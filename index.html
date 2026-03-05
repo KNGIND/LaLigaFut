@@ -2,369 +2,486 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>La Super Liga</title>
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#0d0d1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
     :root {
-        --primary: #4f46e5; --primary-light: #818cf8; --primary-dark: #3730a3;
-        --accent: #f59e0b; --danger: #ef4444; --success: #22c55e;
-        --bg: #f4f4f8; --surface: #ffffff; --surface2: #f0f0f6;
-        --text: #111128; --text2: #6b6b8a; --border: rgba(0,0,0,0.07);
-        --shadow: 0 4px 20px rgba(79,70,229,0.10); --shadow-lg: 0 12px 40px rgba(79,70,229,0.18);
-        --nav-bg: rgba(255,255,255,0.92); --nav-blur: blur(20px);
-        --radius: 22px; --radius-sm: 14px;
-        --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+        --primary: #4f46e5;
+        --primary-light: #818cf8;
+        --primary-dark: #3730a3;
+        --accent: #f59e0b;
+        --danger: #ef4444;
+        --success: #22c55e;
+        --bg: #f0f0f8;
+        --surface: #ffffff;
+        --surface2: #e8e8f5;
+        --text: #111128;
+        --text2: #6b6b8a;
+        --border: rgba(0,0,0,0.07);
+        --shadow: 0 2px 12px rgba(79,70,229,0.08);
+        --shadow-lg: 0 8px 32px rgba(79,70,229,0.15);
+        --nav-bg: rgba(255,255,255,0.75);
+        --radius: 20px;
+        --radius-sm: 14px;
+        --font-head: 'Syne', sans-serif;
+        --font-body: 'DM Sans', sans-serif;
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     [data-theme="dark"] {
-        --bg: #0d0d1a; --surface: #16162a; --surface2: #1e1e35;
-        --text: #f0f0ff; --text2: #8888aa; --border: rgba(255,255,255,0.07);
-        --shadow: 0 4px 20px rgba(0,0,0,0.4); --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
-        --nav-bg: rgba(22,22,42,0.92);
+        --bg: #0d0d1a;
+        --surface: #15152a;
+        --surface2: #1c1c33;
+        --text: #f0f0ff;
+        --text2: #7878a0;
+        --border: rgba(255,255,255,0.07);
+        --shadow: 0 2px 12px rgba(0,0,0,0.35);
+        --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+        --nav-bg: rgba(15,15,28,0.8);
     }
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; transition:background 0.4s, color 0.4s; }
+    html { height: 100%; }
+    body {
+        background:var(--bg);
+        color:var(--text);
+        font-family:var(--font-body);
+        font-size: 15px;
+        line-height: 1.5;
+        min-height:100vh;
+        min-height: -webkit-fill-available;
+        overflow-x:hidden;
+        transition:background 0.35s, color 0.35s;
+        -webkit-font-smoothing: antialiased;
+    }
     h1,h2,h3,h4,.logo-text { font-family:var(--font-head); }
 
-    /* UPDATE BANNER */
+    /* ===== UPDATE BANNER ===== */
     #update-banner {
         position:fixed; top:0; left:0; right:0; z-index:99999;
         background:linear-gradient(135deg,#f59e0b,#ef4444); color:white;
-        padding:14px 20px; display:none; align-items:center; justify-content:space-between;
+        padding:max(14px, calc(10px + var(--safe-top))) 20px 14px;
+        display:none; align-items:center; justify-content:space-between;
         box-shadow:0 4px 20px rgba(0,0,0,0.3); gap:12px;
     }
     #update-banner.show { display:flex; }
-    .update-btn { background:white; color:#ef4444; border:none; padding:8px 16px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.85rem; white-space:nowrap; }
+    .update-btn { background:white; color:#ef4444; border:none; padding:8px 16px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.82rem; }
 
-    /* SPLASH */
+    /* ===== SPLASH ===== */
     #splash {
         position:fixed; inset:0; z-index:9999;
-        background:linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        background:linear-gradient(145deg, #090916 0%, #1a1235 50%, #0f0c29 100%);
         display:flex; flex-direction:column; align-items:center; justify-content:center;
-        gap:24px; transition:opacity 0.6s ease;
+        gap:20px; transition:opacity 0.6s ease;
     }
     #splash.out { opacity:0; pointer-events:none; }
     .splash-logo-wrap {
-        width:120px; height:120px; background:white; border-radius:32px;
+        width:110px; height:110px; background:white; border-radius:28px;
         display:flex; align-items:center; justify-content:center;
-        box-shadow:0 20px 60px rgba(0,0,0,0.5); animation:floatY 3s ease-in-out infinite;
+        box-shadow:0 20px 60px rgba(79,70,229,0.5); animation:floatY 3s ease-in-out infinite;
         overflow:hidden; cursor:pointer; position:relative;
     }
     .splash-logo-wrap img { width:100%; height:100%; object-fit:cover; display:none; }
-    .splash-logo-wrap .def-icon { font-size:60px; color:#302b63; }
-    .splash-logo-edit { position:absolute; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:32px; }
+    .splash-logo-wrap .def-icon { font-size:52px; color:#302b63; }
+    .splash-logo-edit { position:absolute; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; color:white; font-size:22px; border-radius:28px; }
     .splash-logo-wrap:hover .splash-logo-edit { display:flex; }
-    @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
-    .splash-title { color:white; font-size:2.2rem; font-weight:800; animation:fadeUp 0.8s ease both; }
-    .splash-sub { color:rgba(255,255,255,0.75); font-size:1rem; animation:fadeUp 0.8s 0.2s ease both; }
-    .splash-bar { width:140px; height:3px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden; animation:fadeUp 0.8s 0.4s ease both; }
-    .splash-bar-fill { height:100%; background:white; border-radius:10px; animation:loadBar 2.3s ease forwards; }
+    @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+    .splash-title { color:white; font-size:1.9rem; font-weight:800; animation:fadeUp 0.8s ease both; letter-spacing:-0.5px; }
+    .splash-sub { color:rgba(255,255,255,0.6); font-size:0.9rem; animation:fadeUp 0.8s 0.2s ease both; }
+    .splash-bar { width:120px; height:3px; background:rgba(255,255,255,0.15); border-radius:10px; overflow:hidden; animation:fadeUp 0.8s 0.4s ease both; margin-top:8px; }
+    .splash-bar-fill { height:100%; background:linear-gradient(90deg,var(--primary-light),white); border-radius:10px; animation:loadBar 2.4s ease forwards; }
     @keyframes loadBar { from{width:0} to{width:100%} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-    /* TUTORIAL */
-    #tutorial-screen { position:fixed; inset:0; z-index:9998; background:linear-gradient(135deg,#0f0c29,#302b63); display:none; flex-direction:column; }
+    /* ===== TUTORIAL ===== */
+    #tutorial-screen { position:fixed; inset:0; z-index:9998; background:linear-gradient(145deg,#090916,#1a1235); display:none; flex-direction:column; }
     #tutorial-screen.active { display:flex; }
     .tut-slides { flex:1; overflow:hidden; position:relative; }
-    .tut-slide { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 30px; opacity:0; transform:translateX(100px); transition:all 0.5s cubic-bezier(0.4,0,0.2,1); pointer-events:none; }
+    .tut-slide { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 30px; opacity:0; transform:translateX(80px); transition:all 0.45s cubic-bezier(0.4,0,0.2,1); pointer-events:none; }
     .tut-slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
-    .tut-slide.out { opacity:0; transform:translateX(-100px); }
-    .tut-icon { font-size:80px; margin-bottom:30px; }
-    .tut-title { font-family:var(--font-head); font-size:2rem; font-weight:800; color:white; text-align:center; margin-bottom:16px; }
-    .tut-desc { color:rgba(255,255,255,0.7); text-align:center; font-size:1.05rem; line-height:1.6; }
-    .tut-footer { padding:30px; display:flex; flex-direction:column; gap:16px; align-items:center; }
-    .tut-dots { display:flex; gap:8px; }
-    .tut-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); transition:all 0.3s; }
-    .tut-dot.active { background:white; width:24px; border-radius:4px; }
-    .tut-btn { width:100%; max-width:320px; padding:16px; background:white; color:#302b63; border:none; border-radius:16px; font-family:var(--font-head); font-size:1.1rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
+    .tut-slide.out { opacity:0; transform:translateX(-80px); }
+    .tut-icon { font-size:72px; margin-bottom:24px; }
+    .tut-title { font-family:var(--font-head); font-size:1.7rem; font-weight:800; color:white; text-align:center; margin-bottom:12px; }
+    .tut-desc { color:rgba(255,255,255,0.65); text-align:center; font-size:0.95rem; line-height:1.65; }
+    .tut-footer { padding:28px; padding-bottom:max(28px, calc(20px + var(--safe-bottom))); display:flex; flex-direction:column; gap:14px; align-items:center; }
+    .tut-dots { display:flex; gap:7px; }
+    .tut-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.25); transition:all 0.3s; }
+    .tut-dot.active { background:white; width:22px; border-radius:4px; }
+    .tut-btn { width:100%; max-width:300px; padding:16px; background:var(--primary); color:white; border:none; border-radius:16px; font-family:var(--font-head); font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.2s; box-shadow:0 8px 24px rgba(79,70,229,0.4); }
     .tut-btn:active { transform:scale(0.97); }
 
-    /* LOGIN */
-    #login-screen { position:fixed; inset:0; z-index:9997; background:linear-gradient(160deg,#0f0c29 0%,#302b63 60%,#4f46e5 100%); display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+    /* ===== LOGIN ===== */
+    #login-screen { position:fixed; inset:0; z-index:9997; background:linear-gradient(155deg,#090916 0%,#1a1235 60%,#4f46e5 100%); display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
     #login-screen.active { display:flex; }
-    .login-box { background:var(--surface); border-radius:28px; padding:36px 28px; width:100%; max-width:400px; box-shadow:0 30px 80px rgba(0,0,0,0.4); animation:fadeUp 0.5s ease; }
-    .login-logo { width:72px; height:72px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:32px; color:white; overflow:hidden; }
+    .login-box { background:var(--surface); border-radius:26px; padding:32px 24px; width:100%; max-width:400px; box-shadow:0 30px 80px rgba(0,0,0,0.45); animation:fadeUp 0.5s ease; }
+    .login-logo { width:68px; height:68px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:18px; display:flex; align-items:center; justify-content:center; margin:0 auto 18px; font-size:28px; color:white; overflow:hidden; }
     .login-logo img { width:100%; height:100%; object-fit:cover; display:none; }
-    .login-title { font-size:1.6rem; font-weight:800; text-align:center; margin-bottom:6px; }
-    .login-sub { color:var(--text2); text-align:center; margin-bottom:28px; font-size:0.9rem; }
-    .login-tabs { display:flex; background:var(--bg); border-radius:12px; padding:4px; margin-bottom:24px; }
-    .login-tab { flex:1; padding:10px; border:none; background:none; border-radius:10px; font-size:0.85rem; font-weight:600; color:var(--text2); cursor:pointer; transition:all 0.3s; }
+    .login-title { font-size:1.5rem; font-weight:800; text-align:center; margin-bottom:4px; }
+    .login-sub { color:var(--text2); text-align:center; margin-bottom:24px; font-size:0.85rem; }
+    .login-tabs { display:flex; background:var(--bg); border-radius:12px; padding:4px; margin-bottom:22px; }
+    .login-tab { flex:1; padding:9px; border:none; background:none; border-radius:9px; font-size:0.8rem; font-weight:600; color:var(--text2); cursor:pointer; transition:all 0.25s; }
     .login-tab.active { background:var(--surface); color:var(--primary); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
     .login-panel { display:none; }
     .login-panel.active { display:block; animation:fadeUp 0.3s ease; }
-    .inp-group { margin-bottom:16px; }
-    .inp-group label { display:block; font-size:0.85rem; font-weight:600; color:var(--text2); margin-bottom:8px; }
-    .inp-group input { width:100%; padding:14px 16px; border:2px solid var(--border); border-radius:14px; font-size:1rem; font-family:var(--font-body); background:var(--bg); color:var(--text); transition:all 0.3s; }
-    .inp-group input:focus { border-color:var(--primary); outline:none; }
-    .btn-primary { width:100%; padding:15px; border:none; border-radius:14px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; font-family:var(--font-head); font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.2s; box-shadow:0 6px 20px rgba(79,70,229,0.4); }
+    .inp-group { margin-bottom:14px; }
+    .inp-group label { display:block; font-size:0.82rem; font-weight:600; color:var(--text2); margin-bottom:7px; }
+    .inp-group input { width:100%; padding:13px 15px; border:2px solid var(--border); border-radius:13px; font-size:0.95rem; font-family:var(--font-body); background:var(--bg); color:var(--text); transition:all 0.25s; }
+    .inp-group input:focus { border-color:var(--primary); outline:none; background:var(--surface); }
+    .btn-primary { width:100%; padding:14px; border:none; border-radius:13px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; font-family:var(--font-head); font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.2s; box-shadow:0 6px 20px rgba(79,70,229,0.35); }
     .btn-primary:active { transform:scale(0.97); }
-    .social-btns { display:flex; flex-direction:column; gap:12px; }
-    .social-btn { display:flex; align-items:center; justify-content:center; gap:10px; padding:14px; border:2px solid var(--border); border-radius:14px; background:var(--surface); color:var(--text); font-weight:600; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+    .social-btns { display:flex; flex-direction:column; gap:10px; }
+    .social-btn { display:flex; align-items:center; justify-content:center; gap:10px; padding:13px; border:2px solid var(--border); border-radius:13px; background:var(--surface); color:var(--text); font-weight:600; font-size:0.9rem; cursor:pointer; transition:all 0.2s; }
     .social-btn:active { transform:scale(0.97); }
 
-    /* PROFILE SETUP */
+    /* ===== PROFILE SETUP ===== */
     #profile-setup-screen { position:fixed; inset:0; z-index:9996; background:var(--bg); display:none; flex-direction:column; overflow-y:auto; }
     #profile-setup-screen.active { display:flex; }
-    .setup-hdr { background:linear-gradient(135deg,var(--primary),var(--primary-light)); padding:50px 24px 30px; color:white; text-align:center; }
-    .setup-avatar { width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.2); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:40px; cursor:pointer; position:relative; border:3px solid rgba(255,255,255,0.5); overflow:hidden; }
+    .setup-hdr { background:linear-gradient(135deg,var(--primary),var(--primary-light)); padding:max(50px, calc(40px + var(--safe-top))) 24px 28px; color:white; text-align:center; }
+    .setup-avatar { width:90px; height:90px; border-radius:50%; background:rgba(255,255,255,0.2); margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-size:36px; cursor:pointer; position:relative; border:3px solid rgba(255,255,255,0.4); overflow:hidden; }
     .setup-avatar img { width:100%; height:100%; object-fit:cover; display:none; }
-    .setup-avatar-ov { position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:20px; opacity:0; transition:opacity 0.3s; }
+    .setup-avatar-ov { position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:18px; opacity:0; transition:opacity 0.3s; }
     .setup-avatar:hover .setup-avatar-ov { opacity:1; }
-    .setup-body { padding:24px; flex:1; }
+    .setup-body { padding:22px; flex:1; }
     .setup-step { display:none; animation:fadeUp 0.4s ease; }
     .setup-step.active { display:block; }
-    .team-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px; }
-    .team-pick { background:var(--surface); border-radius:var(--radius-sm); padding:16px; text-align:center; cursor:pointer; border:2px solid var(--border); transition:all 0.3s; }
+    .team-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:14px; }
+    .team-pick { background:var(--surface); border-radius:var(--radius-sm); padding:14px; text-align:center; cursor:pointer; border:2px solid var(--border); transition:all 0.3s; }
     .team-pick.sel { border-color:var(--primary); background:rgba(79,70,229,0.08); }
-    .team-pick .team-emoji { font-size:2rem; margin-bottom:8px; }
+    .team-pick .team-emoji { font-size:1.8rem; margin-bottom:6px; }
 
-    /* APP */
-    #app { display:none; min-height:100vh; padding-bottom:110px; }
+    /* ===== APP ===== */
+    #app { display:none; min-height:100vh; padding-bottom:calc(90px + var(--safe-bottom)); }
     #app.active { display:block; }
 
-    /* HEADER */
-    .app-header { padding:52px 20px 20px; display:flex; align-items:center; justify-content:space-between; }
-    .hdr-left { display:flex; align-items:center; gap:12px; }
-    .hamburger { width:44px; height:44px; border-radius:14px; background:var(--surface); border:none; color:var(--text); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); transition:all 0.2s; }
+    /* ===== HEADER ===== */
+    .app-header { padding:max(52px, calc(44px + var(--safe-top))) 18px 18px; display:flex; align-items:center; justify-content:space-between; }
+    .hdr-left { display:flex; align-items:center; gap:10px; }
+    .hamburger { width:42px; height:42px; border-radius:13px; background:var(--surface); border:none; color:var(--text); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); transition:all 0.2s; }
     .hamburger:active { transform:scale(0.92); }
-    .hdr-logo { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-size:16px; overflow:hidden; }
+    .hdr-logo { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-size:15px; overflow:hidden; }
     .hdr-logo img { width:100%; height:100%; object-fit:cover; display:none; }
-    .hdr-greeting { font-size:0.75rem; color:var(--text2); font-weight:500; }
-    .hdr-name { font-size:1.05rem; font-weight:700; }
-    .hdr-right { display:flex; gap:10px; align-items:center; }
-    .icon-btn { width:42px; height:42px; border-radius:13px; background:var(--surface); border:none; color:var(--text2); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); transition:all 0.2s; position:relative; }
+    .hdr-greeting { font-size:0.7rem; color:var(--text2); font-weight:500; }
+    .hdr-name { font-size:0.95rem; font-weight:700; line-height:1.2; }
+    .hdr-right { display:flex; gap:8px; align-items:center; }
+    .icon-btn { width:40px; height:40px; border-radius:12px; background:var(--surface); border:none; color:var(--text2); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); transition:all 0.2s; position:relative; }
     .icon-btn:active { transform:scale(0.92); }
-    .notif-dot { position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%; background:var(--danger); border:2px solid var(--surface); display:none; }
-    .avatar-btn { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border:2px solid var(--primary-light); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center; color:white; font-size:18px; transition:all 0.2s; }
+    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--danger); border:2px solid var(--surface); display:none; }
+    .avatar-btn { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border:2px solid var(--primary-light); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center; color:white; font-size:16px; transition:all 0.2s; }
     .avatar-btn img { width:100%; height:100%; object-fit:cover; display:none; }
     .avatar-btn:active { transform:scale(0.92); }
 
-    /* PAGES */
-    .page { display:none; padding:0 16px; animation:pageIn 0.35s cubic-bezier(0.4,0,0.2,1); }
+    /* ===== PAGES ===== */
+    .page { display:none; padding:0 15px; animation:pageIn 0.3s cubic-bezier(0.4,0,0.2,1); }
     .page.active { display:block; }
-    @keyframes pageIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pageIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-    /* CARDS */
-    .card { background:var(--surface); border-radius:var(--radius); padding:20px; margin-bottom:14px; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; position:relative; overflow:hidden; }
+    /* ===== CARDS ===== */
+    .card { background:var(--surface); border-radius:var(--radius); padding:18px; margin-bottom:12px; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; position:relative; overflow:hidden; }
     .card:active { transform:scale(0.98); box-shadow:none; }
 
-    /* LIVE CARD */
-    .live-card { background:linear-gradient(135deg,#0f0c29 0%,#302b63 100%); color:white; border-radius:var(--radius); padding:22px; margin-bottom:14px; cursor:pointer; box-shadow:0 8px 32px rgba(48,43,99,0.4); transition:transform 0.2s; }
+    /* ===== LIVE CARD ===== */
+    .live-card { background:linear-gradient(135deg,#0f0c29 0%,#302b63 100%); color:white; border-radius:var(--radius); padding:20px; margin-bottom:12px; cursor:pointer; box-shadow:0 8px 28px rgba(48,43,99,0.4); transition:transform 0.2s; }
     .live-card:active { transform:scale(0.98); }
-    .live-badge { display:inline-flex; align-items:center; gap:6px; background:#ef4444; padding:5px 12px; border-radius:20px; font-size:0.7rem; font-weight:700; letter-spacing:1px; margin-bottom:16px; animation:pulseBg 2s infinite; }
+    .live-badge { display:inline-flex; align-items:center; gap:6px; background:#ef4444; padding:4px 11px; border-radius:20px; font-size:0.68rem; font-weight:700; letter-spacing:1px; margin-bottom:14px; animation:pulseBg 2s infinite; }
     @keyframes pulseBg { 0%,100%{opacity:1} 50%{opacity:0.75} }
-    .live-dot { width:7px; height:7px; border-radius:50%; background:white; animation:blink 1s infinite; }
+    .live-dot { width:6px; height:6px; border-radius:50%; background:white; animation:blink 1s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .match-teams { display:flex; align-items:center; justify-content:space-between; }
-    .team-block { display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; }
-    .team-shield { width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; overflow:hidden; }
+    .team-block { display:flex; flex-direction:column; align-items:center; gap:7px; flex:1; }
+    .team-shield { width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; overflow:hidden; }
     .team-shield img { width:100%; height:100%; object-fit:contain; }
-    .team-label { font-size:0.85rem; font-weight:600; text-align:center; }
-    .score-block { padding:0 16px; text-align:center; }
-    .score-big { font-size:2.4rem; font-weight:800; font-family:var(--font-head); }
-    .score-min { font-size:0.75rem; color:rgba(255,255,255,0.6); margin-top:2px; }
-    .match-footer { display:flex; align-items:center; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.12); font-size:0.8rem; color:rgba(255,255,255,0.6); flex-wrap:wrap; }
-    .channel-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.12); padding:3px 10px; border-radius:20px; }
-    .channel-logo { width:18px; height:18px; border-radius:4px; object-fit:contain; background:white; padding:1px; }
-    .match-up-card { background:var(--surface); border-radius:var(--radius-sm); padding:16px 18px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s; }
+    .team-label { font-size:0.8rem; font-weight:600; text-align:center; }
+    .score-block { padding:0 14px; text-align:center; }
+    .score-big { font-size:2.2rem; font-weight:800; font-family:var(--font-head); }
+    .score-min { font-size:0.72rem; color:rgba(255,255,255,0.6); margin-top:2px; }
+    .match-footer { display:flex; align-items:center; gap:7px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.12); font-size:0.77rem; color:rgba(255,255,255,0.6); flex-wrap:wrap; }
+    .channel-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.12); padding:3px 9px; border-radius:20px; }
+    .channel-logo { width:16px; height:16px; border-radius:4px; object-fit:contain; background:white; padding:1px; }
+    .match-up-card { background:var(--surface); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:9px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s; }
     .match-up-card:active { transform:scale(0.98); }
-    .match-up-teams { font-weight:600; font-size:0.95rem; }
-    .match-up-time { font-size:0.8rem; color:var(--text2); margin-top:2px; }
-    .status-pill { padding:5px 12px; border-radius:20px; font-size:0.75rem; font-weight:700; }
+    .match-up-teams { font-weight:600; font-size:0.9rem; }
+    .match-up-time { font-size:0.77rem; color:var(--text2); margin-top:2px; }
+    .status-pill { padding:4px 11px; border-radius:20px; font-size:0.72rem; font-weight:700; }
     .status-pill.upcoming { background:rgba(79,70,229,0.12); color:var(--primary); }
     .status-pill.live { background:#fee2e2; color:#ef4444; }
     .status-pill.done { background:rgba(0,0,0,0.06); color:var(--text2); }
     [data-theme="dark"] .status-pill.done { background:rgba(255,255,255,0.08); }
 
-    /* STATS */
-    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
-    .stat-card { background:var(--surface); border-radius:var(--radius-sm); padding:18px 14px; text-align:center; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s; }
+    /* ===== STATS ===== */
+    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+    .stat-card { background:var(--surface); border-radius:var(--radius-sm); padding:16px 10px; text-align:center; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s; }
     .stat-card:active { transform:scale(0.95); }
-    .stat-icon { font-size:1.4rem; color:var(--primary); margin-bottom:8px; }
-    .stat-val { font-size:1.3rem; font-weight:800; font-family:var(--font-head); }
-    .stat-lbl { font-size:0.7rem; color:var(--text2); margin-top:2px; }
+    .stat-icon { font-size:1.3rem; color:var(--primary); margin-bottom:7px; }
+    .stat-val { font-size:1.15rem; font-weight:800; font-family:var(--font-head); }
+    .stat-lbl { font-size:0.68rem; color:var(--text2); margin-top:2px; }
 
-    /* NEWS */
-    .news-card { background:var(--surface); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); margin-bottom:14px; cursor:pointer; transition:transform 0.2s; }
+    /* ===== NEWS ===== */
+    .news-card { background:var(--surface); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); margin-bottom:12px; cursor:pointer; transition:transform 0.2s; }
     .news-card:active { transform:scale(0.98); }
-    .news-img { width:100%; height:160px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-size:3rem; overflow:hidden; }
+    .news-img { width:100%; height:150px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-size:2.5rem; overflow:hidden; }
     .news-img img { width:100%; height:100%; object-fit:cover; }
-    .news-body { padding:16px; }
-    .news-tag { font-size:0.7rem; font-weight:700; color:var(--primary); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:6px; }
-    .news-title { font-weight:700; font-size:1rem; line-height:1.4; margin-bottom:6px; }
-    .news-date { font-size:0.78rem; color:var(--text2); }
-    .sec-title { font-size:1.1rem; font-weight:800; font-family:var(--font-head); margin:18px 0 12px; display:flex; align-items:center; gap:8px; }
+    .news-body { padding:14px; }
+    .news-tag { font-size:0.68rem; font-weight:700; color:var(--primary); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:5px; }
+    .news-title { font-weight:700; font-size:0.9rem; line-height:1.4; margin-bottom:5px; }
+    .news-date { font-size:0.75rem; color:var(--text2); }
+    .sec-title { font-size:1rem; font-weight:800; font-family:var(--font-head); margin:16px 0 10px; display:flex; align-items:center; gap:7px; }
     .sec-icon { color:var(--primary); }
 
-    /* NAV ISLAND */
-    .nav-island { position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--nav-bg); backdrop-filter:var(--nav-blur); -webkit-backdrop-filter:var(--nav-blur); border-radius:30px; padding:8px; display:flex; gap:6px; z-index:500; box-shadow:0 8px 40px rgba(0,0,0,0.2), 0 0 0 1px var(--border); transition:box-shadow 0.5s; }
-    .nav-btn { position:relative; display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 16px; border:none; background:none; color:var(--text2); border-radius:24px; cursor:pointer; transition:all 0.3s; font-size:0.65rem; font-weight:600; min-width:60px; }
-    .nav-btn i { font-size:1.2rem; transition:all 0.3s; }
+    /* ===== NAV ISLAND - BLUR ===== */
+    .nav-island {
+        position:fixed;
+        bottom:max(16px, calc(10px + var(--safe-bottom)));
+        left:50%; transform:translateX(-50%);
+        background:var(--nav-bg);
+        backdrop-filter:blur(24px) saturate(180%);
+        -webkit-backdrop-filter:blur(24px) saturate(180%);
+        border-radius:28px;
+        padding:7px;
+        display:flex; gap:4px;
+        z-index:500;
+        box-shadow:0 8px 32px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.15);
+        border:1px solid rgba(255,255,255,0.12);
+        transition:box-shadow 0.4s;
+    }
+    [data-theme="dark"] .nav-island {
+        box-shadow:0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
+        border-color:rgba(255,255,255,0.06);
+    }
+    .nav-btn { position:relative; display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 14px; border:none; background:none; color:var(--text2); border-radius:22px; cursor:pointer; transition:all 0.3s; font-size:0.6rem; font-weight:600; min-width:56px; letter-spacing:0.2px; }
+    .nav-btn svg, .nav-btn .nav-ico { font-size:1.15rem; transition:all 0.3s; }
     .nav-btn.active { color:white; }
-    .nav-pill { position:absolute; inset:0; border-radius:24px; transition:all 0.4s cubic-bezier(0.4,0,0.2,1); z-index:-1; opacity:0; }
-    .nav-btn.active .nav-pill { opacity:1; }
-    .nav-btn[data-page="home"].active .nav-pill { background:#4f46e5; }
+    .nav-pill { position:absolute; inset:0; border-radius:22px; transition:all 0.4s cubic-bezier(0.4,0,0.2,1); z-index:-1; opacity:0; transform:scale(0.85); }
+    .nav-btn.active .nav-pill { opacity:1; transform:scale(1); }
+    .nav-btn[data-page="home"].active .nav-pill { background:var(--primary); }
     .nav-btn[data-page="matches"].active .nav-pill { background:#059669; }
     .nav-btn[data-page="info"].active .nav-pill { background:#d97706; }
     .nav-btn[data-page="social"].active .nav-pill { background:#db2777; }
     .nav-btn[data-page="admin"].active .nav-pill { background:#7c3aed; }
+    .nav-badge { position:absolute; top:5px; right:8px; width:16px; height:16px; border-radius:50%; background:#ef4444; color:white; font-size:0.5rem; font-weight:800; display:none; align-items:center; justify-content:center; }
+    .nav-badge.show { display:flex; }
 
-    /* SIDE MENU */
-    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:800; display:none; opacity:0; transition:opacity 0.3s; backdrop-filter:blur(4px); }
+    /* ===== SIDE MENU - Simplified ===== */
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:800; display:none; opacity:0; transition:opacity 0.3s; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     .overlay.show { display:block; opacity:1; }
-    .side-menu { position:fixed; top:0; left:-320px; width:300px; height:100%; background:var(--surface); z-index:900; box-shadow:8px 0 40px rgba(0,0,0,0.2); transition:left 0.35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column; overflow:hidden; }
-    .side-menu.open { left:0; }
-    .side-hdr { padding:50px 20px 24px; background:linear-gradient(135deg,var(--primary-dark),var(--primary)); color:white; flex-shrink:0; }
-    .side-user { display:flex; align-items:center; gap:14px; }
-    .side-avatar { width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.2); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:22px; border:2px solid rgba(255,255,255,0.4); }
+    .side-menu {
+        position:fixed; top:0; left:0; height:100%; width:280px;
+        background:var(--surface); z-index:900;
+        box-shadow:12px 0 50px rgba(0,0,0,0.25);
+        display:flex; flex-direction:column; overflow:hidden;
+        transform:translateX(-100%) scale(0.96);
+        transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+        opacity:0;
+        border-radius:0 24px 24px 0;
+    }
+    .side-menu.open { transform:translateX(0) scale(1); opacity:1; }
+    .side-hdr {
+        padding:max(50px, calc(40px + var(--safe-top))) 20px 22px;
+        background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+        color:white; flex-shrink:0;
+    }
+    .side-user { display:flex; align-items:center; gap:12px; margin-bottom:4px; }
+    .side-avatar { width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.2); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:20px; border:2px solid rgba(255,255,255,0.35); }
     .side-avatar img { width:100%; height:100%; object-fit:cover; display:none; }
-    .side-body { flex:1; overflow-y:auto; padding:12px 0; }
-    .side-item { display:flex; align-items:center; gap:14px; padding:14px 20px; color:var(--text); cursor:pointer; transition:background 0.2s; font-size:0.95rem; font-weight:500; }
+    .side-user-name { font-weight:700; font-size:0.95rem; }
+    .side-user-role { font-size:0.75rem; opacity:0.7; margin-top:1px; }
+    .side-body { flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:6px; }
+    .side-item {
+        display:flex; align-items:center; gap:13px; padding:13px 16px;
+        color:var(--text); cursor:pointer; border-radius:15px;
+        transition:all 0.2s; font-size:0.9rem; font-weight:500;
+    }
     .side-item:hover { background:var(--bg); }
-    .side-item i { width:26px; text-align:center; color:var(--primary); font-size:1rem; }
-    .side-div { height:1px; background:var(--border); margin:8px 0; }
+    .side-item:active { transform:scale(0.97); }
+    .side-item .side-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; flex-shrink:0; }
+    .side-item-toggle { display:flex; align-items:center; gap:13px; padding:13px 16px; color:var(--text); border-radius:15px; transition:all 0.2s; font-size:0.9rem; font-weight:500; }
+    .side-item-toggle .side-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; flex-shrink:0; }
+    .side-item-toggle .side-label { flex:1; font-size:0.9rem; font-weight:500; }
+    .side-div { height:1px; background:var(--border); margin:8px 4px; }
+    .side-footer { padding:16px 12px; padding-bottom:max(16px, calc(10px + var(--safe-bottom))); }
 
-    /* MATCH DETAIL */
+    /* ===== MATCH DETAIL ===== */
     #match-detail { position:fixed; inset:0; z-index:600; background:var(--bg); display:none; flex-direction:column; overflow-y:auto; transform:translateY(100%); transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); }
     #match-detail.open { display:flex; transform:translateY(0); }
-    .detail-hdr { background:linear-gradient(135deg,#0f0c29,#302b63); padding:50px 20px 30px; color:white; flex-shrink:0; }
-    .detail-back { background:rgba(255,255,255,0.15); border:none; color:white; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; margin-bottom:20px; }
-    .detail-teams { display:flex; align-items:center; justify-content:space-between; gap:16px; }
-    .detail-team { display:flex; flex-direction:column; align-items:center; gap:10px; flex:1; }
-    .detail-shield { width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; overflow:hidden; }
+    .detail-hdr { background:linear-gradient(135deg,#0f0c29,#302b63); padding:max(50px, calc(44px + var(--safe-top))) 20px 28px; color:white; flex-shrink:0; }
+    .detail-back { background:rgba(255,255,255,0.15); border:none; color:white; width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:17px; cursor:pointer; margin-bottom:18px; }
+    .detail-teams { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .detail-team { display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; }
+    .detail-shield { width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; overflow:hidden; }
     .detail-shield img { width:100%; height:100%; object-fit:contain; }
-    .detail-team-name { font-size:1rem; font-weight:700; text-align:center; }
-    .detail-score { font-size:3rem; font-weight:800; font-family:var(--font-head); text-align:center; }
-    .detail-min { font-size:0.85rem; color:rgba(255,255,255,0.6); text-align:center; }
-    .detail-body { padding:20px 16px; }
-    .detail-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); }
-    .detail-val { font-weight:700; font-size:1rem; }
-    .detail-lbl { font-size:0.85rem; color:var(--text2); }
+    .detail-team-name { font-size:0.9rem; font-weight:700; text-align:center; }
+    .detail-score { font-size:2.8rem; font-weight:800; font-family:var(--font-head); text-align:center; }
+    .detail-min { font-size:0.8rem; color:rgba(255,255,255,0.6); text-align:center; }
+    .detail-body { padding:18px 15px; }
+    .detail-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); }
+    .detail-val { font-weight:700; font-size:0.95rem; }
+    .detail-lbl { font-size:0.82rem; color:var(--text2); }
 
-    /* INFO */
-    .info-card { background:var(--surface); border-radius:var(--radius); padding:18px; margin-bottom:12px; display:flex; align-items:center; gap:16px; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s; }
+    /* ===== INFO ===== */
+    .info-card { background:var(--surface); border-radius:var(--radius); padding:16px; margin-bottom:10px; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s; }
     .info-card:active { transform:scale(0.98); }
-    .info-icon { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:white; flex-shrink:0; }
+    .info-icon { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:white; flex-shrink:0; }
     .tabla-wrap { background:var(--surface); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
     .tabla-wrap table { width:100%; border-collapse:collapse; }
-    .tabla-wrap th { padding:12px 10px; text-align:left; background:var(--primary); color:white; font-size:0.78rem; font-weight:700; }
-    .tabla-wrap td { padding:12px 10px; border-bottom:1px solid var(--border); font-size:0.85rem; }
+    .tabla-wrap th { padding:11px 9px; text-align:left; background:var(--primary); color:white; font-size:0.75rem; font-weight:700; }
+    .tabla-wrap td { padding:11px 9px; border-bottom:1px solid var(--border); font-size:0.82rem; }
     .tabla-wrap tr:last-child td { border-bottom:none; }
     .tabla-pos { font-weight:800; color:var(--primary); }
 
-    /* PROFILE */
-    .profile-banner { height:160px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:var(--radius) var(--radius) 0 0; position:relative; overflow:hidden; cursor:pointer; }
+    /* ===== PROFILE ===== */
+    .profile-banner { height:140px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:var(--radius) var(--radius) 0 0; position:relative; overflow:hidden; cursor:pointer; }
     .profile-banner img { width:100%; height:100%; object-fit:cover; display:none; }
-    .banner-edit { position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; }
-    .profile-card { background:var(--surface); border-radius:0 0 var(--radius) var(--radius); padding:16px 20px 24px; box-shadow:var(--shadow); margin-bottom:16px; }
-    .profile-avatar { width:90px; height:90px; border-radius:50%; border:4px solid var(--surface); background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; font-size:36px; color:white; overflow:hidden; position:relative; cursor:pointer; margin-top:-50px; margin-bottom:12px; }
+    .banner-edit { position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.45); color:white; border:none; width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; }
+    .profile-card { background:var(--surface); border-radius:0 0 var(--radius) var(--radius); padding:14px 18px 22px; margin-bottom:14px; }
+    .profile-avatar { width:80px; height:80px; border-radius:50%; border:4px solid var(--surface); background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; font-size:32px; color:white; overflow:hidden; position:relative; cursor:pointer; margin-top:-44px; margin-bottom:10px; }
     .profile-avatar img { width:100%; height:100%; object-fit:cover; display:none; }
-    .profile-name { font-size:1.3rem; font-weight:800; font-family:var(--font-head); }
-    .profile-role-tag { display:inline-block; background:rgba(79,70,229,0.1); color:var(--primary); padding:3px 12px; border-radius:20px; font-size:0.78rem; font-weight:700; margin-top:4px; }
-    .fav-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    .fav-chip { display:flex; align-items:center; gap:6px; padding:6px 12px; background:var(--bg); border-radius:20px; font-size:0.8rem; font-weight:600; }
-    .settings-item { display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--border); }
+    .profile-name { font-size:1.2rem; font-weight:800; font-family:var(--font-head); }
+    .profile-role-tag { display:inline-block; background:rgba(79,70,229,0.1); color:var(--primary); padding:3px 11px; border-radius:20px; font-size:0.75rem; font-weight:700; margin-top:4px; }
+    .fav-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .fav-chip { display:flex; align-items:center; gap:5px; padding:5px 11px; background:var(--bg); border-radius:20px; font-size:0.78rem; font-weight:600; }
+    .settings-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border); }
     .settings-item:last-child { border-bottom:none; }
-    .settings-label { display:flex; align-items:center; gap:12px; font-weight:500; }
-    .settings-label i { color:var(--primary); width:22px; }
-    .toggle-sw { width:48px; height:26px; background:#cbd5e1; border-radius:13px; cursor:pointer; position:relative; transition:background 0.3s; flex-shrink:0; }
+    .settings-label { display:flex; align-items:center; gap:11px; font-weight:500; font-size:0.9rem; }
+    .settings-label i { color:var(--primary); width:20px; }
+    .toggle-sw { width:46px; height:25px; background:#cbd5e1; border-radius:13px; cursor:pointer; position:relative; transition:background 0.3s; flex-shrink:0; }
     .toggle-sw.on { background:var(--primary); }
-    .toggle-sw::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; background:white; border-radius:50%; box-shadow:0 1px 4px rgba(0,0,0,0.25); transition:transform 0.3s; }
-    .toggle-sw.on::after { transform:translateX(22px); }
+    .toggle-sw::after { content:''; position:absolute; top:3px; left:3px; width:19px; height:19px; background:white; border-radius:50%; box-shadow:0 1px 4px rgba(0,0,0,0.25); transition:transform 0.3s; }
+    .toggle-sw.on::after { transform:translateX(21px); }
 
-    /* SOCIAL / CHAT */
-    .chat-item { background:var(--surface); border-radius:var(--radius-sm); padding:14px 16px; display:flex; gap:12px; align-items:center; cursor:pointer; box-shadow:var(--shadow); transition:transform 0.2s; margin-bottom:10px; }
+    /* ===== SOCIAL / CHAT ===== */
+    .chat-item { background:var(--surface); border-radius:var(--radius-sm); padding:13px 15px; display:flex; gap:11px; align-items:center; cursor:pointer; box-shadow:var(--shadow); transition:transform 0.2s; margin-bottom:9px; }
     .chat-item:active { transform:scale(0.98); }
-    .chat-av { width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:1.1rem; flex-shrink:0; }
+    .chat-av { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:1rem; flex-shrink:0; }
     .chat-info { flex:1; min-width:0; }
-    .chat-name { font-weight:700; font-size:0.95rem; }
-    .chat-preview { font-size:0.8rem; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .chat-time { font-size:0.72rem; color:var(--text2); flex-shrink:0; }
+    .chat-name { font-weight:700; font-size:0.9rem; }
+    .chat-preview { font-size:0.78rem; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .chat-time { font-size:0.7rem; color:var(--text2); flex-shrink:0; }
+    /* FRIEND REQUEST CARD */
+    .friend-req-card { background:var(--surface); border-radius:var(--radius-sm); padding:14px 16px; display:flex; align-items:center; gap:11px; box-shadow:var(--shadow); margin-bottom:9px; }
+    .friend-req-btns { display:flex; gap:7px; margin-left:auto; }
+    .btn-accept { background:rgba(34,197,94,0.12); color:#16a34a; border:none; padding:7px 13px; border-radius:10px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all 0.2s; }
+    .btn-accept:active { transform:scale(0.95); }
+    .btn-reject { background:rgba(239,68,68,0.1); color:#ef4444; border:none; padding:7px 13px; border-radius:10px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all 0.2s; }
+    .btn-reject:active { transform:scale(0.95); }
+    /* ADD FRIEND BTN */
+    .add-friend-btn { background:rgba(79,70,229,0.1); color:var(--primary); border:none; padding:8px 14px; border-radius:11px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+    .add-friend-btn:active { transform:scale(0.95); }
+
     #chat-window { position:fixed; inset:0; z-index:700; background:var(--bg); display:none; flex-direction:column; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); }
     #chat-window.open { display:flex; transform:translateX(0); }
-    .chat-win-hdr { background:var(--surface); padding:50px 16px 16px; display:flex; align-items:center; gap:12px; box-shadow:var(--shadow); }
-    .chat-back { background:none; border:none; color:var(--text); font-size:20px; cursor:pointer; }
-    .chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
-    .msg { max-width:75%; padding:10px 14px; border-radius:18px; font-size:0.9rem; line-height:1.4; }
-    .msg.me { background:var(--primary); color:white; align-self:flex-end; border-bottom-right-radius:6px; }
-    .msg.them { background:var(--surface); color:var(--text); align-self:flex-start; border-bottom-left-radius:6px; box-shadow:var(--shadow); }
-    .chat-input-bar { background:var(--surface); padding:12px 16px; display:flex; gap:10px; align-items:center; box-shadow:0 -4px 20px rgba(0,0,0,0.08); }
-    .chat-input { flex:1; padding:12px 16px; border:2px solid var(--border); border-radius:24px; font-size:0.95rem; font-family:var(--font-body); background:var(--bg); color:var(--text); outline:none; }
+    .chat-win-hdr { background:var(--surface); padding:max(50px, calc(44px + var(--safe-top))) 16px 14px; display:flex; align-items:center; gap:11px; box-shadow:var(--shadow); }
+    .chat-back { background:none; border:none; color:var(--text); font-size:19px; cursor:pointer; }
+    .chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:9px; }
+    .chat-empty { text-align:center; padding:40px 20px; color:var(--text2); }
+    .chat-empty-icon { font-size:3rem; margin-bottom:12px; opacity:0.5; }
+    .msg { max-width:76%; padding:10px 14px; border-radius:18px; font-size:0.88rem; line-height:1.45; }
+    .msg.me { background:var(--primary); color:white; align-self:flex-end; border-bottom-right-radius:5px; }
+    .msg.them { background:var(--surface); color:var(--text); align-self:flex-start; border-bottom-left-radius:5px; box-shadow:var(--shadow); }
+    .chat-input-bar { background:var(--surface); padding:10px 14px; padding-bottom:max(10px, calc(8px + var(--safe-bottom))); display:flex; gap:9px; align-items:center; box-shadow:0 -4px 20px rgba(0,0,0,0.07); }
+    .chat-input { flex:1; border:2px solid var(--border); border-radius:20px; padding:10px 16px; font-size:0.9rem; font-family:var(--font-body); background:var(--bg); color:var(--text); outline:none; transition:border 0.2s; }
     .chat-input:focus { border-color:var(--primary); }
-    .chat-send { width:44px; height:44px; border-radius:50%; border:none; background:var(--primary); color:white; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-    .chat-send:active { transform:scale(0.92); }
+    .chat-send { width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px; transition:all 0.2s; flex-shrink:0; }
+    .chat-send:active { transform:scale(0.9); }
 
-    /* ADMIN */
-    .admin-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
-    .admin-card { background:var(--surface); border-radius:var(--radius); padding:22px 16px; text-align:center; box-shadow:var(--shadow); cursor:pointer; border:2px solid transparent; transition:all 0.3s; }
-    .admin-card:hover { border-color:var(--primary); transform:translateY(-3px); }
-    .admin-card:active { transform:scale(0.96); }
-    .admin-icon { width:56px; height:56px; border-radius:18px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 12px; }
-    .admin-card-title { font-weight:700; font-size:0.95rem; }
-    .admin-card-sub { font-size:0.75rem; color:var(--text2); margin-top:4px; }
-    .feature-panel { background:var(--surface); border-radius:var(--radius); padding:20px; margin-bottom:14px; box-shadow:var(--shadow); }
-    .feature-title { font-weight:800; font-family:var(--font-head); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    /* ===== ADMIN GRID ===== */
+    .admin-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .admin-card { background:var(--surface); border-radius:var(--radius-sm); padding:16px 10px; text-align:center; box-shadow:var(--shadow); cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; }
+    .admin-card:active { transform:scale(0.95); box-shadow:none; }
+    .admin-icon { width:48px; height:48px; border-radius:14px; background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(129,140,248,0.12)); margin:0 auto 9px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; transition:all 0.2s; }
+    .admin-card:hover .admin-icon { background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; }
+    .admin-card-title { font-weight:700; font-size:0.8rem; }
+    .admin-card-sub { font-size:0.67rem; color:var(--text2); margin-top:2px; }
+    .feature-panel { background:var(--surface); border-radius:var(--radius-sm); padding:16px; margin-bottom:14px; box-shadow:var(--shadow); }
+    .feature-title { font-weight:700; font-size:0.9rem; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
     .feature-title i { color:var(--primary); }
 
-    /* EDIT MODE */
-    #edit-toolbar { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--surface); border-radius:20px; padding:10px 16px; display:none; gap:12px; box-shadow:var(--shadow-lg); z-index:401; }
+    /* ===== EDIT TOOLBAR ===== */
+    #edit-toolbar { position:fixed; bottom:calc(100px + var(--safe-bottom)); left:50%; transform:translateX(-50%); background:var(--surface); border-radius:16px; padding:10px 16px; display:none; gap:10px; z-index:600; box-shadow:var(--shadow-lg); border:1px solid var(--border); }
     #edit-toolbar.active { display:flex; }
-    .edit-tool { display:flex; flex-direction:column; align-items:center; gap:4px; background:var(--bg); border:none; border-radius:12px; padding:10px 14px; cursor:pointer; color:var(--text); font-size:0.7rem; font-weight:600; }
-    .edit-tool i { font-size:1.1rem; color:var(--primary); }
+    .edit-tool { background:var(--bg); border:none; border-radius:10px; padding:9px 12px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.68rem; font-weight:600; color:var(--text2); transition:all 0.2s; min-width:55px; }
+    .edit-tool:hover { background:rgba(79,70,229,0.08); color:var(--primary); }
+    .edit-tool i { font-size:1rem; color:var(--primary); }
 
-    /* MODAL */
-    .modal { position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.5); display:none; align-items:flex-end; justify-content:center; opacity:0; transition:opacity 0.3s; backdrop-filter:blur(4px); }
+    /* ===== MODAL ===== */
+    .modal { position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.5); display:none; align-items:flex-end; justify-content:center; opacity:0; transition:opacity 0.3s; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     .modal.show { display:flex; opacity:1; }
-    .modal-sheet { background:var(--surface); width:100%; max-width:520px; max-height:90vh; border-radius:24px 24px 0 0; overflow-y:auto; transform:translateY(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); padding:0 0 30px; }
+    .modal-sheet { background:var(--surface); width:100%; max-width:520px; max-height:92vh; border-radius:24px 24px 0 0; overflow-y:auto; transform:translateY(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); padding:0 0 max(30px, calc(24px + var(--safe-bottom))); }
     .modal.show .modal-sheet { transform:translateY(0); }
-    .modal-handle { width:40px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 0; }
-    .modal-header { display:flex; justify-content:space-between; align-items:center; padding:20px 20px 0; }
-    .modal-title { font-size:1.2rem; font-weight:800; font-family:var(--font-head); }
-    .modal-close { background:var(--bg); border:none; width:34px; height:34px; border-radius:50%; cursor:pointer; color:var(--text2); font-size:16px; display:flex; align-items:center; justify-content:center; }
-    .modal-body { padding:20px; }
-    .form-row { margin-bottom:16px; }
-    .form-row label { display:block; font-size:0.85rem; font-weight:600; color:var(--text2); margin-bottom:8px; }
-    .form-row input, .form-row select, .form-row textarea { width:100%; padding:13px 15px; border:2px solid var(--border); border-radius:14px; font-size:1rem; font-family:var(--font-body); background:var(--bg); color:var(--text); transition:border 0.3s; }
+    .modal-handle { width:38px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 0; }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; padding:18px 20px 0; }
+    .modal-title { font-size:1.1rem; font-weight:800; font-family:var(--font-head); }
+    .modal-close { background:var(--bg); border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--text2); font-size:15px; display:flex; align-items:center; justify-content:center; }
+    .modal-body { padding:18px; }
+    .form-row { margin-bottom:14px; }
+    .form-row label { display:block; font-size:0.82rem; font-weight:600; color:var(--text2); margin-bottom:7px; }
+    .form-row input, .form-row select, .form-row textarea { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:13px; font-size:0.92rem; font-family:var(--font-body); background:var(--bg); color:var(--text); transition:border 0.25s; }
     .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color:var(--primary); outline:none; }
-    .color-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
-    .color-sw { width:44px; height:44px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.2s; }
+    .color-grid { display:flex; gap:9px; flex-wrap:wrap; margin-top:8px; }
+    .color-sw { width:42px; height:42px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.2s; }
     .color-sw.sel { border-color:var(--text); transform:scale(1.15); }
-    .btn-sm { padding:10px 20px; border:none; border-radius:12px; font-weight:700; cursor:pointer; font-size:0.9rem; transition:all 0.2s; font-family:var(--font-body); }
+    .btn-sm { padding:9px 18px; border:none; border-radius:11px; font-weight:700; cursor:pointer; font-size:0.85rem; transition:all 0.2s; font-family:var(--font-body); }
     .btn-sm:active { transform:scale(0.96); }
     .btn-danger { background:#fee2e2; color:#ef4444; }
     .btn-success { background:rgba(34,197,94,0.12); color:#16a34a; }
-    .upload-area { border:2px dashed var(--border); border-radius:14px; padding:24px; text-align:center; cursor:pointer; transition:all 0.3s; color:var(--text2); }
+    .upload-area { border:2px dashed var(--border); border-radius:13px; padding:22px; text-align:center; cursor:pointer; transition:all 0.3s; color:var(--text2); }
     .upload-area:hover { border-color:var(--primary); color:var(--primary); background:rgba(79,70,229,0.04); }
-    .upload-area i { font-size:2rem; margin-bottom:8px; display:block; }
-    .preview-img { width:100%; border-radius:12px; margin-top:10px; max-height:160px; object-fit:cover; display:none; }
-    .search-bar { display:flex; align-items:center; gap:10px; background:var(--surface); border-radius:16px; padding:12px 16px; margin-bottom:16px; box-shadow:var(--shadow); }
+    .upload-area i { font-size:1.8rem; margin-bottom:7px; display:block; }
+    .preview-img { width:100%; border-radius:11px; margin-top:9px; max-height:150px; object-fit:cover; display:none; }
+    .search-bar { display:flex; align-items:center; gap:9px; background:var(--surface); border-radius:15px; padding:11px 15px; margin-bottom:14px; box-shadow:var(--shadow); }
     .search-bar i { color:var(--text2); }
-    .search-bar input { border:none; background:none; flex:1; font-size:0.95rem; font-family:var(--font-body); color:var(--text); outline:none; }
-    .notif-item { background:var(--surface); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; box-shadow:var(--shadow); }
-    .notif-dot2 { width:10px; height:10px; border-radius:50%; background:var(--primary); margin-top:5px; flex-shrink:0; }
+    .search-bar input { border:none; background:none; flex:1; font-size:0.9rem; font-family:var(--font-body); color:var(--text); outline:none; }
+    .notif-item { background:var(--surface); border-radius:var(--radius-sm); padding:13px 15px; margin-bottom:9px; display:flex; gap:11px; align-items:flex-start; box-shadow:var(--shadow); }
+    .notif-dot2 { width:9px; height:9px; border-radius:50%; background:var(--primary); margin-top:5px; flex-shrink:0; }
 
-    /* LOADING SPINNER */
-    .loading { text-align:center; padding:30px; color:var(--text2); }
-    .spinner { width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
+    /* ===== LOADING ===== */
+    .loading { text-align:center; padding:28px; color:var(--text2); font-size:0.88rem; }
+    .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 10px; }
     @keyframes spin { to{transform:rotate(360deg)} }
 
-    /* REALTIME INDICATOR */
-    .rt-indicator { display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--success); font-weight:600; padding:6px 12px; background:rgba(34,197,94,0.1); border-radius:20px; margin-bottom:12px; width:fit-content; }
-    .rt-dot { width:7px; height:7px; border-radius:50%; background:var(--success); animation:blink 1.5s infinite; }
+    /* ===== REALTIME ===== */
+    .rt-indicator { display:flex; align-items:center; gap:6px; font-size:0.73rem; color:var(--success); font-weight:600; padding:5px 12px; background:rgba(34,197,94,0.1); border-radius:20px; margin-bottom:10px; width:fit-content; }
+    .rt-dot { width:6px; height:6px; border-radius:50%; background:var(--success); animation:blink 1.5s infinite; }
 
-    /* TOAST */
-    .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-120px); background:var(--surface); color:var(--text); padding:13px 22px; border-radius:14px; box-shadow:var(--shadow-lg); z-index:9000; display:flex; align-items:center; gap:10px; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); font-weight:600; border-left:4px solid var(--primary); min-width:200px; }
+    /* ===== TOAST ===== */
+    .toast { position:fixed; top:max(24px, calc(18px + var(--safe-top))); left:50%; transform:translateX(-50%) translateY(-130px); background:var(--surface); color:var(--text); padding:12px 20px; border-radius:13px; box-shadow:var(--shadow-lg); z-index:9000; display:flex; align-items:center; gap:9px; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); font-weight:600; border-left:4px solid var(--primary); min-width:190px; font-size:0.88rem; }
     .toast.show { transform:translateX(-50%) translateY(0); }
     .toast.success { border-left-color:var(--success); }
     .toast.error { border-left-color:var(--danger); }
 
-    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar { width:4px; }
     ::-webkit-scrollbar-thumb { background:var(--border); border-radius:10px; }
-    @media(max-width:380px) { .stats-row { grid-template-columns:1fr; } .admin-grid { grid-template-columns:1fr; } }
+    @media(max-width:380px) { .stats-row { grid-template-columns:repeat(2,1fr); } .admin-grid { grid-template-columns:repeat(2,1fr); } }
+
+    /* ===== PERSONALIZATION PANEL ===== */
+    .perso-section { background:var(--surface); border-radius:var(--radius-sm); padding:16px; margin-bottom:12px; }
+    .perso-section h4 { font-size:0.85rem; font-weight:700; margin-bottom:12px; color:var(--text2); display:flex; align-items:center; gap:7px; }
+    .perso-section h4 i { color:var(--primary); }
+    .destacado-editor { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+    .dest-edit-card { background:var(--bg); border-radius:12px; padding:12px 8px; text-align:center; border:2px solid transparent; transition:all 0.2s; cursor:pointer; }
+    .dest-edit-card.active { border-color:var(--primary); background:rgba(79,70,229,0.05); }
+    .dest-edit-card .d-icon { font-size:1.4rem; color:var(--primary); margin-bottom:6px; }
+    .dest-edit-card .d-label { font-size:0.68rem; color:var(--text2); font-weight:600; }
+
+    /* ===== TABLA POSICIONES ===== */
+    .tabla-edit-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+    .tabla-edit-row:last-child { border-bottom:none; }
+    .tabla-edit-row input { border:2px solid var(--border); border-radius:10px; padding:7px 10px; font-size:0.85rem; background:var(--bg); color:var(--text); outline:none; transition:border 0.2s; }
+    .tabla-edit-row input:focus { border-color:var(--primary); }
+    .tabla-edit-row input[type=number] { width:55px; text-align:center; }
+
+    /* ===== USER CARD ===== */
+    .user-card { background:var(--surface); border-radius:var(--radius-sm); padding:13px 16px; display:flex; align-items:center; gap:11px; margin-bottom:9px; box-shadow:var(--shadow); }
+    .user-av { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.9rem; flex-shrink:0; }
+    .user-info { flex:1; }
+    .user-name { font-weight:700; font-size:0.88rem; }
+    .user-role { font-size:0.73rem; color:var(--text2); }
+    .user-online { width:9px; height:9px; border-radius:50%; background:#22c55e; flex-shrink:0; }
+    .user-offline { width:9px; height:9px; border-radius:50%; background:var(--border); flex-shrink:0; }
     </style>
 </head>
 <body>
@@ -372,8 +489,8 @@
 <!-- UPDATE BANNER -->
 <div id="update-banner">
     <div>
-        <div style="font-weight:800;font-size:0.95rem">🚀 Nueva versión disponible</div>
-        <div style="font-size:0.8rem;opacity:0.9" id="update-version-text">Versión X.X disponible</div>
+        <div style="font-weight:800;font-size:0.9rem">🚀 Nueva versión disponible</div>
+        <div style="font-size:0.78rem;opacity:0.9" id="update-version-text">Versión X.X disponible</div>
     </div>
     <button class="update-btn" id="update-download-btn">Descargar</button>
 </div>
@@ -396,7 +513,7 @@
     <div class="tut-slides">
         <div class="tut-slide active"><div class="tut-icon">⚽</div><div class="tut-title">Bienvenido a La Super Liga</div><div class="tut-desc">Seguí todos los partidos, noticias y estadísticas de tu liga favorita.</div></div>
         <div class="tut-slide"><div class="tut-icon">📊</div><div class="tut-title">Partidos en tiempo real</div><div class="tut-desc">Minuto a minuto, marcadores y detalles de cada encuentro en tu celular.</div></div>
-        <div class="tut-slide"><div class="tut-icon">💬</div><div class="tut-title">Conectate con amigos</div><div class="tut-desc">Chat, amigos, perfiles y más. Viví el fútbol juntos.</div></div>
+        <div class="tut-slide"><div class="tut-icon">💬</div><div class="tut-title">Conectate con amigos</div><div class="tut-desc">Mandá solicitudes, aceptá amigos y chateá en tiempo real.</div></div>
         <div class="tut-slide"><div class="tut-icon">🏆</div><div class="tut-title">Todo listo</div><div class="tut-desc">Ya podés ingresar y disfrutar de la experiencia completa.</div></div>
     </div>
     <div class="tut-footer">
@@ -420,7 +537,7 @@
             <div class="inp-group"><label>Correo electrónico</label><input type="email" id="inp-email" placeholder="tucorreo@email.com"></div>
             <div class="inp-group"><label>Contraseña</label><input type="password" id="inp-pass" placeholder="••••••••"></div>
             <button class="btn-primary" onclick="doLogin('email')"><i class="fas fa-sign-in-alt"></i> Ingresar</button>
-            <p style="text-align:center;margin-top:12px;font-size:0.78rem;color:var(--text2)">Admin: correo "admin" / pass "admin"</p>
+            <p style="text-align:center;margin-top:10px;font-size:0.75rem;color:var(--text2)">Admin: correo "admin" / pass "admin"</p>
         </div>
         <div class="login-panel" id="tab-phone">
             <div class="inp-group"><label>Número de teléfono</label><input type="tel" id="inp-phone" placeholder="+54 11 1234-5678"></div>
@@ -442,19 +559,19 @@
             <i class="fas fa-user" id="setup-av-icon"></i><img id="setup-av-img">
             <div class="setup-avatar-ov"><i class="fas fa-camera"></i></div>
         </div>
-        <div style="font-size:1.4rem;font-weight:800;font-family:var(--font-head)">Configurá tu perfil</div>
-        <div style="opacity:0.8;margin-top:4px">Personalizá tu experiencia</div>
+        <div style="font-size:1.3rem;font-weight:800;font-family:var(--font-head)">Configurá tu perfil</div>
+        <div style="opacity:0.75;margin-top:4px;font-size:0.88rem">Personalizá tu experiencia</div>
     </div>
     <div class="setup-body">
         <div class="setup-step active" id="setup-s0">
             <div class="sec-title">¿Cómo te llamás?</div>
-            <div class="form-row"><input type="text" id="setup-name" placeholder="Tu nombre o apodo" style="font-size:1.1rem"></div>
+            <div class="form-row"><input type="text" id="setup-name" placeholder="Tu nombre o apodo" style="font-size:1rem"></div>
             <button class="btn-primary" onclick="setupNext()">Continuar →</button>
         </div>
         <div class="setup-step" id="setup-s1">
-            <div class="sec-title">Elegí tus equipos favoritos</div>
+            <div class="sec-title">Elegí tu equipo favorito</div>
             <div class="team-grid" id="setup-teams"></div>
-            <button class="btn-primary" style="margin-top:20px" onclick="finishSetup()">¡Listo! Entrar →</button>
+            <button class="btn-primary" style="margin-top:18px" onclick="finishSetup()">¡Listo! Entrar →</button>
         </div>
     </div>
     <input type="file" id="setup-av-inp" accept="image/*" style="display:none">
@@ -464,7 +581,7 @@
 <div id="app">
     <div class="app-header">
         <div class="hdr-left">
-            <button class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <button class="hamburger" onclick="toggleMenu()"><i class="fas fa-grip-lines"></i></button>
             <div class="hdr-logo" id="hdr-logo"><i class="fas fa-shield-halved"></i><img id="hdr-logo-img"></div>
             <div>
                 <div class="hdr-greeting" id="hdr-greeting">Buenas tardes,</div>
@@ -472,7 +589,6 @@
             </div>
         </div>
         <div class="hdr-right">
-            <button class="icon-btn" onclick="openSearch()"><i class="fas fa-search"></i></button>
             <button class="icon-btn" onclick="showNotifPanel()"><i class="fas fa-bell"></i><div class="notif-dot" id="notif-dot"></div></button>
             <div class="avatar-btn" id="hdr-avatar" onclick="showPage('profile')"><i class="fas fa-user" id="hdr-av-icon"></i><img id="hdr-av-img"></div>
         </div>
@@ -481,13 +597,25 @@
     <!-- HOME -->
     <div id="page-home" class="page active">
         <div class="rt-indicator"><div class="rt-dot"></div>Tiempo real · Supabase</div>
-        <div class="sec-title"><i class="fas fa-circle-dot sec-icon" style="color:#ef4444;font-size:0.7rem"></i> En Vivo</div>
+        <div class="sec-title"><span style="color:#ef4444;font-size:0.75rem">●</span> En Vivo</div>
         <div id="live-container"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-        <div class="sec-title"><i class="fas fa-chart-simple sec-icon"></i> Destacados</div>
+        <div class="sec-title"><i class="fas fa-bolt-lightning sec-icon"></i> Destacados</div>
         <div class="stats-row">
-            <div class="stat-card" onclick="showPage('matches')"><div class="stat-icon"><i class="fas fa-calendar-day"></i></div><div class="stat-val" id="stat-today">-</div><div class="stat-lbl">Hoy</div></div>
-            <div class="stat-card" onclick="openInfoModal('goleadores')"><div class="stat-icon"><i class="fas fa-star"></i></div><div class="stat-val" id="stat-scorer">-</div><div class="stat-lbl">Goleador</div></div>
-            <div class="stat-card" onclick="openInfoModal('tabla')"><div class="stat-icon"><i class="fas fa-trophy"></i></div><div class="stat-val" id="stat-leader">-</div><div class="stat-lbl">Líder</div></div>
+            <div class="stat-card" id="destacado-0" onclick="showPage('matches')">
+                <div class="stat-icon"><i id="dest-ico-0" class="fas fa-calendar-day"></i></div>
+                <div class="stat-val" id="stat-today">-</div>
+                <div class="stat-lbl" id="dest-lbl-0">Hoy</div>
+            </div>
+            <div class="stat-card" id="destacado-1" onclick="openInfoModal('goleadores')">
+                <div class="stat-icon"><i id="dest-ico-1" class="fas fa-star"></i></div>
+                <div class="stat-val" id="stat-scorer">-</div>
+                <div class="stat-lbl" id="dest-lbl-1">Goleador</div>
+            </div>
+            <div class="stat-card" id="destacado-2" onclick="openInfoModal('tabla')">
+                <div class="stat-icon"><i id="dest-ico-2" class="fas fa-trophy"></i></div>
+                <div class="stat-val" id="stat-leader">-</div>
+                <div class="stat-lbl" id="dest-lbl-2">Líder</div>
+            </div>
         </div>
         <div class="sec-title"><i class="fas fa-clock sec-icon"></i> Próximos</div>
         <div id="upcoming-container"></div>
@@ -504,25 +632,27 @@
     <!-- INFO -->
     <div id="page-info" class="page">
         <div class="sec-title"><i class="fas fa-circle-info sec-icon"></i> Información</div>
-        <div class="info-card" onclick="openInfoModal('tabla')"><div class="info-icon" style="background:linear-gradient(135deg,#4f46e5,#818cf8)"><i class="fas fa-table-list"></i></div><div><div style="font-weight:700">Tabla de Posiciones</div><div style="font-size:0.82rem;color:var(--text2)">Clasificación actual</div></div></div>
-        <div class="info-card" onclick="openInfoModal('reglas')"><div class="info-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><i class="fas fa-gavel"></i></div><div><div style="font-weight:700">Reglas de la Liga</div><div style="font-size:0.82rem;color:var(--text2)">Reglamento oficial</div></div></div>
-        <div class="info-card" onclick="openInfoModal('sancionados')"><div class="info-icon" style="background:linear-gradient(135deg,#ef4444,#f87171)"><i class="fas fa-ban"></i></div><div><div style="font-weight:700">Sancionados</div><div style="font-size:0.82rem;color:var(--text2)">Suspendidos</div></div></div>
-        <div class="info-card" onclick="openInfoModal('lesionados')"><div class="info-icon" style="background:linear-gradient(135deg,#d97706,#fbbf24)"><i class="fas fa-briefcase-medical"></i></div><div><div style="font-weight:700">Lesionados</div><div style="font-size:0.82rem;color:var(--text2)">Bajas por lesión</div></div></div>
-        <div class="info-card" onclick="openInfoModal('goleadores')"><div class="info-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><i class="fas fa-ranking-star"></i></div><div><div style="font-weight:700">Goleadores</div><div style="font-size:0.82rem;color:var(--text2)">Top anotadores</div></div></div>
+        <div class="info-card" onclick="openInfoModal('tabla')"><div class="info-icon" style="background:linear-gradient(135deg,#4f46e5,#818cf8)"><i class="fas fa-table-list"></i></div><div><div style="font-weight:700">Tabla de Posiciones</div><div style="font-size:0.8rem;color:var(--text2)">Clasificación actual</div></div></div>
+        <div class="info-card" onclick="openInfoModal('reglas')"><div class="info-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><i class="fas fa-gavel"></i></div><div><div style="font-weight:700">Reglas de la Liga</div><div style="font-size:0.8rem;color:var(--text2)">Reglamento oficial</div></div></div>
+        <div class="info-card" onclick="openInfoModal('sancionados')"><div class="info-icon" style="background:linear-gradient(135deg,#ef4444,#f87171)"><i class="fas fa-ban"></i></div><div><div style="font-weight:700">Sancionados</div><div style="font-size:0.8rem;color:var(--text2)">Suspendidos</div></div></div>
+        <div class="info-card" onclick="openInfoModal('lesionados')"><div class="info-icon" style="background:linear-gradient(135deg,#d97706,#fbbf24)"><i class="fas fa-briefcase-medical"></i></div><div><div style="font-weight:700">Lesionados</div><div style="font-size:0.8rem;color:var(--text2)">Bajas por lesión</div></div></div>
+        <div class="info-card" onclick="openInfoModal('goleadores')"><div class="info-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><i class="fas fa-ranking-star"></i></div><div><div style="font-weight:700">Goleadores</div><div style="font-size:0.8rem;color:var(--text2)">Top anotadores</div></div></div>
     </div>
 
     <!-- SOCIAL -->
     <div id="page-social" class="page">
-        <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="Buscar amigos..." oninput="filterFriends(this.value)"></div>
+        <div class="sec-title"><i class="fas fa-user-plus sec-icon"></i> Solicitudes</div>
+        <div id="friend-requests-list"></div>
         <div class="sec-title"><i class="fas fa-comments sec-icon"></i> Chats</div>
-        <div id="chat-list"></div>
-        <div class="sec-title"><i class="fas fa-user-group sec-icon"></i> Amigos</div>
-        <div id="friends-list"></div>
+        <div id="chat-list"><div style="text-align:center;padding:20px;color:var(--text2);font-size:0.88rem"><i class="fas fa-comment-slash" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:8px"></i>No hay chats aún. Buscá amigos para empezar.</div></div>
+        <div class="sec-title"><i class="fas fa-magnifying-glass sec-icon"></i> Buscar Usuarios</div>
+        <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="user-search-inp" placeholder="Buscar por nombre..." oninput="searchUsers(this.value)"></div>
+        <div id="user-search-results"></div>
     </div>
 
     <!-- PROFILE -->
     <div id="page-profile" class="page">
-        <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px">
+        <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px">
             <div class="profile-banner" onclick="document.getElementById('banner-inp').click()">
                 <img id="profile-banner-img"><button class="banner-edit"><i class="fas fa-camera"></i></button>
             </div>
@@ -530,18 +660,18 @@
                 <div class="profile-avatar" onclick="document.getElementById('profile-av-inp').click()">
                     <i class="fas fa-user" id="profile-av-icon"></i><img id="profile-av-img">
                 </div>
-                <div style="display:flex;align-items:center;gap:10px">
+                <div style="display:flex;align-items:center;gap:9px">
                     <div class="profile-name" id="profile-name">Usuario</div>
-                    <button style="background:none;border:none;color:var(--primary);cursor:pointer;font-size:14px" onclick="editName()"><i class="fas fa-pen"></i></button>
+                    <button style="background:none;border:none;color:var(--primary);cursor:pointer;font-size:13px" onclick="editName()"><i class="fas fa-pen"></i></button>
                 </div>
                 <div class="profile-role-tag" id="profile-role">Fan</div>
                 <div class="fav-row" id="fav-row"></div>
             </div>
         </div>
         <div class="card" style="cursor:default">
-            <div class="sec-title" style="margin-top:0"><i class="fas fa-cog sec-icon"></i> Configuración</div>
+            <div class="sec-title" style="margin-top:0"><i class="fas fa-sliders sec-icon"></i> Configuración</div>
             <div class="settings-item"><div class="settings-label"><i class="fas fa-moon"></i> Modo Oscuro</div><div class="toggle-sw" id="dark-sw" onclick="toggleDark()"></div></div>
-            <div class="settings-item"><div class="settings-label"><i class="fas fa-bell"></i> Notificaciones</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="settings-item"><div class="settings-label"><i class="fas fa-bell"></i> Notificaciones</div><div class="toggle-sw on" id="notif-sw" onclick="this.classList.toggle('on')"></div></div>
             <div class="settings-item"><div class="settings-label"><i class="fas fa-volume-high"></i> Sonidos</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
         </div>
         <div class="stats-row">
@@ -556,56 +686,138 @@
 
     <!-- ADMIN -->
     <div id="page-admin" class="page">
-        <div style="text-align:center;padding:8px 0 20px"><div style="font-size:1.5rem;font-weight:800;font-family:var(--font-head)"><i class="fas fa-crown" style="color:var(--accent)"></i> Panel de Admin</div></div>
+        <div style="text-align:center;padding:6px 0 18px">
+            <div style="font-size:1.4rem;font-weight:800;font-family:var(--font-head)">
+                <span style="color:var(--accent)">👑</span> Panel de Admin
+            </div>
+        </div>
         <div class="admin-grid">
-            <div class="admin-card" onclick="openAdmin('noticias')"><div class="admin-icon"><i class="fas fa-newspaper"></i></div><div class="admin-card-title">Noticias</div><div class="admin-card-sub">Crear y editar</div></div>
-            <div class="admin-card" onclick="openAdmin('partidos')"><div class="admin-icon"><i class="fas fa-futbol"></i></div><div class="admin-card-title">Partidos</div><div class="admin-card-sub">Gestionar fixture</div></div>
-            <div class="admin-card" onclick="openAdmin('tabla')"><div class="admin-icon"><i class="fas fa-table"></i></div><div class="admin-card-title">Tabla</div><div class="admin-card-sub">Editar posiciones</div></div>
-            <div class="admin-card" onclick="openAdmin('equipos')"><div class="admin-icon"><i class="fas fa-shield-halved"></i></div><div class="admin-card-title">Equipos</div><div class="admin-card-sub">Logos e info</div></div>
-            <div class="admin-card" onclick="openAdmin('personalizacion')"><div class="admin-icon"><i class="fas fa-paint-brush"></i></div><div class="admin-card-title">Personalización</div><div class="admin-card-sub">Colores y estilo</div></div>
-            <div class="admin-card" onclick="openAdmin('notificaciones')"><div class="admin-icon"><i class="fas fa-bell"></i></div><div class="admin-card-title">Notificaciones</div><div class="admin-card-sub">Enviar al instante</div></div>
-            <div class="admin-card" onclick="openAdmin('usuarios')"><div class="admin-icon"><i class="fas fa-users"></i></div><div class="admin-card-title">Usuarios</div><div class="admin-card-sub">Ver y gestionar</div></div>
-            <div class="admin-card" onclick="openAdmin('bienvenida')"><div class="admin-icon"><i class="fas fa-star"></i></div><div class="admin-card-title">Bienvenida</div><div class="admin-card-sub">Editar splash</div></div>
-            <div class="admin-card" onclick="openAdmin('version')"><div class="admin-icon"><i class="fas fa-rocket"></i></div><div class="admin-card-title">Versiones</div><div class="admin-card-sub">APK y actualizaciones</div></div>
-            <div class="admin-card" onclick="openAdmin('canales')"><div class="admin-icon"><i class="fas fa-tv"></i></div><div class="admin-card-title">Canales TV</div><div class="admin-card-sub">Logos y nombres</div></div>
-            <div class="admin-card" onclick="openAdmin('nuevafuncion')"><div class="admin-icon"><i class="fas fa-plus-circle"></i></div><div class="admin-card-title">Nueva Función</div><div class="admin-card-sub">Agregar desde el panel</div></div>
+            <div class="admin-card" onclick="openAdmin('noticias')">
+                <div class="admin-icon"><i class="fas fa-newspaper" style="color:#4f46e5"></i></div>
+                <div class="admin-card-title">Noticias</div><div class="admin-card-sub">Crear y editar</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('partidos')">
+                <div class="admin-icon"><i class="fas fa-futbol" style="color:#059669"></i></div>
+                <div class="admin-card-title">Partidos</div><div class="admin-card-sub">Gestionar fixture</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('tabla')">
+                <div class="admin-icon"><i class="fas fa-chart-bar" style="color:#d97706"></i></div>
+                <div class="admin-card-title">Tabla</div><div class="admin-card-sub">Editar posiciones</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('equipos')">
+                <div class="admin-icon"><i class="fas fa-shield-halved" style="color:#7c3aed"></i></div>
+                <div class="admin-card-title">Equipos</div><div class="admin-card-sub">Logos e info</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('personalizacion')">
+                <div class="admin-icon"><i class="fas fa-palette" style="color:#db2777"></i></div>
+                <div class="admin-card-title">Estilo</div><div class="admin-card-sub">Colores y diseño</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('notificaciones')">
+                <div class="admin-icon"><i class="fas fa-bell" style="color:#0ea5e9"></i></div>
+                <div class="admin-card-title">Notificaciones</div><div class="admin-card-sub">Enviar al instante</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('usuarios')">
+                <div class="admin-icon"><i class="fas fa-users" style="color:#059669"></i></div>
+                <div class="admin-card-title">Usuarios</div><div class="admin-card-sub">Ver y gestionar</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('bienvenida')">
+                <div class="admin-icon"><i class="fas fa-star" style="color:#f59e0b"></i></div>
+                <div class="admin-card-title">Bienvenida</div><div class="admin-card-sub">Editar splash</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('canales')">
+                <div class="admin-icon"><i class="fas fa-tv" style="color:#6366f1"></i></div>
+                <div class="admin-card-title">Canales TV</div><div class="admin-card-sub">Logos y nombres</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('destacados')">
+                <div class="admin-icon"><i class="fas fa-grip" style="color:#ec4899"></i></div>
+                <div class="admin-card-title">Destacados</div><div class="admin-card-sub">Editar tarjetas</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('version')">
+                <div class="admin-icon"><i class="fas fa-rocket" style="color:#f43f5e"></i></div>
+                <div class="admin-card-title">Versiones</div><div class="admin-card-sub">APK y actualizaciones</div>
+            </div>
+            <div class="admin-card" onclick="openAdmin('chat-admin')">
+                <div class="admin-icon"><i class="fas fa-comments" style="color:#14b8a6"></i></div>
+                <div class="admin-card-title">Chat</div><div class="admin-card-sub">Mensajes globales</div>
+            </div>
         </div>
     </div>
 
     <!-- NAV ISLAND -->
     <nav class="nav-island">
-        <button class="nav-btn active" data-page="home" onclick="showPage('home')"><div class="nav-pill"></div><i class="fas fa-house"></i><span>Inicio</span></button>
-        <button class="nav-btn" data-page="matches" onclick="showPage('matches')"><div class="nav-pill"></div><i class="fas fa-futbol"></i><span>Partidos</span></button>
-        <button class="nav-btn" data-page="info" onclick="showPage('info')"><div class="nav-pill"></div><i class="fas fa-circle-info"></i><span>Info</span></button>
-        <button class="nav-btn" data-page="social" onclick="showPage('social')"><div class="nav-pill"></div><i class="fas fa-comments"></i><span>Social</span></button>
-        <button class="nav-btn" data-page="admin" id="nav-admin" onclick="showPage('admin')" style="display:none"><div class="nav-pill"></div><i class="fas fa-crown"></i><span>Admin</span></button>
+        <button class="nav-btn active" data-page="home" onclick="showPage('home')">
+            <div class="nav-pill"></div>
+            <i class="fas fa-house-chimney"></i><span>Inicio</span>
+        </button>
+        <button class="nav-btn" data-page="matches" onclick="showPage('matches')">
+            <div class="nav-pill"></div>
+            <i class="fas fa-futbol"></i><span>Partidos</span>
+        </button>
+        <button class="nav-btn" data-page="info" onclick="showPage('info')">
+            <div class="nav-pill"></div>
+            <i class="fas fa-chart-pie"></i><span>Info</span>
+        </button>
+        <button class="nav-btn" data-page="social" onclick="showPage('social')">
+            <div class="nav-pill"></div>
+            <i class="fas fa-comments"></i><span>Social</span>
+            <div class="nav-badge" id="social-badge">0</div>
+        </button>
+        <button class="nav-btn" data-page="admin" id="nav-admin" onclick="showPage('admin')" style="display:none">
+            <div class="nav-pill"></div>
+            <i class="fas fa-crown"></i><span>Admin</span>
+        </button>
     </nav>
 </div>
 
-<!-- SIDE MENU -->
+<!-- SIDE MENU (Simplified) -->
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="side-menu" id="side-menu">
     <div class="side-hdr">
         <div class="side-user">
             <div class="side-avatar" id="side-av"><i class="fas fa-user" id="side-av-icon"></i><img id="side-av-img"></div>
-            <div><div style="font-weight:700" id="side-name">Usuario</div><div style="font-size:0.8rem;opacity:0.8" id="side-role">Fan</div></div>
+            <div>
+                <div class="side-user-name" id="side-name">Usuario</div>
+                <div class="side-user-role" id="side-role">Fan</div>
+            </div>
         </div>
     </div>
     <div class="side-body">
-        <div class="side-item" onclick="sideNav('home')"><i class="fas fa-house"></i> Inicio</div>
-        <div class="side-item" onclick="sideNav('matches')"><i class="fas fa-futbol"></i> Partidos</div>
-        <div class="side-item" onclick="sideNav('info')"><i class="fas fa-circle-info"></i> Información</div>
-        <div class="side-item" onclick="sideNav('social')"><i class="fas fa-comments"></i> Amigos & Chat</div>
+        <!-- Dark/Light mode -->
+        <div class="side-item-toggle">
+            <div class="side-ico" style="background:rgba(79,70,229,0.1);color:var(--primary)">
+                <i class="fas fa-moon" id="side-theme-ico"></i>
+            </div>
+            <span class="side-label" id="side-theme-lbl">Modo Oscuro</span>
+            <div class="toggle-sw" id="side-dark-sw" onclick="toggleDark()"></div>
+        </div>
+        <!-- Notifications -->
+        <div class="side-item-toggle">
+            <div class="side-ico" style="background:rgba(239,68,68,0.1);color:#ef4444">
+                <i class="fas fa-bell"></i>
+            </div>
+            <span class="side-label">Notificaciones</span>
+            <div class="toggle-sw on" id="side-notif-sw" onclick="toggleSideNotif()"></div>
+        </div>
         <div class="side-div"></div>
-        <div class="side-item" onclick="openInfoModal('tabla')"><i class="fas fa-table-list"></i> Tabla de posiciones</div>
-        <div class="side-item" onclick="openInfoModal('goleadores')"><i class="fas fa-ranking-star"></i> Goleadores</div>
-        <div class="side-item" onclick="openInfoModal('sancionados')"><i class="fas fa-ban"></i> Sancionados</div>
-        <div class="side-item" onclick="openInfoModal('lesionados')"><i class="fas fa-briefcase-medical"></i> Lesionados</div>
-        <div class="side-div"></div>
-        <div class="side-item" onclick="showNotifPanel()"><i class="fas fa-bell"></i> Notificaciones</div>
-        <div class="side-item" onclick="sideNav('profile')"><i class="fas fa-user-circle"></i> Mi Perfil</div>
-        <div class="side-div"></div>
-        <div class="side-item" onclick="logout()" style="color:#ef4444"><i class="fas fa-sign-out-alt" style="color:#ef4444"></i> Cerrar sesión</div>
+        <!-- My Profile -->
+        <div class="side-item" onclick="sideNav('profile')">
+            <div class="side-ico" style="background:rgba(79,70,229,0.1);color:var(--primary)">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            Mi Perfil
+        </div>
+        <!-- Friends & Chat -->
+        <div class="side-item" onclick="sideNav('social')">
+            <div class="side-ico" style="background:rgba(219,39,119,0.1);color:#db2777">
+                <i class="fas fa-comments"></i>
+            </div>
+            Amigos y Chat
+        </div>
+    </div>
+    <div class="side-footer">
+        <button onclick="logout()" style="width:100%;padding:12px;border:2px solid rgba(239,68,68,0.25);border-radius:14px;background:rgba(239,68,68,0.06);color:#ef4444;font-weight:700;font-size:0.88rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all 0.2s">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
     </div>
 </div>
 
@@ -623,7 +835,7 @@
     <div class="chat-win-hdr">
         <button class="chat-back" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
         <div class="chat-av" id="cw-av" style="width:36px;height:36px;font-size:0.9rem"></div>
-        <div style="margin-left:10px"><div style="font-weight:700" id="cw-name">Amigo</div><div style="font-size:0.75rem;color:var(--text2)">En línea</div></div>
+        <div style="margin-left:9px"><div style="font-weight:700;font-size:0.95rem" id="cw-name">Amigo</div><div style="font-size:0.73rem;color:var(--text2)" id="cw-status">En línea</div></div>
     </div>
     <div class="chat-messages" id="chat-msgs"></div>
     <div class="chat-input-bar">
@@ -661,9 +873,8 @@
 
 <!-- EDIT TOOLBAR -->
 <div id="edit-toolbar">
-    <button class="edit-tool" onclick="showToast('Mover: tocá un elemento','success')"><i class="fas fa-up-down-left-right"></i>Mover</button>
-    <button class="edit-tool" onclick="showToast('Tamaño: próximamente','success')"><i class="fas fa-expand"></i>Tamaño</button>
-    <button class="edit-tool" onclick="showToast('Color: próximamente','success')"><i class="fas fa-palette"></i>Color</button>
+    <button class="edit-tool" onclick="showToast('Modo edición visual: tocá elementos','success')"><i class="fas fa-up-down-left-right"></i>Mover</button>
+    <button class="edit-tool" onclick="openAdmin('personalizacion');document.getElementById('edit-toolbar').classList.remove('active')"><i class="fas fa-palette"></i>Estilo</button>
     <button class="edit-tool" onclick="toggleEditMode()"><i class="fas fa-times"></i>Salir</button>
 </div>
 
@@ -671,35 +882,92 @@
 <div class="toast" id="toast"><i class="fas fa-check-circle" id="toast-icon"></i><span id="toast-msg">OK</span></div>
 
 <script>
-// ========== SUPABASE ==========
+// ===== SUPABASE =====
 const SUPABASE_URL = 'https://cewupxpnggvlfmitxosx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNld3VweHBuZ2d2bGZtaXR4b3N4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1Nzc4MTAsImV4cCI6MjA4ODE1MzgxMH0.bU0-fmflOxlwfNfF1IIWEO9BX5tumJD91Zvpo9RAGHI';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ========== APP VERSION ==========
 const APP_VERSION = '1.0';
 
-// ========== STATE ==========
+// ===== STATE =====
 const S = {
-    user: null, isAdmin: false, theme: localStorage.getItem('lsl-theme')||'light',
+    user: null, isAdmin: false, theme: 'dark',
     currentPage: 'home', editMode: false, currentChat: null,
     matches: [], news: [], notifications: [], channels: [],
-    friends: [
-        {id:1, name:'Rodrigo G.', init:'RG', online:true, lastMsg:'¡Qué golazo!', time:'5m'},
-        {id:2, name:'Matías P.', init:'MP', online:false, lastMsg:'¿Viste el partido?', time:'2h'},
-        {id:3, name:'Lucas F.', init:'LF', online:true, lastMsg:'🔥', time:'1d'},
-    ],
+    friends: [], // empty by default - only accepted friends
+    friendRequests: [], // incoming friend requests
     chatHistory: {},
     teams: [
-        {id:'lanza', name:'Lanza All', emoji:'🔴'}, {id:'latde', name:'La T De', emoji:'🟡'},
-        {id:'team3', name:'Equipo 3', emoji:'🔵'}, {id:'team4', name:'Equipo 4', emoji:'🟢'},
+        {id:'lanza', name:'Lanza All', emoji:'🔴', color:'#ef4444'},
+        {id:'latde',  name:'La T De',  emoji:'🟡', color:'#eab308'},
+    ],
+    tabla: [
+        {pos:1, team:'Lanza All', pj:0, pg:0, pe:0, pp:0, gf:0, gc:0, pts:0},
+        {pos:2, team:'La T De',   pj:0, pg:0, pe:0, pp:0, gf:0, gc:0, pts:0},
     ],
     favTeams: [], userAvatar: null, userName: 'Usuario',
     splashConfig: {title:'La Super Liga', subtitle:'¡Hola, Bienvenido!', logo:null},
+    destConfig: [
+        {icon:'fa-calendar-day', label:'Hoy', val:'stat-today'},
+        {icon:'fa-star', label:'Goleador', val:'stat-scorer'},
+        {icon:'fa-trophy', label:'Líder', val:'stat-leader'},
+    ],
+    notifsEnabled: true,
 };
 
-// ========== BOOT ==========
+// ===== PERSISTENT SETTINGS HELPERS =====
+function saveSettings() {
+    const cfg = {
+        theme: S.theme,
+        primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+        radius: getComputedStyle(document.documentElement).getPropertyValue('--radius').trim(),
+        destConfig: S.destConfig,
+        tabla: S.tabla,
+        channels: S.channels,
+        splashConfig: S.splashConfig,
+        notifsEnabled: S.notifsEnabled,
+    };
+    localStorage.setItem('lsl-settings-v2', JSON.stringify(cfg));
+    // Also save to Supabase for persistence across devices
+    db.from('app_config').upsert({key:'app_settings', value:JSON.stringify(cfg)}).then(()=>{}).catch(()=>{});
+}
+
+function loadSettings() {
+    const raw = localStorage.getItem('lsl-settings-v2');
+    if (!raw) return;
+    try {
+        const cfg = JSON.parse(raw);
+        if (cfg.theme) { S.theme = cfg.theme; }
+        if (cfg.primaryColor) document.documentElement.style.setProperty('--primary', cfg.primaryColor);
+        if (cfg.radius) document.documentElement.style.setProperty('--radius', cfg.radius);
+        if (cfg.destConfig) S.destConfig = cfg.destConfig;
+        if (cfg.tabla) S.tabla = cfg.tabla;
+        if (cfg.channels) S.channels = cfg.channels;
+        if (cfg.splashConfig) S.splashConfig = cfg.splashConfig;
+        if (typeof cfg.notifsEnabled !== 'undefined') S.notifsEnabled = cfg.notifsEnabled;
+    } catch(e) {}
+}
+
+async function loadSettingsFromSupabase() {
+    try {
+        const { data } = await db.from('app_config').select('value').eq('key','app_settings').single();
+        if (data && data.value) {
+            const cfg = JSON.parse(data.value);
+            if (cfg.theme) S.theme = cfg.theme;
+            if (cfg.primaryColor) document.documentElement.style.setProperty('--primary', cfg.primaryColor);
+            if (cfg.radius) document.documentElement.style.setProperty('--radius', cfg.radius);
+            if (cfg.destConfig) S.destConfig = cfg.destConfig;
+            if (cfg.tabla) S.tabla = cfg.tabla;
+            if (cfg.channels) S.channels = cfg.channels;
+            if (cfg.splashConfig) S.splashConfig = cfg.splashConfig;
+            if (typeof cfg.notifsEnabled !== 'undefined') S.notifsEnabled = cfg.notifsEnabled;
+            localStorage.setItem('lsl-settings-v2', data.value); // sync to local
+        }
+    } catch(e) {}
+}
+
+// ===== BOOT =====
 window.addEventListener('load', async () => {
+    loadSettings();
     applyTheme(S.theme);
     loadSplashConfig();
     setTimeout(async () => {
@@ -720,11 +988,11 @@ window.addEventListener('load', async () => {
     }, 2600);
 });
 
-// ========== UPDATE CHECK ==========
+// ===== UPDATE CHECK =====
 async function checkForUpdate() {
     try {
-        const { data } = await db.from('app_config').select('value').eq('key', 'app_version').single();
-        const { data: apkData } = await db.from('app_config').select('value').eq('key', 'latest_apk_url').single();
+        const { data } = await db.from('app_config').select('value').eq('key','app_version').single();
+        const { data: apkData } = await db.from('app_config').select('value').eq('key','latest_apk_url').single();
         if (data && data.value && data.value !== APP_VERSION) {
             const banner = document.getElementById('update-banner');
             document.getElementById('update-version-text').textContent = `Versión ${data.value} disponible`;
@@ -734,78 +1002,76 @@ async function checkForUpdate() {
                 else showToast('Link de descarga no configurado', 'error');
             };
         }
-    } catch(e) { console.log('Update check skipped'); }
+    } catch(e) {}
 }
 
-// ========== SUPABASE LOAD ==========
+// ===== SUPABASE LOAD =====
 async function loadFromSupabase() {
     try {
-        // Load matches
-        const { data: matches } = await db.from('partidos').select('*').order('created_at', {ascending: false});
+        await loadSettingsFromSupabase();
+        applyTheme(S.theme);
+        applyDestConfig();
+
+        const { data: matches } = await db.from('partidos').select('*').order('created_at', {ascending:false});
         if (matches) S.matches = matches.map(m => ({
-            id: m.id, team1: m.team1, team2: m.team2,
-            score1: m.score1, score2: m.score2, status: m.status,
-            stadium: m.stadium||'', channel: m.channel||'',
-            date: m.match_date||'', time: m.match_time||'',
-            min: m.min_played||''
+            id:m.id, team1:m.team1, team2:m.team2,
+            score1:m.score1, score2:m.score2, status:m.status,
+            stadium:m.stadium||'', channel:m.channel||'',
+            date:m.match_date||'', time:m.match_time||'', min:m.min_played||''
         }));
 
-        // Load news
-        const { data: news } = await db.from('noticias').select('*').order('created_at', {ascending: false});
+        const { data: news } = await db.from('noticias').select('*').order('created_at', {ascending:false});
         if (news) S.news = news.map(n => ({
-            id: n.id, title: n.title, tag: n.tag||'Noticias',
-            img: n.img||null, date: n.fecha||new Date().toLocaleDateString('es-AR')
+            id:n.id, title:n.title, tag:n.tag||'Noticias',
+            img:n.img||null, date:n.fecha||new Date().toLocaleDateString('es-AR')
         }));
 
-        // Load notifications
-        const { data: notifs } = await db.from('notificaciones').select('*').order('created_at', {ascending: false}).limit(20);
-        if (notifs) S.notifications = notifs.map(n => ({
-            title: n.title, body: n.body||'',
-            time: timeAgo(n.created_at)
-        }));
+        const { data: notifs } = await db.from('notificaciones').select('*').order('created_at', {ascending:false}).limit(20);
+        if (notifs) S.notifications = notifs.map(n => ({title:n.title, body:n.body||'', time:timeAgo(n.created_at)}));
 
-        // Load splash config from db
-        const { data: splashTitle } = await db.from('app_config').select('value').eq('key','splash_title').single();
-        const { data: splashSub } = await db.from('app_config').select('value').eq('key','splash_subtitle').single();
-        if (splashTitle) S.splashConfig.title = splashTitle.value;
-        if (splashSub) S.splashConfig.subtitle = splashSub.value;
+        // Load tabla from supabase if available
+        const { data: tablaData } = await db.from('app_config').select('value').eq('key','tabla_posiciones').single();
+        if (tablaData && tablaData.value) { try { S.tabla = JSON.parse(tablaData.value); } catch(e){} }
 
         renderAllPages();
         updateStats();
     } catch(e) {
         console.error('Supabase load error:', e);
-        showToast('Sin conexión, mostrando datos locales', 'error');
+        showToast('Sin conexión, datos locales', 'error');
+        renderAllPages();
+        updateStats();
     }
 }
 
-// ========== REALTIME SUBSCRIPTIONS ==========
+// ===== REALTIME =====
 function initRealtime() {
-    // Partidos en tiempo real
     db.channel('partidos-rt').on('postgres_changes', {event:'*', schema:'public', table:'partidos'}, async () => {
         const { data } = await db.from('partidos').select('*').order('created_at', {ascending:false});
-        if (data) S.matches = data.map(m => ({
-            id:m.id, team1:m.team1, team2:m.team2, score1:m.score1, score2:m.score2,
-            status:m.status, stadium:m.stadium||'', channel:m.channel||'',
-            date:m.match_date||'', time:m.match_time||'', min:m.min_played||''
-        }));
+        if (data) S.matches = data.map(m => ({id:m.id, team1:m.team1, team2:m.team2, score1:m.score1, score2:m.score2, status:m.status, stadium:m.stadium||'', channel:m.channel||'', date:m.match_date||'', time:m.match_time||'', min:m.min_played||''}));
         renderLiveMatches(); renderUpcoming(); renderMatchesPage(); updateStats();
-        showToast('Partidos actualizados en tiempo real ⚡', 'success');
+        showToast('⚡ Partidos actualizados', 'success');
     }).subscribe();
 
-    // Noticias en tiempo real
     db.channel('noticias-rt').on('postgres_changes', {event:'*', schema:'public', table:'noticias'}, async () => {
         const { data } = await db.from('noticias').select('*').order('created_at', {ascending:false});
         if (data) S.news = data.map(n => ({id:n.id, title:n.title, tag:n.tag||'Noticias', img:n.img||null, date:n.fecha||''}));
         renderNews();
-        showToast('Nueva noticia publicada 📰', 'success');
+        showToast('📰 Nueva noticia publicada', 'success');
     }).subscribe();
 
-    // Notificaciones en tiempo real
     db.channel('notifs-rt').on('postgres_changes', {event:'INSERT', schema:'public', table:'notificaciones'}, (payload) => {
+        if (!S.notifsEnabled) return;
         const n = payload.new;
         S.notifications.unshift({title:n.title, body:n.body||'', time:'Ahora'});
         document.getElementById('notif-dot').style.display = 'block';
         showToast(`🔔 ${n.title}`, 'success');
+    }).subscribe();
+
+    // Config changes realtime
+    db.channel('config-rt').on('postgres_changes', {event:'*', schema:'public', table:'app_config'}, async () => {
+        await loadSettingsFromSupabase();
+        applyTheme(S.theme);
+        applyDestConfig();
     }).subscribe();
 }
 
@@ -819,12 +1085,13 @@ function timeAgo(ts) {
 
 function updateStats() {
     const today = S.matches.filter(m => m.date === new Date().toLocaleDateString('es-AR') || m.date === 'Hoy');
-    document.getElementById('stat-today').textContent = today.length || S.matches.length;
-    document.getElementById('stat-scorer').textContent = 'M.L';
-    document.getElementById('stat-leader').textContent = S.teams[0]?.name?.split(' ')[0] || '-';
+    document.getElementById('stat-today').textContent = today.length || S.matches.length || '0';
+    document.getElementById('stat-scorer').textContent = S.tabla[0]?.pts > 0 ? 'Ver' : '-';
+    const leader = S.tabla.sort((a,b)=>b.pts-a.pts)[0];
+    document.getElementById('stat-leader').textContent = leader ? (leader.team.split(' ')[0]) : '-';
 }
 
-// ========== TUTORIAL ==========
+// ===== TUTORIAL =====
 let tutIdx = 0;
 function showTutorial() { document.getElementById('tutorial-screen').classList.add('active'); renderTutDots(); }
 function renderTutDots() {
@@ -841,7 +1108,7 @@ function tutNext() {
     if (tutIdx === 3) document.getElementById('tut-next-btn').textContent = '¡Empezar!';
 }
 
-// ========== LOGIN ==========
+// ===== LOGIN =====
 function switchTab(t, btn) {
     document.querySelectorAll('.login-tab').forEach(el=>el.classList.remove('active'));
     document.querySelectorAll('.login-panel').forEach(el=>el.classList.remove('active'));
@@ -863,20 +1130,19 @@ async function doLogin(method) {
     }
     S.user = {name, role}; S.isAdmin = role === 'admin'; S.userName = name;
     localStorage.setItem('lsl-user', JSON.stringify(S.user));
-    // Save to Supabase
     try { await db.from('usuarios').upsert({username:name, role, last_login:new Date().toISOString(), online:true}); } catch(e){}
     document.getElementById('login-screen').classList.remove('active');
     if (!localStorage.getItem('lsl-setup-done')) showProfileSetup();
     else showApp();
 }
 
-// ========== PROFILE SETUP ==========
+// ===== PROFILE SETUP =====
 function showProfileSetup() {
     document.getElementById('profile-setup-screen').classList.add('active');
     document.getElementById('setup-teams').innerHTML = S.teams.map(t=>`
         <div class="team-pick" data-tid="${t.id}" onclick="this.classList.toggle('sel')">
             <div class="team-emoji">${t.emoji}</div>
-            <div style="font-weight:600;font-size:0.9rem">${t.name}</div>
+            <div style="font-weight:600;font-size:0.88rem">${t.name}</div>
         </div>`).join('');
 }
 function setupNext() {
@@ -895,31 +1161,8 @@ function finishSetup() {
     document.getElementById('profile-setup-screen').classList.remove('active');
     showApp(); showToast('¡Perfil configurado! 🎉', 'success');
 }
-document.getElementById('setup-av-inp').onchange = function() {
-    const f = this.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = e => { S.userAvatar = e.target.result; syncAvatars(); }; r.readAsDataURL(f);
-};
-document.getElementById('profile-av-inp').onchange = function() {
-    const f = this.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = e => { S.userAvatar = e.target.result; syncAvatars(); }; r.readAsDataURL(f);
-};
-document.getElementById('banner-inp').onchange = function() {
-    const f = this.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = e => {
-        const img = document.getElementById('profile-banner-img');
-        img.src = e.target.result; img.style.display = 'block';
-    }; r.readAsDataURL(f);
-};
-function syncAvatars() {
-    const av = S.userAvatar;
-    [['hdr-av-img','hdr-av-icon'],['profile-av-img','profile-av-icon'],['side-av-img','side-av-icon']].forEach(([imgId,iconId])=>{
-        const img = document.getElementById(imgId); const icon = document.getElementById(iconId);
-        if (img) { img.src = av; img.style.display = 'block'; }
-        if (icon) icon.style.display = 'none';
-    });
-}
 
-// ========== SHOW APP ==========
+// ===== SHOW APP =====
 async function showApp() {
     document.getElementById('app').classList.add('active');
     document.getElementById('hdr-name').textContent = S.userName;
@@ -933,8 +1176,15 @@ async function showApp() {
     renderFavTeams();
     renderSocialPage();
     if (S.userAvatar) syncAvatars();
+    // Load friends from localStorage
+    const savedFriends = localStorage.getItem('lsl-friends');
+    if (savedFriends) { try { S.friends = JSON.parse(savedFriends); } catch(e){} }
+    const savedReqs = localStorage.getItem('lsl-friend-requests');
+    if (savedReqs) { try { S.friendRequests = JSON.parse(savedReqs); } catch(e){} }
+    updateFriendBadge();
     await loadFromSupabase();
     initRealtime();
+    applyDestConfig();
 }
 function setGreeting() {
     const h = new Date().getHours();
@@ -944,7 +1194,7 @@ function setGreeting() {
     document.getElementById('hdr-greeting').textContent = g + ',';
 }
 
-// ========== NAVIGATION ==========
+// ===== NAVIGATION =====
 const pageColors = {home:'#4f46e5', matches:'#059669', info:'#d97706', social:'#db2777', admin:'#7c3aed'};
 function showPage(p) {
     document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
@@ -954,8 +1204,10 @@ function showPage(p) {
     if (btn) btn.classList.add('active');
     S.currentPage = p;
     const col = pageColors[p] || '#4f46e5';
-    document.querySelector('.nav-island').style.boxShadow = `0 8px 40px ${col}44, 0 0 0 1px var(--border)`;
+    document.querySelector('.nav-island').style.boxShadow = `0 8px 32px ${col}35, 0 0 0 1px rgba(255,255,255,0.12)`;
     if (p === 'matches') renderMatchesPage();
+    if (p === 'social') renderSocialPage();
+    if (p === 'admin') renderAdminPage();
     toggleMenu(true);
 }
 function sideNav(p) { showPage(p); toggleMenu(); }
@@ -964,16 +1216,22 @@ function toggleMenu(forceClose) {
     if (forceClose || m.classList.contains('open')) { m.classList.remove('open'); ov.classList.remove('show'); }
     else { m.classList.add('open'); ov.classList.add('show'); }
 }
-function openSearch() { showToast('Buscador: próximamente', 'success'); }
 function showNotifPanel() { openModal('notif-modal'); renderNotifs(); toggleMenu(true); }
+function toggleSideNotif() {
+    S.notifsEnabled = !S.notifsEnabled;
+    document.getElementById('side-notif-sw').classList.toggle('on', S.notifsEnabled);
+    document.getElementById('notif-sw').classList.toggle('on', S.notifsEnabled);
+    saveSettings();
+    showToast(S.notifsEnabled ? '🔔 Notificaciones activadas' : '🔕 Notificaciones desactivadas', 'success');
+}
 
-// ========== RENDER ==========
+// ===== RENDER =====
 function renderAllPages() { renderLiveMatches(); renderUpcoming(); renderNews(); renderMatchesPage(); }
 
 function renderLiveMatches() {
     const c = document.getElementById('live-container');
     const live = S.matches.filter(m => m.status === 'live');
-    if (!live.length) { c.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2)">No hay partidos en vivo ahora</div>'; return; }
+    if (!live.length) { c.innerHTML = '<div style="text-align:center;padding:18px;color:var(--text2);font-size:0.88rem">No hay partidos en vivo ahora</div>'; return; }
     c.innerHTML = live.map(m => liveCardHTML(m)).join('');
 }
 function liveCardHTML(m) {
@@ -986,7 +1244,7 @@ function liveCardHTML(m) {
             <div class="team-block"><div class="team-shield">${m.team2?.substring(0,2)||'?'}</div><div class="team-label">${m.team2}</div></div>
         </div>
         <div class="match-footer">
-            <i class="fas fa-map-marker-alt"></i> ${m.stadium||''}
+            <i class="fas fa-location-dot"></i> ${m.stadium||''}
             <div class="channel-badge">${ch.logo?`<img class="channel-logo" src="${ch.logo}">`:''}${ch.name||''}</div>
         </div>
     </div>`;
@@ -994,169 +1252,338 @@ function liveCardHTML(m) {
 function renderUpcoming() {
     const c = document.getElementById('upcoming-container');
     const up = S.matches.filter(m => m.status !== 'live');
-    if (!up.length) { c.innerHTML = '<div style="color:var(--text2);font-size:0.9rem;padding:10px 0">No hay próximos partidos cargados</div>'; return; }
+    if (!up.length) { c.innerHTML = '<div style="color:var(--text2);font-size:0.88rem;padding:10px 0">No hay próximos partidos cargados</div>'; return; }
     c.innerHTML = up.map(m=>`
         <div class="match-up-card" onclick="openDetail(${m.id})">
-            <div><div class="match-up-teams">${m.team1} vs ${m.team2}</div><div class="match-up-time"><i class="fas fa-clock"></i> ${m.time||m.date||''} • ${m.stadium||''}</div></div>
+            <div><div class="match-up-teams">${m.team1} vs ${m.team2}</div>
+            <div class="match-up-time"><i class="fas fa-clock"></i> ${m.time||m.date||''} • ${m.stadium||''}</div></div>
             <div class="status-pill ${m.status==='done'?'done':'upcoming'}">${m.status==='done'?'Finalizado':'Próximo'}</div>
         </div>`).join('');
 }
 function renderNews() {
     const c = document.getElementById('news-container');
-    if (!S.news.length) { c.innerHTML = '<div style="color:var(--text2);font-size:0.9rem;padding:10px 0">No hay noticias publicadas</div>'; return; }
+    if (!S.news.length) { c.innerHTML = '<div style="color:var(--text2);font-size:0.88rem;padding:10px 0">No hay noticias publicadas</div>'; return; }
     c.innerHTML = S.news.map(n=>`
-        <div class="news-card" onclick="showToast('${n.title.replace(/'/g,"\\'")}','success')">
+        <div class="news-card" onclick="showToast('${(n.title||'').replace(/'/g,"\\'")}','success')">
             <div class="news-img">${n.img?`<img src="${n.img}">`:'<i class="fas fa-newspaper"></i>'}</div>
             <div class="news-body"><div class="news-tag">${n.tag}</div><div class="news-title">${n.title}</div><div class="news-date">${n.date}</div></div>
         </div>`).join('');
 }
 function renderMatchesPage() {
     const c = document.getElementById('all-matches-container');
-    if (!S.matches.length) { c.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text2)"><i class="fas fa-futbol" style="font-size:3rem;opacity:0.3;display:block;margin-bottom:12px"></i>No hay partidos cargados</div>'; return; }
+    if (!S.matches.length) { c.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text2)"><i class="fas fa-futbol" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:10px"></i><span style="font-size:0.88rem">No hay partidos cargados</span></div>'; return; }
     c.innerHTML = S.matches.map(m=>`
         <div class="live-card" style="background:var(--surface);color:var(--text);box-shadow:var(--shadow)" onclick="openDetail(${m.id})">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-                <span style="font-size:0.78rem;color:var(--text2)"><i class="fas fa-trophy" style="color:var(--primary)"></i> La Super Liga</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <span style="font-size:0.75rem;color:var(--text2)"><i class="fas fa-trophy" style="color:var(--primary)"></i> La Super Liga</span>
                 <div class="status-pill ${m.status}">${m.status==='live'?'🔴 EN VIVO':m.status==='done'?'Finalizado':'Próximo'}</div>
             </div>
             <div class="match-teams">
                 <div class="team-block"><div class="team-shield" style="background:var(--bg);color:var(--primary)">${m.team1?.substring(0,2)||'?'}</div><div class="team-label" style="color:var(--text)">${m.team1}</div></div>
-                <div class="score-block" style="color:var(--primary)"><div class="score-big">${m.status!=='upcoming'?`${m.score1??0} - ${m.score2??0}`:'vs'}</div>${m.min?`<div class="score-min" style="color:var(--text2)">${m.min}'</div>`:''}</div>
+                <div class="score-block"><div class="score-big" style="color:var(--text)">${m.status!=='upcoming'?`${m.score1??0} - ${m.score2??0}`:'vs'}</div>${m.status==='live'?`<div class="score-min" style="color:var(--text2)">${m.min||''}'</div>`:''}</div>
                 <div class="team-block"><div class="team-shield" style="background:var(--bg);color:var(--primary)">${m.team2?.substring(0,2)||'?'}</div><div class="team-label" style="color:var(--text)">${m.team2}</div></div>
             </div>
-            <div class="match-footer" style="border-top:1px solid var(--border);color:var(--text2)">
-                <i class="fas fa-map-marker-alt"></i> ${m.stadium||''}
-                <span>${m.time||m.date||''}</span>
-                <div class="channel-badge" style="background:var(--bg)">${m.channel||''}</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text2)">
+                <i class="fas fa-location-dot"></i> ${m.stadium||'-'} <span style="margin-left:auto"><i class="fas fa-clock"></i> ${m.time||m.date||'-'}</span>
             </div>
         </div>`).join('');
 }
 
-// ========== MATCH DETAIL ==========
+// ===== MATCH DETAIL =====
 function openDetail(id) {
-    const m = S.matches.find(x => x.id === id); if (!m) return;
+    const m = S.matches.find(x=>x.id===id); if(!m) return;
     document.getElementById('detail-teams').innerHTML = `
         <div class="detail-team"><div class="detail-shield">${m.team1?.substring(0,2)||'?'}</div><div class="detail-team-name">${m.team1}</div></div>
-        <div style="text-align:center"><div class="detail-score">${m.status!=='upcoming'?`${m.score1??0} - ${m.score2??0}`:'vs'}</div><div class="detail-min">${m.status==='live'?`${m.min||0}'`:m.status==='done'?'Finalizado':'Próximo'}</div></div>
+        <div style="text-align:center"><div class="detail-score">${m.status!=='upcoming'?`${m.score1??0}-${m.score2??0}`:'vs'}</div>${m.status==='live'?`<div class="detail-min">${m.min||''}'</div>`:''}</div>
         <div class="detail-team"><div class="detail-shield">${m.team2?.substring(0,2)||'?'}</div><div class="detail-team-name">${m.team2}</div></div>`;
     document.getElementById('detail-body').innerHTML = `
-        <div class="sec-title">Detalles del partido</div>
-        <div class="card" style="cursor:default">
-            <div class="detail-row"><div class="detail-lbl">Estadio</div><div class="detail-val">${m.stadium||'-'}</div></div>
-            <div class="detail-row"><div class="detail-lbl">Canal</div><div class="detail-val">${m.channel||'-'}</div></div>
-            <div class="detail-row" style="border:none"><div class="detail-lbl">Fecha</div><div class="detail-val">${m.date||m.time||'-'}</div></div>
-        </div>`;
-    const s = document.getElementById('match-detail');
-    s.style.display = 'flex'; requestAnimationFrame(() => s.classList.add('open'));
+        <div class="detail-row"><div class="detail-lbl">Estado</div><div class="detail-val">${m.status==='live'?'🔴 En Vivo':m.status==='done'?'✅ Finalizado':'⏱️ Próximo'}</div></div>
+        <div class="detail-row"><div class="detail-lbl">Estadio</div><div class="detail-val">${m.stadium||'-'}</div></div>
+        <div class="detail-row"><div class="detail-lbl">Canal</div><div class="detail-val">${m.channel||'-'}</div></div>
+        <div class="detail-row"><div class="detail-lbl">Fecha</div><div class="detail-val">${m.date||'-'}</div></div>
+        <div class="detail-row"><div class="detail-lbl">Hora</div><div class="detail-val">${m.time||'-'}</div></div>`;
+    const d = document.getElementById('match-detail');
+    d.style.display = 'flex'; requestAnimationFrame(()=>d.classList.add('open'));
 }
-function closeDetail() {
-    const s = document.getElementById('match-detail');
-    s.classList.remove('open'); setTimeout(() => s.style.display = 'none', 400);
+function closeDetail() { const d=document.getElementById('match-detail'); d.classList.remove('open'); setTimeout(()=>d.style.display='none',400); }
+
+// ===== INFO MODAL =====
+function openInfoModal(t) {
+    const titles = {tabla:'📊 Tabla de Posiciones', reglas:'📋 Reglas', sancionados:'🚫 Sancionados', lesionados:'🏥 Lesionados', goleadores:'⚽ Goleadores'};
+    document.getElementById('info-title').textContent = titles[t]||t;
+    const body = document.getElementById('info-body');
+    if (t === 'tabla') {
+        const sorted = [...S.tabla].sort((a,b)=>b.pts-a.pts).map((r,i)=>({...r,pos:i+1}));
+        body.innerHTML = `<div class="tabla-wrap"><table>
+            <tr><th>#</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>Pts</th></tr>
+            ${sorted.map(r=>`<tr><td class="tabla-pos">${r.pos}</td><td>${r.team}</td><td>${r.pj}</td><td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td><td>${r.gf}</td><td>${r.gc}</td><td style="font-weight:800">${r.pts}</td></tr>`).join('')}
+        </table></div>`;
+    } else if (t === 'goleadores') {
+        body.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text2)"><i class="fas fa-futbol" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:10px"></i><span style="font-size:0.88rem">Sin goleadores cargados</span></div>`;
+    } else {
+        body.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text2)"><i class="fas fa-file-lines" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:10px"></i><span style="font-size:0.88rem">Información próximamente</span></div>`;
+    }
+    openModal('info-modal');
 }
 
-// ========== INFO MODAL ==========
-function openInfoModal(type) { toggleMenu(true); document.getElementById('info-title').textContent = {tabla:'Tabla',reglas:'Reglas',sancionados:'Sancionados',lesionados:'Lesionados',goleadores:'Goleadores'}[type]||type; document.getElementById('info-body').innerHTML = infoHTML(type); openModal('info-modal'); }
-function infoHTML(type) {
-    if (type === 'tabla') return `<div class="tabla-wrap"><table><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>PTS</th></tr></thead><tbody>${S.teams.map((t,i)=>`<tr><td class="tabla-pos">${i+1}</td><td>${t.emoji} ${t.name}</td><td>${3+i}</td><td>${12-i*3}</td></tr>`).join('')}</tbody></table></div>`;
-    if (type === 'reglas') return `<div class="card" style="cursor:default"><p style="line-height:1.8;color:var(--text2)">📌 Cada equipo juega contra todos.<br>🏆 3 puntos por victoria.<br>🤝 1 punto por empate.<br>❌ 0 puntos por derrota.<br>⚽ En caso de empate decide diferencia de gol.</p></div>`;
-    if (type === 'goleadores') return `<div class="card" style="cursor:default"><div class="detail-row"><div style="font-weight:800;color:var(--accent)">🥇</div><div class="detail-lbl">M. López</div><div class="detail-val">7 goles</div></div><div class="detail-row"><div>🥈</div><div class="detail-lbl">R. Díaz</div><div class="detail-val">4 goles</div></div><div class="detail-row" style="border:none"><div>🥉</div><div class="detail-lbl">L. Fernández</div><div class="detail-val">3 goles</div></div></div>`;
-    return `<div class="card" style="cursor:default;text-align:center;padding:40px;color:var(--text2)"><i class="fas fa-${type==='sancionados'?'ban':'briefcase-medical'}" style="font-size:3rem;opacity:0.4;display:block;margin-bottom:12px"></i>Sin registros actualmente.</div>`;
-}
-
-// ========== NOTIFICATIONS ==========
+// ===== NOTIFS =====
 function renderNotifs() {
-    document.getElementById('notif-body').innerHTML = S.notifications.length
-        ? S.notifications.map(n=>`<div class="notif-item"><div class="notif-dot2"></div><div><div style="font-weight:700">${n.title}</div><div style="font-size:0.82rem;color:var(--text2)">${n.body}</div><div style="font-size:0.72rem;color:var(--text2);margin-top:4px">${n.time}</div></div></div>`).join('')
-        : '<div style="text-align:center;padding:30px;color:var(--text2)">Sin notificaciones</div>';
+    const b = document.getElementById('notif-body');
+    if (!S.notifications.length) { b.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text2);font-size:0.88rem">Sin notificaciones</div>'; return; }
+    b.innerHTML = S.notifications.map(n=>`<div class="notif-item"><div class="notif-dot2"></div><div><div style="font-weight:700;font-size:0.88rem">${n.title}</div>${n.body?`<div style="font-size:0.8rem;color:var(--text2);margin-top:2px">${n.body}</div>`:''}<div style="font-size:0.72rem;color:var(--text2);margin-top:4px">${n.time}</div></div></div>`).join('');
+    document.getElementById('notif-dot').style.display = 'none';
 }
 
-// ========== PROFILE ==========
+// ===== PROFILE =====
 function renderFavTeams() {
-    const r = document.getElementById('fav-row'); if (!r) return;
-    const favs = S.teams.filter(t => S.favTeams.includes(t.id));
-    r.innerHTML = favs.length ? favs.map(t=>`<div class="fav-chip">${t.emoji} ${t.name}</div>`).join('') : '<div style="color:var(--text2);font-size:0.85rem">Sin equipos favoritos</div>';
+    const r = document.getElementById('fav-row'); if(!r) return;
+    const favs = S.teams.filter(t=>S.favTeams.includes(t.id));
+    r.innerHTML = favs.length ? favs.map(t=>`<div class="fav-chip">${t.emoji} ${t.name}</div>`).join('') : '<div style="color:var(--text2);font-size:0.82rem">Sin equipos favoritos</div>';
 }
 function editName() {
-    const n = prompt('Nuevo nombre:', S.userName); if (!n) return;
+    const n = prompt('Nuevo nombre:', S.userName); if(!n) return;
     S.userName = n; S.user.name = n; localStorage.setItem('lsl-user', JSON.stringify(S.user));
-    document.getElementById('hdr-name').textContent = n; document.getElementById('profile-name').textContent = n; document.getElementById('side-name').textContent = n;
+    document.getElementById('hdr-name').textContent = n;
+    document.getElementById('profile-name').textContent = n;
+    document.getElementById('side-name').textContent = n;
     showToast('Nombre actualizado ✓', 'success');
 }
-
-// ========== SOCIAL ==========
-function renderSocialPage() {
-    const cl = document.getElementById('chat-list'); if (!cl) return;
-    cl.innerHTML = S.friends.map(f=>`<div class="chat-item" onclick="openChat(${f.id})"><div class="chat-av">${f.init}</div><div class="chat-info"><div class="chat-name">${f.name} ${f.online?'<span style="color:#22c55e;font-size:0.7rem">● En línea</span>':''}</div><div class="chat-preview">${f.lastMsg}</div></div><div class="chat-time">${f.time}</div></div>`).join('');
-    document.getElementById('friends-list').innerHTML = S.friends.map(f=>`<div class="match-up-card"><div style="display:flex;gap:12px;align-items:center"><div class="chat-av" style="width:40px;height:40px;font-size:0.85rem">${f.init}</div><div><div style="font-weight:700">${f.name}</div><div style="font-size:0.78rem;color:${f.online?'#22c55e':'var(--text2)'}">${f.online?'En línea':'Desconectado'}</div></div></div><button class="btn-sm btn-success" onclick="openChat(${f.id})"><i class="fas fa-comment"></i></button></div>`).join('');
+document.getElementById('setup-av-inp').onchange = function() {
+    const f=this.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{S.userAvatar=e.target.result;syncAvatars();}; r.readAsDataURL(f);
+};
+document.getElementById('profile-av-inp').onchange = function() {
+    const f=this.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{S.userAvatar=e.target.result;syncAvatars();}; r.readAsDataURL(f);
+};
+document.getElementById('banner-inp').onchange = function() {
+    const f=this.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{const img=document.getElementById('profile-banner-img');img.src=e.target.result;img.style.display='block';}; r.readAsDataURL(f);
+};
+function syncAvatars() {
+    [['hdr-av-img','hdr-av-icon'],['profile-av-img','profile-av-icon'],['side-av-img','side-av-icon']].forEach(([imgId,iconId])=>{
+        const img=document.getElementById(imgId); const icon=document.getElementById(iconId);
+        if(img){img.src=S.userAvatar;img.style.display='block';}
+        if(icon) icon.style.display='none';
+    });
 }
-function filterFriends(q) {
-    const f = S.friends.filter(x => x.name.toLowerCase().includes(q.toLowerCase()));
-    document.getElementById('chat-list').innerHTML = f.map(fr=>`<div class="chat-item" onclick="openChat(${fr.id})"><div class="chat-av">${fr.init}</div><div class="chat-info"><div class="chat-name">${fr.name}</div><div class="chat-preview">${fr.lastMsg}</div></div></div>`).join('');
+
+// ===== SOCIAL (Friends & Chat) =====
+function renderSocialPage() {
+    // Friend requests
+    const reqList = document.getElementById('friend-requests-list');
+    if (reqList) {
+        if (!S.friendRequests.length) {
+            reqList.innerHTML = '<div style="color:var(--text2);font-size:0.85rem;padding:6px 0">No hay solicitudes pendientes</div>';
+        } else {
+            reqList.innerHTML = S.friendRequests.map(req=>`
+                <div class="friend-req-card">
+                    <div class="chat-av" style="width:40px;height:40px;font-size:0.85rem">${req.init||req.name.substring(0,2).toUpperCase()}</div>
+                    <div style="flex:1"><div style="font-weight:700;font-size:0.88rem">${req.name}</div><div style="font-size:0.75rem;color:var(--text2)">Quiere ser tu amigo</div></div>
+                    <div class="friend-req-btns">
+                        <button class="btn-accept" onclick="acceptFriend(${req.id})"><i class="fas fa-check"></i></button>
+                        <button class="btn-reject" onclick="rejectFriend(${req.id})"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>`).join('');
+        }
+    }
+    // Chat list (only accepted friends)
+    const cl = document.getElementById('chat-list');
+    if (cl) {
+        if (!S.friends.length) {
+            cl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2);font-size:0.85rem"><i class="fas fa-comment-slash" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:8px"></i>No hay chats aún. Aceptá solicitudes de amistad.</div>';
+        } else {
+            cl.innerHTML = S.friends.map(f=>`
+                <div class="chat-item" onclick="openChat(${f.id})">
+                    <div class="chat-av">${f.init}</div>
+                    <div class="chat-info">
+                        <div class="chat-name">${f.name} ${f.online?'<span style="color:#22c55e;font-size:0.68rem">● En línea</span>':''}</div>
+                        <div class="chat-preview">${(S.chatHistory[f.id]||[]).slice(-1)[0]?.text || 'Empieza a chatear'}</div>
+                    </div>
+                    <div class="chat-time">${f.time||''}</div>
+                </div>`).join('');
+        }
+    }
+    updateFriendBadge();
+}
+function updateFriendBadge() {
+    const badge = document.getElementById('social-badge');
+    if (badge) {
+        const count = S.friendRequests.length;
+        badge.textContent = count;
+        badge.classList.toggle('show', count > 0);
+    }
+}
+async function searchUsers(q) {
+    const container = document.getElementById('user-search-results');
+    if (!q || q.length < 2) { container.innerHTML = ''; return; }
+    try {
+        const { data } = await db.from('usuarios').select('*').ilike('username', `%${q}%`).limit(10);
+        if (!data || !data.length) { container.innerHTML = '<div style="color:var(--text2);font-size:0.85rem;padding:8px 0">Sin resultados</div>'; return; }
+        container.innerHTML = data
+            .filter(u => u.username !== S.userName)
+            .map(u=>`
+            <div class="user-card">
+                <div class="user-av">${u.username.substring(0,2).toUpperCase()}</div>
+                <div class="user-info">
+                    <div class="user-name">${u.username}</div>
+                    <div class="user-role">${u.role==='admin'?'Administrador':'Fan'}</div>
+                </div>
+                ${S.friends.find(f=>f.name===u.username)?
+                    '<span style="font-size:0.75rem;color:#22c55e;font-weight:700"><i class="fas fa-check"></i> Amigos</span>' :
+                    S.friendRequests.find(r=>r.name===u.username)?
+                    '<span style="font-size:0.75rem;color:var(--text2);font-weight:700">Pendiente</span>' :
+                    `<button class="add-friend-btn" onclick="sendFriendRequest('${u.username}')"><i class="fas fa-user-plus"></i> Agregar</button>`
+                }
+            </div>`).join('');
+    } catch(e) {
+        container.innerHTML = '<div style="color:var(--text2);font-size:0.85rem">Error al buscar</div>';
+    }
+}
+function sendFriendRequest(username) {
+    // Simulate sending a friend request (in real app, save to DB)
+    showToast(`Solicitud enviada a ${username} ✓`, 'success');
+    // For demo, add directly as friend
+    const newFriend = {id: Date.now(), name: username, init: username.substring(0,2).toUpperCase(), online:false, time:''};
+    S.friends.push(newFriend);
+    localStorage.setItem('lsl-friends', JSON.stringify(S.friends));
+    renderSocialPage();
+}
+function acceptFriend(id) {
+    const req = S.friendRequests.find(r=>r.id===id);
+    if (!req) return;
+    S.friends.push({...req, time: 'Ahora'});
+    S.friendRequests = S.friendRequests.filter(r=>r.id!==id);
+    localStorage.setItem('lsl-friends', JSON.stringify(S.friends));
+    localStorage.setItem('lsl-friend-requests', JSON.stringify(S.friendRequests));
+    renderSocialPage();
+    showToast(`${req.name} ahora es tu amigo 🎉`, 'success');
+}
+function rejectFriend(id) {
+    S.friendRequests = S.friendRequests.filter(r=>r.id!==id);
+    localStorage.setItem('lsl-friend-requests', JSON.stringify(S.friendRequests));
+    renderSocialPage();
+    showToast('Solicitud rechazada', 'success');
 }
 function openChat(fid) {
-    const f = S.friends.find(x => x.id === fid); if (!f) return;
+    const f = S.friends.find(x=>x.id===fid); if(!f) return;
     S.currentChat = fid;
     document.getElementById('cw-name').textContent = f.name;
     document.getElementById('cw-av').textContent = f.init;
-    if (!S.chatHistory[fid]) S.chatHistory[fid] = [{me:false,text:'¡Hola! ¿Viste el último partido?'},{me:true,text:'¡Sí! Estuvo increíble 🔥'}];
+    document.getElementById('cw-status').textContent = f.online ? '● En línea' : 'Desconectado';
+    if (!S.chatHistory[fid]) S.chatHistory[fid] = [];
     renderChatMsgs(fid);
     const w = document.getElementById('chat-window');
-    w.style.display = 'flex'; requestAnimationFrame(() => w.classList.add('open'));
+    w.style.display = 'flex'; requestAnimationFrame(()=>w.classList.add('open'));
 }
 function renderChatMsgs(fid) {
-    document.getElementById('chat-msgs').innerHTML = (S.chatHistory[fid]||[]).map(m=>`<div class="msg ${m.me?'me':'them'}">${m.text}</div>`).join('');
-    document.getElementById('chat-msgs').scrollTop = 99999;
+    const msgs = S.chatHistory[fid] || [];
+    const c = document.getElementById('chat-msgs');
+    if (!msgs.length) {
+        c.innerHTML = '<div class="chat-empty"><div class="chat-empty-icon">💬</div><p style="font-size:0.88rem">Empezá la conversación</p></div>';
+        return;
+    }
+    c.innerHTML = msgs.map(m=>`<div class="msg ${m.me?'me':'them'}">${m.text}</div>`).join('');
+    c.scrollTop = 99999;
 }
 function sendMsg() {
-    const inp = document.getElementById('chat-inp'); const t = inp.value.trim();
-    if (!t || !S.currentChat) return;
-    if (!S.chatHistory[S.currentChat]) S.chatHistory[S.currentChat] = [];
-    S.chatHistory[S.currentChat].push({me:true, text:t}); inp.value = '';
+    const inp=document.getElementById('chat-inp'); const t=inp.value.trim();
+    if(!t || !S.currentChat) return;
+    if(!S.chatHistory[S.currentChat]) S.chatHistory[S.currentChat]=[];
+    S.chatHistory[S.currentChat].push({me:true, text:t}); inp.value='';
     renderChatMsgs(S.currentChat);
-    setTimeout(() => {
-        const r = ['¡Qué golazo!','Definitivamente 😂','¿Ya viste los goles?','¡Vamos el equipo!'];
-        S.chatHistory[S.currentChat].push({me:false, text:r[Math.floor(Math.random()*r.length)]});
-        renderChatMsgs(S.currentChat);
-    }, 1200);
 }
-function closeChat() { const w = document.getElementById('chat-window'); w.classList.remove('open'); setTimeout(()=>w.style.display='none',350); }
+function closeChat() { const w=document.getElementById('chat-window'); w.classList.remove('open'); setTimeout(()=>w.style.display='none',350); }
 
-// ========== THEME ==========
+// ===== THEME =====
 function toggleDark() {
     const t = S.theme === 'light' ? 'dark' : 'light';
-    S.theme = t; localStorage.setItem('lsl-theme', t); applyTheme(t);
-    document.getElementById('dark-sw').classList.toggle('on');
+    S.theme = t; applyTheme(t); saveSettings();
 }
 function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
-    if (t === 'dark') document.getElementById('dark-sw')?.classList.add('on');
-    else document.getElementById('dark-sw')?.classList.remove('on');
+    const isDark = t === 'dark';
+    document.getElementById('dark-sw')?.classList.toggle('on', isDark);
+    document.getElementById('side-dark-sw')?.classList.toggle('on', isDark);
+    const ico = document.getElementById('side-theme-ico');
+    const lbl = document.getElementById('side-theme-lbl');
+    if (ico) ico.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    if (lbl) lbl.textContent = isDark ? 'Modo Claro' : 'Modo Oscuro';
 }
 
-// ========== EDIT MODE ==========
+// ===== EDIT MODE =====
 let editMode = false;
 function toggleEditMode() {
     editMode = !editMode;
     document.getElementById('edit-toolbar').classList.toggle('active', editMode);
-    showToast(editMode ? 'Modo edición activado 🎨' : 'Modo edición desactivado', 'success');
+    showToast(editMode ? '🎨 Modo edición activado' : 'Modo edición desactivado', 'success');
 }
 
-// ========== ADMIN ==========
+// ===== SPLASH CONFIG =====
+function loadSplashConfig() {
+    const cfg = S.splashConfig;
+    if (cfg.title) document.getElementById('splash-title-txt').textContent = cfg.title;
+    if (cfg.subtitle) document.getElementById('splash-sub-txt').textContent = cfg.subtitle;
+    if (cfg.logo) {
+        const img = document.getElementById('splash-logo-img');
+        img.src = cfg.logo; img.style.display = 'block';
+        document.querySelector('#splash-logo-wrap .def-icon').style.display = 'none';
+    }
+}
+document.getElementById('splash-logo-inp').onchange = function() {
+    const f=this.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{
+        S.splashConfig.logo = e.target.result;
+        const img=document.getElementById('splash-logo-img'); img.src=e.target.result; img.style.display='block';
+        document.querySelector('#splash-logo-wrap .def-icon').style.display='none';
+        setLogo('login-logo-img','login-logo',e.target.result);
+        setLogo('hdr-logo-img','hdr-logo',e.target.result);
+        saveSettings();
+    }; r.readAsDataURL(f);
+};
+
+// ===== DESTACADOS CONFIG =====
+function applyDestConfig() {
+    S.destConfig.forEach((d, i) => {
+        const ico = document.getElementById(`dest-ico-${i}`);
+        const lbl = document.getElementById(`dest-lbl-${i}`);
+        if (ico) ico.className = `fas ${d.icon}`;
+        if (lbl) lbl.textContent = d.label;
+    });
+}
+
+// ===== ADMIN PAGE RENDER =====
+function renderAdminPage() {
+    // Admin page is static HTML, nothing to reload
+}
+
+// ===== ADMIN FUNCTIONS =====
 function openAdmin(s) { openModal('admin-modal'); renderAdmin(s); }
 function closeAdminModal() { closeModal('admin-modal'); }
 
 function renderAdmin(s) {
-    const titles = {noticias:'📰 Noticias',partidos:'⚽ Partidos',tabla:'📊 Tabla',equipos:'🛡️ Equipos',personalizacion:'🎨 Personalización',notificaciones:'🔔 Notificaciones',usuarios:'👥 Usuarios',bienvenida:'⭐ Bienvenida',version:'🚀 Versiones y APK',canales:'📺 Canales TV',nuevafuncion:'➕ Nueva Función'};
+    const titles = {
+        noticias:'📰 Noticias', partidos:'⚽ Partidos', tabla:'📊 Tabla de Posiciones',
+        equipos:'🛡️ Equipos e Info', personalizacion:'🎨 Estilo Visual', notificaciones:'🔔 Notificaciones',
+        usuarios:'👥 Usuarios', bienvenida:'⭐ Bienvenida', version:'🚀 Versiones y APK',
+        canales:'📺 Canales TV', destacados:'✨ Destacados', 'chat-admin':'💬 Chat Global'
+    };
     document.getElementById('admin-title').textContent = titles[s] || s;
     const body = document.getElementById('admin-body');
-    const map = {noticias:adminNoticias, partidos:adminPartidos, personalizacion:adminPerso, notificaciones:adminNotifs, usuarios:adminUsers, bienvenida:adminBienvenida, version:adminVersion, canales:adminCanales, nuevafuncion:adminNuevaFunc};
+    const map = {
+        noticias:adminNoticias, partidos:adminPartidos, tabla:adminTabla,
+        equipos:adminEquipos, personalizacion:adminPerso, notificaciones:adminNotifs,
+        bienvenida:adminBienvenida, version:adminVersion, canales:adminCanales,
+        destacados:adminDestacados, 'chat-admin':adminChatGlobal
+    };
+    if (s === 'usuarios') { adminUsers(body); return; }
     body.innerHTML = map[s] ? map[s]() : '<p style="color:var(--text2);text-align:center;padding:40px">Sección en desarrollo 🚧</p>';
 }
 
 // --- NOTICIAS ---
 function adminNoticias() {
-    return `<button class="btn-primary" style="margin-bottom:16px" onclick="showCreateNews()"><i class="fas fa-plus"></i> Nueva Noticia</button>
-    <div id="news-admin-list">${S.news.map(n=>`<div class="card" style="cursor:default"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700">${n.title}</div><div style="font-size:0.8rem;color:var(--text2)">${n.date} · ${n.tag}</div></div><div style="display:flex;gap:8px"><button class="btn-sm btn-danger" onclick="deleteNews(${n.id})"><i class="fas fa-trash"></i></button></div></div></div>`).join('') || '<div style="color:var(--text2);text-align:center;padding:20px">Sin noticias</div>'}</div>`;
+    return `<button class="btn-primary" style="margin-bottom:14px" onclick="showCreateNews()"><i class="fas fa-plus"></i> Nueva Noticia</button>
+    <div id="news-admin-list">${S.news.map(n=>`<div class="card" style="cursor:default"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:0.9rem">${n.title}</div><div style="font-size:0.78rem;color:var(--text2)">${n.date} · ${n.tag}</div></div><button class="btn-sm btn-danger" onclick="deleteNews(${n.id})"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<div style="color:var(--text2);text-align:center;padding:18px;font-size:0.88rem">Sin noticias</div>'}</div>`;
 }
 function showCreateNews() {
     document.getElementById('admin-body').innerHTML = `
@@ -1181,14 +1608,11 @@ async function createNews() {
         if (error) throw error;
         closeAdminModal();
         showToast('¡Noticia publicada! 📰', 'success');
-    } catch(e) { showToast('Error al guardar: '+e.message, 'error'); }
+    } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
 async function deleteNews(id) {
     if (!confirm('¿Eliminar esta noticia?')) return;
-    try {
-        await db.from('noticias').delete().eq('id', id);
-        showToast('Noticia eliminada', 'success');
-    } catch(e) { showToast('Error: '+e.message, 'error'); }
+    try { await db.from('noticias').delete().eq('id', id); showToast('Noticia eliminada', 'success'); } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
 
 // --- PARTIDOS ---
@@ -1198,15 +1622,10 @@ function adminPartidos() {
     return `
     <div class="form-row"><label>Equipo Local</label><select id="p-local">${teamOpts}</select></div>
     <div class="form-row"><label>Equipo Visitante</label><select id="p-visit">${teamOpts}</select></div>
-    <div class="form-row"><label>Fecha (ej: 10/03/2026)</label><input type="text" id="p-date" placeholder="dd/mm/aaaa"></div>
-    <div class="form-row"><label>Hora (ej: 18:00)</label><input type="text" id="p-time" placeholder="HH:MM"></div>
+    <div class="form-row"><label>Fecha (dd/mm/aaaa)</label><input type="text" id="p-date" placeholder="dd/mm/aaaa"></div>
+    <div class="form-row"><label>Hora (HH:MM)</label><input type="text" id="p-time" placeholder="HH:MM"></div>
     <div class="form-row"><label>Estadio</label><input type="text" id="p-stad" placeholder="Nombre del estadio"></div>
-    <div class="form-row"><label>Canal de TV</label>
-        <div style="display:flex;gap:10px;align-items:center">
-            <select id="p-ch" style="flex:1">${chOpts}<option value="otro">Otro...</option></select>
-            <span id="p-ch-label" style="font-weight:700;min-width:60px">ESPN</span>
-        </div>
-    </div>
+    <div class="form-row"><label>Canal de TV</label><select id="p-ch">${chOpts}<option value="otro">Otro...</option></select></div>
     <div class="form-row"><label>Estado</label>
         <select id="p-status" onchange="document.getElementById('score-fields').style.display=this.value!=='upcoming'?'block':'none'">
             <option value="upcoming">Próximo</option><option value="live">En Vivo</option><option value="done">Finalizado</option>
@@ -1218,25 +1637,24 @@ function adminPartidos() {
         <div class="form-row"><label>Minuto (si está en vivo)</label><input type="text" id="p-min" placeholder="Ej: 45"></div>
     </div>
     <button class="btn-primary" onclick="createPartido()"><i class="fas fa-save"></i> Guardar Partido</button>
-    <div class="sec-title" style="margin-top:20px">Partidos guardados</div>
-    ${S.matches.map(m=>`<div class="card" style="cursor:default"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:600">${m.team1} vs ${m.team2}</div><div style="display:flex;gap:8px"><button class="btn-sm btn-danger" onclick="deletePartido(${m.id})"><i class="fas fa-trash"></i></button></div></div><div style="font-size:0.8rem;color:var(--text2)">${m.status==='live'?'🔴 EN VIVO':m.status==='done'?'✅ Finalizado':'⏱️ Próximo'} · ${m.date||''} ${m.time||''}</div></div>`).join('')}`;
+    <div class="sec-title" style="margin-top:18px">Partidos guardados</div>
+    ${S.matches.map(m=>`<div class="card" style="cursor:default"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:600;font-size:0.9rem">${m.team1} vs ${m.team2}</div><div style="display:flex;gap:8px"><button class="btn-sm btn-danger" onclick="deletePartido(${m.id})"><i class="fas fa-trash"></i></button></div></div><div style="font-size:0.78rem;color:var(--text2);margin-top:4px">${m.status==='live'?'🔴 EN VIVO':m.status==='done'?'✅ Finalizado':'⏱️ Próximo'} · ${m.date||''} ${m.time||''}</div></div>`).join('')}`;
 }
-document.addEventListener('change', function(e) { if (e.target.id === 'p-ch') { document.getElementById('p-ch-label').textContent = e.target.value; } });
 async function createPartido() {
-    const local = document.getElementById('p-local')?.value;
-    const visit = document.getElementById('p-visit')?.value;
+    const local=document.getElementById('p-local')?.value;
+    const visit=document.getElementById('p-visit')?.value;
     if (!local || !visit) { showToast('Seleccioná los equipos', 'error'); return; }
     if (local === visit) { showToast('Los equipos deben ser distintos', 'error'); return; }
-    const status = document.getElementById('p-status')?.value || 'upcoming';
+    const status=document.getElementById('p-status')?.value||'upcoming';
     const data = {
-        team1: local, team2: visit, status,
-        match_date: document.getElementById('p-date')?.value || '',
-        match_time: document.getElementById('p-time')?.value || '',
-        stadium: document.getElementById('p-stad')?.value || '',
-        channel: document.getElementById('p-ch')?.value || '',
-        score1: parseInt(document.getElementById('p-s1')?.value) || 0,
-        score2: parseInt(document.getElementById('p-s2')?.value) || 0,
-        min_played: document.getElementById('p-min')?.value || '',
+        team1:local, team2:visit, status,
+        match_date:document.getElementById('p-date')?.value||'',
+        match_time:document.getElementById('p-time')?.value||'',
+        stadium:document.getElementById('p-stad')?.value||'',
+        channel:document.getElementById('p-ch')?.value||'',
+        score1:parseInt(document.getElementById('p-s1')?.value)||0,
+        score2:parseInt(document.getElementById('p-s2')?.value)||0,
+        min_played:document.getElementById('p-min')?.value||'',
     };
     try {
         const { error } = await db.from('partidos').insert(data);
@@ -1251,26 +1669,104 @@ async function deletePartido(id) {
     showToast('Partido eliminado', 'success');
 }
 
+// --- TABLA DE POSICIONES (Admin) ---
+function adminTabla() {
+    return `
+    <p style="color:var(--text2);font-size:0.82rem;margin-bottom:14px">Editá las estadísticas de cada equipo. Se guardan en Supabase y son permanentes.</p>
+    <div id="tabla-editor">
+    ${S.tabla.map((r,i)=>`
+        <div class="tabla-edit-row">
+            <span style="font-weight:700;min-width:70px;font-size:0.88rem">${r.team}</span>
+            <input type="number" value="${r.pj}" min="0" placeholder="PJ" title="Partidos Jugados" onchange="updateTabla(${i},'pj',this.value)">
+            <input type="number" value="${r.pg}" min="0" placeholder="PG" title="Partidos Ganados" onchange="updateTabla(${i},'pg',this.value)">
+            <input type="number" value="${r.pe}" min="0" placeholder="PE" title="Empates" onchange="updateTabla(${i},'pe',this.value)">
+            <input type="number" value="${r.pp}" min="0" placeholder="PP" title="Perdidos" onchange="updateTabla(${i},'pp',this.value)">
+            <input type="number" value="${r.gf}" min="0" placeholder="GF" title="Goles a favor" onchange="updateTabla(${i},'gf',this.value)">
+            <input type="number" value="${r.gc}" min="0" placeholder="GC" title="Goles en contra" onchange="updateTabla(${i},'gc',this.value)">
+            <input type="number" value="${r.pts}" min="0" placeholder="Pts" title="Puntos" onchange="updateTabla(${i},'pts',this.value)" style="font-weight:800;color:var(--primary)">
+        </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <button class="btn-sm btn-success" onclick="autoCalcTabla()"><i class="fas fa-calculator"></i> Auto-calcular pts</button>
+        <button class="btn-primary" onclick="saveTabla()"><i class="fas fa-save"></i> Guardar</button>
+    </div>`;
+}
+function updateTabla(i, field, val) {
+    S.tabla[i][field] = parseInt(val)||0;
+}
+function autoCalcTabla() {
+    S.tabla = S.tabla.map(r => ({...r, pts: (r.pg*3) + r.pe}));
+    renderAdmin('tabla');
+    showToast('Puntos calculados automáticamente', 'success');
+}
+async function saveTabla() {
+    try {
+        await db.from('app_config').upsert({key:'tabla_posiciones', value:JSON.stringify(S.tabla)});
+        saveSettings();
+        closeAdminModal();
+        updateStats();
+        showToast('¡Tabla guardada! 📊', 'success');
+    } catch(e) { showToast('Error: '+e.message, 'error'); }
+}
+
+// --- EQUIPOS ---
+function adminEquipos() {
+    return S.teams.map((t,i)=>`
+    <div class="perso-section">
+        <h4><i class="fas fa-shield-halved"></i> ${t.name}</h4>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <div style="width:60px;height:60px;border-radius:50%;background:${t.color||'var(--primary)'};display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0" id="team-preview-${i}">${t.emoji}</div>
+            <div style="flex:1">
+                <div class="form-row" style="margin-bottom:8px"><label>Nombre del equipo</label><input type="text" value="${t.name}" onchange="S.teams[${i}].name=this.value"></div>
+                <div class="form-row" style="margin-bottom:0"><label>Emoji / Símbolo</label><input type="text" value="${t.emoji}" maxlength="4" onchange="S.teams[${i}].emoji=this.value;document.getElementById('team-preview-${i}').textContent=this.value"></div>
+            </div>
+        </div>
+        <div class="form-row"><label>Color del equipo</label>
+            <input type="color" value="${t.color||'#4f46e5'}" style="height:44px;border-radius:10px;border:2px solid var(--border);padding:4px 8px;background:var(--bg);width:100%" onchange="S.teams[${i}].color=this.value;document.getElementById('team-preview-${i}').style.background=this.value">
+        </div>
+        <div class="form-row"><label>Logo (imagen)</label>
+            <div class="upload-area" onclick="document.getElementById('team-logo-inp-${i}').click()"><i class="fas fa-image"></i>Subir escudo</div>
+            <input type="file" id="team-logo-inp-${i}" accept="image/*" style="display:none" onchange="uploadTeamLogo(${i},this)">
+            ${t.logo?`<img src="${t.logo}" style="width:60px;height:60px;border-radius:50%;object-fit:contain;margin-top:8px;border:2px solid var(--border)">` : ''}
+        </div>
+    </div>`).join('') + `<button class="btn-primary" onclick="saveEquipos()"><i class="fas fa-save"></i> Guardar Equipos</button>`;
+}
+function uploadTeamLogo(i, inp) {
+    const f=inp.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{S.teams[i].logo=e.target.result; renderAdmin('equipos');}; r.readAsDataURL(f);
+}
+function saveEquipos() { saveSettings(); showToast('¡Equipos guardados!', 'success'); closeAdminModal(); }
+
 // --- PERSONALIZACIÓN ---
 function adminPerso() {
+    const colors = [['#4f46e5','Indigo'],['#dc2626','Rojo'],['#059669','Verde'],['#7c3aed','Violeta'],['#ea580c','Naranja'],['#0ea5e9','Celeste'],['#db2777','Rosa'],['#0f766e','Teal'],['#ca8a04','Dorado']];
+    const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
     return `
-    <div class="feature-panel"><div class="feature-title"><i class="fas fa-palette"></i> Color Principal</div>
-    <div class="color-grid">${[['#4f46e5','Indigo'],['#dc2626','Rojo'],['#059669','Verde'],['#7c3aed','Violeta'],['#ea580c','Naranja'],['#0ea5e9','Celeste'],['#db2777','Rosa']].map(([c,n])=>`<div class="color-sw" style="background:${c}" title="${n}" onclick="changeColor('${c}',this)"></div>`).join('')}</div></div>
-    <div class="feature-panel"><div class="feature-title"><i class="fas fa-expand"></i> Redondeo de cards</div>
-    <input type="range" min="0" max="40" value="22" oninput="document.documentElement.style.setProperty('--radius',this.value+'px')"></div>
-    <div class="feature-panel"><div class="feature-title"><i class="fas fa-moon"></i> Tema</div>
-    <div style="display:flex;gap:10px">
-        <button class="btn-sm" style="background:rgba(79,70,229,0.1);color:var(--primary);flex:1" onclick="applyTheme('light');S.theme='light'"><i class="fas fa-sun"></i> Claro</button>
-        <button class="btn-sm" style="background:var(--surface2);flex:1" onclick="applyTheme('dark');S.theme='dark'"><i class="fas fa-moon"></i> Oscuro</button>
-    </div></div>
-    <div class="feature-panel"><div class="feature-title"><i class="fas fa-pen-ruler"></i> Modo Edición Visual</div>
-    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:12px">Activá para mover y reordenar elementos en pantalla.</p>
-    <button class="btn-primary" onclick="toggleEditMode();closeAdminModal()"><i class="fas fa-pencil"></i> Activar Edición Visual</button></div>`;
+    <div class="perso-section"><h4><i class="fas fa-palette"></i> Color Principal</h4>
+        <div class="color-grid">${colors.map(([c,n])=>`<div class="color-sw" style="background:${c}" title="${n}" onclick="changeColor('${c}',this)" ${c===currentColor?'class="color-sw sel"':''}></div>`).join('')}</div>
+        <div style="margin-top:12px"><label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text2);margin-bottom:7px">Color personalizado</label>
+        <input type="color" value="${currentColor}" style="height:44px;border-radius:10px;border:2px solid var(--border);padding:4px 8px;background:var(--bg);width:100%" oninput="changeColor(this.value,null)"></div>
+    </div>
+    <div class="perso-section"><h4><i class="fas fa-expand-arrows-alt"></i> Redondeo de tarjetas</h4>
+        <input type="range" min="0" max="32" value="20" style="width:100%;accent-color:var(--primary)" oninput="document.documentElement.style.setProperty('--radius',this.value+'px');document.documentElement.style.setProperty('--radius-sm',(parseInt(this.value)-6)+'px')">
+    </div>
+    <div class="perso-section"><h4><i class="fas fa-moon"></i> Tema</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn-sm" style="background:rgba(79,70,229,0.1);color:var(--primary)" onclick="applyTheme('light');S.theme='light';saveSettings()"><i class="fas fa-sun"></i> Claro</button>
+            <button class="btn-sm" style="background:var(--surface2)" onclick="applyTheme('dark');S.theme='dark';saveSettings()"><i class="fas fa-moon"></i> Oscuro</button>
+        </div>
+    </div>
+    <div class="perso-section"><h4><i class="fas fa-pencil"></i> Modo Edición Visual</h4>
+        <p style="color:var(--text2);font-size:0.82rem;margin-bottom:12px">Activá para mover elementos en pantalla.</p>
+        <button class="btn-primary" onclick="toggleEditMode();closeAdminModal()"><i class="fas fa-pencil"></i> Activar Edición</button>
+    </div>
+    <button class="btn-primary" onclick="saveSettings();showToast('¡Configuración guardada! Permanente ✓','success')"><i class="fas fa-save"></i> Guardar todo</button>`;
 }
 function changeColor(c, el) {
     document.documentElement.style.setProperty('--primary', c);
+    // Auto-adjust primary-light and primary-dark
     document.querySelectorAll('.color-sw').forEach(s=>s.classList.remove('sel'));
-    el.classList.add('sel');
+    if (el) el.classList.add('sel');
 }
 
 // --- NOTIFICACIONES ---
@@ -1281,19 +1777,36 @@ function adminNotifs() {
     <button class="btn-primary" onclick="sendNotif()"><i class="fas fa-paper-plane"></i> Enviar a todos ahora</button>`;
 }
 async function sendNotif() {
-    const title = document.getElementById('notif-t')?.value.trim();
-    const body = document.getElementById('notif-b')?.value.trim() || '';
+    const title=document.getElementById('notif-t')?.value.trim();
+    const body=document.getElementById('notif-b')?.value.trim()||'';
     if (!title) { showToast('Ingresá un título', 'error'); return; }
     try {
         const { error } = await db.from('notificaciones').insert({title, body});
         if (error) throw error;
         closeAdminModal();
-        showToast('¡Notificación enviada a todos! 🔔', 'success');
+        showToast('¡Notificación enviada! 🔔', 'success');
     } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
 
 // --- USUARIOS ---
-async function adminUsers() { return '<div class="loading"><div class="spinner"></div>Cargando...</div>'; }
+async function adminUsers(body) {
+    body.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando usuarios...</div>';
+    try {
+        const { data } = await db.from('usuarios').select('*').order('last_login', {ascending:false}).limit(30);
+        if (!data || !data.length) { body.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text2);font-size:0.88rem">Sin usuarios registrados</div>'; return; }
+        body.innerHTML = `
+        <p style="color:var(--text2);font-size:0.82rem;margin-bottom:14px">${data.length} usuario(s) registrado(s)</p>
+        ${data.map(u=>`
+        <div class="user-card">
+            <div class="user-av">${u.username.substring(0,2).toUpperCase()}</div>
+            <div class="user-info">
+                <div class="user-name">${u.username}</div>
+                <div class="user-role">${u.role==='admin'?'👑 Admin':'Fan'} · ${timeAgo(u.last_login)}</div>
+            </div>
+            <div class="${u.online?'user-online':'user-offline'}"></div>
+        </div>`).join('')}`;
+    } catch(e) { body.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text2);font-size:0.88rem">Error al cargar usuarios</div>'; }
+}
 
 // --- BIENVENIDA ---
 function adminBienvenida() {
@@ -1308,136 +1821,132 @@ function adminBienvenida() {
     <button class="btn-primary" onclick="saveBienvenida()"><i class="fas fa-save"></i> Guardar</button>`;
 }
 async function saveBienvenida() {
-    const t = document.getElementById('sp-t')?.value || 'La Super Liga';
-    const s = document.getElementById('sp-s')?.value || '¡Hola, Bienvenido!';
-    const imgEl = document.getElementById('sp-logo-prev');
-    const logo = imgEl?.src?.startsWith('data:') ? imgEl.src : S.splashConfig.logo;
-    S.splashConfig = {title:t, subtitle:s, logo};
-    localStorage.setItem('lsl-splash', JSON.stringify(S.splashConfig));
+    const t=document.getElementById('sp-t')?.value||'La Super Liga';
+    const s=document.getElementById('sp-s')?.value||'¡Hola, Bienvenido!';
+    const imgEl=document.getElementById('sp-logo-prev');
+    const logo=imgEl?.src?.startsWith('data:')?imgEl.src:S.splashConfig.logo;
+    S.splashConfig={title:t, subtitle:s, logo};
+    saveSettings();
     try {
         await db.from('app_config').upsert({key:'splash_title', value:t});
         await db.from('app_config').upsert({key:'splash_subtitle', value:s});
-    } catch(e) {}
-    if (logo) { setLogo('login-logo-img', 'login-logo', logo); setLogo('hdr-logo-img', 'hdr-logo', logo); }
+    } catch(e){}
+    if (logo) { setLogo('login-logo-img','login-logo',logo); setLogo('hdr-logo-img','hdr-logo',logo); }
     closeAdminModal();
-    showToast('¡Bienvenida guardada!', 'success');
+    showToast('¡Bienvenida guardada y permanente! ✓', 'success');
 }
 
-// --- VERSION / APK ---
-function adminVersion() {
-    return `
-    <div class="feature-panel">
-        <div class="feature-title"><i class="fas fa-rocket"></i> Versión actual de la app</div>
-        <p style="font-size:1.2rem;font-weight:800;color:var(--primary)">v${APP_VERSION}</p>
-    </div>
-    <div class="feature-panel">
-        <div class="feature-title"><i class="fas fa-bell"></i> Publicar nueva versión</div>
-        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:16px">Cuando publiques una versión nueva, los usuarios verán un aviso automático para descargar el APK.</p>
-        <div class="form-row"><label>Número de versión</label><input type="text" id="ver-num" placeholder="Ej: 1.1"></div>
-        <div class="form-row"><label>Link de descarga del APK</label><input type="url" id="ver-url" placeholder="https://..."></div>
-        <button class="btn-primary" onclick="publishVersion()"><i class="fas fa-rocket"></i> Publicar versión</button>
-    </div>
-    <div class="feature-panel">
-        <div class="feature-title"><i class="fas fa-circle-info"></i> ¿Cómo funciona?</div>
-        <p style="color:var(--text2);font-size:0.85rem;line-height:1.7">1. Generás el nuevo APK con PWABuilder.<br>2. Lo subís a Google Drive o similar y copiás el link.<br>3. Pegás el link acá y publicás.<br>4. Los usuarios ven el banner de actualización automáticamente.</p>
-    </div>`;
-}
-async function publishVersion() {
-    const v = document.getElementById('ver-num')?.value.trim();
-    const url = document.getElementById('ver-url')?.value.trim();
-    if (!v) { showToast('Ingresá el número de versión', 'error'); return; }
-    try {
-        await db.from('app_config').upsert({key:'app_version', value:v});
-        if (url) await db.from('app_config').upsert({key:'latest_apk_url', value:url});
-        closeAdminModal();
-        showToast(`¡Versión ${v} publicada! Los usuarios serán notificados 🚀`, 'success');
-    } catch(e) { showToast('Error: '+e.message, 'error'); }
-}
-
-// --- CANALES ---
+// --- CANALES TV ---
 function adminCanales() {
     return `
-    ${S.channels.map((c,i)=>`<div class="card" style="cursor:default"><div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:10px">${c.logo?`<img src="${c.logo}" style="width:40px;height:40px;border-radius:8px;object-fit:contain;background:white;padding:4px">`:`<div style="width:40px;height:40px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center">📺</div>`}<div style="font-weight:700">${c.name}</div></div>
-        <label style="background:rgba(79,70,229,0.1);color:var(--primary);padding:6px 12px;border-radius:10px;cursor:pointer;font-size:0.8rem;font-weight:700"><i class="fas fa-image"></i> Logo<input type="file" accept="image/*" style="display:none" onchange="uploadChannelLogo(${i},this)"></label>
+    ${S.channels.map((c,i)=>`<div class="card" style="cursor:default"><div style="display:flex;align-items:center;gap:11px;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:9px">${c.logo?`<img src="${c.logo}" style="width:38px;height:38px;border-radius:8px;object-fit:contain;background:white;padding:4px">`:`<div style="width:38px;height:38px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center">📺</div>`}
+        <div style="font-weight:700;font-size:0.9rem">${c.name}</div></div>
+        <div style="display:flex;gap:6px">
+        <label style="background:rgba(79,70,229,0.1);color:var(--primary);padding:6px 11px;border-radius:9px;cursor:pointer;font-size:0.78rem;font-weight:700"><i class="fas fa-image"></i> Logo<input type="file" accept="image/*" style="display:none" onchange="uploadChannelLogo(${i},this)"></label>
+        <button class="btn-sm btn-danger" onclick="removeChannel(${i})"><i class="fas fa-trash"></i></button>
+        </div>
     </div></div>`).join('')}
     <div class="form-row" style="margin-top:12px"><label>Agregar canal</label><input type="text" id="new-ch" placeholder="Nombre del canal"></div>
     <button class="btn-primary" onclick="addChannel()"><i class="fas fa-plus"></i> Agregar</button>`;
 }
 function uploadChannelLogo(i, inp) {
-    const f = inp.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = e => { S.channels[i].logo = e.target.result; renderAllPages(); showToast('Logo actualizado', 'success'); }; r.readAsDataURL(f);
+    const f=inp.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{S.channels[i].logo=e.target.result; renderAdmin('canales');}; r.readAsDataURL(f);
 }
 function addChannel() {
-    const n = document.getElementById('new-ch')?.value.trim(); if (!n) { showToast('Ingresá el nombre', 'error'); return; }
-    S.channels.push({name:n, logo:null}); renderAdmin('canales'); showToast('Canal agregado', 'success');
+    const n=document.getElementById('new-ch')?.value.trim(); if(!n){ showToast('Ingresá el nombre','error'); return; }
+    S.channels.push({name:n, logo:null}); saveSettings(); renderAdmin('canales'); showToast('Canal agregado ✓','success');
 }
+function removeChannel(i) { S.channels.splice(i,1); saveSettings(); renderAdmin('canales'); showToast('Canal eliminado','success'); }
 
-// --- NUEVA FUNCIÓN ---
-let customFeatures = JSON.parse(localStorage.getItem('lsl-custom-features') || '[]');
-function adminNuevaFunc() {
+// --- DESTACADOS (Editar tarjetas del inicio) ---
+function adminDestacados() {
+    const icons = [['fa-calendar-day','Calendario'],['fa-star','Estrella'],['fa-trophy','Trofeo'],['fa-futbol','Pelota'],['fa-ranking-star','Ranking'],['fa-chart-line','Estadísticas'],['fa-bolt','Rayo'],['fa-fire','Fuego']];
     return `
-    <div class="feature-panel">
-        <div class="feature-title"><i class="fas fa-lightbulb"></i> Agregar nueva sección</div>
-        <div class="form-row"><label>Nombre</label><input type="text" id="fn-name" placeholder="Ej: Calendario, Rankings..."></div>
-        <div class="form-row"><label>Ícono FontAwesome</label><input type="text" id="fn-icon" placeholder="Ej: fa-calendar"></div>
-        <div class="form-row"><label>Descripción</label><input type="text" id="fn-desc" placeholder="Descripción breve"></div>
-        <button class="btn-primary" onclick="addFeature()"><i class="fas fa-plus"></i> Agregar al panel</button>
+    <p style="color:var(--text2);font-size:0.82rem;margin-bottom:14px">Configurá las 3 tarjetas de "Destacados" en la pantalla de inicio.</p>
+    ${S.destConfig.map((d,i)=>`
+    <div class="perso-section">
+        <h4><i class="fas ${d.icon}"></i> Tarjeta ${i+1}: ${d.label}</h4>
+        <div class="form-row"><label>Etiqueta (texto abajo)</label><input type="text" value="${d.label}" onchange="S.destConfig[${i}].label=this.value;applyDestConfig()"></div>
+        <div class="form-row"><label>Ícono (FontAwesome)</label>
+            <div class="color-grid">${icons.map(([ico,nm])=>`<div onclick="S.destConfig[${i}].icon='${ico}';applyDestConfig();renderAdmin('destacados')" title="${nm}" style="width:42px;height:42px;border-radius:10px;background:${d.icon===ico?'var(--primary)':'var(--bg)'};display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;color:${d.icon===ico?'white':'var(--text2)'}"><i class="fas ${ico}"></i></div>`).join('')}</div>
+        </div>
+    </div>`).join('')}
+    <button class="btn-primary" onclick="saveDestacados()"><i class="fas fa-save"></i> Guardar Destacados</button>`;
+}
+function saveDestacados() { saveSettings(); applyDestConfig(); showToast('¡Destacados guardados! ✓', 'success'); closeAdminModal(); }
+
+// --- VERSIONES ---
+function adminVersion() {
+    return `
+    <div class="feature-panel"><div class="feature-title"><i class="fas fa-rocket"></i> Versión actual</div>
+        <p style="font-size:1.1rem;font-weight:800;color:var(--primary)">v${APP_VERSION}</p>
     </div>
-    <div class="feature-panel">
-        <div class="feature-title"><i class="fas fa-list"></i> Funciones personalizadas</div>
-        <div id="custom-features-list">${renderCF()}</div>
+    <div class="feature-panel"><div class="feature-title"><i class="fas fa-bell"></i> Publicar nueva versión</div>
+        <p style="color:var(--text2);font-size:0.82rem;margin-bottom:14px">Los usuarios verán un aviso automático para descargar el APK.</p>
+        <div class="form-row"><label>Número de versión</label><input type="text" id="ver-num" placeholder="Ej: 1.1"></div>
+        <div class="form-row"><label>Link de descarga APK</label><input type="url" id="ver-url" placeholder="https://..."></div>
+        <button class="btn-primary" onclick="publishVersion()"><i class="fas fa-rocket"></i> Publicar</button>
     </div>`;
 }
-function renderCF() {
-    if (!customFeatures.length) return '<p style="color:var(--text2);font-size:0.85rem">Ninguna aún.</p>';
-    return customFeatures.map((f,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div><i class="fas ${f.icon}" style="color:var(--primary);margin-right:8px"></i><strong>${f.name}</strong></div><button class="btn-sm btn-danger" onclick="removeFeature(${i})"><i class="fas fa-trash"></i></button></div>`).join('');
+async function publishVersion() {
+    const v=document.getElementById('ver-num')?.value.trim();
+    const url=document.getElementById('ver-url')?.value.trim();
+    if (!v) { showToast('Ingresá el número de versión','error'); return; }
+    try {
+        await db.from('app_config').upsert({key:'app_version', value:v});
+        if (url) await db.from('app_config').upsert({key:'latest_apk_url', value:url});
+        closeAdminModal();
+        showToast(`¡Versión ${v} publicada! 🚀`, 'success');
+    } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
-function addFeature() {
-    const n = document.getElementById('fn-name')?.value.trim(); if (!n) { showToast('Ingresá un nombre','error'); return; }
-    customFeatures.push({name:n, icon:document.getElementById('fn-icon')?.value.trim()||'fa-star', desc:document.getElementById('fn-desc')?.value.trim()||''});
-    localStorage.setItem('lsl-custom-features', JSON.stringify(customFeatures));
-    document.getElementById('custom-features-list').innerHTML = renderCF();
-    showToast('¡Función agregada!','success');
-}
-function removeFeature(i) { customFeatures.splice(i,1); localStorage.setItem('lsl-custom-features',JSON.stringify(customFeatures)); document.getElementById('custom-features-list').innerHTML=renderCF(); }
 
-// ========== HELPERS ==========
+// --- CHAT GLOBAL ---
+function adminChatGlobal() {
+    return `
+    <div class="feature-panel">
+        <div class="feature-title"><i class="fas fa-users"></i> Amigos registrados</div>
+        <p style="color:var(--text2);font-size:0.82rem">Total de amigos del usuario actual: <strong>${S.friends.length}</strong></p>
+        <p style="color:var(--text2);font-size:0.82rem">Solicitudes pendientes: <strong>${S.friendRequests.length}</strong></p>
+    </div>
+    <div class="feature-panel">
+        <div class="feature-title"><i class="fas fa-comment-dots"></i> Simulador de solicitud</div>
+        <p style="color:var(--text2);font-size:0.82rem;margin-bottom:12px">Simular que alguien te manda una solicitud de amistad.</p>
+        <div class="form-row"><input type="text" id="sim-req-name" placeholder="Nombre del usuario"></div>
+        <button class="btn-primary" onclick="simFriendRequest()"><i class="fas fa-user-plus"></i> Simular solicitud</button>
+    </div>`;
+}
+function simFriendRequest() {
+    const name = document.getElementById('sim-req-name')?.value.trim();
+    if (!name) { showToast('Ingresá un nombre', 'error'); return; }
+    const req = {id: Date.now(), name, init: name.substring(0,2).toUpperCase(), online:false};
+    S.friendRequests.push(req);
+    localStorage.setItem('lsl-friend-requests', JSON.stringify(S.friendRequests));
+    updateFriendBadge();
+    renderSocialPage();
+    closeAdminModal();
+    showToast(`Solicitud de ${name} recibida!`, 'success');
+}
+
+// ===== HELPERS =====
 function previewImg(inp, prevId) {
-    const f = inp.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = e => { const img = document.getElementById(prevId); img.src = e.target.result; img.style.display = 'block'; }; r.readAsDataURL(f);
+    const f=inp.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=e=>{const img=document.getElementById(prevId);img.src=e.target.result;img.style.display='block';}; r.readAsDataURL(f);
 }
 function setLogo(imgId, wrapId, src) {
-    const img = document.getElementById(imgId); const wrap = document.getElementById(wrapId);
-    if (img) { img.src = src; img.style.display = 'block'; }
-    if (wrap) { const icon = wrap.querySelector('i'); if (icon) icon.style.display = 'none'; }
+    const img=document.getElementById(imgId); const wrap=document.getElementById(wrapId);
+    if (img) { img.src=src; img.style.display='block'; }
+    if (wrap) { const icon=wrap.querySelector('i'); if(icon) icon.style.display='none'; }
 }
-function loadSplashConfig() {
-    const cfg = JSON.parse(localStorage.getItem('lsl-splash') || 'null');
-    if (!cfg) return;
-    S.splashConfig = cfg;
-    if (cfg.title) document.getElementById('splash-title-txt').textContent = cfg.title;
-    if (cfg.subtitle) document.getElementById('splash-sub-txt').textContent = cfg.subtitle;
-    if (cfg.logo) { const img = document.getElementById('splash-logo-img'); img.src = cfg.logo; img.style.display = 'block'; document.querySelector('#splash-logo-wrap .def-icon').style.display = 'none'; }
-}
-document.getElementById('splash-logo-inp').onchange = function() {
-    const f = this.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = e => {
-        S.splashConfig.logo = e.target.result;
-        const img = document.getElementById('splash-logo-img'); img.src = e.target.result; img.style.display = 'block';
-        document.querySelector('#splash-logo-wrap .def-icon').style.display = 'none';
-        setLogo('login-logo-img', 'login-logo', e.target.result);
-        setLogo('hdr-logo-img', 'hdr-logo', e.target.result);
-        localStorage.setItem('lsl-splash', JSON.stringify(S.splashConfig));
-    }; r.readAsDataURL(f);
-};
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function showToast(msg, type='success') {
-    const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg;
-    t.className = 'toast '+type+' show';
-    document.getElementById('toast-icon').className = 'fas '+(type==='error'?'fa-circle-xmark':'fa-circle-check');
-    clearTimeout(window._tt); window._tt = setTimeout(()=>t.classList.remove('show'), 3500);
+    const t=document.getElementById('toast');
+    document.getElementById('toast-msg').textContent=msg;
+    t.className='toast '+type+' show';
+    document.getElementById('toast-icon').className='fas '+(type==='error'?'fa-circle-xmark':'fa-circle-check');
+    clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'), 3200);
 }
 function logout() { localStorage.removeItem('lsl-user'); location.reload(); }
 </script>
