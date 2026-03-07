@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
@@ -34,8 +34,8 @@
   --radius: 20px;
   --radius-sm: 14px;
   --radius-xs: 10px;
-  --font-head: 'Outfit', sans-serif;
-  --font-body: 'Space Grotesk', sans-serif;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -140,7 +140,7 @@ h1,h2,h3,h4,.logo-text{font-family:var(--font-head)}
 #app.active{display:block}
 
 /* ═══ HEADER ═══ */
-.app-header{padding:max(52px,calc(44px + var(--safe-top))) 18px 16px;display:flex;align-items:center;justify-content:space-between}
+.app-header{padding:max(16px,calc(10px + var(--safe-top))) 18px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
 .hdr-left{display:flex;align-items:center;gap:10px}
 .hamburger{width:42px;height:42px;border-radius:13px;background:var(--surface);border:none;color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:all 0.2s}
 .hamburger:active{transform:scale(0.92)}
@@ -168,26 +168,33 @@ h1,h2,h3,h4,.logo-text{font-family:var(--font-head)}
 .card:active{transform:scale(0.98);box-shadow:none}
 
 /* ═══ LIVE CARD ═══ */
-.live-card{background:linear-gradient(135deg,#0d1030 0%,#1a1060 100%);color:white;border-radius:var(--radius);padding:20px;margin-bottom:12px;cursor:pointer;box-shadow:0 8px 32px rgba(30,30,100,0.45);transition:transform 0.2s;position:relative;overflow:hidden}
-.live-card::before{content:'';position:absolute;top:-50%;right:-30%;width:200px;height:200px;background:radial-gradient(circle,rgba(59,130,246,0.15),transparent 70%);pointer-events:none}
-.live-card:active{transform:scale(0.98)}
-.live-badge{display:inline-flex;align-items:center;gap:6px;background:#ef4444;padding:4px 11px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:1px;margin-bottom:14px}
-.live-badge.upcoming-badge{background:rgba(59,130,246,0.3)}
-.live-badge.done-badge{background:rgba(255,255,255,0.1)}
+.live-card{background:var(--surface);color:var(--text);border-radius:var(--radius);padding:18px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;border:1px solid var(--border)}
+.live-card.is-live{background:linear-gradient(135deg,#0d1030 0%,#1a1060 100%);color:white;border-color:rgba(59,130,246,0.3);box-shadow:0 8px 32px rgba(30,30,100,0.45)}
+.live-card::before{content:'';position:absolute;top:-50%;right:-30%;width:200px;height:200px;background:radial-gradient(circle,rgba(59,130,246,0.12),transparent 70%);pointer-events:none}
+.live-card:active{transform:scale(0.98);box-shadow:none}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:#ef4444;padding:4px 11px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:1px;margin-bottom:14px;color:white}
+.live-badge.upcoming-badge{background:rgba(59,130,246,0.15);color:var(--primary)}
+.live-card.is-live .live-badge.upcoming-badge{background:rgba(59,130,246,0.3);color:#93c5fd}
+.live-badge.done-badge{background:var(--surface2);color:var(--text2)}
+.live-card.is-live .live-badge.done-badge{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:white;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .match-teams{display:flex;align-items:center;justify-content:space-between}
 .team-block{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1}
-.team-shield{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;overflow:hidden;transition:transform 0.3s}
+.team-shield{width:52px;height:52px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;overflow:hidden;transition:transform 0.3s}
+.live-card.is-live .team-shield{background:rgba(255,255,255,0.15)}
 .team-shield img{width:100%;height:100%;object-fit:contain}
 .team-label{font-size:0.8rem;font-weight:600;text-align:center;max-width:80px;line-height:1.3}
 .score-block{padding:0 12px;text-align:center;min-width:80px}
 .score-big{font-size:2.4rem;font-weight:900;font-family:var(--font-head);letter-spacing:-2px}
 .score-min{font-size:0.72rem;color:rgba(255,255,255,0.6);margin-top:2px}
-.match-footer{display:flex;align-items:center;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.75rem;color:rgba(255,255,255,0.55);flex-wrap:wrap;justify-content:space-between}
-.channel-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.1);padding:3px 10px;border-radius:20px}
+.match-footer{display:flex;align-items:center;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text2);flex-wrap:wrap;justify-content:space-between}
+.live-card.is-live .match-footer{border-top-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.55)}
+.channel-badge{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);padding:3px 10px;border-radius:20px}
+.live-card.is-live .channel-badge{background:rgba(255,255,255,0.1)}
 .channel-logo{width:16px;height:16px;border-radius:4px;object-fit:contain;background:white;padding:1px}
-.comp-badge{background:rgba(59,130,246,0.25);color:var(--primary-light);font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:8px;letter-spacing:0.3px}
+.comp-badge{background:rgba(59,130,246,0.1);color:var(--primary);font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:8px;letter-spacing:0.3px}
+.live-card.is-live .comp-badge{background:rgba(59,130,246,0.25);color:var(--primary-light)}
 
 /* ═══ JORNADA ═══ */
 .jornada-header{display:flex;align-items:center;gap:10px;margin:18px 0 10px;padding:10px 14px;background:var(--surface2);border-radius:12px}
@@ -228,20 +235,22 @@ h1,h2,h3,h4,.logo-text{font-family:var(--font-head)}
 .news-date{font-size:0.73rem;color:var(--text2)}
 
 /* ═══ NAV ISLAND ═══ */
-.nav-island{position:fixed;bottom:max(16px,calc(10px + var(--safe-bottom)));left:50%;transform:translateX(-50%);background:var(--nav-bg);backdrop-filter:blur(28px) saturate(200%);-webkit-backdrop-filter:blur(28px) saturate(200%);border-radius:30px;padding:6px;display:flex;gap:3px;z-index:500;box-shadow:0 8px 40px rgba(0,0,0,0.2),0 0 0 1px rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.12);transition:box-shadow 0.4s}
+.nav-island{position:fixed;bottom:max(16px,calc(10px + var(--safe-bottom)));left:50%;transform:translateX(-50%);background:var(--nav-bg);backdrop-filter:blur(28px) saturate(200%);-webkit-backdrop-filter:blur(28px) saturate(200%);border-radius:30px;padding:8px;display:flex;gap:4px;z-index:500;box-shadow:0 8px 40px rgba(0,0,0,0.2),0 0 0 1px rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.12);transition:box-shadow 0.4s}
 [data-theme="dark"] .nav-island{box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.05)}
-.nav-btn{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 14px;border:none;background:none;color:var(--text3);border-radius:24px;cursor:pointer;transition:all 0.3s;font-size:0.58rem;font-weight:700;min-width:52px;letter-spacing:0.3px;text-transform:uppercase}
-.nav-btn i{font-size:1.1rem;transition:all 0.3s}
+.nav-btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 18px;border:none;background:none;color:var(--text3);border-radius:22px;cursor:pointer;transition:all 0.3s;min-width:54px}
+.nav-btn i{font-size:1.15rem;transition:all 0.3s;position:relative;z-index:1}
+.nav-btn span{display:none}
 .nav-btn.active{color:white}
-.nav-pill{position:absolute;inset:0;border-radius:24px;transition:all 0.35s cubic-bezier(0.34,1.2,0.64,1);z-index:-1;opacity:0;transform:scale(0.8)}
+.nav-btn.active i{transform:scale(1.1)}
+.nav-pill{position:absolute;inset:0;border-radius:22px;transition:all 0.35s cubic-bezier(0.34,1.2,0.64,1);z-index:0;opacity:0;transform:scale(0.8)}
 .nav-btn.active .nav-pill{opacity:1;transform:scale(1)}
 .nav-btn[data-page="home"].active .nav-pill{background:linear-gradient(135deg,#3b82f6,#6366f1)}
 .nav-btn[data-page="matches"].active .nav-pill{background:linear-gradient(135deg,#059669,#10b981)}
-.nav-btn[data-page="info"].active .nav-pill{background:linear-gradient(135deg,#d97706,#f59e0b)}
-.nav-btn[data-page="social"].active .nav-pill{background:linear-gradient(135deg,#db2777,#ec4899)}
 .nav-btn[data-page="profile"].active .nav-pill{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
-.nav-btn[data-page="admin"].active .nav-pill{background:linear-gradient(135deg,#0f172a,#1e293b)}
-.nav-badge{position:absolute;top:4px;right:7px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:white;font-size:0.5rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--surface)}
+.nav-btn[data-page="admin"].active .nav-pill{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.nav-active-dot{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--primary);opacity:0;transition:opacity 0.3s}
+.nav-btn.active .nav-active-dot{opacity:1}
+.nav-badge{position:absolute;top:4px;right:7px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:white;font-size:0.5rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--surface);z-index:2}
 .nav-badge.show{display:flex}
 
 /* ═══ SIDE MENU ═══ */
@@ -653,15 +662,15 @@ h1,h2,h3,h4,.logo-text{font-family:var(--font-head)}
     </div>
     <div class="admin-grid">
       <div class="admin-card" onclick="playClick();openAdmin('noticias')" style="--ac:#3b82f6">
-        <div class="admin-icon" style="background:rgba(59,130,246,0.12)"><i class="fas fa-newspaper" style="color:#3b82f6"></i></div>
+        <div class="admin-icon" style="background:rgba(59,130,246,0.12)"><i class="fas fa-pen-to-square" style="color:#3b82f6"></i></div>
         <div class="admin-card-title">Noticias</div><div class="admin-card-sub">Crear y editar</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('partidos')" style="--ac:#059669">
-        <div class="admin-icon" style="background:rgba(5,150,105,0.12)"><i class="fas fa-futbol" style="color:#059669"></i></div>
+        <div class="admin-icon" style="background:rgba(5,150,105,0.12)"><i class="fas fa-calendar-plus" style="color:#059669"></i></div>
         <div class="admin-card-title">Partidos</div><div class="admin-card-sub">Fixture y jornadas</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('tabla')" style="--ac:#d97706">
-        <div class="admin-icon" style="background:rgba(217,119,6,0.12)"><i class="fas fa-chart-bar" style="color:#d97706"></i></div>
+        <div class="admin-icon" style="background:rgba(217,119,6,0.12)"><i class="fas fa-ranking-star" style="color:#d97706"></i></div>
         <div class="admin-card-title">Tabla</div><div class="admin-card-sub">Posiciones</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('equipos')" style="--ac:#7c3aed">
@@ -669,35 +678,35 @@ h1,h2,h3,h4,.logo-text{font-family:var(--font-head)}
         <div class="admin-card-title">Equipos</div><div class="admin-card-sub">Logos e info</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('personalizacion')" style="--ac:#db2777">
-        <div class="admin-icon" style="background:rgba(219,39,119,0.12)"><i class="fas fa-palette" style="color:#db2777"></i></div>
+        <div class="admin-icon" style="background:rgba(219,39,119,0.12)"><i class="fas fa-swatchbook" style="color:#db2777"></i></div>
         <div class="admin-card-title">Estilo</div><div class="admin-card-sub">Colores y diseño</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('notificaciones')" style="--ac:#0ea5e9">
-        <div class="admin-icon" style="background:rgba(14,165,233,0.12)"><i class="fas fa-bell" style="color:#0ea5e9"></i></div>
+        <div class="admin-icon" style="background:rgba(14,165,233,0.12)"><i class="fas fa-paper-plane" style="color:#0ea5e9"></i></div>
         <div class="admin-card-title">Notifs</div><div class="admin-card-sub">Enviar al instante</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('usuarios')" style="--ac:#059669">
-        <div class="admin-icon" style="background:rgba(5,150,105,0.12)"><i class="fas fa-users" style="color:#059669"></i></div>
+        <div class="admin-icon" style="background:rgba(5,150,105,0.12)"><i class="fas fa-people-group" style="color:#059669"></i></div>
         <div class="admin-card-title">Usuarios</div><div class="admin-card-sub">Ver y gestionar</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('bienvenida')" style="--ac:#f59e0b">
-        <div class="admin-icon" style="background:rgba(245,158,11,0.12)"><i class="fas fa-star" style="color:#f59e0b"></i></div>
+        <div class="admin-icon" style="background:rgba(245,158,11,0.12)"><i class="fas fa-wand-magic-sparkles" style="color:#f59e0b"></i></div>
         <div class="admin-card-title">Bienvenida</div><div class="admin-card-sub">Editar splash</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('canales')" style="--ac:#6366f1">
-        <div class="admin-icon" style="background:rgba(99,102,241,0.12)"><i class="fas fa-tv" style="color:#6366f1"></i></div>
+        <div class="admin-icon" style="background:rgba(99,102,241,0.12)"><i class="fas fa-satellite-dish" style="color:#6366f1"></i></div>
         <div class="admin-card-title">Canales TV</div><div class="admin-card-sub">Logos y nombres</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('destacados')" style="--ac:#ec4899">
-        <div class="admin-icon" style="background:rgba(236,72,153,0.12)"><i class="fas fa-grip" style="color:#ec4899"></i></div>
+        <div class="admin-icon" style="background:rgba(236,72,153,0.12)"><i class="fas fa-star" style="color:#ec4899"></i></div>
         <div class="admin-card-title">Destacados</div><div class="admin-card-sub">Tarjetas inicio</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('version')" style="--ac:#f43f5e">
-        <div class="admin-icon" style="background:rgba(244,63,94,0.12)"><i class="fas fa-rocket" style="color:#f43f5e"></i></div>
+        <div class="admin-icon" style="background:rgba(244,63,94,0.12)"><i class="fas fa-code-branch" style="color:#f43f5e"></i></div>
         <div class="admin-card-title">Versiones</div><div class="admin-card-sub">APK y updates</div>
       </div>
       <div class="admin-card" onclick="playClick();openAdmin('chat-admin')" style="--ac:#14b8a6">
-        <div class="admin-icon" style="background:rgba(20,184,166,0.12)"><i class="fas fa-comments" style="color:#14b8a6"></i></div>
+        <div class="admin-icon" style="background:rgba(20,184,166,0.12)"><i class="fas fa-message" style="color:#14b8a6"></i></div>
         <div class="admin-card-title">Chat</div><div class="admin-card-sub">Mensajes globales</div>
       </div>
     </div>
@@ -707,28 +716,19 @@ h1,h2,h3,h4,.logo-text{font-family:var(--font-head)}
   <nav class="nav-island">
     <button class="nav-btn active" data-page="home" onclick="playClick();showPage('home')">
       <div class="nav-pill"></div>
-      <i class="fas fa-house-chimney"></i><span>Inicio</span>
+      <i class="fas fa-house-chimney"></i>
     </button>
     <button class="nav-btn" data-page="matches" onclick="playClick();showPage('matches')">
       <div class="nav-pill"></div>
-      <i class="fas fa-futbol"></i><span>Fixture</span>
-    </button>
-    <button class="nav-btn" data-page="info" onclick="playClick();showPage('info')">
-      <div class="nav-pill"></div>
-      <i class="fas fa-chart-pie"></i><span>Info</span>
-    </button>
-    <button class="nav-btn" data-page="social" onclick="playClick();showPage('social')">
-      <div class="nav-pill"></div>
-      <i class="fas fa-comments"></i><span>Social</span>
-      <div class="nav-badge" id="social-badge">0</div>
+      <i class="fas fa-futbol"></i>
     </button>
     <button class="nav-btn" data-page="profile" onclick="playClick();showPage('profile')">
       <div class="nav-pill"></div>
-      <i class="fas fa-user-circle"></i><span>Perfil</span>
+      <i class="fas fa-user-circle"></i>
     </button>
     <button class="nav-btn" data-page="admin" id="nav-admin" onclick="playClick();showPage('admin')" style="display:none">
       <div class="nav-pill"></div>
-      <i class="fas fa-crown"></i><span>Admin</span>
+      <i class="fas fa-crown"></i>
     </button>
   </nav>
 </div>
@@ -1274,23 +1274,32 @@ function matchCardHTML(m, dark=false) {
   const p1 = total ? Math.round((m.pred1/total)*100) : 33;
   const pD = total ? Math.round((m.predD/total)*100) : 34;
   const p2 = total ? Math.round(100-p1-pD) : 33;
-  const statusLabel = m.status==='live' ? '<span class="live-badge"><div class="live-dot"></div>EN VIVO</span>' :
+  const isLive = m.status === 'live';
+  const statusLabel = isLive ? '<span class="live-badge"><div class="live-dot"></div>EN VIVO</span>' :
     m.status==='done' ? '<span class="live-badge done-badge">✓ Finalizado</span>' :
     `<span class="live-badge upcoming-badge">⏱ ${m.time||m.date||'Próximo'}</span>`;
 
-  return `<div class="live-card" onclick="openDetail(${m.id})">
+  // Format date for display
+  let displayDate = m.date || '';
+  if (displayDate && displayDate.includes('-') && displayDate.length === 10) {
+    const [y,mo,d] = displayDate.split('-');
+    displayDate = `${d}/${mo}/${y}`;
+  }
+
+  return `<div class="live-card${isLive?' is-live':''}" onclick="openDetail(${m.id})">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       ${statusLabel}
       <div style="display:flex;gap:6px;align-items:center">
-        <span class="comp-badge"><i class="fas fa-trophy" style="font-size:0.65rem"></i> ${m.competicion||'Liga'}</span>
-        <span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">J${m.jornada||1}</span>
+        <span class="comp-badge">${m.competicion||'Liga'}</span>
+        <span style="font-size:0.7rem;color:${isLive?'rgba(255,255,255,0.5)':'var(--text3)'}">J${m.jornada||1}</span>
       </div>
     </div>
     <div class="match-teams">
       <div class="team-block">${getTeamShield(m.team1)}<div class="team-label">${m.team1}</div></div>
       <div class="score-block">
-        <div class="score-big">${m.status!=='upcoming'?`${m.score1??0} - ${m.score2??0}`:'vs'}</div>
-        ${m.status==='live'?`<div class="score-min">⏱ ${m.min||'?'}'</div>`:''}
+        <div class="score-big"${isLive?'':' style="color:var(--text)"'}>${m.status!=='upcoming'?`${m.score1??0} - ${m.score2??0}`:'vs'}</div>
+        ${isLive?`<div class="score-min">⏱ ${m.min||'?'}'</div>`:''}
+        ${!isLive&&displayDate?`<div style="font-size:0.7rem;color:var(--text2);margin-top:4px">${displayDate}${m.time?' · '+m.time:''}</div>`:''}
       </div>
       <div class="team-block">${getTeamShield(m.team2)}<div class="team-label">${m.team2}</div></div>
     </div>
@@ -1306,11 +1315,11 @@ function matchCardHTML(m, dark=false) {
         <div class="pred-seg d" style="flex:${pD}"></div>
         <div class="pred-seg l" style="flex:${p2}"></div>
       </div>
-      <div class="pred-labels"><span>Local ${p1}%</span><span>Empate ${pD}%</span><span>Visit. ${p2}%</span></div>
+      <div class="pred-labels"${isLive?'':' style="color:var(--text2)"'}><span>Local ${p1}%</span><span>Empate ${pD}%</span><span>Visit. ${p2}%</span></div>
     </div>` : ''}
     <div class="match-footer">
       <span><i class="fas fa-location-dot"></i> ${m.stadium||'—'}</span>
-      <div class="channel-badge">${ch.logo?`<img class="channel-logo" src="${ch.logo}">`:''}${ch.name||''}</div>
+      ${ch.name?`<div class="channel-badge">${ch.logo?`<img class="channel-logo" src="${ch.logo}">`:'📺'}${ch.name}</div>`:''}
     </div>
   </div>`;
 }
@@ -1720,28 +1729,36 @@ async function createNews() {
   try {
     const { error } = await db.from('noticias').insert({title, tag, img, fecha});
     if (error) throw error;
+    const { data } = await db.from('noticias').select('*').order('created_at',{ascending:false});
+    if (data) S.news = data.map(n => ({id:n.id, title:n.title, tag:n.tag||'Noticias', img:n.img||null, date:n.fecha||''}));
+    renderNews();
     closeAdminModal(); playSuccess();
     showToast('¡Noticia publicada! 📰', 'success');
   } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
 async function deleteNews(id) {
   if (!confirm('¿Eliminar esta noticia?')) return;
-  try { await db.from('noticias').delete().eq('id', id); showToast('Noticia eliminada', 'success'); } catch(e) { showToast('Error: '+e.message, 'error'); }
+  try {
+    await db.from('noticias').delete().eq('id', id);
+    const { data } = await db.from('noticias').select('*').order('created_at',{ascending:false});
+    if (data) S.news = data.map(n => ({id:n.id, title:n.title, tag:n.tag||'Noticias', img:n.img||null, date:n.fecha||''}));
+    renderNews();
+    showToast('Noticia eliminada', 'success');
+  } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
 
 // ═══ ADMIN - PARTIDOS ═══
 function adminPartidos() {
   const teamOpts = S.teams.map(t=>`<option value="${t.name}">${t.emoji} ${t.name}</option>`).join('');
   const chOpts = S.channels.length ? S.channels.map(c=>`<option>${c.name}</option>`).join('') : '<option>ESPN</option><option>FOX Sport</option><option>DSports</option>';
-  const compOpts = ['Liga','Copa','Torneo Apertura','Torneo Clausura','Amistoso','Eliminatorias','Otro'].map(c=>`<option>${c}</option>`).join('');
   return `
-  <div class="form-row"><label>Competición</label><select id="p-comp">${compOpts}</select></div>
+  <div class="form-row"><label>Competición <span style="color:var(--text2);font-weight:400;font-size:0.75rem">(texto libre)</span></label><input type="text" id="p-comp" placeholder="Ej: Liga, Copa, Torneo Apertura..." value="Liga"></div>
   <div class="form-row"><label>Jornada N°</label><input type="number" id="p-jorn" value="1" min="1" placeholder="1"></div>
   <div class="form-row"><label>Equipo Local</label><select id="p-local">${teamOpts}</select></div>
   <div class="form-row"><label>Equipo Visitante</label><select id="p-visit">${teamOpts}</select></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <div class="form-row"><label>Fecha (dd/mm)</label><input type="text" id="p-date" placeholder="dd/mm/aaaa"></div>
-    <div class="form-row"><label>Hora</label><input type="text" id="p-time" placeholder="HH:MM"></div>
+    <div class="form-row"><label>Fecha</label><input type="date" id="p-date"></div>
+    <div class="form-row"><label>Hora</label><input type="time" id="p-time"></div>
   </div>
   <div class="form-row"><label>Estadio</label><input type="text" id="p-stad" placeholder="Nombre del estadio"></div>
   <div class="form-row"><label>Canal de TV</label><select id="p-ch">${chOpts}<option>Otro</option></select></div>
@@ -1757,17 +1774,20 @@ function adminPartidos() {
       <div class="form-row"><label>Minuto</label><input type="text" id="p-min" placeholder="45"></div>
     </div>
   </div>
-  <button class="btn-primary" onclick="createPartido()"><i class="fas fa-save"></i> Guardar Partido</button>
+  <button class="btn-primary" onclick="createPartido()"><i class="fas fa-calendar-plus"></i> Guardar Partido</button>
   <div class="sec-title" style="margin-top:18px">Partidos cargados (${S.matches.length})</div>
-  ${S.matches.map(m=>`<div class="card" style="cursor:default">
+  ${S.matches.map(m=>{
+    let dsp = m.date||'';
+    if (dsp && dsp.includes('-') && dsp.length===10) { const [y,mo,d]=dsp.split('-'); dsp=`${d}/${mo}/${y}`; }
+    return `<div class="card" style="cursor:default">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>
         <div style="font-weight:700;font-size:0.88rem">${m.team1} vs ${m.team2}</div>
-        <div style="font-size:0.75rem;color:var(--text2);margin-top:3px">J${m.jornada||1} · ${m.competicion||'Liga'} · ${m.status==='live'?'🔴 LIVE':m.status==='done'?'✅ Final':'⏱ Próximo'} · ${m.date||''} ${m.time||''}</div>
+        <div style="font-size:0.75rem;color:var(--text2);margin-top:3px">J${m.jornada||1} · ${m.competicion||'Liga'} · ${m.status==='live'?'🔴 LIVE':m.status==='done'?'✅ Final':'⏱ Próximo'}${dsp?' · '+dsp:''}${m.time?' '+m.time:''}</div>
       </div>
       <button class="btn-sm btn-danger" onclick="deletePartido(${m.id})"><i class="fas fa-trash"></i></button>
     </div>
-  </div>`).join('')}`;
+  </div>`;}).join('')}`;
 }
 async function createPartido() {
   const local=document.getElementById('p-local')?.value;
@@ -1791,14 +1811,32 @@ async function createPartido() {
   try {
     const { error } = await db.from('partidos').insert(data);
     if (error) throw error;
+    // Immediately refresh data without waiting for realtime
+    await reloadMatches();
     closeAdminModal(); playSuccess();
     showToast('¡Partido creado! ⚽', 'success');
   } catch(e) { showToast('Error: '+e.message, 'error'); }
 }
 async function deletePartido(id) {
   if (!confirm('¿Eliminar este partido?')) return;
-  await db.from('partidos').delete().eq('id', id);
-  showToast('Partido eliminado', 'success');
+  try {
+    await db.from('partidos').delete().eq('id', id);
+    await reloadMatches();
+    showToast('Partido eliminado', 'success');
+  } catch(e) { showToast('Error al eliminar', 'error'); }
+}
+async function reloadMatches() {
+  try {
+    const { data } = await db.from('partidos').select('*').order('jornada',{ascending:true}).order('created_at',{ascending:false});
+    if (data) S.matches = data.map(m => ({
+      id:m.id, team1:m.team1, team2:m.team2, score1:m.score1, score2:m.score2,
+      status:m.status, stadium:m.stadium||'', channel:m.channel||'',
+      date:m.match_date||'', time:m.match_time||'', min:m.min_played||'',
+      jornada:m.jornada||1, competicion:m.competicion||'Liga',
+      pred1:m.pred1||0, predD:m.pred_d||0, pred2:m.pred2||0,
+    }));
+    renderAllPages(); updateStats();
+  } catch(e) { console.error(e); }
 }
 
 // ═══ ADMIN - TABLA ═══
@@ -2079,6 +2117,44 @@ function showToast(msg, type='success') {
   clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'), 3200);
 }
 function logout() { localStorage.removeItem('lsl-user'); location.reload(); }
+
+// ═══ PWA SERVICE WORKER ═══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swCode = `
+const CACHE = 'lsl-cache-v1';
+const ASSETS = ['./', './index.html'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{}));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(fetch(e.request).then(r => {
+    const clone = r.clone();
+    caches.open(CACHE).then(c => c.put(e.request, clone)).catch(()=>{});
+    return r;
+  }).catch(() => caches.match(e.request)));
+});`;
+    try {
+      const blob = new Blob([swCode], {type:'application/javascript'});
+      const url = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(url).catch(()=>{});
+    } catch(e) {}
+  });
+}
+
+// ═══ PWA INSTALL PROMPT ═══
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
 </script>
 </body>
 </html>
