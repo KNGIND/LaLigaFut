@@ -2452,16 +2452,22 @@
   body.nav-youtube #island-nav {
     padding: 0;
     border-radius: 0;
+    position: relative;
   }
   body.nav-youtube .island-inner {
     border-radius: 0;
-    padding: 6px 0 2px;
+    padding: 8px 0 4px;
     box-shadow: 0 -1px 0 var(--border);
-    background: var(--header-bg);
-    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+  }
+  [data-theme="dark"] body.nav-youtube .island-inner,
+  body.nav-youtube [data-theme="dark"] .island-inner {
+    background: rgba(10,12,18,0.78);
   }
   body.nav-youtube .nav-item {
-    border-radius: 0;
+    border-radius: 4px;
     padding: 6px 8px 8px;
     min-width: 0;
     flex: 1;
@@ -2471,7 +2477,16 @@
     transform: none;
     color: var(--gold);
   }
-  body.nav-youtube .nav-item.active svg { transform: none; filter: none; }
+  body.nav-youtube .nav-item.active svg { transform: none; }
+  body.nav-youtube .nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
   body.nav-youtube #ambient-canvas { display: none; }
 
   /* ===== NAV STYLE: POKEMON (circular floating) ===== */
@@ -2570,6 +2585,61 @@
     font-size: 12px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
   }
+
+
+  /* ===== ADMIN PIN LOCK ===== */
+  #admin-pin-overlay {
+    position: fixed; inset: 0;
+    background: var(--overlay);
+    z-index: 500;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  #admin-pin-overlay.active { opacity: 1; pointer-events: all; }
+  .pin-modal {
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 32px 24px;
+    width: 100%; max-width: 320px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.92);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #admin-pin-overlay.active .pin-modal { transform: scale(1); }
+  .pin-icon { font-size: 40px; margin-bottom: 12px; }
+  .pin-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--text); margin-bottom:4px; }
+  .pin-sub { font-size:13px; color:var(--text3); margin-bottom:24px; }
+  .pin-dots {
+    display: flex; justify-content: center; gap: 12px; margin-bottom: 24px;
+  }
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .pin-dot.filled { background: var(--gold); border-color: var(--gold); }
+  .pin-dot.error { background: #ff5050; border-color: #ff5050; }
+  .pin-keypad {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+    max-width: 240px; margin: 0 auto 16px;
+  }
+  .pin-key {
+    aspect-ratio: 1; border-radius: 50%;
+    background: var(--bg3); border: none;
+    font-size: 20px; font-weight: 700; color: var(--text);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    font-family: 'Figtree', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pin-key:active { background: var(--gold); color: #000; transform: scale(0.9); }
+  .pin-key.wide { border-radius: 24px; font-size: 14px; }
+  .pin-cancel { font-size: 13px; color: var(--text3); background: none; border: none; cursor: pointer; margin-top: 4px; padding: 8px; }
 
 </style>
 </head>
@@ -2910,7 +2980,7 @@
         <span>Info</span>
       </button>
 
-      <button class="nav-item" data-page="admin" id="nav-admin">
+      <button class="nav-item" data-page="admin" id="nav-admin" onclick="handleAdminNav(event)">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <span>Admin</span>
       </button>
@@ -3190,7 +3260,65 @@
 </div>
 
 <script>
+// ===== ADMIN PIN =====
+const ADMIN_CODE = 'LSL2024'; // ← Código secreto de admin
+let pinBuffer = '';
+let adminUnlocked = localStorage.getItem('lsl_admin_unlocked') === 'true';
+
+function requireAdmin(callback) {
+  if (adminUnlocked) { callback(); return; }
+  document.getElementById('admin-pin-overlay').classList.add('active');
+  window._pinCallback = callback;
+}
+
+function pinKey(k) {
+  if (pinBuffer.length >= 7) return;
+  pinBuffer += k;
+  updatePinDots();
+  playSound('click');
+  if (pinBuffer.length === 7) {
+    setTimeout(() => checkPin(), 120);
+  }
+}
+
+function pinBackspace() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+  playSound('click');
+}
+
+function updatePinDots(state) {
+  for (let i = 0; i < 7; i++) {
+    const dot = document.getElementById('pd-' + i);
+    if (!dot) continue;
+    dot.classList.remove('filled', 'error');
+    if (state === 'error') dot.classList.add('error');
+    else if (i < pinBuffer.length) dot.classList.add('filled');
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === ADMIN_CODE) {
+    adminUnlocked = true;
+    localStorage.setItem('lsl_admin_unlocked', 'true');
+    closePinModal();
+    showToast('✅ Acceso concedido');
+    if (window._pinCallback) { window._pinCallback(); window._pinCallback = null; }
+  } else {
+    updatePinDots('error');
+    playSound('click');
+    setTimeout(() => { pinBuffer = ''; updatePinDots(); }, 800);
+  }
+}
+
+function closePinModal() {
+  document.getElementById('admin-pin-overlay').classList.remove('active');
+  pinBuffer = '';
+  updatePinDots();
+}
+
 // ===== SUPABASE =====
+// handleAdminNav defined after init
 const SUPABASE_URL = 'https://swvvbnnsryqjkwpcqcte.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3dnZibm5zcnlxamt3cGNxY3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMjUyOTksImV4cCI6MjA4OTkwMTI5OX0.9Yaf2obt8omQVHkc_SJCPxpnERCKfSS_QTMgpDcMocY';
 const SB_HEADERS = { 'Content-Type':'application/json', 'apikey': SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Prefer':'return=representation' };
@@ -3373,10 +3501,13 @@ async function loadTemporada() {
       temporadaData = data[0];
       if(temporadaData.color_principal) {
         document.documentElement.style.setProperty('--gold', temporadaData.color_principal);
+        document.documentElement.style.setProperty('--gold-dark', temporadaData.color_principal);
+        localStorage.setItem('lsl_main_color', temporadaData.color_principal);
       }
       if(temporadaData.logo_url) {
         const el = document.getElementById('header-logo-img');
         if(el) el.src = temporadaData.logo_url;
+        localStorage.setItem('lsl_logo', temporadaData.logo_url); // cache locally
       }
       const sub = document.getElementById('header-sub');
       if(sub) sub.textContent = `TEMPORADA ${temporadaData.numero} · ${temporadaData.nombre}`;
@@ -3460,8 +3591,16 @@ function updateGreeting() {
 // ===== NAVIGATION =====
 function setupNavigation() {
   document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.addEventListener('click', () => { navigateTo(btn.dataset.page); playSound('nav'); });
+    btn.addEventListener('click', (e) => {
+      if (btn.dataset.page === 'admin') return; // handled by handleAdminNav
+      navigateTo(btn.dataset.page); playSound('nav');
+    });
   });
+}
+
+function handleAdminNav(e) {
+  e.stopPropagation();
+  requireAdmin(() => { navigateTo('admin'); playSound('nav'); });
 }
 
 function navigateTo(page) {
@@ -3623,17 +3762,18 @@ function setupSearch() {
 }
 
 // ===== MUSIC (YouTube IFrame) =====
+// Playlist from: https://music.youtube.com/playlist?list=PLs2cQeSN3vCL1XsoIeGairY4NzCUbllFC
 const playlist = [
-  { id:'j-fWDrZSiZs', title:'Amarillo',           artist:'J Balvin',               dur:'3:28', emoji:'🟡' },
-  { id:'Pgzp4HwFfSk', title:'Ojitos Lindos',       artist:'Bad Bunny & Bomba Estéreo', dur:'4:18', emoji:'👀' },
-  { id:'kTJczUoc26U', title:'Tití Me Preguntó',    artist:'Bad Bunny',              dur:'4:04', emoji:'🐰' },
-  { id:'g9suFKnKkHM', title:'Efecto',              artist:'Bad Bunny',              dur:'3:43', emoji:'✨' },
-  { id:'bKBtVR2GwCI', title:'Provenza',            artist:'Karol G',               dur:'3:12', emoji:'🌿' },
-  { id:'JSCQxhSE3gQ', title:'Dákiti',              artist:'Bad Bunny ft. Jhay Cortez', dur:'3:15', emoji:'🌴' },
-  { id:'DdNtgFfOf_E', title:'La Canción',          artist:'J Balvin & Bad Bunny',  dur:'3:49', emoji:'🎶' },
-  { id:'wnJ6LuUFpMo', title:'MAMIII',              artist:'Becky G & Karol G',     dur:'3:01', emoji:'💜' },
-  { id:'GfDxCVsKYaM', title:'Hawái',               artist:'Maluma',                dur:'3:18', emoji:'🏝️' },
-  { id:'cDFkXOlFPqU', title:'Con Calma',           artist:'Daddy Yankee & Snow',   dur:'3:23', emoji:'🎉' },
+  { id:'j-fWDrZSiZs', title:'Amarillo',         artist:'J Balvin',                  dur:'3:28', emoji:'🟡' },
+  { id:'X8JoIHHBMhs', title:'Ojitos Lindos',     artist:'Bad Bunny & Bomba Estéreo', dur:'4:18', emoji:'👀' },
+  { id:'BSBtBpSm3rQ', title:'Tití Me Preguntó',  artist:'Bad Bunny',                 dur:'4:04', emoji:'🐰' },
+  { id:'vwVnHnDiEu8', title:'Efecto',            artist:'Bad Bunny',                 dur:'3:43', emoji:'✨' },
+  { id:'KM_GEMxSLZU', title:'Provenza',          artist:'Karol G',                   dur:'3:12', emoji:'🌿' },
+  { id:'x3mFnpOvzmQ', title:'Dákiti',            artist:'Bad Bunny & Jhay Cortez',   dur:'3:15', emoji:'🌴' },
+  { id:'69edMSGJNOE', title:'La Canción',        artist:'J Balvin & Bad Bunny',      dur:'3:49', emoji:'🎶' },
+  { id:'p_4coiRG_BI', title:'MAMIII',            artist:'Becky G & Karol G',         dur:'3:01', emoji:'💜' },
+  { id:'GfDxCVsKYaM', title:'Hawái',             artist:'Maluma',                    dur:'3:18', emoji:'🏝️' },
+  { id:'wnl9-4aRTig', title:'Con Calma',         artist:'Daddy Yankee & Snow',       dur:'3:23', emoji:'🎉' },
 ];
 
 let ytPlayer=null, ytReady=false, ytCurrentTrack=0, ytProgressInterval=null, ytVolume=80;
@@ -4033,18 +4173,53 @@ function refreshCommentsList(ctxId){ const el=document.getElementById('cl-'+ctxI
 const profileData={ username:localStorage.getItem('lsl_username')||'joelito', nickname:localStorage.getItem('lsl_nickname')||'', bio:localStorage.getItem('lsl_bio')||'', team:localStorage.getItem('lsl_fav_team')||'Lanza All', avatarUrl:localStorage.getItem('lsl_avatar')||'', bannerUrl:localStorage.getItem('lsl_banner')||'' };
 
 function initProfile() {
-  const d=profileData;
-  const setTxt=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
-  setTxt('profile-display-name',d.username); setTxt('profile-nickname-display',d.nickname?'@'+d.nickname:'@'+d.username);
-  setTxt('profile-bio-display',d.bio||'Sin biografía aún.'); setTxt('pev-username',d.username);
-  setTxt('pev-nickname',d.nickname||'—'); setTxt('pev-bio',d.bio?d.bio.substring(0,20)+'...':'—'); setTxt('pev-team',d.team||'—');
-  const tb=document.getElementById('profile-team-display'); if(tb) tb.innerHTML=`<span>${{Lanza_All:'⚡','La T De':'🔵'}[d.team]||'⚽'}</span><span>${d.team}</span>`;
-  const avatarEl=document.getElementById('profile-avatar-el');
-  if(d.avatarUrl && avatarEl) avatarEl.innerHTML=`<img src="${d.avatarUrl}" alt="avatar"/>`;
-  else { const initEl=document.getElementById('profile-avatar-initial'); if(initEl) initEl.textContent=(d.username[0]||'?').toUpperCase(); }
-  const bannerEl=document.getElementById('profile-banner');
-  if(d.bannerUrl && bannerEl) bannerEl.style.background=`url(${d.bannerUrl}) center/cover no-repeat`;
-  const hInit=document.getElementById('avatar-initials'); if(hInit) hInit.textContent=(d.username[0]||'?').toUpperCase();
+  const d = profileData;
+  const setTxt = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  setTxt('profile-display-name', d.username);
+  setTxt('profile-nickname-display', d.nickname ? '@'+d.nickname : '@'+d.username);
+  setTxt('profile-bio-display', d.bio || 'Sin biografía aún. Tocá "Editar perfil" para agregar una.');
+  setTxt('pev-username', d.username);
+  setTxt('pev-nickname', d.nickname || '—');
+  setTxt('pev-bio', d.bio ? d.bio.substring(0,20)+'...' : '—');
+  setTxt('pev-team', d.team || '—');
+  const teamEmojis = {'Lanza All':'⚡','La T De':'🔵'};
+  const tb = document.getElementById('profile-team-display');
+  if (tb) tb.innerHTML = `<span>${teamEmojis[d.team]||'⚽'}</span><span>${d.team}</span>`;
+
+  // Profile page avatar
+  const avatarEl = document.getElementById('profile-avatar-el');
+  if (avatarEl) {
+    if (d.avatarUrl) avatarEl.innerHTML = `<img src="${d.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="avatar"/>`;
+    else { const initEl = document.getElementById('profile-avatar-initial'); if (initEl) initEl.textContent = (d.username[0]||'?').toUpperCase(); }
+  }
+
+  // Banner
+  const bannerEl = document.getElementById('profile-banner');
+  if (bannerEl && d.bannerUrl) bannerEl.style.background = `url(${d.bannerUrl}) center/cover no-repeat`;
+
+  // Header avatar — show photo if available, else initial
+  const headerAvatarWrap = document.getElementById('avatar-btn');
+  if (headerAvatarWrap) {
+    const initEl = document.getElementById('avatar-initials');
+    if (d.avatarUrl) {
+      // Replace initials with photo
+      headerAvatarWrap.innerHTML = `<img src="${d.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="avatar"/>`;
+    } else if (initEl) {
+      initEl.textContent = (d.username[0]||'?').toUpperCase();
+    }
+  }
+
+  // Sidebar avatar
+  const sidebarAvatarWrap = document.querySelector('.sidebar-avatar');
+  if (sidebarAvatarWrap) {
+    const sInit = document.getElementById('sidebar-avatar-initials');
+    if (d.avatarUrl) sidebarAvatarWrap.innerHTML = `<img src="${d.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="avatar"/>`;
+    else if (sInit) sInit.textContent = (d.username[0]||'?').toUpperCase();
+  }
+
+  // Header username in sidebar
+  const su = document.getElementById('sidebar-username'); if (su) su.textContent = d.username;
+  const wn = document.getElementById('welcome-name'); if (wn) wn.textContent = d.username;
 }
 
 function previewAvatar(input){ const file=input.files[0]; if(!file) return; const r=new FileReader(); r.onload=e=>{ profileData.avatarUrl=e.target.result; localStorage.setItem('lsl_avatar',e.target.result); initProfile(); sbUpdate('usuarios',state.username,{avatar_url:e.target.result}).catch(()=>{}); }; r.readAsDataURL(file); }
@@ -4171,25 +4346,42 @@ function renderAdminPartidos() {
 }
 
 async function createMatchDB() {
-  const compRaw=document.getElementById('np-comp')?.value||'Liga LSL|🏆';
-  const [compNombre,compEmoji]=(compRaw.includes('|')?compRaw:'Liga LSL|🏆').split('|');
-  const homeNombre=document.getElementById('np-home')?.value; const awayNombre=document.getElementById('np-away')?.value;
-  const fecha=document.getElementById('np-date')?.value; if(!fecha){showToast('⚠️ Fecha requerida');return;}
-  const hora=document.getElementById('np-time')?.value||'17:30';
-  const jornada=parseInt(document.getElementById('np-jornada')?.value)||1;
-  const homeEq=adminEquipos.find(e=>e.nombre===homeNombre)||{nombre:homeNombre,emoji:'⚽'};
-  const awayEq=adminEquipos.find(e=>e.nombre===awayNombre)||{nombre:awayNombre,emoji:'⚽'};
-  await sbInsert('partidos',{
-    competicion_nombre:compNombre, competicion_emoji:compEmoji,
-    jornada, jornada_label:'Jornada '+jornada,
-    fecha, hora:hora+':00', estado:'programado',
-    local_nombre:homeNombre, local_emoji:homeEq.emoji||'⚽', local_logo:homeEq.logo_url||null,
-    visitante_nombre:awayNombre, visitante_emoji:awayEq.emoji||'⚽', visitante_logo:awayEq.logo_url||null,
-    estadio:document.getElementById('np-stadium')?.value||'', canal_tv:document.getElementById('np-tv')?.value||'',
-    eventos:[], estadisticas:[],
+  const compRaw = document.getElementById('np-comp')?.value || 'Liga LSL|🏆';
+  const parts = compRaw.includes('|') ? compRaw.split('|') : [compRaw, '🏆'];
+  const compNombre = parts[0], compEmoji = parts[1] || '🏆';
+  const homeNombre = document.getElementById('np-home')?.value;
+  const awayNombre = document.getElementById('np-away')?.value;
+  const fecha = document.getElementById('np-date')?.value;
+  if (!fecha) { showToast('⚠️ Fecha requerida'); return; }
+  if (!homeNombre || !awayNombre) { showToast('⚠️ Seleccioná los equipos'); return; }
+  if (homeNombre === awayNombre) { showToast('⚠️ Los equipos no pueden ser iguales'); return; }
+  const horaRaw = document.getElementById('np-time')?.value || '17:30';
+  // Supabase expects time as HH:MM:SS
+  const hora = horaRaw.includes(':') && horaRaw.split(':').length === 2 ? horaRaw + ':00' : horaRaw;
+  const jornada = parseInt(document.getElementById('np-jornada')?.value) || 1;
+  const homeEq = adminEquipos.find(e => e.nombre === homeNombre) || { nombre: homeNombre, emoji: '⚽', logo_url: null };
+  const awayEq = adminEquipos.find(e => e.nombre === awayNombre) || { nombre: awayNombre, emoji: '⚽', logo_url: null };
+  const result = await sbInsert('partidos', {
+    competicion_nombre: compNombre, competicion_emoji: compEmoji,
+    jornada, jornada_label: 'Jornada ' + jornada,
+    fecha, hora, estado: 'programado',
+    local_nombre: homeNombre, local_emoji: homeEq.emoji || '⚽', local_logo: homeEq.logo_url || null,
+    visitante_nombre: awayNombre, visitante_emoji: awayEq.emoji || '⚽', visitante_logo: awayEq.logo_url || null,
+    estadio: document.getElementById('np-stadium')?.value || '',
+    estadio_equipo: homeNombre,
+    canal_tv: document.getElementById('np-tv')?.value || '',
+    goles_local: 0, goles_visitante: 0,
+    eventos: [], estadisticas: [],
   });
-  await loadMatches(); document.getElementById('admin-panel-body').innerHTML=renderAdminPartidos();
-  showToast('✅ Partido creado'); playSound('click');
+  if (result && result[0]?.id) {
+    await loadMatches();
+    document.getElementById('admin-panel-body').innerHTML = renderAdminPartidos();
+    showToast('✅ Partido creado');
+    playSound('click');
+  } else {
+    showToast('❌ Error al crear partido. Verificá los datos.');
+    console.error('Insert error:', result);
+  }
 }
 
 async function deleteMatchDB(id){ if(!confirm('¿Eliminar partido?')) return; await sbDelete('partidos',id); await loadMatches(); document.getElementById('admin-panel-body').innerHTML=renderAdminPartidos(); showToast('🗑️ Eliminado'); }
@@ -4390,18 +4582,36 @@ let _leagueLogoFile=null;
 function handleLeagueLogo(input){ _leagueLogoFile=input.files[0]; if(!_leagueLogoFile) return; const r=new FileReader(); r.onload=e=>{ const img=document.getElementById('at-logo-prev'); if(img){img.src=e.target.result;img.style.display='block';} const hdr=document.getElementById('header-logo-img'); if(hdr) hdr.src=e.target.result; }; r.readAsDataURL(_leagueLogoFile); }
 
 async function saveTemporadaDB() {
-  let logoUrl=null;
-  if(_leagueLogoFile){ showToast('⬆️ Subiendo logo...'); logoUrl=await sbUploadImage('lsl-media',_leagueLogoFile); if(logoUrl){const hdr=document.getElementById('header-logo-img');if(hdr)hdr.src=logoUrl;} }
-  const color=document.getElementById('at-color')?.value||'#F5C518';
-  const estadoBtn=document.querySelector('#admin-panel-body .admin-status-btn.active');
-  const estadoMap={'En curso':'en-curso','Finalizada':'finalizada','Próximamente':'proximamente'};
-  const estado=estadoMap[estadoBtn?.textContent?.trim()]||'en-curso';
-  const data={numero:parseInt(document.getElementById('at-num')?.value)||9,nombre:document.getElementById('at-nombre')?.value||'"Reinicio"',estado,color_principal:color,logo_url:logoUrl||temporadaData?.logo_url||null};
-  if(temporadaData?.id) await sbUpdate('temporada',temporadaData.id,data);
-  else await sbInsert('temporada',data);
-  _leagueLogoFile=null;
-  document.documentElement.style.setProperty('--gold',color);
-  localStorage.setItem('lsl_main_color',color);
+  let logoUrl = temporadaData?.logo_url || null;
+  if (_leagueLogoFile) {
+    showToast('⬆️ Subiendo logo...');
+    const uploaded = await sbUploadImage('lsl-media', _leagueLogoFile);
+    if (uploaded) {
+      logoUrl = uploaded;
+      localStorage.setItem('lsl_logo', logoUrl); // persist logo locally
+      const hdr = document.getElementById('header-logo-img');
+      if (hdr) hdr.src = logoUrl;
+    }
+  }
+  const color = document.getElementById('at-color')?.value || '#F5C518';
+  const estadoBtn = document.querySelector('#admin-panel-body .admin-status-btn.active');
+  const estadoMap = {'En curso':'en-curso','Finalizada':'finalizada','Próximamente':'proximamente'};
+  const estado = estadoMap[estadoBtn?.textContent?.trim()] || 'en-curso';
+  const num = parseInt(document.getElementById('at-num')?.value) || 9;
+  const nombre = document.getElementById('at-nombre')?.value || '"Reinicio"';
+  const data = { numero: num, nombre, estado, color_principal: color, logo_url: logoUrl };
+  if (temporadaData?.id) await sbUpdate('temporada', temporadaData.id, data);
+  else await sbInsert('temporada', data);
+  _leagueLogoFile = null;
+  document.documentElement.style.setProperty('--gold', color);
+  document.documentElement.style.setProperty('--gold-dark', color);
+  localStorage.setItem('lsl_main_color', color);
+  // Update header subtitle
+  const sub = document.getElementById('header-sub');
+  if (sub) {
+    const dot = sub.querySelector('.realtime-dot');
+    sub.innerHTML = (dot ? dot.outerHTML : '') + `TEMPORADA ${num} · ${nombre}`;
+  }
   await loadTemporada();
   showToast('✅ Temporada guardada'); playSound('click');
 }
@@ -4431,8 +4641,16 @@ function previewUpload(input,prevId){ const f=input.files[0];if(!f)return;const 
 
 // ===== APPLY SAVED COLOR + LOGO =====
 function applySavedColor() {
-  const c=localStorage.getItem('lsl_main_color'); if(c) document.documentElement.style.setProperty('--gold',c);
-  const logo=localStorage.getItem('lsl_logo'); if(logo){const el=document.getElementById('header-logo-img');if(el)el.src=logo;}
+  const c = localStorage.getItem('lsl_main_color');
+  if (c) {
+    document.documentElement.style.setProperty('--gold', c);
+    document.documentElement.style.setProperty('--gold-dark', c);
+  }
+  const logo = localStorage.getItem('lsl_logo');
+  if (logo) {
+    const el = document.getElementById('header-logo-img');
+    if (el) el.src = logo;
+  }
 }
 
 // ===== TOAST =====
@@ -4485,6 +4703,41 @@ init().then(()=>{
     <div class="profile-edit-modal-handle"></div>
     <div class="profile-edit-modal-title" id="pem-title">Editar</div>
     <div id="pem-body"></div>
+  </div>
+</div>
+
+
+<!-- ADMIN PIN OVERLAY -->
+<div id="admin-pin-overlay">
+  <div class="pin-modal">
+    <div class="pin-icon">🔐</div>
+    <div class="pin-title">Admin Panel</div>
+    <div class="pin-sub">Ingresá el código de acceso</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd-0"></div>
+      <div class="pin-dot" id="pd-1"></div>
+      <div class="pin-dot" id="pd-2"></div>
+      <div class="pin-dot" id="pd-3"></div>
+      <div class="pin-dot" id="pd-4"></div>
+      <div class="pin-dot" id="pd-5"></div>
+      <div class="pin-dot" id="pd-6"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" onclick="pinKey('L')">L</button>
+      <button class="pin-key" onclick="pinKey('S')">S</button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key" onclick="pinBackspace()">⌫</button>
+    </div>
+    <button class="pin-cancel" onclick="closePinModal()">Cancelar</button>
   </div>
 </div>
 
