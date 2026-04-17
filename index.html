@@ -135,10 +135,6 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .ni:active{transform:scale(.85)}
 [data-theme="dark"] .ni.on{background:rgba(255,255,255,.1)}
 [data-theme="light"] .ni.on{background:rgba(0,0,0,.08)}
-.niico{width:22px;height:22px;display:flex;align-items:center;justify-content:center;
-  color:var(--t3);transition:color .2s,transform .22s var(--spring)}
-.niico svg{width:21px;height:21px}
-.ni.on .niico{color:var(--text);transform:translateY(-1px)}
 .nilbl{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;
   color:var(--t3);transition:color .2s}
 .ni.on .nilbl{color:var(--text)}
@@ -167,16 +163,17 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .hscroll::-webkit-scrollbar{display:none}
 
 /* ---- MATCH CARD (featured) ---- */
-.mc{flex-shrink:0;width:282px;border-radius:28px;background:var(--surf);
-  border:1px solid var(--bdr);padding:16px;cursor:pointer;scroll-snap-align:start;
+.mc{flex-shrink:0;width:290px;min-height:260px;border-radius:32px;background:var(--surf);
+  border:1px solid var(--bdr);padding:18px;cursor:pointer;scroll-snap-align:start;
   transition:transform .22s var(--spring),box-shadow .2s;
-  box-shadow:0 2px 16px rgba(0,0,0,.16);position:relative;overflow:hidden}
+  box-shadow:0 4px 20px rgba(0,0,0,.18);position:relative;overflow:hidden;
+  display:flex;flex-direction:column}
 .mc::before{content:"";position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 55%);pointer-events:none}
+  background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none}
 .mc:active{transform:scale(.97)}
 .mc.live{animation:lp 3s ease infinite}
-@keyframes lp{0%,100%{box-shadow:0 2px 16px rgba(0,0,0,.16),0 0 0 1.5px rgba(255,255,255,.1)}
-              50%{box-shadow:0 4px 24px rgba(0,0,0,.22),0 0 0 2px rgba(255,255,255,.22)}}
+@keyframes lp{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,.18),0 0 0 2px rgba(255,255,255,.12)}
+              50%{box-shadow:0 6px 28px rgba(0,0,0,.24),0 0 0 3px rgba(255,255,255,.24)}}
 .mcst{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
   letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
 .mcst.lv{color:var(--text)}
@@ -184,9 +181,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   animation:sbl 1.2s ease infinite;flex-shrink:0;opacity:1}
 .mcts{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .mct{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0}
-.mccr{width:46px;height:46px;border-radius:14px;border:1px solid var(--bdr2);
+.mccr{width:56px;height:56px;border-radius:18px;border:1.5px solid var(--bdr2);
   background:var(--surf2);display:flex;align-items:center;justify-content:center;
-  font-family:"Bebas Neue",sans-serif;font-size:10px;overflow:hidden;flex-shrink:0}
+  font-family:"Bebas Neue",sans-serif;font-size:12px;overflow:hidden;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .mccr img{width:100%;height:100%;object-fit:cover}
 .mctn{font-size:11px;font-weight:600;color:var(--text);text-align:center;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px}
@@ -333,15 +331,19 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 .ovs{background:var(--nbg);
   backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);
-  border-radius:30px 30px 0 0;
-  max-height:92dvh;overflow-y:auto;
+  border-radius:28px 28px 0 0;
+  width:94%;max-width:500px;margin:0 auto;
+  max-height:90dvh;overflow-y:auto;
   transform:translateY(100%);transition:transform var(--spd) var(--ease);
   padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));position:relative;
-  border-top:1px solid var(--bdr2);border-left:1px solid var(--bdr);border-right:1px solid var(--bdr);
+  border:1px solid var(--bdr2);
   box-shadow:0 -8px 40px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.06)}
 .ov.open .ovs{transform:translateY(0)}
 .ovs::-webkit-scrollbar{display:none}
 .ovhd{width:40px;height:5px;border-radius:99px;background:var(--surf3);margin:14px auto 0;opacity:.6}
+
+/* Match detail: CUADRADO, no vertical */
+#md-ov .ovs{max-height:82dvh;border-radius:28px 28px 0 0}
 .ovx{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
   background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;
   justify-content:center;cursor:pointer;z-index:10;transition:transform .15s var(--spring)}
@@ -636,6 +638,33 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .scfl{animation:scfl .38s var(--spring)}
 @keyframes bdgPop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
 
+/* ---- LOGIN SCREEN ---- */
+#login-screen{position:fixed;inset:0;z-index:900;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
+  max-width:520px;left:50%;transform:translateX(-50%)}
+#login-screen.hidden{display:none}
+.login-logo{width:90px;height:90px;border-radius:26px;background:var(--surf2);border:2px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;
+  font-size:32px;letter-spacing:1px;color:var(--text);margin-bottom:28px;overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.login-logo img{width:100%;height:100%;object-fit:cover}
+.login-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1.2px;color:var(--text);margin-bottom:10px}
+.login-sub{font-size:14px;color:var(--t2);margin-bottom:36px;text-align:center;line-height:1.5}
+.login-form{width:100%;max-width:340px}
+.login-form .fi{margin-bottom:16px;font-size:15px;padding:14px 16px}
+.login-btn{width:100%;padding:16px;border-radius:20px;background:var(--text);color:var(--bg);
+  font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:1.4px;
+  cursor:pointer;transition:transform .15s var(--spring),opacity .2s;margin-top:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.login-btn:active{transform:scale(.97);opacity:.88}
+
+/* NAV ICONS mejorados con glow */
+.niico{width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:color .2s,transform .22s var(--spring),filter .3s}
+.niico svg{width:24px;height:24px;filter:drop-shadow(0 0 0 transparent);transition:filter .3s}
+.ni.on .niico{color:var(--text);transform:translateY(-1px)}
+.ni.on .niico svg{filter:drop-shadow(0 0 12px currentColor) drop-shadow(0 2px 8px rgba(255,255,255,.3))}
+
 /* NOTIF ITEM mejorado */
 .notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 18px;
   border-bottom:1px solid var(--bdr);transition:background .14s;cursor:default}
@@ -678,6 +707,20 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 </style>
 </head>
 <body>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-logo" id="login-logo">
+    <img id="login-logo-img" src="" alt="" style="display:none"/>
+    <span id="login-logo-fb">LSL</span>
+  </div>
+  <div class="login-title" id="login-app-name">La Súper Liga</div>
+  <div class="login-sub">Ingresá tu nombre para personalizar tu experiencia</div>
+  <div class="login-form">
+    <input type="text" class="fi" id="login-name-input" placeholder="Tu nombre..." maxlength="20"/>
+    <button class="login-btn" onclick="submitLogin()">CONTINUAR</button>
+  </div>
+</div>
+
 <div id="app">
 <div class="amb" id="ab-top"></div>
 <div class="amb" id="ab-bot"></div>
@@ -782,10 +825,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
     <div class="atab on" onclick="admTab('matches',this)">⚽ Partidos</div>
     <div class="atab" onclick="admTab('teams',this)">🏆 Equipos</div>
     <div class="atab" onclick="admTab('players',this)">👤 Jugadores</div>
+    <div class="atab" onclick="admTab('referees',this)">👨‍⚖️ Árbitros</div>
     <div class="atab" onclick="admTab('news',this)">📰 Noticias</div>
     <div class="atab" onclick="admTab('channels',this)">📺 Canales</div>
     <div class="atab" onclick="admTab('sanctions',this)">🟨 Sanciones</div>
+    <div class="atab" onclick="admTab('sponsors',this)">💼 Sponsors</div>
     <div class="atab" onclick="admTab('season',this)">🏅 Temporada</div>
+    <div class="atab" onclick="admTab('stats',this)">📊 Estadísticas</div>
     <div class="atab" onclick="admTab('config',this)">⚙️ Config</div>
   </div>
   <!-- MATCHES PANE -->
@@ -867,6 +913,50 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
     </div>
     <div class="atit" style="margin-top:4px">Canales registrados</div>
     <div id="adm-ch-list"></div>
+  </div>
+  <!-- REFEREES -->
+  <div class="apane" id="adm-referees">
+    <div class="atit">Agregar árbitro</div>
+    <div class="aform">
+      <div class="fl">Nombre completo</div><input type="text" class="fi" id="ref-name" placeholder="Nombre del árbitro..."/>
+      <div class="fl">Categoría</div>
+      <select class="fsel" id="ref-cat"><option value="principal">Principal</option><option value="asistente">Asistente</option><option value="var">VAR</option></select>
+      <button class="abtn" onclick="saveReferee()">AGREGAR ÁRBITRO</button>
+    </div>
+    <div class="atit" style="margin-top:4px">Registrados</div>
+    <div id="adm-ref-list"><div class="empty" style="padding:14px 0"><div class="etic">👨‍⚖️</div><div class="etit">Sin árbitros</div></div></div>
+  </div>
+  <!-- SPONSORS -->
+  <div class="apane" id="adm-sponsors">
+    <div class="atit">Agregar sponsor</div>
+    <div class="aform">
+      <div class="fl">Nombre</div><input type="text" class="fi" id="sp-name" placeholder="Nombre del sponsor..."/>
+      <div class="fl">Tipo</div>
+      <select class="fsel" id="sp-type"><option value="principal">Principal</option><option value="oficial">Oficial</option><option value="colaborador">Colaborador</option></select>
+      <button class="fupbtn" id="sp-logo-btn" onclick="document.getElementById('sp-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="sp-logo-txt">Logo del sponsor</span></button>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="sp-logo-fi" onchange="handleFile(event,'pendingSponsorLogo','sp-logo-btn','sp-logo-txt')"/>
+      <button class="abtn" onclick="saveSponsor()">GUARDAR SPONSOR</button>
+    </div>
+    <div class="atit" style="margin-top:4px">Sponsors registrados</div>
+    <div id="adm-sp-list"><div class="empty" style="padding:14px 0"><div class="etic">💼</div><div class="etit">Sin sponsors</div></div></div>
+  </div>
+  <!-- STATS -->
+  <div class="apane" id="adm-stats">
+    <div class="atit">Exportar estadísticas</div>
+    <div class="aform">
+      <button class="abtn sec" onclick="exportStatsCSV()">📊 EXPORTAR TABLA A CSV</button>
+      <button class="abtn sec" onclick="exportMatchesCSV()">⚽ EXPORTAR PARTIDOS A CSV</button>
+      <button class="abtn sec" onclick="exportTopScorers()">🥇 EXPORTAR GOLEADORES</button>
+    </div>
+    <div class="atit" style="margin-top:8px">Resumen general</div>
+    <div id="stats-summary" style="padding:0"><div class="ibox" id="stats-box">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px">
+        <div><div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:4px">PARTIDOS JUGADOS</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--text)" id="stat-matches">0</div></div>
+        <div><div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:4px">GOLES TOTALES</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--text)" id="stat-goals">0</div></div>
+        <div><div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:4px">PROMEDIO GOLES</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--text)" id="stat-avg">0.0</div></div>
+        <div><div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:4px">EQUIPOS</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--text)" id="stat-teams">0</div></div>
+      </div>
+    </div></div>
   </div>
   <!-- SANCTIONS -->
   <div class="apane" id="adm-sanctions">
@@ -1108,6 +1198,9 @@ function $(id){return document.getElementById(id)}
 /* ---- INIT ---- */
 function init(){
   load();
+  // Check login
+  if(!checkLogin())return;
+  
   // Ensure default teams
   if(!D.teams.length){
     D.teams=[
@@ -1124,6 +1217,35 @@ function init(){
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   setInterval(updateGreet,60000);
   setTimeout(maybeShowPWABanner,4500);
+}
+
+/* ---- LOGIN SYSTEM ---- */
+function checkLogin(){
+  const savedName=localStorage.getItem('lsl_username');
+  if(savedName){
+    D.user.name=savedName;
+    $('login-screen').classList.add('hidden');
+    return true;
+  }
+  // Show login screen
+  $('login-screen').classList.remove('hidden');
+  // Update logo
+  const li=$('login-logo-img'),fb=$('login-logo-fb');
+  if(D.cfg.logo){li.src=D.cfg.logo;li.style.display='block';fb.style.display='none'}
+  else{fb.textContent=D.cfg.short||'LSL'}
+  $('login-app-name').textContent=D.cfg.name||'La Súper Liga';
+  setTimeout(()=>$('login-name-input')?.focus(),300);
+  return false;
+}
+function submitLogin(){
+  const name=$('login-name-input').value.trim();
+  if(!name||name.length<2){toast('⚠️ Ingresá un nombre válido');$('login-name-input').focus();return}
+  localStorage.setItem('lsl_username',name);
+  D.user.name=name;
+  save();
+  $('login-screen').classList.add('hidden');
+  init(); // Re-initialize with user name
+  toast(`👋 ¡Bienvenido/a, ${name}!`);
 }
 
 /* ---- BROADCAST ---- */
@@ -1755,7 +1877,15 @@ function renderAdmLists(){
   const nl=$('adm-n-list');if(nl)nl.innerHTML=D.news.length?D.news.map(n=>`<div class="ali"><div class="alinf"><div class="aln">${n.title}</div><div class="als">${n.category} · ${fmtND(n.date)}</div></div><div class="alacts"><button class="albtn" onclick="delNews('${n.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';
   const chl=$('adm-ch-list');if(chl)chl.innerHTML=D.channels.length?D.channels.map(c=>`<div class="ali"><div class="alcr">${crEl(c.logo,c.name.substring(0,2))}</div><div class="alinf"><div class="aln">${c.name}</div><div class="als">${c.url||'Sin URL'}</div></div><div class="alacts"><button class="albtn" onclick="delChannel('${c.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F4FA;</div><div class="etit">Sin canales</div></div>';
   const sl=$('adm-sa-list');if(sl)sl.innerHTML=D.sanctions.length?D.sanctions.map(s=>`<div class="ali"><div class="alinf"><div class="aln">${s.player}</div><div class="als">${s.type} · ${s.duration||''}</div></div><div class="alacts"><button class="albtn" onclick="delSanction('${s.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sanciones</div></div>';
+  // Referees
+  const refl=$('adm-ref-list');if(refl)refl.innerHTML=(D.referees||[]).length?(D.referees||[]).map(r=>`<div class="ali"><div class="alinf"><div class="aln">${r.name}</div><div class="als">${r.category}</div></div><div class="alacts"><button class="albtn" onclick="delReferee('${r.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">👨‍⚖️</div><div class="etit">Sin árbitros</div></div>';
+  // Sponsors
+  const spl=$('adm-sp-list');if(spl)spl.innerHTML=(D.sponsors||[]).length?(D.sponsors||[]).map(s=>`<div class="ali"><div class="alcr">${crEl(s.logo,s.name.substring(0,2))}</div><div class="alinf"><div class="aln">${s.name}</div><div class="als">${s.type}</div></div><div class="alacts"><button class="albtn" onclick="delSponsor('${s.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">💼</div><div class="etit">Sin sponsors</div></div>';
+  // Stats
+  updateStatsPanel();
 }
+function delReferee(id){if(!confirm('¿Eliminar árbitro?'))return;if(!D.referees)D.referees=[];D.referees=D.referees.filter(r=>r.id!==id);save();renderAdmLists();toast('Árbitro eliminado')}
+function delSponsor(id){if(!confirm('¿Eliminar sponsor?'))return;if(!D.sponsors)D.sponsors=[];D.sponsors=D.sponsors.filter(s=>s.id!==id);save();renderAdmLists();toast('Sponsor eliminado')}
 
 /* ---- ADMIN SELECTS ---- */
 function populateSels(){
@@ -1998,6 +2128,75 @@ function clearNotifs(){D.notifications=[]; save(); updateUser(); openNotifs(); t
 function openFriends(){toast('👥 Próximamente: Gestión de Amigos')}
 function openBetHistory(){toast('📋 Próximamente: Historial de Apuestas')}
 function openAccountSettings(){toast('⚙️ Próximamente: Configuración de Cuenta')}
+
+/* ---- REFEREES ---- */
+function saveReferee(){
+  const name=$('ref-name').value.trim(),cat=$('ref-cat').value;
+  if(!name){toast('Completa el nombre');return}
+  if(!D.referees)D.referees=[];
+  D.referees.push({id:Date.now().toString(),name,category:cat});
+  save();renderAdmLists();
+  $('ref-name').value='';toast('✅ Árbitro agregado');
+}
+
+/* ---- SPONSORS ---- */
+function saveSponsor(){
+  const name=$('sp-name').value.trim(),type=$('sp-type').value,logo=pending.pendingSponsorLogo||'';
+  if(!name){toast('Completa el nombre');return}
+  if(!D.sponsors)D.sponsors=[];
+  D.sponsors.push({id:Date.now().toString(),name,type,logo});
+  save();renderAdmLists();delete pending.pendingSponsorLogo;
+  resetFup('sp-logo-btn','sp-logo-txt','Logo del sponsor');
+  $('sp-name').value='';toast('✅ Sponsor agregado');
+}
+
+/* ---- STATS EXPORT ---- */
+function exportStatsCSV(){
+  const ts=sortedTeams();
+  let csv='Posición,Equipo,PJ,PG,PE,PP,GF,GC,DG,Puntos\n';
+  ts.forEach((t,i)=>{csv+=`${i+1},${t.name},${t.pj},${t.pg},${t.pe||0},${t.pp},${t.gf},${t.gc},${t.gf-t.gc},${t.pts+(t.adj||0)}\n`});
+  downloadCSV(csv,'tabla_posiciones.csv');
+  toast('📊 Tabla exportada');
+}
+function exportMatchesCSV(){
+  let csv='Fecha,Local,Visitante,Resultado,Estado\n';
+  D.matches.forEach(m=>{
+    const h=team(m.homeTeam),a=team(m.awayTeam);
+    if(!h||!a)return;
+    csv+=`${fmtND(m.datetime)},${h.name},${a.name},${m.homeScore??'-'} - ${m.awayScore??'-'},${stLabel(m.status)}\n`;
+  });
+  downloadCSV(csv,'partidos.csv');
+  toast('⚽ Partidos exportados');
+}
+function exportTopScorers(){
+  const scorers={};
+  D.matches.filter(m=>m.status==='finalizado'&&m.events).forEach(m=>{
+    m.events.filter(e=>e.type==='goal').forEach(e=>{
+      scorers[e.player]=(scorers[e.player]||0)+1;
+    });
+  });
+  let csv='Jugador,Goles\n';
+  Object.entries(scorers).sort((a,b)=>b[1]-a[1]).forEach(([p,g])=>{csv+=`${p},${g}\n`});
+  downloadCSV(csv,'goleadores.csv');
+  toast('🥇 Goleadores exportados');
+}
+function downloadCSV(content,filename){
+  const blob=new Blob([content],{type:'text/csv;charset=utf-8;'});
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);
+  link.download=filename;
+  link.click();
+}
+function updateStatsPanel(){
+  if(!$('stat-matches'))return;
+  const finished=D.matches.filter(m=>m.status==='finalizado');
+  let goals=0;
+  finished.forEach(m=>{goals+=(m.homeScore||0)+(m.awayScore||0)});
+  $('stat-matches').textContent=finished.length;
+  $('stat-goals').textContent=goals;
+  $('stat-avg').textContent=finished.length?(goals/finished.length).toFixed(1):'0.0';
+  $('stat-teams').textContent=D.teams.length;
+}
 
 /* ---- SEARCH ---- */
 function openSearch(){$('srch-ov').classList.add('open');setTimeout(()=>$('srch-inp')?.focus(),200)}
