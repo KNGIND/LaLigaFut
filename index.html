@@ -2,250 +2,424 @@
 <html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="mobile-web-app-capable" content="yes"/>
-<meta name="theme-color" content="#080808" id="theme-color-meta"/>
+<meta name="theme-color" content="#000000" id="theme-color-meta"/>
 <title id="app-title">La Súper Liga</title>
+<link rel="manifest" id="manifest-link"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
+/* =========================================================
+   VARIABLES — SOLO BLANCO Y NEGRO, SIN EXCEPCIONES
+   ========================================================= */
 :root{--spd:.26s;--slow:.55s;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1)}
-[data-theme="dark"]{--bg:#080808;--bg2:#0f0f0f;--bg3:#181818;--surf:#1c1c1e;--surf2:#242426;--surf3:#2c2c2e;--bdr:rgba(255,255,255,.07);--bdr2:rgba(255,255,255,.13);--text:#f2f2f7;--t2:#8e8e93;--t3:#48484a;--over:rgba(0,0,0,.88);--glass:rgba(12,12,12,.78);--hbg:rgba(8,8,8,.76);--nbg:rgba(14,14,14,.86)}
-[data-theme="light"]{--bg:#f2f2f7;--bg2:#e9e9ef;--bg3:#dddde4;--surf:#fff;--surf2:#f5f5fa;--surf3:#ebebf0;--bdr:rgba(0,0,0,.06);--bdr2:rgba(0,0,0,.12);--text:#1c1c1e;--t2:#636366;--t3:#aeaeb2;--over:rgba(255,255,255,.92);--hbg:rgba(242,242,247,.8);--nbg:rgba(245,245,250,.9)}
+
+[data-theme="dark"]{
+  --bg:#000000;--bg2:#0a0a0a;--bg3:#141414;
+  --surf:#1a1a1a;--surf2:#222222;--surf3:#2a2a2a;
+  --bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.14);
+  --text:#f5f5f5;--t2:#888888;--t3:#444444;
+  --over:rgba(0,0,0,.92);
+  --hbg:rgba(0,0,0,.72);--nbg:rgba(10,10,10,.88);
+}
+[data-theme="light"]{
+  --bg:#ffffff;--bg2:#f5f5f5;--bg3:#ebebeb;
+  --surf:#ffffff;--surf2:#f0f0f0;--surf3:#e5e5e5;
+  --bdr:rgba(0,0,0,.07);--bdr2:rgba(0,0,0,.13);
+  --text:#111111;--t2:#666666;--t3:#aaaaaa;
+  --over:rgba(255,255,255,.94);
+  --hbg:rgba(255,255,255,.78);--nbg:rgba(250,250,250,.92);
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;outline:none!important;-webkit-tap-highlight-color:transparent}
 html{height:100%;overflow:hidden}
 body{font-family:"DM Sans",-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 img{max-width:100%;display:block}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,textarea,select{font-family:inherit;color:var(--text)}
-/* AMBIENT */
-.amb{position:fixed;pointer-events:none;border-radius:50%;filter:blur(62px);opacity:0;transition:background 1.6s ease,opacity 1.4s ease;z-index:1}
-#ab-top{width:400px;height:300px;top:-100px;left:50%;transform:translateX(-50%)}
-#ab-bot{width:420px;height:280px;bottom:-100px;left:50%;transform:translateX(-50%)}
-#ab-mid{width:300px;height:200px;top:35%;left:50%;transform:translateX(-50%)}
-/* APP SHELL */
+input,textarea,select{font-family:inherit;color:var(--text);background:transparent}
+
+/* ---- AMBIENT GLOW ---- */
+.amb{position:fixed;pointer-events:none;border-radius:50%;filter:blur(90px);opacity:0;transition:background 2s ease,opacity 1.8s ease;z-index:1;will-change:opacity,background}
+#ab-top{width:500px;height:360px;top:-150px;left:50%;transform:translateX(-50%)}
+#ab-bot{width:480px;height:320px;bottom:-140px;left:50%;transform:translateX(-50%)}
+#ab-mid{width:340px;height:240px;top:40%;left:50%;transform:translateX(-50%)}
+
+/* ---- APP SHELL ---- */
 #app{display:flex;flex-direction:column;height:100dvh;position:relative;overflow:hidden;background:var(--bg);max-width:520px;margin:0 auto}
-/* HEADER */
-#hdr{position:relative;z-index:100;flex-shrink:0;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 12px;background:var(--hbg);backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);border-bottom:1px solid var(--bdr);transition:background .4s,border-color .4s}
+
+/* ---- HEADER ---- */
+#hdr{position:relative;z-index:100;flex-shrink:0;
+  padding:calc(10px + env(safe-area-inset-top,0px)) 14px 12px;
+  background:var(--hbg);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border-bottom:1px solid var(--bdr);
+  transition:background .5s,border-color .5s,box-shadow .5s}
 .hrow{display:flex;align-items:center;gap:9px}
 .hl{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-#hlogo{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--bdr2);background:var(--surf);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .18s var(--spring)}
+#hlogo{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--bdr2);
+  background:var(--surf);overflow:hidden;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;transition:transform .18s var(--spring);
+  position:relative;user-select:none}
 #hlogo:active{transform:scale(.86)}
+/* HOLD RING */
+#hlogo-ring{position:absolute;inset:-3px;border-radius:14px;border:2px solid transparent;
+  background:conic-gradient(var(--text) 0deg, transparent 0deg) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:destination-out;mask-composite:exclude;
+  opacity:0;transition:opacity .2s}
 .hi{min-width:0;flex:1}
-.hn{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.8px;color:var(--text);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hn{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.8px;
+  color:var(--text);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hsub{display:flex;align-items:center;gap:5px;margin-top:3px}
 .hse{font-size:10px;font-weight:600;color:var(--t2);letter-spacing:.6px;text-transform:uppercase}
-.spill{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:99px;background:var(--surf2);border:1px solid var(--bdr2);font-size:8px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--t2)}
-.sdot{width:4px;height:4px;border-radius:50%;background:var(--t2);animation:sbl 2.4s ease infinite}
-@keyframes sbl{0%,100%{opacity:1}50%{opacity:.2}}
+.spill{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:99px;
+  background:var(--surf2);border:1px solid var(--bdr2);font-size:8px;font-weight:700;
+  letter-spacing:.4px;text-transform:uppercase;color:var(--t2)}
+.sdot{width:4px;height:4px;border-radius:50%;background:var(--t2);
+  animation:sbl 2.4s ease infinite;opacity:.5}
+@keyframes sbl{0%,100%{opacity:.5}50%{opacity:.12}}
+.sdot.live{background:var(--text);opacity:1;animation:sbl 1.1s ease infinite}
 .hacts{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.hbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bdr2);background:var(--surf);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:transform .15s var(--spring),background .2s,color .18s,box-shadow .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-.hbtn:hover{color:var(--text);background:var(--surf2)}
-.hbtn:active{transform:scale(.84);box-shadow:none}
+.hbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bdr2);
+  background:var(--surf);color:var(--t2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:transform .15s var(--spring),background .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.hbtn:active{transform:scale(.84);background:var(--surf2)}
 .hbtn svg{width:16px;height:16px}
 .hbtn.rnd{border-radius:50%;border-width:2px;overflow:hidden;background:var(--surf2)}
 .hbtn.rnd img{width:100%;height:100%;object-fit:cover}
 .avi{font-family:"Bebas Neue",sans-serif;font-size:14px;color:var(--text)}
-.nbadge{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;border-radius:99px;background:var(--text);color:var(--bg);font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);padding:0 3px}
-/* MENU BTN */
-.mbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bdr2);background:var(--surf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.5px;cursor:pointer;padding:0;transition:transform .15s var(--spring),background .2s,box-shadow .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-.mbtn:active{transform:scale(.84);box-shadow:none}
+.nbadge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:99px;
+  background:#e53e3e;color:#fff;font-size:9px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;border:2.5px solid var(--bg);padding:0 4px;
+  box-shadow:0 2px 6px rgba(229,62,62,.5);animation:bdgPop .3s var(--spring)}
+.mbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bdr2);background:var(--surf);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  cursor:pointer;padding:0;transition:transform .15s var(--spring),background .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.mbtn:active{transform:scale(.84);background:var(--surf2)}
 .mbtn span{display:block;height:1.5px;border-radius:2px;background:var(--t2);transition:all .28s var(--ease)}
 .mbtn span:nth-child(1){width:14px}
 .mbtn span:nth-child(2){width:20px}
 .mbtn span:nth-child(3){width:10px}
-.mbtn:hover span{background:var(--text)}
-/* SCROLL */
-#scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;padding-bottom:106px;position:relative;z-index:10}
+
+/* ---- SCROLL ---- */
+#scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;padding-bottom:110px;position:relative;z-index:10}
 #scroll::-webkit-scrollbar{display:none}
-/* PAGES */
+
+/* ---- PAGES ---- */
 .page{display:none;animation:pgi .26s var(--ease) both}
 .page.active{display:block}
 @keyframes pgi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* NAV ISLAND */
-#nav{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:200;background:var(--nbg);backdrop-filter:blur(36px) saturate(200%);-webkit-backdrop-filter:blur(36px) saturate(200%);border:1px solid var(--bdr2);border-radius:28px;padding:7px 8px;display:flex;gap:1px;box-shadow:0 20px 60px rgba(0,0,0,.32),0 4px 12px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.06);transition:background 1.2s,border-color 1.2s;max-width:calc(100vw - 32px)}
-.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 12px;border-radius:22px;cursor:pointer;transition:all .22s var(--spring);min-width:52px;position:relative}
+
+/* ---- NAV ISLAND ---- */
+#nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;
+  transform:translateX(-50%);z-index:200;
+  background:var(--nbg);
+  backdrop-filter:blur(40px) saturate(180%);
+  -webkit-backdrop-filter:blur(40px) saturate(180%);
+  border:1px solid var(--bdr2);border-radius:32px;padding:7px 8px;
+  display:flex;gap:1px;
+  box-shadow:0 24px 64px rgba(0,0,0,.36),0 4px 16px rgba(0,0,0,.18),
+             inset 0 1px 0 rgba(255,255,255,.06);
+  transition:background 1.6s,border-color 1.6s,box-shadow 1.6s;
+  max-width:calc(100vw - 32px)}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 12px;border-radius:24px;cursor:pointer;
+  transition:all .22s var(--spring);min-width:52px;position:relative}
 .ni:active{transform:scale(.85)}
 [data-theme="dark"] .ni.on{background:rgba(255,255,255,.1)}
 [data-theme="light"] .ni.on{background:rgba(0,0,0,.08)}
-.niico{width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:color .2s,transform .22s var(--spring)}
+.niico{width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:color .2s,transform .22s var(--spring)}
 .niico svg{width:21px;height:21px}
 .ni.on .niico{color:var(--text);transform:translateY(-1px)}
-.nilbl{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--t3);transition:color .2s}
+.nilbl{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;
+  color:var(--t3);transition:color .2s}
 .ni.on .nilbl{color:var(--text)}
-.ni.on::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--text);opacity:.45}
-/* SECTIONS */
+.ni.on::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
+  width:3px;height:3px;border-radius:50%;background:var(--text);opacity:.45}
+
+/* ---- SECTIONS ---- */
 .sec{padding:20px 14px 0}
 .sechd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px}
 .sect{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.7px;color:var(--text)}
 .secm{font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;padding:3px 0}
 .secm:active{opacity:.6}
-/* GREETING */
+
+/* ---- GREETING ---- */
 .greet{padding:18px 14px 0}
 .ghi{font-size:12px;font-weight:500;color:var(--t3);letter-spacing:.3px;margin-bottom:2px}
-.gnm{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.8px;color:var(--text);line-height:1;display:flex;align-items:center;gap:8px}
+.gnm{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.8px;
+  color:var(--text);line-height:1;display:flex;align-items:center;gap:8px}
 .wv{font-size:26px;display:inline-block;animation:wva 2.8s ease infinite;transform-origin:70% 70%}
 @keyframes wva{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-8deg)}30%{transform:rotate(14deg)}40%{transform:rotate(-4deg)}50%{transform:rotate(10deg)}}
 .gsea{font-size:11px;font-weight:600;color:var(--t2);letter-spacing:.6px;text-transform:uppercase;margin-top:5px}
-/* HSCROLL */
-.hscroll{display:flex;gap:10px;overflow-x:auto;padding:0 14px 2px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none}
+
+/* ---- HSCROLL ---- */
+.hscroll{display:flex;gap:10px;overflow-x:auto;padding:0 14px 2px;
+  -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none}
 .hscroll::-webkit-scrollbar{display:none}
-/* MATCH CARD */
-.mc{flex-shrink:0;width:276px;border-radius:20px;background:var(--surf);border:1px solid var(--bdr);padding:15px;cursor:pointer;scroll-snap-align:start;transition:transform .22s var(--spring),box-shadow .2s;position:relative;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.14)}
-.mc::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 55%);pointer-events:none}
-.mc:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.22)}
-.mc:active{transform:scale(.97);box-shadow:0 1px 6px rgba(0,0,0,.14)}
+
+/* ---- MATCH CARD (featured) ---- */
+.mc{flex-shrink:0;width:282px;border-radius:28px;background:var(--surf);
+  border:1px solid var(--bdr);padding:16px;cursor:pointer;scroll-snap-align:start;
+  transition:transform .22s var(--spring),box-shadow .2s;
+  box-shadow:0 2px 16px rgba(0,0,0,.16);position:relative;overflow:hidden}
+.mc::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 55%);pointer-events:none}
+.mc:active{transform:scale(.97)}
 .mc.live{animation:lp 3s ease infinite}
-@keyframes lp{0%,100%{box-shadow:0 2px 14px rgba(0,0,0,.14),0 0 0 1.5px rgba(255,255,255,.1)}50%{box-shadow:0 4px 22px rgba(0,0,0,.2),0 0 0 2px rgba(255,255,255,.24)}}
-.mcst{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
+@keyframes lp{0%,100%{box-shadow:0 2px 16px rgba(0,0,0,.16),0 0 0 1.5px rgba(255,255,255,.1)}
+              50%{box-shadow:0 4px 24px rgba(0,0,0,.22),0 0 0 2px rgba(255,255,255,.22)}}
+.mcst{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
+  letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
 .mcst.lv{color:var(--text)}
-.ldot{width:6px;height:6px;border-radius:50%;background:var(--text);animation:sbl 1.2s ease infinite;flex-shrink:0}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--text);
+  animation:sbl 1.2s ease infinite;flex-shrink:0;opacity:1}
 .mcts{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .mct{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0}
-.mccr{width:44px;height:44px;border-radius:11px;border:1px solid var(--bdr2);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:10px;letter-spacing:.3px;overflow:hidden;flex-shrink:0}
+.mccr{width:46px;height:46px;border-radius:14px;border:1px solid var(--bdr2);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;
+  font-family:"Bebas Neue",sans-serif;font-size:10px;overflow:hidden;flex-shrink:0}
 .mccr img{width:100%;height:100%;object-fit:cover}
-.mctn{font-size:11px;font-weight:600;color:var(--text);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px}
+.mctn{font-size:11px;font-weight:600;color:var(--text);text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px}
 .mcmd{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
 .mcsc{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:2px;color:var(--text);line-height:1}
 .mcdsh{color:var(--t3)}
 .mctl{font-size:10px;font-weight:600;color:var(--t2);letter-spacing:.3px}
 .mcft{display:flex;align-items:center;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)}
 .mcftxt{font-size:10px;color:var(--t3);font-weight:500;display:flex;align-items:center;gap:3px}
-.chl{width:16px;height:16px;border-radius:3px;object-fit:cover;flex-shrink:0}
-/* MATCH ROW */
+.chl{width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0}
+
+/* ---- MATCH ROW (list) ---- */
 .jornhd{display:flex;align-items:center;gap:10px;padding:16px 14px 8px}
 .jornt{font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:.7px;color:var(--t2)}
 .jornl{flex:1;height:1px;background:var(--bdr)}
-.mr{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--bdr);background:var(--bg);transition:background .14s}
+.mr{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;
+  border-bottom:1px solid var(--bdr);background:var(--bg);transition:background .14s}
 .mr:active{background:var(--surf)}
 .mrts{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .mrt{display:flex;align-items:center;gap:7px}
-.mrcr{width:22px;height:22px;border-radius:5px;border:1px solid var(--bdr2);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:7px;overflow:hidden;flex-shrink:0}
+.mrcr{width:22px;height:22px;border-radius:6px;border:1px solid var(--bdr2);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;
+  font-family:"Bebas Neue",sans-serif;font-size:7px;overflow:hidden;flex-shrink:0}
 .mrcr img{width:100%;height:100%;object-fit:cover}
 .mrtn{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mrr{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:54px}
 .mrsc{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);line-height:1}
 .mrsp{color:var(--t3)}
 .mrtm{font-size:10px;font-weight:600;color:var(--t2);letter-spacing:.3px}
-.mrbdg{font-size:8px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--text);background:var(--surf2);padding:2px 6px;border-radius:4px;border:1px solid var(--bdr2)}
-/* NEWS */
-.ncbig{border-radius:18px;background:var(--surf);border:1px solid var(--bdr);overflow:hidden;cursor:pointer;transition:transform .2s var(--spring)}
+.mrbdg{font-size:8px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--text);background:var(--surf2);padding:2px 6px;border-radius:5px;border:1px solid var(--bdr2)}
+
+/* ---- NEWS ---- */
+.ncbig{border-radius:28px;background:var(--surf);border:1px solid var(--bdr);
+  overflow:hidden;cursor:pointer;transition:transform .2s var(--spring)}
 .ncbig:active{transform:scale(.98)}
 .ncbig-img{height:175px;background:var(--surf2);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .ncbig-img img{width:100%;height:100%;object-fit:cover}
 .ncbig-body{padding:14px}
 .nccat{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
-.ncbig-t{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:.4px;color:var(--text);line-height:1.15;margin-bottom:5px}
-.ncexc{font-size:12px;color:var(--t2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ncsm{display:flex;border-radius:14px;background:var(--surf);border:1px solid var(--bdr);overflow:hidden;cursor:pointer;transition:transform .2s var(--spring)}
+.ncbig-t{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:.4px;
+  color:var(--text);line-height:1.15;margin-bottom:5px}
+.ncexc{font-size:12px;color:var(--t2);line-height:1.5;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ncsm{display:flex;border-radius:18px;background:var(--surf);border:1px solid var(--bdr);
+  overflow:hidden;cursor:pointer;transition:transform .2s var(--spring)}
 .ncsm:active{transform:scale(.98)}
 .ncsm+.ncsm{margin-top:8px}
-.ncsm-img{width:88px;flex-shrink:0;background:var(--surf2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ncsm-img{width:88px;flex-shrink:0;background:var(--surf2);overflow:hidden}
 .ncsm-img img{width:100%;height:100%;object-fit:cover}
 .ncsm-body{padding:12px;flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-.ncsm-t{font-size:13px;font-weight:700;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ncsm-t{font-size:13px;font-weight:700;color:var(--text);line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ncdt{font-size:10px;color:var(--t3);font-weight:500}
-/* STANDINGS */
-.stw{background:var(--surf);border-radius:16px;border:1px solid var(--bdr);overflow:hidden;padding:2px 6px}
+
+/* ---- STANDINGS ---- */
+.stw{background:var(--surf);border-radius:22px;border:1px solid var(--bdr);overflow:hidden;padding:2px 6px}
 .stt{width:100%;border-collapse:collapse}
-.stt th{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);padding:7px 6px;text-align:right}
+.stt th{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--t3);padding:7px 6px;text-align:right}
 .stt th:first-child,.stt td:first-child{text-align:left;width:22px}
 .stt th:nth-child(2),.stt td:nth-child(2){text-align:left}
-.stt td{font-size:12px;font-weight:600;color:var(--text);padding:9px 6px;text-align:right;border-bottom:1px solid var(--bdr)}
+.stt td{font-size:12px;font-weight:600;color:var(--text);padding:9px 6px;text-align:right;
+  border-bottom:1px solid var(--bdr)}
 .stt tr:last-child td{border-bottom:none}
 .stt td:first-child{color:var(--t3);font-size:11px}
 .stt td:nth-child(2){font-size:13px}
 .stt td:last-child{font-weight:800}
 .sttr{display:flex;align-items:center;gap:7px}
-.stcr{width:22px;height:22px;border-radius:5px;border:1px solid var(--bdr2);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:7px;overflow:hidden}
+.stcr{width:22px;height:22px;border-radius:6px;border:1px solid var(--bdr2);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;
+  font-family:"Bebas Neue",sans-serif;font-size:7px;overflow:hidden}
 .stcr img{width:100%;height:100%;object-fit:cover}
-/* CHIPS */
+
+/* ---- CHIPS ---- */
 .chips{display:flex;gap:7px;overflow-x:auto;padding:12px 14px 4px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:7px 15px;border-radius:99px;border:1px solid var(--bdr2);background:var(--surf);font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s var(--spring)}
+.chip{flex-shrink:0;padding:7px 16px;border-radius:99px;border:1px solid var(--bdr2);
+  background:var(--surf);font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;
+  transition:all .2s var(--spring)}
 .chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
 .chip:active{transform:scale(.92)}
-/* INFO */
-.ibox{background:var(--surf);border-radius:16px;border:1px solid var(--bdr);padding:14px;margin-bottom:10px}
+
+/* ---- INFO ---- */
+.ibox{background:var(--surf);border-radius:18px;border:1px solid var(--bdr);padding:14px;margin-bottom:10px}
 .ibxt{font-size:13px;color:var(--t2);line-height:1.6}
-.sancrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr)}
+.sancrow{display:flex;align-items:center;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid var(--bdr)}
 .sancrow:last-child{border-bottom:none}
 .sancn{font-size:13px;font-weight:600;color:var(--text)}
 .sanct{font-size:11px;color:var(--t2)}
-/* PROFILE */
+
+/* ---- PROFILE ---- */
 .pban{height:150px;background:var(--surf2);position:relative;overflow:hidden;cursor:pointer}
 .pban img{width:100%;height:100%;object-fit:cover}
 .pbanph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--t3)}
 .pbanph svg{width:28px;height:28px}
 .pbanph span{font-size:11px;font-weight:600}
-.pbanedit{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:#fff;cursor:pointer;backdrop-filter:blur(8px)}
+.pbanedit{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:4px 10px;
+  font-size:11px;font-weight:600;color:#fff;cursor:pointer;backdrop-filter:blur(8px)}
 .phdr{padding:0 14px 16px;margin-top:-32px;position:relative}
 .pavw{position:relative;display:inline-block;margin-bottom:10px}
-.pav{width:68px;height:68px;border-radius:17px;border:3px solid var(--bg);background:var(--surf2);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:22px;color:var(--text)}
+.pav{width:68px;height:68px;border-radius:18px;border:3px solid var(--bg);
+  background:var(--surf2);overflow:hidden;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:22px;color:var(--text)}
 .pav img{width:100%;height:100%;object-fit:cover}
-.paved{position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--surf);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.paved{position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:50%;
+  background:var(--surf);border:2px solid var(--bg);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .paved svg{width:10px;height:10px;color:var(--text)}
 .pnm{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.7px;color:var(--text);line-height:1}
 .pbio{font-size:13px;color:var(--t2);margin:5px 0 10px;line-height:1.45}
-.ptb{display:inline-flex;align-items:center;gap:7px;background:var(--surf);border:1px solid var(--bdr2);border-radius:12px;padding:7px 12px;cursor:pointer;transition:background .2s}
+.ptb{display:inline-flex;align-items:center;gap:7px;background:var(--surf);
+  border:1px solid var(--bdr2);border-radius:12px;padding:7px 12px;cursor:pointer;transition:background .2s}
 .ptb:active{background:var(--surf2)}
-.ptbcr{width:22px;height:22px;border-radius:5px;overflow:hidden;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:"Bebas Neue",sans-serif}
+.ptbcr{width:22px;height:22px;border-radius:6px;overflow:hidden;background:var(--surf2);
+  display:flex;align-items:center;justify-content:center;font-size:8px;font-family:"Bebas Neue",sans-serif}
 .ptbcr img{width:100%;height:100%;object-fit:cover}
 .ptbnm{font-size:12px;font-weight:700;color:var(--text)}
 .pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 14px 14px}
-.pst{background:var(--surf);border-radius:14px;border:1px solid var(--bdr);padding:12px 10px;text-align:center}
+.pst{background:var(--surf);border-radius:18px;border:1px solid var(--bdr);padding:12px 10px;text-align:center}
 .pstv{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.4px;color:var(--text);line-height:1}
 .pstl{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin-top:2px}
-.pedbtn{display:flex;align-items:center;justify-content:center;gap:7px;width:calc(100% - 28px);margin:0 14px 12px;padding:13px;border-radius:14px;background:var(--surf);border:1px solid var(--bdr2);font-size:14px;font-weight:700;color:var(--text);cursor:pointer;transition:background .2s,transform .15s var(--spring)}
+.pedbtn{display:flex;align-items:center;justify-content:center;gap:7px;
+  width:calc(100% - 28px);margin:0 14px 12px;padding:13px;border-radius:28px;
+  background:var(--surf);border:1px solid var(--bdr2);font-size:14px;font-weight:700;
+  color:var(--text);cursor:pointer;transition:background .2s,transform .15s var(--spring)}
 .pedbtn:active{transform:scale(.97);background:var(--surf2)}
 .pedbtn svg{width:15px;height:15px}
-/* MATCH DETAIL — OneFootball style full sheet */
-.ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity var(--spd) var(--ease);max-width:520px;left:50%;transform:translateX(-50%);background:var(--over);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+
+/* ====================================================
+   MATCH DETAIL SHEET — 85% height, full width, OneFootball style
+   ==================================================== */
+.ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;justify-content:flex-end;
+  opacity:0;pointer-events:none;transition:opacity var(--spd) var(--ease);
+  max-width:520px;left:50%;transform:translateX(-50%);
+  background:var(--over);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .ov.open{opacity:1;pointer-events:all}
-.ovs{background:var(--bg2);border-radius:24px 24px 0 0;max-height:92dvh;overflow-y:auto;transform:translateY(100%);transition:transform var(--spd) var(--ease);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));position:relative}
+
+/* Match detail gets special 85% treatment */
+#md-ov .ovs{max-height:88dvh;border-radius:30px 30px 0 0}
+#nw-ov .ovs,#pe-ov .ovs,#notif-ov .ovs,#tp-ov .ovs,#le-ov .ovs{border-radius:28px 28px 0 0}
+
+.ovs{background:var(--nbg);
+  backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);
+  border-radius:30px 30px 0 0;
+  max-height:92dvh;overflow-y:auto;
+  transform:translateY(100%);transition:transform var(--spd) var(--ease);
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));position:relative;
+  border-top:1px solid var(--bdr2);border-left:1px solid var(--bdr);border-right:1px solid var(--bdr);
+  box-shadow:0 -8px 40px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.06)}
 .ov.open .ovs{transform:translateY(0)}
 .ovs::-webkit-scrollbar{display:none}
-.ovhd{width:36px;height:4px;border-radius:99px;background:var(--surf3);margin:12px auto 0}
-.ovx{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:transform .15s var(--spring)}
+.ovhd{width:40px;height:5px;border-radius:99px;background:var(--surf3);margin:14px auto 0;opacity:.6}
+.ovx{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+  background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;z-index:10;transition:transform .15s var(--spring)}
 .ovx:active{transform:scale(.86)}
 .ovx svg{width:14px;height:14px;color:var(--t2)}
-/* Hero scoreboard */
-.mdh{padding:20px 18px 16px;background:linear-gradient(180deg,var(--surf) 0%,transparent 100%)}
-.mdcomp{font-size:11px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--t2);text-align:center;margin-bottom:18px}
+
+/* MD Hero */
+.mdh{padding:24px 18px 20px;
+  background:linear-gradient(180deg,var(--surf2) 0%,transparent 100%);
+  border-bottom:1px solid var(--bdr)}
+.mdcomp{font-size:11px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--t2);text-align:center;margin-bottom:20px}
 .mdsb{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.mdsd{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
-.mdcr{width:68px;height:68px;border-radius:16px;border:1.5px solid var(--bdr2);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:14px;overflow:hidden}
+.mdsd{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px}
+/* LARGE logos in match detail */
+.mdcr{width:76px;height:76px;border-radius:20px;border:1.5px solid var(--bdr2);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;
+  font-family:"Bebas Neue",sans-serif;font-size:15px;overflow:hidden}
 .mdcr img{width:100%;height:100%;object-fit:cover}
-.mdtn{font-size:14px;font-weight:700;color:var(--text);text-align:center}
+.mdtn{font-size:15px;font-weight:700;color:var(--text);text-align:center;line-height:1.2}
 .mdscb{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
-.mdscn{font-family:"Bebas Neue",sans-serif;font-size:54px;letter-spacing:4px;color:var(--text);line-height:1}
+/* BIG scoreboard in Bebas Neue */
+.mdscn{font-family:"Bebas Neue",sans-serif;font-size:60px;letter-spacing:6px;
+  color:var(--text);line-height:1;text-align:center}
 .mddsh{color:var(--t3);font-family:"Bebas Neue",sans-serif}
-.mdstl{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--t2)}
+.mdstl{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--t2);text-align:center}
+
+/* MD Info Grid — 2 columns */
+.md-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:16px 18px 8px}
+.md-info-cell{background:var(--surf);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:18px;border:1px solid var(--bdr2);padding:13px 15px;
+  box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.md-info-lbl{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.md-info-val{font-size:14px;font-weight:700;color:var(--text);line-height:1.3}
+
+/* Reminder button */
+.md-reminder-btn{display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:10px 18px 6px;padding:15px;border-radius:20px;
+  background:var(--surf2);border:1.5px solid var(--bdr2);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  font-size:14px;font-weight:700;color:var(--text);cursor:pointer;letter-spacing:.3px;
+  transition:background .2s,transform .15s var(--spring),border-color .2s,box-shadow .2s;
+  box-shadow:0 2px 14px rgba(0,0,0,.15)}
+.md-reminder-btn:active{transform:scale(.97)}
+.md-reminder-btn.set{background:var(--surf);border-color:var(--bdr2);box-shadow:0 0 0 2px var(--text) inset}
+.md-reminder-btn svg{width:18px;height:18px}
+
 /* MD Tabs */
 .mdtabs{display:flex;padding:0 18px;border-bottom:1px solid var(--bdr);margin-top:4px}
-.mdtab{flex:1;padding:10px 6px;font-size:12px;font-weight:700;color:var(--t2);text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;letter-spacing:.3px}
+.mdtab{flex:1;padding:10px 6px;font-size:12px;font-weight:700;color:var(--t2);
+  text-align:center;cursor:pointer;border-bottom:2px solid transparent;
+  transition:color .18s,border-color .18s;letter-spacing:.3px}
 .mdtab.on{color:var(--text);border-bottom-color:var(--text)}
 .mdtc{display:none;padding:16px 18px 4px}
 .mdtc.on{display:block}
 .mdig{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.mdic{background:var(--surf);border-radius:13px;padding:11px 13px;border:1px solid var(--bdr)}
+.mdic{background:var(--surf);border-radius:14px;padding:11px 13px;border:1px solid var(--bdr)}
 .mdicl{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
 .mdicv{font-size:13px;font-weight:600;color:var(--text)}
-.strow{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.stn{font-size:13px;font-weight:700;color:var(--text);width:32px}
+
+/* STAT BARS — rounded, pure B/N */
+.strow{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.stn{font-size:14px;font-weight:800;color:var(--text);min-width:28px}
 .stn.l{text-align:right}
 .stn.r{text-align:left}
-.stbar{flex:1;height:4px;border-radius:99px;background:var(--surf2);overflow:hidden}
-.stfill{height:100%;background:var(--text);border-radius:99px;transition:width .7s var(--ease)}
-.stlbl{font-size:10px;font-weight:600;color:var(--t2);min-width:64px;text-align:center}
+.stbar{flex:1;height:6px;border-radius:99px;background:var(--surf2);overflow:hidden;position:relative}
+.stfill{height:100%;background:var(--text);border-radius:99px;transition:width .8s var(--ease)}
+.stfill.away{background:var(--t2)}
+.stlbl{font-size:10px;font-weight:600;color:var(--t2);min-width:70px;text-align:center}
+
+/* Events timeline */
 .evit{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr)}
 .evit:last-child{border-bottom:none}
 .evmin{font-family:"DM Mono",monospace;font-size:11px;color:var(--t2);width:28px;text-align:right;flex-shrink:0;padding-top:1px}
 .evico{font-size:15px;flex-shrink:0}
 .evnm{font-size:13px;font-weight:600;color:var(--text)}
 .evtm{font-size:11px;color:var(--t3)}
+
 /* NEWS MODAL */
 .ndimg{width:100%;height:220px;background:var(--surf2);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .ndimg img{width:100%;height:100%;object-fit:cover}
@@ -254,101 +428,253 @@ input,textarea,select{font-family:inherit;color:var(--text)}
 .ndtit{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.4px;color:var(--text);line-height:1.1;margin-bottom:8px}
 .nddate{font-size:11px;color:var(--t3);margin-bottom:14px}
 .ndtxt{font-size:14px;color:var(--t2);line-height:1.75}
-/* SIDE MENU */
-#smov{position:fixed;inset:0;z-index:400;opacity:0;pointer-events:none;transition:opacity var(--spd);max-width:520px;left:50%;transform:translateX(-50%)}
+
+/* ---- SIDE MENU ---- */
+#smov{position:fixed;inset:0;z-index:400;opacity:0;pointer-events:none;transition:opacity var(--spd);
+  max-width:520px;left:50%;transform:translateX(-50%)}
 #smov.open{opacity:1;pointer-events:all}
-#smov::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-#sm{position:absolute;top:0;right:0;bottom:0;width:290px;background:var(--bg2);transform:translateX(100%);transition:transform var(--spd) var(--ease);display:flex;flex-direction:column;padding:calc(16px + env(safe-area-inset-top,0px)) 0 calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto}
+#smov::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.65);
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+#sm{position:absolute;top:0;right:0;bottom:0;width:300px;
+  background:var(--nbg);
+  backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);
+  transform:translateX(100%);transition:transform var(--spd) var(--ease);
+  display:flex;flex-direction:column;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 0 calc(24px + env(safe-area-inset-bottom,0px));
+  overflow-y:auto;border-left:1px solid var(--bdr2);
+  box-shadow:-12px 0 48px rgba(0,0,0,.4)}
 #sm::-webkit-scrollbar{display:none}
 #smov.open #sm{transform:translateX(0)}
 .smcrow{display:flex;align-items:center;justify-content:space-between;padding:0 16px 16px}
-.smxbtn{width:34px;height:34px;border-radius:50%;background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s var(--spring)}
+.smxbtn{width:34px;height:34px;border-radius:50%;background:var(--surf2);border:1px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s var(--spring)}
 .smxbtn:active{transform:scale(.86)}
 .smxbtn svg{width:15px;height:15px;color:var(--t2)}
 .smaln{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.5px;color:var(--text)}
 .smusr{display:flex;align-items:center;gap:12px;padding:12px 16px 16px;border-bottom:1px solid var(--bdr)}
-.smav{width:46px;height:46px;border-radius:13px;background:var(--surf2);border:1.5px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:17px;color:var(--text);overflow:hidden;flex-shrink:0}
+.smav{width:46px;height:46px;border-radius:14px;background:var(--surf2);border:1.5px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;
+  font-size:17px;color:var(--text);overflow:hidden;flex-shrink:0}
 .smav img{width:100%;height:100%;object-fit:cover}
 .smun{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.4px;color:var(--text)}
 .smur{font-size:11px;color:var(--t3);font-weight:500}
 .smit{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;transition:background .14s}
 .smit:active{background:var(--surf)}
-.smic{width:34px;height:34px;border-radius:10px;background:var(--surf);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2)}
+.smic{width:34px;height:34px;border-radius:10px;background:var(--surf);border:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2)}
 .smic svg{width:16px;height:16px}
 .smlab{font-size:14px;font-weight:600;color:var(--text)}
 .smsub{font-size:11px;color:var(--t3)}
 .smdiv{height:1px;background:var(--bdr);margin:5px 16px}
 .smtgl{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
 .smtgll{font-size:14px;font-weight:600;color:var(--text)}
-.tgl{width:44px;height:24px;border-radius:99px;background:var(--surf2);border:1.5px solid var(--bdr2);position:relative;cursor:pointer;transition:background .2s}
+.tgl{width:44px;height:24px;border-radius:99px;background:var(--surf2);border:1.5px solid var(--bdr2);
+  position:relative;cursor:pointer;transition:background .2s,border-color .2s}
 .tgl.on{background:var(--text);border-color:var(--text)}
-.tglk{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:99px;background:var(--bg);transition:transform .2s var(--spring)}
+.tglk{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:99px;
+  background:var(--bg2);transition:transform .2s var(--spring);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .tgl.on .tglk{transform:translateX(20px)}
 [data-theme="light"] .tgl.on .tglk{background:var(--surf)}
-/* ADMIN */
+
+/* ---- ADMIN ---- */
 .atabs{display:flex;gap:6px;overflow-x:auto;padding:0 14px 14px;scrollbar-width:none}
 .atabs::-webkit-scrollbar{display:none}
-.atab{flex-shrink:0;padding:8px 14px;border-radius:99px;border:1px solid var(--bdr2);background:var(--surf);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .2s var(--spring);white-space:nowrap}
+.atab{flex-shrink:0;padding:8px 14px;border-radius:99px;border:1px solid var(--bdr2);
+  background:var(--surf);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;
+  transition:all .2s var(--spring);white-space:nowrap}
 .atab.on{background:var(--text);color:var(--bg);border-color:var(--text)}
 .atab:active{transform:scale(.92)}
 .apane{display:none;padding:0 14px 24px}
 .apane.on{display:block}
 .atit{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.4px;color:var(--text);margin-bottom:12px}
-.aform{background:var(--surf);border-radius:16px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
+.aform{background:var(--surf);border-radius:22px;border:1px solid var(--bdr);padding:14px;margin-bottom:12px}
 .fl{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
-.fi{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--bdr2);background:var(--bg2);color:var(--text);font-size:13px;margin-bottom:10px;transition:border-color .2s}
-.fi:focus{background:var(--bg3)}
+.fi{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--bdr2);
+  background:var(--bg2);color:var(--text);font-size:13px;margin-bottom:10px;
+  transition:border-color .2s,background .2s}
+.fi:focus{background:var(--bg3);border-color:var(--bdr2)}
 .fi::placeholder{color:var(--t3)}
-.fsel{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--bdr2);background:var(--bg2);color:var(--text);font-size:13px;margin-bottom:10px;appearance:none}
+.fsel{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--bdr2);
+  background:var(--bg2);color:var(--text);font-size:13px;margin-bottom:10px;appearance:none;cursor:pointer}
 .frow{display:flex;gap:8px}
 .frow .fi,.frow .fsel{margin-bottom:0;flex:1}
 .fgrp{flex:1}
-.abtn{width:100%;padding:13px;border-radius:14px;background:var(--text);color:var(--bg);font-size:13px;font-weight:800;font-family:"Bebas Neue",sans-serif;letter-spacing:1.2px;cursor:pointer;transition:transform .15s var(--spring),opacity .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(0,0,0,.26)}
-.abtn:hover{box-shadow:0 6px 22px rgba(0,0,0,.32)}
-.abtn:active{transform:scale(.97);opacity:.88;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.abtn{width:100%;padding:13px;border-radius:18px;background:var(--text);color:var(--bg);
+  font-size:13px;font-weight:800;font-family:"Bebas Neue",sans-serif;letter-spacing:1.2px;
+  cursor:pointer;transition:transform .15s var(--spring),opacity .2s;
+  box-shadow:0 4px 18px rgba(0,0,0,.22)}
+.abtn:active{transform:scale(.97);opacity:.88}
 .abtn.sec{background:var(--surf2);color:var(--text);border:1px solid var(--bdr2);box-shadow:none}
-.fupbtn{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1.5px dashed var(--bdr2);background:transparent;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;transition:border-color .2s,color .2s}
-.fupbtn.has{border-color:var(--t2);color:var(--text)}
+.abtn.dng{background:transparent;color:var(--text);border:1.5px solid var(--bdr2);box-shadow:none;opacity:.6}
+.fupbtn{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;
+  border:1.5px dashed var(--bdr2);background:transparent;color:var(--t2);font-size:12px;
+  font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;transition:border-color .2s,color .2s,background .2s}
+.fupbtn.has{border-style:solid;border-color:var(--bdr2);color:var(--text);background:var(--surf2)}
 .fupbtn svg{width:16px;height:16px;flex-shrink:0}
 .hfi{display:none}
-.ali{display:flex;align-items:center;gap:9px;padding:9px;background:var(--bg2);border-radius:10px;margin-bottom:6px;border:1px solid var(--bdr)}
-.alcr{width:32px;height:32px;border-radius:8px;border:1px solid var(--bdr2);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:10px;overflow:hidden;flex-shrink:0}
+.ali{display:flex;align-items:center;gap:9px;padding:9px;background:var(--bg2);
+  border-radius:12px;margin-bottom:6px;border:1px solid var(--bdr)}
+.alcr{width:32px;height:32px;border-radius:9px;border:1px solid var(--bdr2);background:var(--surf2);
+  display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:10px;overflow:hidden;flex-shrink:0}
 .alcr img{width:100%;height:100%;object-fit:cover}
 .alinf{flex:1;min-width:0}
 .aln{font-size:13px;font-weight:700;color:var(--text)}
 .als{font-size:10px;color:var(--t3);margin-top:1px}
 .alacts{display:flex;gap:5px}
-.albtn{width:30px;height:30px;border-radius:8px;background:var(--surf);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);transition:background .15s,transform .15s var(--spring)}
+.albtn{width:30px;height:30px;border-radius:8px;background:var(--surf);border:1px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);
+  transition:background .15s,transform .15s var(--spring)}
 .albtn:active{transform:scale(.86)}
 .albtn svg{width:13px;height:13px}
-.albtn.del{color:#ff453a;border-color:rgba(255,69,58,.2)}
-.lcbox{background:var(--surf);border-radius:14px;border:1px solid var(--bdr);padding:13px;margin-bottom:8px}
+
+/* LIVE CONTROL */
+.lcbox{background:var(--surf);border-radius:18px;border:1px solid var(--bdr);padding:13px;margin-bottom:8px}
 .lctit{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px}
 .lcsc{display:flex;align-items:center;justify-content:center;gap:10px}
 .lctn{font-size:11px;font-weight:700;color:var(--t2);max-width:70px;text-align:center;line-height:1.2}
 .lcn{font-family:"Bebas Neue",sans-serif;font-size:38px;letter-spacing:2px;color:var(--text);min-width:32px;text-align:center}
 .scc{display:flex;flex-direction:column;gap:4px}
-.scb{width:28px;height:22px;border-radius:6px;background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:800;color:var(--text);transition:background .14s,transform .14s var(--spring)}
+.scb{width:28px;height:22px;border-radius:6px;background:var(--surf2);border:1px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;
+  font-weight:800;color:var(--text);transition:background .14s,transform .14s var(--spring)}
 .scb:active{transform:scale(.85)}
-.tpit{display:flex;align-items:center;gap:11px;padding:11px;background:var(--surf);border-radius:12px;margin-bottom:7px;cursor:pointer;border:1px solid var(--bdr);transition:background .14s}
+.tpit{display:flex;align-items:center;gap:11px;padding:11px;background:var(--surf);
+  border-radius:14px;margin-bottom:7px;cursor:pointer;border:1px solid var(--bdr);transition:background .14s}
 .tpit.sel{border-color:var(--bdr2)}
-.tpck{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bdr2);margin-left:auto;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
+.tpck{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bdr2);
+  margin-left:auto;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
 .tpit.sel .tpck{background:var(--text);border-color:var(--text);color:var(--bg)}
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 20px;text-align:center;gap:7px}
-.etic{font-size:34px;opacity:.4}
+
+/* ---- EDIT MODE ---- */
+.edit-mode-bar{position:fixed;top:calc(68px + env(safe-area-inset-top,0px));left:50%;
+  transform:translateX(-50%);z-index:500;background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:14px;padding:8px 16px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.3);backdrop-filter:blur(16px);
+  white-space:nowrap;max-width:calc(100vw - 28px)}
+.edit-mode-bar span{font-size:12px;font-weight:700;color:var(--t2);letter-spacing:.3px}
+.edit-mode-btn{padding:6px 14px;border-radius:8px;background:var(--text);color:var(--bg);
+  font-size:11px;font-weight:800;cursor:pointer;transition:opacity .15s}
+.edit-mode-btn:active{opacity:.7}
+.edit-mode-btn.sec{background:var(--surf2);color:var(--text);border:1px solid var(--bdr2)}
+/* Editable elements get drag handle */
+.editable{position:relative!important;cursor:grab!important}
+.editable:active{cursor:grabbing!important}
+.editable::after{content:"⠿";position:absolute;top:4px;right:4px;font-size:14px;
+  color:var(--text);opacity:.5;pointer-events:none;background:var(--bg2);
+  border-radius:4px;padding:0 3px;border:1px solid var(--bdr)}
+
+/* ---- ADMIN GATE ---- */
+#admin-gate{position:fixed;inset:0;z-index:800;background:var(--over);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .26s;
+  max-width:520px;left:50%;transform:translateX(-50%);backdrop-filter:blur(4px)}
+#admin-gate.open{opacity:1;pointer-events:all}
+#admin-gate-box{background:var(--bg2);border-radius:28px 28px 0 0;
+  padding:24px 18px calc(24px + env(safe-area-inset-bottom,0px));width:100%;
+  transform:translateY(100%);transition:transform .3s var(--ease)}
+#admin-gate.open #admin-gate-box{transform:translateY(0)}
+.gate-t{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.5px;color:var(--text);margin-bottom:6px}
+.gate-s{font-size:12px;color:var(--t2);margin-bottom:18px}
+.gate-err{font-size:12px;color:var(--text);margin-top:6px;opacity:.7;min-height:17px}
+
+/* ---- SEARCH OVERLAY ---- */
+#srch-ov{position:fixed;inset:0;z-index:500;background:var(--over);
+  opacity:0;pointer-events:none;transition:opacity .22s;
+  max-width:520px;left:50%;transform:translateX(-50%);
+  padding:calc(16px + env(safe-area-inset-top,0px)) 14px 0;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#srch-ov.open{opacity:1;pointer-events:all}
+.srchbar{display:flex;align-items:center;gap:10px;background:var(--surf);
+  border:1px solid var(--bdr2);border-radius:18px;padding:12px 14px;margin-bottom:12px}
+.srchbar input{flex:1;border:none;background:transparent;color:var(--text);font-size:15px;font-family:"DM Sans",sans-serif}
+.srchbar input::placeholder{color:var(--t3)}
+.srchbar svg{width:17px;height:17px;color:var(--t3)}
+.srchcancel{font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;flex-shrink:0;padding:4px}
+
+/* ---- PWA BANNER ---- */
+#pwa-banner{position:fixed;bottom:calc(102px + env(safe-area-inset-bottom,0px));left:50%;
+  transform:translateX(-50%) translateY(20px);
+  width:calc(100% - 28px);max-width:492px;
+  background:var(--surf);border:1px solid var(--bdr2);border-radius:22px;padding:14px;
+  z-index:250;box-shadow:0 12px 40px rgba(0,0,0,.26);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease)}
+#pwa-banner.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:all}
+.pwab-row{display:flex;align-items:center;gap:12px}
+.pwab-ico{width:46px;height:46px;border-radius:12px;border:1px solid var(--bdr2);
+  background:var(--surf2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:12px;color:var(--text)}
+.pwab-ico img{width:100%;height:100%;object-fit:cover}
+.pwab-info{flex:1;min-width:0}
+.pwab-t{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.pwab-s{font-size:11px;color:var(--t2)}
+.pwab-acts{display:flex;gap:8px;margin-top:12px}
+.pwab-btn{flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:700;
+  cursor:pointer;transition:opacity .15s,transform .15s var(--spring);
+  font-family:"Bebas Neue",sans-serif;letter-spacing:.5px}
+.pwab-btn:active{transform:scale(.96)}
+.pwab-btn.pri{background:var(--text);color:var(--bg)}
+.pwab-btn.sec{background:var(--surf2);color:var(--text);border:1px solid var(--bdr2)}
+
+/* ---- EMPTY / TOAST ---- */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:36px 20px;text-align:center;gap:7px}
+.etic{font-size:34px;opacity:.35}
 .etit{font-size:14px;font-weight:700;color:var(--t2)}
 .esub{font-size:12px;color:var(--t3)}
-/* TOAST */
-#toast{position:fixed;bottom:106px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--surf);border:1px solid var(--bdr2);color:var(--text);border-radius:99px;padding:11px 22px;font-size:13px;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity .26s var(--ease),transform .26s var(--spring);white-space:nowrap;box-shadow:0 10px 40px rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.06);max-width:calc(100vw - 48px)}
+#toast{position:fixed;bottom:110px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--surf);border:1px solid var(--bdr2);color:var(--text);
+  border-radius:99px;padding:11px 22px;font-size:13px;font-weight:600;
+  z-index:9999;opacity:0;pointer-events:none;
+  transition:opacity .26s var(--ease),transform .26s var(--spring);
+  white-space:nowrap;box-shadow:0 10px 40px rgba(0,0,0,.28);max-width:calc(100vw - 48px)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .hidden{display:none!important}
-@keyframes scfl{0%{transform:scale(1)}45%{transform:scale(1.3)}70%{transform:scale(.96)}100%{transform:scale(1)}}
-.scfl{animation:scfl .36s var(--spring)}
-/* RESPONSIVE */
-@media(min-width:700px){#app{max-width:640px}.mc{width:310px}.pstats{grid-template-columns:repeat(4,1fr)}.mdig{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:1024px){html,body{overflow:auto}#app{max-width:1200px;height:100dvh;display:grid;grid-template-columns:230px 1fr;grid-template-rows:auto 1fr;overflow:hidden}#hdr{grid-column:1/-1;padding-left:22px;padding-right:22px}#nav{position:static;bottom:auto;left:auto;transform:none;border-radius:0;padding:12px 10px;flex-direction:column;gap:2px;width:230px;height:100%;background:var(--bg2);backdrop-filter:none;-webkit-backdrop-filter:none;border-right:1px solid var(--bdr);border-left:none;border-top:none;border-bottom:none;box-shadow:none;max-width:none;align-items:stretch;justify-content:flex-start;overflow-y:auto;grid-row:2;grid-column:1}.ni{flex-direction:row;align-items:center;justify-content:flex-start;padding:10px 14px;min-width:auto;border-radius:12px;gap:10px}.ni.on::after{display:none}.nilbl{font-size:13px;text-transform:none;letter-spacing:0;font-weight:600}.niico{width:20px;height:20px}#scroll{grid-row:2;grid-column:2;max-height:calc(100dvh - 68px);padding-bottom:24px}.greet,.sec{padding-left:24px;padding-right:24px}.hscroll{padding-left:24px;padding-right:24px}.chips{padding-left:24px;padding-right:24px}.jornhd{padding-left:24px;padding-right:24px}.mr{padding-left:24px;padding-right:24px}#toast{bottom:24px}}
-@media(min-width:1600px){#app{max-width:1600px;grid-template-columns:270px 1fr}#nav{width:270px}.hn{font-size:22px}.sect{font-size:24px}.mc{width:350px}.mccr{width:54px;height:54px}.mcsc{font-size:38px}.nilbl{font-size:15px}.niico svg{width:24px;height:24px}}
+
+/* GOAL ANIMATION */
+@keyframes scfl{0%{transform:scale(1)}40%{transform:scale(1.35)}70%{transform:scale(.94)}100%{transform:scale(1)}}
+.scfl{animation:scfl .38s var(--spring)}
+@keyframes bdgPop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+/* NOTIF ITEM mejorado */
+.notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 18px;
+  border-bottom:1px solid var(--bdr);transition:background .14s;cursor:default}
+.notif-item:last-child{border-bottom:none}
+.notif-item:active{background:var(--surf)}
+.notif-ico{width:36px;height:36px;border-radius:10px;background:var(--surf2);border:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.notif-sub{font-size:11px;color:var(--t2);line-height:1.4}
+.notif-date{font-size:10px;color:var(--t3);margin-top:3px}
+.notif-unread{width:7px;height:7px;border-radius:50%;background:var(--text);
+  flex-shrink:0;margin-top:5px;opacity:.8}
+.notif-header{display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px}
+.notif-clear{font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;padding:4px 0}
+.notif-clear:active{opacity:.6}
+@media(min-width:700px){#app{max-width:640px}.mc{width:318px}.pstats{grid-template-columns:repeat(4,1fr)}.mdig{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){
+  html,body{overflow:auto}
+  #app{max-width:1200px;height:100dvh;display:grid;grid-template-columns:230px 1fr;grid-template-rows:auto 1fr;overflow:hidden}
+  #hdr{grid-column:1/-1;padding-left:22px;padding-right:22px}
+  #nav{position:static;bottom:auto;left:auto;transform:none;border-radius:0;padding:12px 10px;
+    flex-direction:column;gap:2px;width:230px;height:100%;background:var(--bg2);
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    border-right:1px solid var(--bdr);border-left:none;border-top:none;border-bottom:none;
+    box-shadow:none;max-width:none;align-items:stretch;justify-content:flex-start;
+    overflow-y:auto;grid-row:2;grid-column:1}
+  .ni{flex-direction:row;align-items:center;justify-content:flex-start;
+    padding:10px 14px;min-width:auto;border-radius:12px;gap:10px}
+  .ni.on::after{display:none}
+  .nilbl{font-size:13px;text-transform:none;letter-spacing:0;font-weight:600}
+  #scroll{grid-row:2;grid-column:2;max-height:calc(100dvh - 68px);padding-bottom:24px}
+  .greet,.sec{padding-left:24px;padding-right:24px}
+  .hscroll{padding-left:24px;padding-right:24px}
+  .chips{padding-left:24px;padding-right:24px}
+  .jornhd{padding-left:24px;padding-right:24px}
+  .mr{padding-left:24px;padding-right:24px}
+  #toast{bottom:24px}
+}
 </style>
 </head>
 <body>
@@ -356,17 +682,22 @@ input,textarea,select{font-family:inherit;color:var(--text)}
 <div class="amb" id="ab-top"></div>
 <div class="amb" id="ab-bot"></div>
 <div class="amb" id="ab-mid"></div>
+
 <!-- HEADER -->
 <header id="hdr">
   <div class="hrow">
     <div class="hl">
       <div id="hlogo" onclick="onLogoTap()">
+        <div id="hlogo-ring"></div>
         <img id="logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover"/>
         <span id="logo-fb" style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.5px;color:var(--text)">LSL</span>
       </div>
       <div class="hi">
         <div class="hn" id="hname">La Súper Liga</div>
-        <div class="hsub"><span class="hse" id="hseason">T9 "Reinicio"</span><span class="spill"><span class="sdot"></span><span id="hstatus">En curso</span></span></div>
+        <div class="hsub">
+          <span class="hse" id="hseason">T9 "Reinicio"</span>
+          <span class="spill"><span class="sdot" id="hdot"></span><span id="hstatus">En curso</span></span>
+        </div>
       </div>
     </div>
     <div class="hacts">
@@ -377,8 +708,16 @@ input,textarea,select{font-family:inherit;color:var(--text)}
     </div>
   </div>
 </header>
-<!-- CONTENT -->
+
+<!-- EDIT MODE BAR (hidden by default) -->
+<div class="edit-mode-bar hidden" id="edit-bar">
+  <span>MODO EDICIÓN</span>
+  <button class="edit-mode-btn sec" onclick="resetEditMode()">Resetear</button>
+  <button class="edit-mode-btn" onclick="saveEditMode()">Guardar</button>
+</div>
+
 <div id="scroll">
+
 <!-- INICIO -->
 <div class="page active" id="pg-inicio">
   <div class="greet">
@@ -391,16 +730,18 @@ input,textarea,select{font-family:inherit;color:var(--text)}
   <div class="sec"><div class="sechd"><div class="sect">Noticias</div><div class="secm" onclick="go('info')">Ver todo</div></div><div id="feat-n"><div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div></div></div>
   <div class="sec"><div class="sechd"><div class="sect">Tabla</div><div class="secm" onclick="go('info')">Completa</div></div><div id="mini-tbl" style="padding-bottom:16px"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div></div></div>
 </div>
+
 <!-- PARTIDOS -->
 <div class="page" id="pg-partidos">
   <div class="chips">
     <div class="chip on" onclick="flt('todos',this)">Todos</div>
-    <div class="chip" onclick="flt('proximo',this)">Proximos</div>
+    <div class="chip" onclick="flt('proximo',this)">Próximos</div>
     <div class="chip" onclick="flt('en_vivo',this)">En vivo</div>
     <div class="chip" onclick="flt('finalizado',this)">Finalizados</div>
   </div>
   <div id="mlist"><div class="empty"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div></div>
 </div>
+
 <!-- INFO -->
 <div class="page" id="pg-info">
   <div style="padding:16px 0 0">
@@ -409,35 +750,43 @@ input,textarea,select{font-family:inherit;color:var(--text)}
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Sanciones / Lesiones</div></div>
     <div style="padding:0 14px 14px"><div class="ibox" id="sanc-box"><div class="empty"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sancionados</div></div></div></div>
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Reglamento</div></div>
-    <div style="padding:0 14px 14px"><div class="ibox"><div class="ibxt" id="rules-txt">El reglamento sera publicado pronto.</div></div></div>
+    <div style="padding:0 14px 14px"><div class="ibox"><div class="ibxt" id="rules-txt">El reglamento será publicado pronto.</div></div></div>
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Noticias</div></div>
     <div style="padding:0 14px 24px" id="all-n"><div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div></div>
   </div>
 </div>
+
 <!-- PERFIL -->
 <div class="page" id="pg-perfil">
   <div class="pban" onclick="triggerBanner()"><img id="pban-img" src="" alt="" style="display:none"/><div class="pbanph" id="pbanph"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Agregar banner</span></div><div class="pbanedit">Cambiar</div></div>
   <div class="phdr">
     <div class="pavw"><div class="pav" id="pav"><img id="pav-img" src="" style="display:none"/><span id="pav-init">J</span></div><div class="paved" onclick="triggerAvatar()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div></div>
     <div class="pnm" id="pnm">joelito</div>
-    <div class="pbio" id="pbio">Sin bio aun.</div>
+    <div class="pbio" id="pbio">Sin bio aún.</div>
     <div class="ptb" onclick="openTeamPicker()"><div class="ptbcr" id="ptbcr">&#x26BD;</div><span class="ptbnm" id="ptbnm">Sin equipo favorito</span></div>
   </div>
   <div class="pstats"><div class="pst"><div class="pstv" id="ps-pj">0</div><div class="pstl">Partidos</div></div><div class="pst"><div class="pstv" id="ps-gf">0</div><div class="pstl">Goles</div></div><div class="pst"><div class="pstv" id="ps-rk">-</div><div class="pstl">Ranking</div></div></div>
   <button class="pedbtn" onclick="openProfEdit()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Editar perfil</button>
 </div>
+
 <!-- ADMIN -->
 <div class="page" id="pg-admin">
-  <div style="padding:18px 14px 10px;display:flex;align-items:center;justify-content:space-between"><div class="sect">Panel Admin</div><span style="background:var(--surf2);border:1px solid var(--bdr2);border-radius:6px;padding:2px 8px;font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2)">Admin</span></div>
+  <div style="padding:18px 14px 10px;display:flex;align-items:center;justify-content:space-between">
+    <div class="sect">Panel Admin</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="toggleEditMode()" style="padding:4px 12px;border-radius:8px;background:var(--surf2);border:1px solid var(--bdr2);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);cursor:pointer" id="edit-mode-toggle">✏️ Editar UI</button>
+      <span style="background:var(--surf2);border:1px solid var(--bdr2);border-radius:6px;padding:2px 8px;font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2)">Admin</span>
+    </div>
+  </div>
   <div class="atabs">
-    <div class="atab on" onclick="admTab('matches',this)">&#x26BD; Partidos</div>
-    <div class="atab" onclick="admTab('teams',this)">&#x1F3C6; Equipos</div>
-    <div class="atab" onclick="admTab('players',this)">&#x1F464; Jugadores</div>
-    <div class="atab" onclick="admTab('news',this)">&#x1F4F0; Noticias</div>
-    <div class="atab" onclick="admTab('channels',this)">&#x1F4FA; Canales</div>
-    <div class="atab" onclick="admTab('sanctions',this)">&#x1F7E8; Sanciones</div>
-    <div class="atab" onclick="admTab('season',this)">&#x1F3C5; Temporada</div>
-    <div class="atab" onclick="admTab('config',this)">&#x2699;&#xFE0F; Config</div>
+    <div class="atab on" onclick="admTab('matches',this)">⚽ Partidos</div>
+    <div class="atab" onclick="admTab('teams',this)">🏆 Equipos</div>
+    <div class="atab" onclick="admTab('players',this)">👤 Jugadores</div>
+    <div class="atab" onclick="admTab('news',this)">📰 Noticias</div>
+    <div class="atab" onclick="admTab('channels',this)">📺 Canales</div>
+    <div class="atab" onclick="admTab('sanctions',this)">🟨 Sanciones</div>
+    <div class="atab" onclick="admTab('season',this)">🏅 Temporada</div>
+    <div class="atab" onclick="admTab('config',this)">⚙️ Config</div>
   </div>
   <!-- MATCHES PANE -->
   <div class="apane on" id="adm-matches">
@@ -451,7 +800,7 @@ input,textarea,select{font-family:inherit;color:var(--text)}
         <div class="fgrp"><div class="fl">Canal</div><select class="fsel" id="m-ch"><option value="">Sin canal</option></select></div>
       </div>
       <div class="fl">Estado</div>
-      <select class="fsel" id="m-st"><option value="proximo">Proximo</option><option value="en_vivo">En Vivo</option><option value="finalizado">Finalizado</option><option value="pausado">Pausado</option></select>
+      <select class="fsel" id="m-st"><option value="proximo">Próximo</option><option value="en_vivo">En Vivo</option><option value="finalizado">Finalizado</option><option value="pausado">Pausado</option></select>
       <button class="abtn" onclick="saveMatch()">GUARDAR PARTIDO</button>
     </div>
     <div class="atit" style="margin-top:4px">Control en vivo</div>
@@ -459,88 +808,89 @@ input,textarea,select{font-family:inherit;color:var(--text)}
     <div class="atit" style="margin-top:12px">Todos los partidos</div>
     <div id="adm-m-list"></div>
   </div>
-  <!-- TEAMS PANE -->
+  <!-- TEAMS -->
   <div class="apane" id="adm-teams">
     <div class="atit">Nuevo equipo</div>
     <div class="aform">
       <div class="fl">Nombre</div><input type="text" class="fi" id="t-name" placeholder="Nombre del equipo..."/>
       <div class="fl">Escudo / Logo</div>
-      <button class="fupbtn" id="t-logo-btn" onclick="document.getElementById('t-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="t-logo-txt">Subir escudo</span></button>
-      <input type="file" accept="image/*" class="hfi" id="t-logo-fi" onchange="handleFile(event,'pendingTeamLogo','t-logo-btn','t-logo-txt')"/>
+      <button class="fupbtn" id="t-logo-btn" onclick="document.getElementById('t-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="t-logo-txt">Subir escudo desde galería</span></button>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="t-logo-fi" onchange="handleFile(event,'pendingTeamLogo','t-logo-btn','t-logo-txt')"/>
       <button class="abtn" onclick="saveTeam()">GUARDAR EQUIPO</button>
     </div>
     <div class="atit" style="margin-top:4px">Equipos registrados</div>
     <div id="adm-t-list"></div>
   </div>
-  <!-- PLAYERS PANE -->
+  <!-- PLAYERS -->
   <div class="apane" id="adm-players">
     <div class="atit">Agregar jugador</div>
     <div class="aform">
-      <div class="fl">Nombre</div><input type="text" class="fi" id="pl-name" placeholder="Nombre del jugador..."/>
+      <div class="fl">Nombre</div><input type="text" class="fi" id="pl-name" placeholder="Nombre..."/>
       <div class="frow">
-        <div class="fgrp"><div class="fl">Numero</div><input type="number" class="fi" id="pl-num" placeholder="10" min="1" max="99"/></div>
-        <div class="fgrp"><div class="fl">Posicion</div><select class="fsel" id="pl-pos"><option value="PO">Portero</option><option value="DF">Defensa</option><option value="MC">Mediocampista</option><option value="DE">Delantero</option></select></div>
+        <div class="fgrp"><div class="fl">Número</div><input type="number" class="fi" id="pl-num" placeholder="10" min="1" max="99"/></div>
+        <div class="fgrp"><div class="fl">Posición</div><select class="fsel" id="pl-pos"><option value="PO">Portero</option><option value="DF">Defensa</option><option value="MC">Mediocampista</option><option value="DE">Delantero</option></select></div>
       </div>
       <div class="fl">Equipo</div><select class="fsel" id="pl-team"></select>
       <button class="fupbtn" id="pl-photo-btn" onclick="document.getElementById('pl-photo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg><span id="pl-photo-txt">Foto (opcional)</span></button>
-      <input type="file" accept="image/*" class="hfi" id="pl-photo-fi" onchange="handleFile(event,'pendingPlayerPhoto','pl-photo-btn','pl-photo-txt')"/>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="pl-photo-fi" onchange="handleFile(event,'pendingPlayerPhoto','pl-photo-btn','pl-photo-txt')"/>
       <button class="abtn" onclick="savePlayer()">AGREGAR JUGADOR</button>
     </div>
     <div class="atit" style="margin-top:4px">Plantillas</div>
     <div id="adm-pl-list"></div>
   </div>
-  <!-- NEWS PANE -->
+  <!-- NEWS -->
   <div class="apane" id="adm-news">
     <div class="atit">Nueva noticia</div>
     <div class="aform">
-      <div class="fl">Titulo</div><input type="text" class="fi" id="n-title" placeholder="Titulo..."/>
-      <div class="fl">Categoria</div>
-      <select class="fsel" id="n-cat"><option value="NOTICIAS">NOTICIAS</option><option value="RESULTADOS">RESULTADOS</option><option value="FICHAJES">FICHAJES</option><option value="ENTREVISTA">ENTREVISTA</option><option value="ANALISIS">ANALISIS</option><option value="RUMORES">RUMORES</option></select>
-      <div class="fl">Resumen</div><input type="text" class="fi" id="n-excerpt" placeholder="Breve descripcion..."/>
-      <div class="fl">Contenido</div><textarea class="fi" id="n-body" rows="4" placeholder="Cuerpo completo..." style="resize:vertical"></textarea>
-      <button class="fupbtn" id="n-img-btn" onclick="document.getElementById('n-img-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="n-img-txt">Subir imagen</span></button>
-      <input type="file" accept="image/*" class="hfi" id="n-img-fi" onchange="handleFile(event,'pendingNewsImg','n-img-btn','n-img-txt')"/>
+      <div class="fl">Título</div><input type="text" class="fi" id="n-title" placeholder="Título..."/>
+      <div class="fl">Categoría</div>
+      <select class="fsel" id="n-cat"><option value="NOTICIAS">NOTICIAS</option><option value="RESULTADOS">RESULTADOS</option><option value="FICHAJES">FICHAJES</option><option value="ENTREVISTA">ENTREVISTA</option><option value="ANÁLISIS">ANÁLISIS</option><option value="RUMORES">RUMORES</option></select>
+      <div class="fl">Resumen</div><input type="text" class="fi" id="n-excerpt" placeholder="Breve descripción..."/>
+      <div class="fl">Contenido</div><textarea class="fi" id="n-body" rows="4" placeholder="Cuerpo..." style="resize:vertical"></textarea>
+      <div class="fl">Imagen</div>
+      <button class="fupbtn" id="n-img-btn" onclick="document.getElementById('n-img-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="n-img-txt">Subir imagen desde galería</span></button>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="n-img-fi" onchange="handleFile(event,'pendingNewsImg','n-img-btn','n-img-txt')"/>
       <button class="abtn" onclick="saveNews()">PUBLICAR NOTICIA</button>
     </div>
     <div class="atit" style="margin-top:4px">Publicadas</div>
     <div id="adm-n-list"></div>
   </div>
-  <!-- CHANNELS PANE -->
+  <!-- CHANNELS -->
   <div class="apane" id="adm-channels">
     <div class="atit">Agregar canal</div>
     <div class="aform">
       <div class="fl">Nombre</div><input type="text" class="fi" id="ch-name" placeholder="Ej: Twitch, YouTube..."/>
       <div class="fl">URL (opcional)</div><input type="text" class="fi" id="ch-url" placeholder="https://..."/>
       <button class="fupbtn" id="ch-logo-btn" onclick="document.getElementById('ch-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M17 2l-5 5-5-5"/></svg><span id="ch-logo-txt">Logo del canal</span></button>
-      <input type="file" accept="image/*" class="hfi" id="ch-logo-fi" onchange="handleFile(event,'pendingChLogo','ch-logo-btn','ch-logo-txt')"/>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="ch-logo-fi" onchange="handleFile(event,'pendingChLogo','ch-logo-btn','ch-logo-txt')"/>
       <button class="abtn" onclick="saveChannel()">GUARDAR CANAL</button>
     </div>
     <div class="atit" style="margin-top:4px">Canales registrados</div>
     <div id="adm-ch-list"></div>
   </div>
-  <!-- SANCTIONS PANE -->
+  <!-- SANCTIONS -->
   <div class="apane" id="adm-sanctions">
-    <div class="atit">Agregar sancion / lesion</div>
+    <div class="atit">Agregar sanción / lesión</div>
     <div class="aform">
-      <div class="fl">Jugador</div><input type="text" class="fi" id="sa-player" placeholder="Nombre del jugador..."/>
+      <div class="fl">Jugador</div><input type="text" class="fi" id="sa-player" placeholder="Nombre..."/>
       <div class="fl">Equipo</div><select class="fsel" id="sa-team"></select>
       <div class="fl">Tipo</div>
-      <select class="fsel" id="sa-type"><option value="sancion">Sancion (amarillas)</option><option value="expulsion">Expulsion roja</option><option value="lesion">Lesion</option><option value="otro">Otro</option></select>
-      <div class="fl">Duracion</div><input type="text" class="fi" id="sa-dur" placeholder="Ej: 1 partido..."/>
+      <select class="fsel" id="sa-type"><option value="sancion">Sanción (amarillas)</option><option value="expulsion">Expulsión roja</option><option value="lesion">Lesión</option><option value="otro">Otro</option></select>
+      <div class="fl">Duración</div><input type="text" class="fi" id="sa-dur" placeholder="Ej: 1 partido..."/>
       <div class="fl">Notas</div><input type="text" class="fi" id="sa-notes" placeholder="Motivo..."/>
       <button class="abtn" onclick="saveSanction()">AGREGAR</button>
     </div>
     <div class="atit" style="margin-top:4px">Activas</div>
     <div id="adm-sa-list"></div>
   </div>
-  <!-- SEASON PANE -->
+  <!-- SEASON -->
   <div class="apane" id="adm-season">
-    <div class="atit">Gestion de temporada</div>
+    <div class="atit">Gestión de temporada</div>
     <div class="aform">
       <div class="fl">Nombre de temporada</div><input type="text" class="fi" id="sea-name" placeholder='T9 "Reinicio"'/>
       <div class="fl">Estado</div>
-      <select class="fsel" id="sea-status"><option value="en_curso">En curso</option><option value="proximo">Proximamente</option><option value="pausado">Pausado</option><option value="finalizado">Finalizado</option></select>
-      <div class="fl">Descripcion</div><input type="text" class="fi" id="sea-desc" placeholder="Descripcion breve..."/>
+      <select class="fsel" id="sea-status"><option value="en_curso">En curso</option><option value="proximo">Próximamente</option><option value="pausado">Pausado</option><option value="finalizado">Finalizado</option></select>
+      <div class="fl">Descripción</div><input type="text" class="fi" id="sea-desc" placeholder="Descripción breve..."/>
       <button class="abtn" onclick="saveSeason()">GUARDAR TEMPORADA</button>
     </div>
     <div class="atit" style="margin-top:4px">Historial</div>
@@ -550,29 +900,37 @@ input,textarea,select{font-family:inherit;color:var(--text)}
       <div class="fl">Equipo</div><select class="fsel" id="pts-team"></select>
       <div class="frow">
         <div class="fgrp"><div class="fl">+/- Puntos</div><input type="number" class="fi" id="pts-delta" placeholder="3" style="margin-bottom:0"/></div>
-        <div class="fgrp"><div class="fl">Razon</div><input type="text" class="fi" id="pts-reason" placeholder="Motivo..." style="margin-bottom:0"/></div>
+        <div class="fgrp"><div class="fl">Razón</div><input type="text" class="fi" id="pts-reason" placeholder="Motivo..." style="margin-bottom:0"/></div>
       </div>
       <button class="abtn" style="margin-top:10px" onclick="adjustPoints()">APLICAR AJUSTE</button>
     </div>
   </div>
-  <!-- CONFIG PANE -->
+  <!-- CONFIG -->
   <div class="apane" id="adm-config">
-    <div class="atit">Configuracion</div>
+    <div class="atit">Configuración</div>
     <div class="aform">
       <div class="fl">Nombre de la liga</div><input type="text" class="fi" id="cfg-name" placeholder="La Super Liga"/>
       <div class="fl">Nombre corto</div><input type="text" class="fi" id="cfg-short" placeholder="LSL"/>
+      <div class="fl">Logo / Icono</div>
       <button class="fupbtn" id="cfg-logo-btn" onclick="document.getElementById('cfg-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="cfg-logo-txt">Cambiar logo</span></button>
-      <input type="file" accept="image/*" class="hfi" id="cfg-logo-fi" onchange="handleFile(event,'pendingCfgLogo','cfg-logo-btn','cfg-logo-txt')"/>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="cfg-logo-fi" onchange="handleFile(event,'pendingCfgLogo','cfg-logo-btn','cfg-logo-txt')"/>
+      <div class="fl">Nueva contraseña Admin</div><input type="password" class="fi" id="cfg-pass" placeholder="Min 4 caracteres..."/>
       <div class="fl">Reglamento</div><textarea class="fi" id="cfg-rules" rows="5" placeholder="Escribe el reglamento..." style="resize:vertical"></textarea>
       <button class="abtn" onclick="saveConfig()">GUARDAR CONFIG</button>
     </div>
     <div class="aform">
-      <div class="atit" style="font-size:14px;margin-bottom:8px">Zona de peligro</div>
-      <button class="abtn sec" onclick="resetApp()">RESETEAR APP</button>
+      <div class="fl" style="margin-bottom:8px">Importar / Exportar</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="abtn sec" style="font-size:11px;padding:10px" onclick="exportJSON()">EXPORTAR JSON</button>
+        <button class="abtn sec" style="font-size:11px;padding:10px" onclick="document.getElementById('import-fi').click()">IMPORTAR JSON</button>
+      </div>
+      <input type="file" accept="application/json" class="hfi" id="import-fi" onchange="importJSON(event)"/>
+      <button class="abtn dng" onclick="resetApp()">RESETEAR APP</button>
     </div>
   </div>
 </div>
 </div><!-- /scroll -->
+
 <!-- NAV ISLAND -->
 <nav id="nav">
   <div class="ni on" id="ni-inicio" onclick="go('inicio')">
@@ -597,430 +955,909 @@ input,textarea,select{font-family:inherit;color:var(--text)}
   </div>
 </nav>
 </div><!-- /app -->
+
 <!-- SIDE MENU -->
 <div id="smov" onclick="closeSMOv(event)">
   <div id="sm">
-    <div class="smcrow">
-      <div class="smaln" id="sm-aln">La Super Liga</div>
-      <button class="smxbtn" onclick="closeMenu()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
+    <div class="smcrow"><div class="smaln" id="sm-aln">La Super Liga</div><button class="smxbtn" onclick="closeMenu()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
     <div class="smusr"><div class="smav" id="sm-av"><img id="sm-av-img" src="" style="display:none"/><span id="sm-av-init">J</span></div><div><div class="smun" id="sm-uname">joelito</div><div class="smur" id="sm-urole">Miembro</div></div></div>
-    <div class="smit" onclick="go('inicio');closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/></svg></div><div class="smlab">Inicio</div></div>
-    <div class="smit" onclick="go('partidos');closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3c0 0 2.5 4 2.5 9s-2.5 9-2.5 9M3 12h18"/></svg></div><div class="smlab">Partidos</div></div>
-    <div class="smit" onclick="openNotifs();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div class="smlab">Notificaciones</div></div>
-    <div class="smit" onclick="go('perfil');closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div class="smlab">Mi perfil</div></div>
     <div class="smdiv"></div>
-    <div class="smtgl"><div class="smtgll">Tema oscuro</div><div class="tgl on" id="tgl-theme" onclick="toggleTheme()"><div class="tglk"></div></div></div>
+    <!-- Exclusivos del menú -->
+    <div class="smit" onclick="go('perfil');closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div><div class="smlab">Mi Perfil</div><div class="smsub">Editar información</div></div></div>
+    <div class="smit" onclick="openFriends();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="smlab">Gestión de Amigos</div><div class="smsub">Seguir equipos y usuarios</div></div></div>
+    <div class="smit" onclick="openBetHistory();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><div><div class="smlab">Historial de Apuestas</div><div class="smsub">Tus predicciones</div></div></div>
+    <div class="smit" onclick="openAccountSettings();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div><div><div class="smlab">Configuración</div><div class="smsub">Cuenta y privacidad</div></div></div>
+    <div class="smdiv"></div>
+    <div class="smtgl"><div class="smtgll">Modo Oscuro</div><div class="tgl on" id="tgl-theme" onclick="toggleTheme()"><div class="tglk"></div></div></div>
+    <div class="smdiv"></div>
+    <div class="smit" onclick="openNotifs();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div><div class="smlab">Notificaciones</div><div class="smsub" id="notif-perm-lbl">Toca para activar</div></div></div>
+    <div class="smit" id="sm-pwa-btn" style="display:none" onclick="installPWA()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div><div class="smlab">Instalar app</div><div class="smsub">Agregar a inicio</div></div></div>
+    <div class="smit" onclick="shareApp()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div class="smlab">Compartir app</div></div>
     <div class="smdiv"></div>
     <div class="smit" id="sm-admin-item" style="display:none" onclick="go('admin');closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg></div><div><div class="smlab">Panel Admin</div><div class="smsub">Gestionar liga</div></div></div>
   </div>
 </div>
+
 <!-- MATCH DETAIL MODAL -->
 <div class="ov" id="md-ov" onclick="ovClick(event,'md-ov')">
-  <div class="ovs" id="md-sheet">
-    <div class="ovhd"></div>
-    <button class="ovx" onclick="closeOv('md-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div id="md-content"></div>
-  </div>
+  <div class="ovs" id="md-sheet"><div class="ovhd"></div><button class="ovx" onclick="closeOv('md-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button><div id="md-content"></div></div>
 </div>
 <!-- NEWS MODAL -->
 <div class="ov" id="nw-ov" onclick="ovClick(event,'nw-ov')">
   <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('nw-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button><div id="nw-content"></div></div>
 </div>
-<!-- PROFILE EDIT MODAL -->
+<!-- PROFILE EDIT -->
 <div class="ov" id="pe-ov" onclick="ovClick(event,'pe-ov')">
   <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('pe-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     <div style="padding:0 18px 24px"><div class="sect" style="margin-bottom:16px">Editar perfil</div><div class="fl">Nombre</div><input type="text" class="fi" id="pe-name"/><div class="fl">Bio</div><textarea class="fi" id="pe-bio" rows="3" style="resize:none"></textarea><button class="abtn" onclick="saveProfEdit()">GUARDAR</button></div>
   </div>
 </div>
-<!-- NOTIFICATIONS MODAL -->
+<!-- NOTIFICATIONS -->
 <div class="ov" id="notif-ov" onclick="ovClick(event,'notif-ov')">
   <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('notif-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div style="padding:0 0 20px"><div class="sect" style="padding:0 18px 14px">Notificaciones</div><div id="notif-list"><div class="empty"><div class="etic">&#x1F514;</div><div class="etit">Sin notificaciones</div></div></div></div>
+    <div style="padding:4px 0 20px">
+      <div class="notif-header">
+        <div class="sect" style="font-size:20px">Notificaciones</div>
+        <span class="notif-clear" onclick="clearNotifs()">Marcar todas leídas</span>
+      </div>
+      <div id="notif-list"></div>
+    </div>
   </div>
 </div>
-<!-- TEAM PICKER MODAL -->
+<!-- TEAM PICKER -->
 <div class="ov" id="tp-ov" onclick="ovClick(event,'tp-ov')">
   <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('tp-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     <div style="padding:0 18px 24px"><div class="sect" style="margin-bottom:14px">Equipo favorito</div><div id="tp-list"></div></div>
   </div>
 </div>
-<!-- LIVE EDIT MODAL -->
+<!-- LIVE EDIT -->
 <div class="ov" id="le-ov" onclick="ovClick(event,'le-ov')">
   <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('le-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     <div style="padding:0 18px 24px" id="le-content"></div>
   </div>
 </div>
-<!-- hidden file inputs -->
+<!-- ADMIN GATE -->
+<div id="admin-gate">
+  <div id="admin-gate-box">
+    <div class="gate-t">Acceso Admin</div>
+    <div class="gate-s">Ingresa la contraseña para continuar</div>
+    <div class="fl">Contraseña</div>
+    <input type="password" class="fi" id="gate-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')verifyAdmin()"/>
+    <div class="gate-err" id="gate-err"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="abtn sec" style="flex:1" onclick="closeAdminGate()">CANCELAR</button>
+      <button class="abtn" style="flex:2" onclick="verifyAdmin()">ENTRAR</button>
+    </div>
+  </div>
+</div>
+<!-- SEARCH -->
+<div id="srch-ov" onclick="if(event.target===this)closeSearch()">
+  <div class="srchbar">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="srch-inp" placeholder="Buscar equipos, jugadores, noticias..." oninput="doSearch(this.value)"/>
+    <span class="srchcancel" onclick="closeSearch()">Cancelar</span>
+  </div>
+  <div id="srch-res" style="overflow-y:auto;max-height:calc(100dvh - 100px)"></div>
+</div>
+<!-- PWA BANNER -->
+<div id="pwa-banner">
+  <div class="pwab-row">
+    <div class="pwab-ico"><img id="pwab-img" src="" alt="" style="display:none"/><span id="pwab-fb">LSL</span></div>
+    <div class="pwab-info"><div class="pwab-t" id="pwab-title">La Súper Liga</div><div class="pwab-s">Agrega la app a tu pantalla de inicio</div></div>
+  </div>
+  <div class="pwab-acts"><button class="pwab-btn sec" onclick="dismissPWA()">Ahora no</button><button class="pwab-btn pri" onclick="installPWA()">Instalar</button></div>
+</div>
+<!-- HIDDEN INPUTS -->
 <input type="file" accept="image/*" class="hfi" id="avatar-fi" onchange="handleAvatarUpload(event)"/>
 <input type="file" accept="image/*" class="hfi" id="banner-fi" onchange="handleBannerUpload(event)"/>
 <div id="toast"></div>
+
 <script>
-const STORE='lsl_v3';
-let D={cfg:{name:'La Super Liga',short:'LSL',season:'T9 "Reinicio"',status:'en_curso',logo:'',rules:''},user:{name:'joelito',bio:'',avatar:'',banner:'',favTeam:'',isAdmin:true},teams:[],matches:[],news:[],players:[],channels:[],sanctions:[],seasons:[],notifications:[],settings:{theme:'dark'}};
+/* =====================================================
+   LA SÚPER LIGA — JS COMPLETO CORREGIDO
+   ===================================================== */
+const STORE='lsl_v5';
+const ADMIN_DEFAULT='Admin123';
+let D={
+  cfg:{name:'La Súper Liga',short:'LSL',season:'T9 "Reinicio"',status:'en_curso',seasonDesc:'',logo:'',rules:'',adminPass:ADMIN_DEFAULT},
+  user:{name:'joelito',bio:'',avatar:'',banner:'',favTeam:'',isAdmin:false},
+  teams:[],matches:[],news:[],players:[],channels:[],sanctions:[],seasons:[],notifications:[],
+  settings:{theme:'dark'},
+  editTransforms:{}
+};
 let pending={};
-function save(){try{localStorage.setItem(STORE,JSON.stringify(D))}catch(e){toast('Storage lleno')}}
-function load(){try{const r=localStorage.getItem(STORE);if(r){const p=JSON.parse(r);D=dm(D,p)}}catch(e){}}
-function dm(t,s){const r={...t};for(const k of Object.keys(s)){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))r[k]=dm(t[k]||{},s[k]);else r[k]=s[k]}return r}
+let deferredPWA=null;
+let logoTapCount=0,logoTapTimer=null,logoHoldTimer=null,logoHoldProgress=null;
+let curPage='inicio';
+let ambientDebounce=null;
+let reminders={};
+let editMode=false;
+
+/* ---- FIX: Persistencia robusta ---- */
+function save(){
+  try{
+    localStorage.setItem(STORE,JSON.stringify(D));
+  }catch(e){
+    // Storage lleno: comprimir imágenes
+    try{
+      const D2=JSON.parse(JSON.stringify(D));
+      D2.teams=D2.teams.map(t=>({...t,logo:t.logo&&t.logo.length>5000?'':t.logo}));
+      D2.cfg.logo=D2.cfg.logo&&D2.cfg.logo.length>5000?'':D2.cfg.logo;
+      localStorage.setItem(STORE,JSON.stringify(D2));
+      toast('⚠️ Algunas imágenes no pudieron guardarse (almacenamiento lleno)');
+    }catch(e2){toast('❌ Error al guardar. Limpia el almacenamiento del navegador.')}
+  }
+}
+function load(){
+  try{
+    const r=localStorage.getItem(STORE);
+    if(r){const p=JSON.parse(r);D=deepMerge(D,p)}
+  }catch(e){console.warn('Error al cargar datos',e)}
+}
+function deepMerge(target,source){
+  const r={...target};
+  for(const k of Object.keys(source)){
+    if(source[k]!==null&&typeof source[k]==='object'&&!Array.isArray(source[k])){
+      r[k]=deepMerge(target[k]||{},source[k]);
+    }else{r[k]=source[k]}
+  }
+  return r;
+}
 function $(id){return document.getElementById(id)}
 
+/* ---- INIT ---- */
 function init(){
   load();
-  if(!D.teams.length){D.teams=[{id:'lanza',name:'Lanza Air',logo:'',pj:0,pg:0,pp:0,gf:0,gc:0,pts:0,adj:0},{id:'todo',name:'Todo De Dios',logo:'',pj:0,pg:0,pp:0,gf:0,gc:0,pts:0,adj:0}];save()}
-  applyTheme(D.settings.theme);updateHdr();updateGreet();updateUser();renderAll();checkAdmin();setupAmbient();setupLogoHold();setInterval(updateGreet,60000);
+  // Ensure default teams
+  if(!D.teams.length){
+    D.teams=[
+      {id:'lanza',name:'Lanza Air',logo:'',pj:0,pg:0,pp:0,pe:0,gf:0,gc:0,pts:0,adj:0},
+      {id:'todo',name:'Todo De Dios',logo:'',pj:0,pg:0,pp:0,pe:0,gf:0,gc:0,pts:0,adj:0}
+    ];
+    save();
+  }
+  D.teams.forEach(t=>{if(t.pe===undefined)t.pe=0});
+  if(!D.cfg.adminPass)D.cfg.adminPass=ADMIN_DEFAULT;
+  if(!D.editTransforms)D.editTransforms={};
+  applyTheme(D.settings.theme);
+  updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
+  setupLogoHold();setupBroadcast();setupPWA();setupManifest();
+  setInterval(updateGreet,60000);
+  setTimeout(maybeShowPWABanner,4500);
 }
 
-/* NAV */
-let curPage='inicio';
+/* ---- BROADCAST ---- */
+let bc=null;
+function setupBroadcast(){
+  try{bc=new BroadcastChannel('lsl_live');bc.onmessage=()=>{load();renderAll();updateHdr()}}catch(e){}
+}
+function broadcastUpdate(){try{bc?.postMessage({ts:Date.now()})}catch(e){}}
+
+/* ---- PWA ---- */
+function setupPWA(){
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();deferredPWA=e;
+    $('sm-pwa-btn').style.display='flex';
+  });
+  if('serviceWorker' in navigator){
+    const sw=`const C='lsl-v5';
+self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/'])));self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim()});
+self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});
+self.addEventListener('push',e=>{const d=e.data?e.data.json():{title:'LSL',body:'Nueva notificación'};e.waitUntil(self.registration.showNotification(d.title,{body:d.body,icon:'/icon.png'}))});`;
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+  }
+}
+function setupManifest(){
+  const manifest={
+    name:D.cfg.name||'La Súper Liga',short_name:D.cfg.short||'LSL',
+    start_url:'/',display:'standalone',
+    background_color:D.settings.theme==='dark'?'#000000':'#ffffff',
+    theme_color:D.settings.theme==='dark'?'#000000':'#ffffff',
+    orientation:'portrait',
+    icons:[{
+      src:D.cfg.logo||`data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23000' width='192' height='192' rx='32'/><text x='96' y='125' font-family='Arial' font-size='86' font-weight='900' text-anchor='middle' fill='%23fff'>LSL</text></svg>`,
+      sizes:'192x192',type:'image/png'
+    }]
+  };
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  let link=$('manifest-link');
+  if(!link){link=document.createElement('link');link.rel='manifest';link.id='manifest-link';document.head.appendChild(link)}
+  link.href=url;
+  $('app-title').textContent=D.cfg.name||'La Súper Liga';
+}
+function maybeShowPWABanner(){
+  if(deferredPWA&&!localStorage.getItem('lsl_pwa_ok')){
+    const b=$('pwa-banner');
+    updatePWABannerLogo();
+    b.classList.add('show');
+  }
+}
+function updatePWABannerLogo(){
+  const pi=$('pwab-img'),pf=$('pwab-fb');
+  if(D.cfg.logo){pi.src=D.cfg.logo;pi.style.display='block';pf.style.display='none'}
+  else{pi.style.display='none';pf.style.display=''}
+  $('pwab-title').textContent=D.cfg.name||'La Súper Liga';
+}
+function installPWA(){
+  $('pwa-banner').classList.remove('show');
+  if(deferredPWA){deferredPWA.prompt();deferredPWA.userChoice.then(r=>{if(r.outcome==='accepted'){localStorage.setItem('lsl_pwa_ok','1');$('sm-pwa-btn').style.display='none';toast('✅ App instalada')}deferredPWA=null})}
+  else toast('💡 Usa "Agregar a pantalla de inicio" del navegador');
+}
+function dismissPWA(){$('pwa-banner').classList.remove('show');localStorage.setItem('lsl_pwa_ok','dismissed')}
+function shareApp(){if(navigator.share)navigator.share({title:D.cfg.name,url:location.href}).catch(()=>{});else{navigator.clipboard?.writeText(location.href);toast('Link copiado')}}
+function requestNotifPerm(){
+  if(!('Notification' in window)){toast('No disponible en este navegador');return}
+  Notification.requestPermission().then(p=>{updateNotifLabel();if(p==='granted'){toast('✅ Notificaciones activadas');new Notification(D.cfg.name,{body:'Notificaciones activadas ✓'})}else toast('❌ Permiso denegado')});
+}
+function updateNotifLabel(){
+  const lbl=$('notif-perm-lbl');if(!lbl)return;
+  const p='Notification' in window?Notification.permission:'not-supported';
+  lbl.textContent=p==='granted'?'Activadas ✓':p==='denied'?'Bloqueadas':'Toca para activar';
+}
+
+/* ---- ADMIN ACCESS — LOGO HOLD 3s ---- */
+function setupLogoHold(){
+  const el=$('hlogo');if(!el)return;
+  function startHold(){
+    logoHoldTimer=setTimeout(()=>{openAdminGate()},3000);
+    // Visual ring progress
+    let start=null;
+    const ring=$('hlogo-ring');
+    ring.style.opacity='1';
+    function anim(ts){
+      if(!start)start=ts;
+      const pct=Math.min((ts-start)/3000,1);
+      ring.style.background=`conic-gradient(var(--text) ${pct*360}deg, transparent 0deg)`;
+      ring.style.webkitMask='linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)';
+      ring.style.webkitMaskComposite='destination-out';
+      ring.style.maskComposite='exclude';
+      if(pct<1)logoHoldProgress=requestAnimationFrame(anim);
+    }
+    logoHoldProgress=requestAnimationFrame(anim);
+  }
+  function cancelHold(){
+    clearTimeout(logoHoldTimer);
+    cancelAnimationFrame(logoHoldProgress);
+    $('hlogo-ring').style.opacity='0';
+    $('hlogo-ring').style.background='';
+  }
+  el.addEventListener('touchstart',startHold,{passive:true});
+  el.addEventListener('touchend',cancelHold,{passive:true});
+  el.addEventListener('touchmove',cancelHold,{passive:true});
+  el.addEventListener('mousedown',startHold);
+  el.addEventListener('mouseup',cancelHold);
+  el.addEventListener('mouseleave',cancelHold);
+}
+function onLogoTap(){
+  logoTapCount++;
+  clearTimeout(logoTapTimer);
+  logoTapTimer=setTimeout(()=>{logoTapCount=0},700);
+  if(logoTapCount>=5){logoTapCount=0;openAdminGate()}
+}
+function openAdminGate(){
+  if(D.user.isAdmin){go('admin');return}
+  $('gate-pass').value='';$('gate-err').textContent='';
+  $('admin-gate').classList.add('open');
+  setTimeout(()=>$('gate-pass').focus(),300);
+}
+function closeAdminGate(){$('admin-gate').classList.remove('open')}
+function verifyAdmin(){
+  const pass=$('gate-pass').value;
+  if(pass===(D.cfg.adminPass||ADMIN_DEFAULT)){
+    D.user.isAdmin=true;save();checkAdmin();closeAdminGate();go('admin');toast('✅ Bienvenido Admin');
+  }else{
+    $('gate-err').textContent='Contraseña incorrecta';
+    $('gate-pass').value='';$('gate-pass').focus();
+  }
+}
+function checkAdmin(){
+  const isA=D.user.isAdmin;
+  $('ni-admin').classList.toggle('hidden',!isA);
+  $('sm-admin-item').style.display=isA?'flex':'none';
+  $('sm-urole').textContent=isA?'Administrador':'Miembro';
+}
+
+/* ---- EDIT MODE (drag / scale / rotate) ---- */
+function toggleEditMode(){
+  editMode=!editMode;
+  $('edit-bar').classList.toggle('hidden',!editMode);
+  $('edit-mode-toggle').textContent=editMode?'✏️ Salir edición':'✏️ Editar UI';
+  if(editMode)activateEditMode();
+  else deactivateEditMode();
+}
+function activateEditMode(){
+  const targets=[...document.querySelectorAll('.sec,.greet,.hscroll,.stw')];
+  targets.forEach(el=>{
+    el.classList.add('editable');
+    const id=el.id||el.className.split(' ')[0];
+    if(D.editTransforms[id]){el.style.transform=D.editTransforms[id]}
+    makeDraggable(el,id);
+  });
+}
+function deactivateEditMode(){
+  document.querySelectorAll('.editable').forEach(el=>{
+    el.classList.remove('editable');
+    el._dragCleanup?.();
+  });
+}
+function makeDraggable(el,id){
+  let startX=0,startY=0,curX=0,curY=0;
+  const saved=D.editTransforms[id]||'';
+  // parse existing translate
+  const m=saved.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
+  curX=m?parseFloat(m[1]):0;curY=m?parseFloat(m[2]):0;
+
+  function onDown(e){
+    if(!editMode)return;
+    const src=e.touches?e.touches[0]:e;
+    startX=src.clientX-curX;startY=src.clientY-curY;
+    document.addEventListener('mousemove',onMove);document.addEventListener('touchmove',onMove,{passive:false});
+    document.addEventListener('mouseup',onUp);document.addEventListener('touchend',onUp);
+    e.preventDefault();
+  }
+  function onMove(e){
+    const src=e.touches?e.touches[0]:e;
+    curX=src.clientX-startX;curY=src.clientY-startY;
+    el.style.transform=`translate(${curX}px,${curY}px)`;
+    e.preventDefault();
+  }
+  function onUp(){
+    document.removeEventListener('mousemove',onMove);document.removeEventListener('touchmove',onMove);
+    document.removeEventListener('mouseup',onUp);document.removeEventListener('touchend',onUp);
+    D.editTransforms[id]=el.style.transform;
+  }
+  el.addEventListener('mousedown',onDown);el.addEventListener('touchstart',onDown,{passive:false});
+  el._dragCleanup=()=>{el.removeEventListener('mousedown',onDown);el.removeEventListener('touchstart',onDown)};
+}
+function saveEditMode(){
+  save();editMode=false;$('edit-bar').classList.add('hidden');$('edit-mode-toggle').textContent='✏️ Editar UI';
+  deactivateEditMode();toast('✅ Transformaciones guardadas');
+}
+function resetEditMode(){D.editTransforms={};save();document.querySelectorAll('.editable').forEach(el=>el.style.transform='');toast('🔄 Posiciones reseteadas')}
+
+/* ---- NAV ---- */
 function go(p){
-  if(curPage===p)return;
+  if(curPage===p&&p!=='admin')return;
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
   const pg=$('pg-'+p),ni=$('ni-'+p);
   if(pg){pg.classList.add('active');curPage=p}
   if(ni)ni.classList.add('on');
-  $('scroll').scrollTop=0;closeMenu();setTimeout(updateAmbient,80);
+  $('scroll').scrollTop=0;closeMenu();
+  clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,100);
 }
 
-/* THEME */
-function applyTheme(t){document.documentElement.setAttribute('data-theme',t);D.settings.theme=t;const tgl=$('tgl-theme');if(tgl)tgl.classList.toggle('on',t==='dark');$('theme-color-meta')?.setAttribute('content',t==='dark'?'#080808':'#f2f2f7')}
+/* ---- THEME ---- */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);D.settings.theme=t;
+  const tgl=$('tgl-theme');if(tgl)tgl.classList.toggle('on',t==='dark');
+  $('theme-color-meta')?.setAttribute('content',t==='dark'?'#000000':'#ffffff');
+}
 function toggleTheme(){applyTheme(D.settings.theme==='dark'?'light':'dark');save();setTimeout(updateAmbient,50)}
 
-/* AMBIENT */
-function extCol(img){
-  try{const c=document.createElement('canvas');c.width=20;c.height=20;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,20,20);const d=ctx.getImageData(0,0,20,20).data;let r=0,g=0,b=0,n=0;
-  for(let i=0;i<d.length;i+=12){const pr=d[i],pg=d[i+1],pb=d[i+2],pa=d[i+3];if(pa<40)continue;const br=(pr+pg+pb)/3;if(br>225||br<18)continue;r+=pr;g+=pg;b+=pb;n++}
-  if(!n)return null;return{r:Math.round(r/n),g:Math.round(g/n),b:Math.round(b/n)}}catch(e){return null}}
-function sat(r,g,b,f=1.7){const a=(r+g+b)/3;return{r:Math.min(255,Math.round(a+(r-a)*f)),g:Math.min(255,Math.round(a+(g-a)*f)),b:Math.min(255,Math.round(a+(b-a)*f))}}
-function applyGlow(r,g,b,live=false){
-  const c=sat(r,g,b);const dk=D.settings.theme==='dark';
-  const ta=dk?(live?.56:.4):(live?.28:.18);const ba=dk?(live?.42:.28):(live?.2:.12);
-  const top=$('ab-top'),bot=$('ab-bot'),mid=$('ab-mid');
-  if(top){top.style.background=`radial-gradient(ellipse 100% 100% at 50% 0%,rgba(${c.r},${c.g},${c.b},${ta}) 0%,transparent 72%)`;top.style.opacity='1'}
-  if(bot){bot.style.background=`radial-gradient(ellipse 100% 100% at 50% 100%,rgba(${c.r},${c.g},${c.b},${ba}) 0%,transparent 72%)`;bot.style.opacity='1'}
-  if(mid){if(live){mid.style.background=`radial-gradient(ellipse 90% 90% at 50% 50%,rgba(${c.r},${c.g},${c.b},.1) 0%,transparent 70%)`;mid.style.opacity='1'}else mid.style.opacity='0'}
-  const nav=$('nav');if(nav)nav.style.borderColor=`rgba(${c.r},${c.g},${c.b},.16)`;
+/* ====================================================
+   FIX CRÍTICO: Ambient con img.onload garantizado
+   ==================================================== */
+function extractColor(imgEl){
+  return new Promise((resolve)=>{
+    const doExtract=()=>{
+      try{
+        const canvas=document.createElement('canvas');
+        canvas.width=20;canvas.height=20;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(imgEl,0,0,20,20);
+        const data=ctx.getImageData(0,0,20,20).data;
+        let r=0,g=0,b=0,n=0;
+        for(let i=0;i<data.length;i+=16){
+          const pa=data[i+3];if(pa<40)continue;
+          const pr=data[i],pg=data[i+1],pb=data[i+2];
+          const br=(pr+pg+pb)/3;
+          // Skip near-white and near-black pixels
+          if(br>228||br<16)continue;
+          r+=pr;g+=pg;b+=pb;n++;
+        }
+        if(!n){resolve(null);return}
+        resolve({r:Math.round(r/n),g:Math.round(g/n),b:Math.round(b/n)});
+      }catch(e){resolve(null)}
+    };
+    // FIX: Esperar a que la imagen esté completamente cargada
+    if(imgEl.complete&&imgEl.naturalWidth>0){
+      doExtract();
+    }else{
+      imgEl.addEventListener('load',doExtract,{once:true});
+      imgEl.addEventListener('error',()=>resolve(null),{once:true});
+    }
+  });
 }
-function updateAmbient(){
-  let col=null;const imgs=document.querySelectorAll('#feat-m .mccr img,#feat-n img');
-  for(const im of imgs){if(im.complete&&im.naturalWidth>0){col=extCol(im);if(col)break}}
+function saturate(r,g,b,f=1.9){
+  const a=(r+g+b)/3;
+  return{r:Math.min(255,Math.round(a+(r-a)*f)),g:Math.min(255,Math.round(a+(g-a)*f)),b:Math.min(255,Math.round(a+(b-a)*f))};
+}
+async function updateAmbient(){
+  const imgs=[...document.querySelectorAll('.page.active img')].filter(i=>!i.src.startsWith('data:image/svg'));
+  if(!imgs.length){
+    // No hay imágenes: fade a neutro
+    ['ab-top','ab-bot','ab-mid'].forEach(id=>{if($(id))$(id).style.opacity='0'});
+    if($('hdr'))$('hdr').style.boxShadow='';
+    if($('nav'))$('nav').style.boxShadow='0 24px 64px rgba(0,0,0,.36),0 4px 16px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.06)';
+    return;
+  }
+  const col=await extractColor(imgs[0]);
+  if(!col){
+    ['ab-top','ab-bot','ab-mid'].forEach(id=>{if($(id))$(id).style.opacity='0'});
+    return;
+  }
+  const s=saturate(col.r,col.g,col.b);
   const live=D.matches.some(m=>m.status==='en_vivo');
-  if(col)applyGlow(col.r,col.g,col.b,live);else{const dk=D.settings.theme==='dark';applyGlow(dk?150:80,dk?150:80,dk?150:80,live)}
-}
-function setupAmbient(){
-  let tick=false;$('scroll').addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(()=>{updateAmbient();tick=false})}},{passive:true});
-  document.addEventListener('load',e=>{if(e.target.tagName==='IMG')setTimeout(updateAmbient,50)},true);
-  updateAmbient();setTimeout(updateAmbient,700);setTimeout(updateAmbient,2000);
+  const opTop=live?0.32:0.2;
+  const opBot=live?0.16:0.09;
+  const opMid=live?0.14:0.07;
+  const colStr=`${s.r},${s.g},${s.b}`;
+  const rawStr=`${col.r},${col.g},${col.b}`;
+  const abt=$('ab-top');if(abt){abt.style.background=`rgb(${colStr})`;abt.style.opacity=opTop}
+  const abb=$('ab-bot');if(abb){abb.style.background=`rgb(${rawStr})`;abb.style.opacity=opBot}
+  const abm=$('ab-mid');if(abm){abm.style.background=`rgb(${colStr})`;abm.style.opacity=opMid}
+  // Sutil tinte en header y nav
+  if($('hdr'))$('hdr').style.boxShadow=`0 1px 0 rgba(${colStr},.1)`;
+  if($('nav'))$('nav').style.boxShadow=`0 24px 64px rgba(0,0,0,.36),0 4px 16px rgba(0,0,0,.18),0 0 0 1px rgba(${colStr},.12),inset 0 1px 0 rgba(255,255,255,.06)`;
 }
 
-/* HEADER */
+/* ---- HDR / GREET / USER ---- */
 function updateHdr(){
   const c=D.cfg;
-  $('hname').textContent=c.name||'La Super Liga';$('hseason').textContent=c.season||'T9';
-  $('app-title').textContent=c.name||'La Super Liga';
-  const sm={en_curso:'En curso',proximo:'Proximamente',pausado:'Pausado',finalizado:'Finalizado'};
-  $('hstatus').textContent=sm[c.status]||'En curso';
-  const li=$('logo-img'),lf=$('logo-fb');
-  if(c.logo){li.src=c.logo;li.style.display='block';lf.style.display='none'}else{li.style.display='none';lf.style.display='';lf.textContent=c.short||'LSL'}
-  $('sm-aln').textContent=c.name||'La Super Liga';
+  $('hname').textContent=c.name||'La Súper Liga';
+  $('hseason').textContent=c.season||'T9';
+  $('sm-aln').textContent=c.name||'La Súper Liga';
+  const sl={en_curso:'En curso',proximo:'Próximamente',pausado:'Pausado',finalizado:'Finalizado'};
+  $('hstatus').textContent=sl[c.status]||'En curso';
+  $('hdot').className='sdot'+(D.matches.some(m=>m.status==='en_vivo')?' live':'');
+  const li=$('logo-img'),fb=$('logo-fb');
+  if(c.logo){li.src=c.logo;li.style.display='block';fb.style.display='none'}
+  else{li.style.display='none';fb.style.display='';fb.textContent=c.short||'LSL'}
+  updatePWABannerLogo();
+  setupManifest();
 }
+function greetStr(){const h=new Date().getHours();return h<5?'Buenas noches':h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches'}
 function updateGreet(){
-  const h=new Date().getHours();const g=h>=5&&h<12?'Buenos dias':h>=12&&h<20?'Buenas tardes':'Buenas noches';
-  $('greet-time').textContent=g;$('greet-user').textContent=D.user.name||'Usuario';
-  $('greet-sea').textContent=('TEMPORADA '+D.cfg.season).toUpperCase();
+  $('greet-time').textContent=greetStr();
+  $('greet-user').textContent=D.user.name||'Usuario';
+  $('greet-sea').textContent=(D.cfg.season||'').toUpperCase();
 }
 function updateUser(){
-  const u=D.user;const init=(u.name||'U').charAt(0).toUpperCase();
-  setAv($('hav-img'),$('hav-init'),u.avatar,init);
-  setAv($('sm-av-img'),$('sm-av-init'),u.avatar,init);
-  setAv($('pav-img'),$('pav-init'),u.avatar,init);
-  $('sm-uname').textContent=u.name||'Usuario';$('sm-urole').textContent=u.isAdmin?'Administrador':'Miembro';
-  $('pnm').textContent=u.name||'Usuario';$('pbio').textContent=u.bio||'Sin bio aun.';
-  const bi=$('pban-img'),bph=$('pbanph');
-  if(u.banner){bi.src=u.banner;bi.style.display='block';bph.style.display='none'}else{bi.style.display='none';bph.style.display='flex'}
-  const ft=D.teams.find(t=>t.id===u.favTeam);
-  if(ft){$('ptbnm').textContent=ft.name;$('ptbcr').innerHTML=ft.logo?`<img src="${ft.logo}" style="width:100%;height:100%;object-fit:cover"/>`:'&#x26BD;'}
-  else{$('ptbnm').textContent='Sin equipo favorito';$('ptbcr').innerHTML='&#x26BD;'}
-  $('ps-pj').textContent=D.matches.filter(m=>m.status==='finalizado').length;
+  const u=D.user;
+  const init=(u.name||'U').charAt(0).toUpperCase();
+  $('hav-init').textContent=init;$('pav-init').textContent=init;$('sm-av-init').textContent=init;
+  $('sm-uname').textContent=u.name||'Usuario';$('pnm').textContent=u.name||'Usuario';
+  $('pbio').textContent=u.bio||'Sin bio aún.';
+  [$('hav-img'),$('pav-img'),$('sm-av-img')].forEach(el=>{if(el){el.src=u.avatar||'';el.style.display=u.avatar?'block':'none'}});
+  $('hav-init').style.display=u.avatar?'none':'';$('pav-init').style.display=u.avatar?'none':'';$('sm-av-init').style.display=u.avatar?'none':'';
+  const pbi=$('pban-img'),pbph=$('pbanph');
+  if(u.banner){pbi.src=u.banner;pbi.style.display='block';pbph.style.display='none'}else{pbi.style.display='none';pbph.style.display=''}
+  const pt=team(u.favTeam);
+  $('ptbnm').textContent=pt?pt.name:'Sin equipo favorito';
+  const ptc=$('ptbcr');ptc.innerHTML=pt&&pt.logo?`<img src="${pt.logo}"/>`:'⚽';
+  const finished=D.matches.filter(m=>m.status==='finalizado');
+  $('ps-pj').textContent=finished.length;
+  let tg=0;finished.forEach(m=>{tg+=m.homeScore+m.awayScore});$('ps-gf').textContent=tg;
+  if(pt){const rank=sortedTeams().findIndex(t=>t.id===pt.id);$('ps-rk').textContent=rank>=0?`#${rank+1}`:'-'}else $('ps-rk').textContent='-';
+  updateNotifLabel();
   const unread=D.notifications.filter(n=>!n.read).length;
-  const nb=$('nbadge');if(unread>0){nb.textContent=unread>9?'9+':unread;nb.classList.remove('hidden')}else nb.classList.add('hidden');
-}
-function setAv(img,init,src,letter){
-  if(src){img.src=src;img.style.display='block';init.style.display='none'}
-  else{img.style.display='none';init.style.display='';init.textContent=letter}
+  $('nbadge').textContent=unread;$('nbadge').classList.toggle('hidden',!unread);
 }
 
-/* ADMIN ACCESS */
-let lgClicks=0,lgClickT=null,lgHoldT=null;
-function checkAdmin(){const show=D.user.isAdmin;$('ni-admin').classList.toggle('hidden',!show);$('sm-admin-item').style.display=show?'flex':'none'}
-function onLogoTap(){lgClicks++;clearTimeout(lgClickT);if(lgClicks>=5){lgClicks=0;unlockAdmin()}else lgClickT=setTimeout(()=>lgClicks=0,2000)}
-function setupLogoHold(){const l=$('hlogo');l.addEventListener('pointerdown',()=>{lgHoldT=setTimeout(unlockAdmin,3000)});l.addEventListener('pointerup',()=>clearTimeout(lgHoldT));l.addEventListener('pointerleave',()=>clearTimeout(lgHoldT))}
-function unlockAdmin(){D.user.isAdmin=true;save();checkAdmin();toast('Admin activado')}
+/* ---- RENDER ALL ---- */
+function renderAll(){renderFeatM();renderMList();renderFeatN();renderAllN();renderStandings();renderMiniTbl();renderSanc();renderAdmLists();populateSels();updateAdmCfg()}
 
-/* RENDER ALL */
-function renderAll(){renderFeatM();renderMList();renderFeatN();renderAllN();renderStandings();renderSancInfo();renderAdmLists();populateSels();updateAdmCfg();updateUser();setTimeout(updateAmbient,120)}
-
-/* HELPERS */
+/* ---- HELPERS ---- */
+function stLabel(s){return{proximo:'Próximo',en_vivo:'EN VIVO',finalizado:'Final',pausado:'Pausado'}[s]||s}
+function crEl(logo,initials,cls=''){return logo?`<img src="${logo}" loading="lazy" class="${cls}"/>`:`<span>${initials}</span>`}
+function fmtND(d){try{return new Date(d).toLocaleDateString('es-AR',{day:'numeric',month:'short',year:'numeric'})}catch(e){return d}}
+function fmtDT(d){try{const dt=new Date(d);return dt.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'})+' '+dt.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}catch(e){return d}}
+function fmtTime(d){try{return new Date(d).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
+function fmtDate(d){try{return new Date(d).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})}catch(e){return d}}
 function team(id){return D.teams.find(t=>t.id===id)}
-function crest(t,sz=40,r=10){
-  if(!t)return`<div style="width:${sz}px;height:${sz}px;border-radius:${r}px;background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:${Math.floor(sz*.24)}px;color:var(--t2)">?</div>`;
-  const ab=t.name.substring(0,3).toUpperCase();
-  return t.logo?`<div style="width:${sz}px;height:${sz}px;border-radius:${r}px;border:1px solid var(--bdr2);overflow:hidden;flex-shrink:0"><img src="${t.logo}" style="width:100%;height:100%;object-fit:cover"/></div>`:
-    `<div style="width:${sz}px;height:${sz}px;border-radius:${r}px;background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:${Math.floor(sz*.24)}px;color:var(--text);overflow:hidden;flex-shrink:0">${ab}</div>`;
-}
-function fmtT(dt){const d=new Date(dt);return d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}
-function fmtD(dt){const d=new Date(dt);return d.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'})}
-function stLbl(s){return{proximo:'Proximo',en_vivo:'En Vivo',finalizado:'Final',pausado:'Pausado'}[s]||s}
-function chEl(id,small=false){
-  const ch=D.channels.find(c=>c.id===id);if(!ch)return id?`<span style="font-size:10px;color:var(--t3)">${id}</span>`:'';
-  const s=small?16:20;
-  return ch.logo?`<img src="${ch.logo}" class="chl" style="width:${s}px;height:${s}px"/><span style="font-size:${small?9:10}px;color:var(--t3)">${ch.name}</span>`:`<span style="font-size:${small?9:10}px;color:var(--t3)">&#x1F4FA; ${ch.name}</span>`;
-}
-function fmtND(d){return new Date(d).toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'})}
+function channel(id){return D.channels.find(c=>c.id===id)}
 
-/* FEAT MATCHES */
+/* ---- FEATURED MATCHES ---- */
 function renderFeatM(){
-  const row=$('feat-m');
-  const sorted=[...D.matches].sort((a,b)=>({en_vivo:0,proximo:1,finalizado:2,pausado:3}[a.status]||2)-({en_vivo:0,proximo:1,finalizado:2,pausado:3}[b.status]||2)).slice(0,8);
-  if(!sorted.length){row.innerHTML='<div class="empty" style="width:100%;padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
-  row.innerHTML=sorted.map(m=>{
-    const h=team(m.homeTeam),a=team(m.awayTeam);const live=m.status==='en_vivo';
-    const showSc=m.status==='finalizado'||live;
-    const scOrTime=showSc?`<div class="mcsc">${m.homeScore??0}<span class="mcdsh"> - </span>${m.awayScore??0}</div>`:
-      `<div class="mcsc" style="font-size:18px;color:var(--t2)">${fmtT(m.datetime)}</div>`;
-    const chRow=m.channel?`<div class="mcftxt">${chEl(m.channel,true)}</div>`:'';
-    const stRow=m.stadium?`<div class="mcftxt" style="margin-left:auto">&#x1F3DF; ${m.stadium}</div>`:'';
+  const c=$('feat-m');if(!c)return;
+  const ms=D.matches.slice().sort((a,b)=>{const o={en_vivo:0,proximo:1,pausado:2,finalizado:3};return(o[a.status]??4)-(o[b.status]??4)}).slice(0,8);
+  if(!ms.length){c.innerHTML='<div class="empty" style="width:100%;padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
+  c.innerHTML=ms.map(m=>{
+    const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
+    const live=m.status==='en_vivo';
+    const ch=channel(m.channel);
     return`<div class="mc${live?' live':''}" onclick="openMatch('${m.id}')">
-      <div class="mcst${live?' lv':''}">${live?'<span class="ldot"></span> EN VIVO':stLbl(m.status).toUpperCase()}</div>
-      <div class="mcts">
-        <div class="mct">${crest(h,44,11)}<div class="mctn">${h?.name||'Local'}</div></div>
-        <div class="mcmd">${scOrTime}<div class="mctl">${m.status==='proximo'?fmtD(m.datetime):(live?'&#x1F534; LIVE':'FIN')}</div></div>
-        <div class="mct">${crest(a,44,11)}<div class="mctn">${a?.name||'Visita'}</div></div>
+      <div class="mcst${live?' lv':''}">
+        ${live?'<div class="ldot"></div>':''}${stLabel(m.status)}${m.stadium?` · ${m.stadium}`:''}
       </div>
-      ${(chRow||stRow)?`<div class="mcft">${chRow}${stRow}</div>`:''}
+      <div class="mcts">
+        <div class="mct"><div class="mccr">${crEl(h.logo,h.name.substring(0,3).toUpperCase())}</div><div class="mctn">${h.name}</div></div>
+        <div class="mcmd">
+          ${m.status==='proximo'?
+            `<div class="mctl">${fmtTime(m.datetime)}</div><div class="mcdsh" style="font-family:'Bebas Neue';font-size:18px">VS</div>`:
+            `<div class="mcsc"><span id="fcmh-${m.id}">${m.homeScore??0}</span><span class="mcdsh">-</span><span id="fcma-${m.id}">${m.awayScore??0}</span></div>`}
+          <div class="mctl">${new Date(m.datetime).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}</div>
+        </div>
+        <div class="mct"><div class="mccr">${crEl(a.logo,a.name.substring(0,3).toUpperCase())}</div><div class="mctn">${a.name}</div></div>
+      </div>
+      ${ch?`<div class="mcft"><div class="mcftxt">${ch.logo?`<img class="chl" src="${ch.logo}"/>`:''}<span>${ch.name}</span></div></div>`:''}
     </div>`;
   }).join('');
+  setTimeout(updateAmbient,300);
 }
 
-/* MATCH LIST */
-let mFlt='todos';
+/* ---- MATCH LIST ---- */
+let curFlt='todos';
+function flt(f,el){curFlt=f;document.querySelectorAll('.chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');renderMList()}
 function renderMList(){
-  const c=$('mlist');let list=D.matches;if(mFlt!=='todos')list=list.filter(m=>m.status===mFlt);
-  if(!list.length){c.innerHTML='<div class="empty"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
-  const groups={};list.forEach(m=>{const k=fmtD(m.datetime);if(!groups[k])groups[k]=[];groups[k].push(m)});
-  let html='';
-  Object.entries(groups).forEach(([k,ms],i)=>{
-    html+=`<div class="jornhd"><div class="jornt">Jornada ${i+1} - ${k}</div><div class="jornl"></div></div>`;
-    html+=ms.map(m=>{
-      const h=team(m.homeTeam),a=team(m.awayTeam);const showSc=m.status!=='proximo';
+  const c=$('mlist');if(!c)return;
+  let ms=D.matches.slice().sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+  if(curFlt!=='todos')ms=ms.filter(m=>m.status===curFlt);
+  if(!ms.length){c.innerHTML='<div class="empty"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
+  const groups={};
+  ms.forEach(m=>{const k=fmtDate(m.datetime);if(!groups[k])groups[k]=[];groups[k].push(m)});
+  c.innerHTML=Object.entries(groups).map(([day,gms])=>`
+    <div class="jornhd"><div class="jornt">${day}</div><div class="jornl"></div></div>
+    ${gms.map(m=>{
+      const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
+      const live=m.status==='en_vivo';
       return`<div class="mr" onclick="openMatch('${m.id}')">
         <div class="mrts">
-          <div class="mrt"><div class="mrcr">${h?.logo?`<img src="${h.logo}"/>`:h?.name.substring(0,3).toUpperCase()||'?'}</div><div class="mrtn">${h?.name||'Local'}</div></div>
-          <div class="mrt"><div class="mrcr">${a?.logo?`<img src="${a.logo}"/>`:a?.name.substring(0,3).toUpperCase()||'?'}</div><div class="mrtn">${a?.name||'Visita'}</div></div>
+          <div class="mrt"><div class="mrcr">${crEl(h.logo,h.name.substring(0,3))}</div><div class="mrtn">${h.name}</div></div>
+          <div class="mrt"><div class="mrcr">${crEl(a.logo,a.name.substring(0,3))}</div><div class="mrtn">${a.name}</div></div>
         </div>
         <div class="mrr">
-          ${showSc?`<div class="mrsc">${m.homeScore??0}<span class="mrsp"> - </span>${m.awayScore??0}</div>`:`<div class="mrtm">${fmtT(m.datetime)}</div>`}
-          <div class="mrbdg">${m.status==='en_vivo'?'LIVE':stLbl(m.status)}</div>
+          ${m.status==='proximo'?
+            `<div class="mrtm">${fmtTime(m.datetime)}</div><div class="mrbdg">PRÓ</div>`:
+            `<div class="mrsc"><span id="rmh-${m.id}">${m.homeScore??0}</span><span class="mrsp">-</span><span id="rma-${m.id}">${m.awayScore??0}</span></div><div class="mrbdg">${live?'LIVE':'FIN'}</div>`}
         </div>
       </div>`;
-    }).join('');
-  });
-  c.innerHTML=html;
+    }).join('')}
+  `).join('');
 }
-function flt(f,el){mFlt=f;document.querySelectorAll('.chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');renderMList()}
 
-/* MATCH DETAIL */
+/* ====================================================
+   MATCH DETAIL — 85% altura, full-width, redesigned
+   ==================================================== */
 function openMatch(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
-  const h=team(m.homeTeam),a=team(m.awayTeam);const showSc=m.status!=='proximo';
-  const evs=m.events||[];const st=m.stats||{};const ch=D.channels.find(c=>c.id===m.channel);
-  let evHtml=evs.length?evs.map(e=>`<div class="evit"><div class="evmin">${e.minute}'</div><div class="evico">${e.type==='goal'?'&#x26BD;':e.type==='yellow'?'&#x1F7E8;':e.type==='red'?'&#x1F7E5;':'&#x1F4CC;'}</div><div><div class="evnm">${e.player}</div><div class="evtm">${e.team==='home'?(h?.name||'Local'):(a?.name||'Visita')}</div></div></div>`).join(''):'<div class="empty"><div class="etic">&#x1F4CB;</div><div class="etit">Sin eventos</div></div>';
-  let stHtml='';
-  if(st.possession!==undefined){
-    const hp=st.possession||50,ap=100-hp;
-    stHtml=[{lbl:'Posesion',hv:hp+'%',av:ap+'%',pct:hp},st.shots!==undefined?{lbl:'Remates',hv:st.shots,av:st.shotsAway||0,pct:Math.round((st.shots/(st.shots+(st.shotsAway||1)))*100)}:null,st.fouls!==undefined?{lbl:'Faltas',hv:st.fouls,av:st.foulsAway||0,pct:Math.round((st.fouls/(st.fouls+(st.foulsAway||1)))*100)}:null].filter(Boolean).map(r=>`<div class="strow"><div class="stn l">${r.hv}</div><div class="stbar"><div class="stfill" style="width:${r.pct}%"></div></div><div class="stn r">${r.av}</div><div class="stlbl">${r.lbl}</div></div>`).join('');
-  }else stHtml='<div class="empty"><div class="etic">&#x1F4CA;</div><div class="etit">Sin estadisticas</div></div>';
-  $('md-content').innerHTML=`
-    <div class="mdh">
-      <div class="mdcomp">La Super Liga - ${D.cfg.season}</div>
-      <div class="mdsb">
-        <div class="mdsd"><div class="mdcr">${h?.logo?`<img src="${h.logo}"/>`:h?.name.substring(0,3).toUpperCase()||'?'}</div><div class="mdtn">${h?.name||'Local'}</div></div>
-        <div class="mdscb">
-          ${showSc?`<div class="mdscn">${m.homeScore??0}<span class="mddsh"> - </span>${m.awayScore??0}</div>`:`<div class="mdscn" style="font-size:30px">${fmtT(m.datetime)}</div>`}
-          <div class="mdstl">${m.status==='en_vivo'?'&#x1F534; En Vivo':stLbl(m.status)}</div>
-          ${m.status==='proximo'?`<div style="font-size:10px;color:var(--t3);margin-top:3px">${fmtD(m.datetime)}</div>`:''}
-        </div>
-        <div class="mdsd"><div class="mdcr">${a?.logo?`<img src="${a.logo}"/>`:a?.name.substring(0,3).toUpperCase()||'?'}</div><div class="mdtn">${a?.name||'Visita'}</div></div>
-      </div>
-    </div>
-    <div class="mdtabs">
-      <div class="mdtab on" onclick="mdTab('info',this)">Info</div>
-      <div class="mdtab" onclick="mdTab('events',this)">Eventos</div>
-      <div class="mdtab" onclick="mdTab('stats',this)">Stats</div>
-    </div>
-    <div class="mdtc on" id="mdt-info">
-      <div class="mdig">
-        <div class="mdic"><div class="mdicl">Estadio</div><div class="mdicv">${m.stadium||'Por confirmar'}</div></div>
-        <div class="mdic"><div class="mdicl">Hora</div><div class="mdicv">${fmtT(m.datetime)}</div></div>
-        <div class="mdic"><div class="mdicl">Fecha</div><div class="mdicv">${fmtD(m.datetime)}</div></div>
-        <div class="mdic"><div class="mdicl">Canal</div><div class="mdicv">${ch?`<div style="display:flex;align-items:center;gap:6px">${ch.logo?`<img src="${ch.logo}" style="width:22px;height:22px;border-radius:5px;object-fit:cover"/>`:''}<span>${ch.name}</span></div>`:'Sin canal'}</div></div>
-        <div class="mdic"><div class="mdicl">Goles L</div><div class="mdicv" style="font-size:11px">${evs.filter(e=>e.type==='goal'&&e.team==='home').map(e=>`${e.player} ${e.minute}'`).join(', ')||'&#x2014;'}</div></div>
-        <div class="mdic"><div class="mdicl">Goles V</div><div class="mdicv" style="font-size:11px">${evs.filter(e=>e.type==='goal'&&e.team==='away').map(e=>`${e.player} ${e.minute}'`).join(', ')||'&#x2014;'}</div></div>
-      </div>
-    </div>
-    <div class="mdtc" id="mdt-events">${evHtml}</div>
-    <div class="mdtc" id="mdt-stats">${stHtml}</div>
-    <div style="height:12px"></div>`;
-  openOv('md-ov');
-}
-function mdTab(name,el){document.querySelectorAll('.mdtab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.mdtc').forEach(t=>t.classList.remove('on'));el.classList.add('on');$('mdt-'+name).classList.add('on')}
+  const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return;
+  const live=m.status==='en_vivo',done=m.status==='finalizado';
+  const ch=channel(m.channel);
+  const hs=m.homeScore??0,as=m.awayScore??0;
+  const poss=m.stats?.possession??50,shots=m.stats?.shots??0,shotsA=m.stats?.shotsAway??0,fouls=m.stats?.fouls??0,foulsA=m.stats?.foulsAway??0;
+  const events=(m.events||[]).slice().sort((x,y)=>x.minute-y.minute);
+  const hPlayers=D.players.filter(p=>p.teamId===h.id);
+  const aPlayers=D.players.filter(p=>p.teamId===a.id);
+  const hasReminder=reminders[id];
 
-/* NEWS */
+  $('md-content').innerHTML=`
+    <!-- SCOREBOARD HERO -->
+    <div class="mdh">
+      <div class="mdcomp">LA SÚPER LIGA${ch?` &nbsp;·&nbsp; ${ch.name}`:''}</div>
+      <div class="mdsb">
+        <div class="mdsd">
+          <div class="mdcr">${crEl(h.logo,h.name.substring(0,3))}</div>
+          <div class="mdtn">${h.name}</div>
+        </div>
+        <div class="mdscb">
+          ${m.status==='proximo'
+            ?`<div style="font-family:'Bebas Neue';font-size:32px;color:var(--t2);letter-spacing:4px">VS</div><div class="mdstl">${fmtTime(m.datetime)}</div>`
+            :`<div class="mdscn" id="mdscn-${id}"><span id="mdh-${id}">${hs}</span><span class="mddsh"> - </span><span id="mda-${id}">${as}</span></div>`}
+          <div class="mdstl${live?' mcst lv':''}">${live?'● ':''}${stLabel(m.status)}</div>
+        </div>
+        <div class="mdsd">
+          <div class="mdcr">${crEl(a.logo,a.name.substring(0,3))}</div>
+          <div class="mdtn">${a.name}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO GRID 2×2 -->
+    <div class="md-info-grid">
+      <div class="md-info-cell">
+        <div class="md-info-lbl">📅 Fecha</div>
+        <div class="md-info-val">${fmtDate(m.datetime)}</div>
+      </div>
+      <div class="md-info-cell">
+        <div class="md-info-lbl">🕐 Horario</div>
+        <div class="md-info-val">${fmtTime(m.datetime)}</div>
+      </div>
+      <div class="md-info-cell">
+        <div class="md-info-lbl">🏟️ Estadio</div>
+        <div class="md-info-val">${m.stadium||'Por confirmar'}</div>
+      </div>
+      <div class="md-info-cell">
+        <div class="md-info-lbl">📺 Canal</div>
+        <div class="md-info-val">${ch?ch.name:'Sin definir'}</div>
+      </div>
+    </div>
+
+    <!-- REMINDER BUTTON -->
+    ${m.status==='proximo'?`
+    <button class="md-reminder-btn${hasReminder?' set':''}" id="reminder-btn-${id}" onclick="toggleReminder('${id}')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px">
+        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        ${hasReminder?'<path d="M3 3l18 18" stroke-width="2.2"/>':''}
+      </svg>
+      ${hasReminder?'Recordatorio establecido ✓':'Establecer recordatorio'}
+    </button>`:
+    `${D.user.isAdmin?`<div style="padding:0 18px 4px"><button class="abtn sec" style="font-size:12px;padding:10px" onclick="closeOv('md-ov');openLiveEdit('${id}')">⚙️ Editar partido</button></div>`:''}`}
+
+    <!-- TABS: Eventos / Stats / Plantillas -->
+    ${(done||live)?`
+    <div class="mdtabs">
+      <div class="mdtab on" onclick="mdTab(this,'mdt-ev-${id}')">Eventos</div>
+      <div class="mdtab" onclick="mdTab(this,'mdt-st-${id}')">Estadísticas</div>
+      ${hPlayers.length||aPlayers.length?`<div class="mdtab" onclick="mdTab(this,'mdt-pl-${id}')">Plantillas</div>`:''}
+    </div>
+
+    <!-- EVENTOS -->
+    <div class="mdtc on" id="mdt-ev-${id}">
+      ${events.length?events.map(ev=>`
+        <div class="evit">
+          <div class="evmin">${ev.minute}'</div>
+          <div class="evico">${ev.type==='goal'?'⚽':ev.type==='yellow'?'🟨':'🟥'}</div>
+          <div><div class="evnm">${ev.player}</div><div class="evtm">${ev.team==='home'?h.name:a.name}</div></div>
+        </div>
+      `).join(''):`<div class="empty" style="padding:24px 0"><div class="etic">📋</div><div class="etit">Sin eventos registrados</div></div>`}
+    </div>
+
+    <!-- ESTADÍSTICAS con barras B/N -->
+    <div class="mdtc" id="mdt-st-${id}">
+      <div style="padding-top:6px">
+        ${buildStatBar2('Posesión',`${poss}%`,`${100-poss}%`,poss,100-poss)}
+        ${buildStatBar2('Remates',shots,shotsA,shots,shotsA)}
+        ${buildStatBar2('Faltas',fouls,foulsA,fouls,foulsA)}
+        ${buildStatBar2('Goles',hs,as,hs,as)}
+      </div>
+    </div>
+
+    ${hPlayers.length||aPlayers.length?`
+    <div class="mdtc" id="mdt-pl-${id}">
+      ${hPlayers.length?`<div style="font-weight:700;font-size:13px;margin:4px 0 8px;color:var(--text)">${h.name}</div>${hPlayers.map(p=>`<div class="sancrow"><span class="sancn">#${p.number||'?'} ${p.name}</span><span class="sanct">${p.position}</span></div>`).join('')}`:''}
+      ${aPlayers.length?`<div style="font-weight:700;font-size:13px;margin:12px 0 8px;color:var(--text)">${a.name}</div>${aPlayers.map(p=>`<div class="sancrow"><span class="sancn">#${p.number||'?'} ${p.name}</span><span class="sanct">${p.position}</span></div>`).join('')}`:''}
+    </div>`:''}
+    `:`<div class="empty" style="padding:36px 0"><div class="etic">⏰</div><div class="etit">Próximamente</div><div class="esub">${fmtDT(m.datetime)}</div></div>`}
+  `;
+  openOv('md-ov');
+  setTimeout(updateAmbient,250);
+}
+
+function buildStatBar2(label,valL,valR,numL,numR){
+  const total=(numL+numR)||1;
+  const pL=Math.round((numL/total)*100);
+  return`
+    <div style="margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="stn l">${valL}</span>
+        <span class="stlbl">${label.toUpperCase()}</span>
+        <span class="stn r">${valR}</span>
+      </div>
+      <div class="stbar">
+        <div class="stfill" style="width:${pL}%"></div>
+      </div>
+    </div>
+  `;
+}
+function mdTab(el,contentId){
+  document.querySelectorAll('.mdtab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.mdtc').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');const tc=$(contentId);if(tc)tc.classList.add('on');
+}
+
+/* ---- REMINDER ---- */
+function toggleReminder(id){
+  const m=D.matches.find(x=>x.id===id);if(!m)return;
+  reminders[id]=!reminders[id];
+  if(reminders[id]){
+    toast('🔔 Recordatorio establecido');
+    if('Notification' in window&&Notification.permission==='granted'){
+      const ms=new Date(m.datetime)-Date.now()-15*60*1000;
+      if(ms>0)setTimeout(()=>new Notification('LSL — Partido próximo',{body:`${team(m.homeTeam)?.name} vs ${team(m.awayTeam)?.name} en 15 minutos`}),ms);
+    }
+  }else{toast('🔕 Recordatorio eliminado')}
+  // Refresh button
+  const btn=$(`reminder-btn-${id}`);
+  if(btn){btn.className=`md-reminder-btn${reminders[id]?' set':''}`;btn.innerHTML=`<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>${reminders[id]?'<path d="M3 3l18 18" stroke-width="2.2"/>':''}</svg>${reminders[id]?'Recordatorio establecido ✓':'Establecer recordatorio'}`}
+}
+
+/* ---- NEWS ---- */
 function renderFeatN(){
-  const c=$('feat-n');const ns=D.news.slice(0,3);
-  if(!ns.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';return}
-  let html='';
-  if(ns[0])html+=`<div class="ncbig" onclick="openNews('${ns[0].id}')"><div class="ncbig-img">${ns[0].image?`<img src="${ns[0].image}"/>`:'<span style="font-size:36px;opacity:.3">&#x1F4F0;</span>'}</div><div class="ncbig-body"><div class="nccat">${ns[0].category}</div><div class="ncbig-t">${ns[0].title}</div><div class="ncexc">${ns[0].excerpt}</div></div></div>`;
-  if(ns.slice(1).length)html+=`<div style="margin-top:9px">`+ns.slice(1).map(n=>`<div class="ncsm" onclick="openNews('${n.id}')"><div class="ncsm-img">${n.image?`<img src="${n.image}"/>`:'<span style="font-size:22px;opacity:.3">&#x1F4F0;</span>'}</div><div class="ncsm-body"><div class="nccat">${n.category}</div><div class="ncsm-t">${n.title}</div><div class="ncdt">${fmtND(n.date)}</div></div></div>`).join('')+'</div>';
-  c.innerHTML=html;
+  const c=$('feat-n');if(!c)return;
+  if(!D.news.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';return}
+  const [big,...rest]=D.news.slice(0,4);
+  c.innerHTML=`
+    <div style="padding:0 14px">
+      <div class="ncbig" onclick="openNews('${big.id}')">
+        <div class="ncbig-img">${big.image?`<img src="${big.image}" loading="lazy"/>`:'<span style="font-size:48px;opacity:.2">📰</span>'}</div>
+        <div class="ncbig-body"><div class="nccat">${big.category||'NOTICIAS'}</div><div class="ncbig-t">${big.title}</div><div class="ncexc">${big.excerpt}</div></div>
+      </div>
+    </div>
+    ${rest.length?`<div style="padding:10px 14px 0">${rest.map(n=>`<div class="ncsm" onclick="openNews('${n.id}')"><div class="ncsm-img" style="height:80px">${n.image?`<img src="${n.image}" loading="lazy"/>`:''}</div><div class="ncsm-body"><div class="ncsm-t">${n.title}</div><div class="nccat">${n.category||''}</div><div class="ncdt">${fmtND(n.date)}</div></div></div>`).join('')}</div>`:''}
+  `;
+  setTimeout(updateAmbient,300);
 }
 function renderAllN(){
-  const c=$('all-n');if(!D.news.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';return}
-  c.innerHTML=D.news.map(n=>`<div class="ncsm" onclick="openNews('${n.id}')" style="margin-bottom:9px"><div class="ncsm-img">${n.image?`<img src="${n.image}"/>`:'<span style="font-size:22px;opacity:.3">&#x1F4F0;</span>'}</div><div class="ncsm-body"><div class="nccat">${n.category}</div><div class="ncsm-t">${n.title}</div><div class="ncdt">${fmtND(n.date)}</div></div></div>`).join('');
+  const c=$('all-n');if(!c)return;
+  if(!D.news.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';return}
+  c.innerHTML=`<div style="padding:0 14px">${D.news.map(n=>`<div class="ncsm" onclick="openNews('${n.id}')"><div class="ncsm-img" style="height:72px">${n.image?`<img src="${n.image}" loading="lazy"/>`:''}</div><div class="ncsm-body"><div class="ncsm-t">${n.title}</div><div class="nccat">${n.category||''}</div><div class="ncdt">${fmtND(n.date)}</div></div></div>`).join('')}</div>`;
 }
-function openNews(id){const n=D.news.find(x=>x.id===id);if(!n)return;$('nw-content').innerHTML=`<div class="ndimg">${n.image?`<img src="${n.image}"/>`:'<span style="font-size:40px;opacity:.3">&#x1F4F0;</span>'}</div><div class="ndbody"><div class="ndcat">${n.category}</div><div class="ndtit">${n.title}</div><div class="nddate">${fmtND(n.date)}</div><div class="ndtxt">${n.content}</div></div>`;openOv('nw-ov')}
+function openNews(id){
+  const n=D.news.find(x=>x.id===id);if(!n)return;
+  $('nw-content').innerHTML=`
+    <div class="ndimg">${n.image?`<img src="${n.image}"/>`:''}</div>
+    <div class="ndbody">
+      <div class="ndcat">${n.category||'NOTICIAS'}</div>
+      <div class="ndtit">${n.title}</div>
+      <div class="nddate">${fmtND(n.date)}</div>
+      <div class="ndtxt">${(n.content||'').replace(/\n/g,'<br/>')}</div>
+    </div>
+  `;
+  openOv('nw-ov');setTimeout(updateAmbient,300);
+}
 
-/* STANDINGS */
-function recalc(){
-  D.teams.forEach(t=>{t.pj=0;t.pg=0;t.pp=0;t.gf=0;t.gc=0;t.pts=t.adj||0});
+/* ---- STANDINGS ---- */
+function calcStandings(){
+  D.teams.forEach(t=>{t.pj=0;t.pg=0;t.pp=0;t.pe=t.pe||0;t.gf=0;t.gc=0;t.pts=0});
   D.matches.filter(m=>m.status==='finalizado').forEach(m=>{
     const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return;
-    const hg=m.homeScore??0,ag=m.awayScore??0;h.pj++;a.pj++;h.gf+=hg;h.gc+=ag;a.gf+=ag;a.gc+=hg;
-    if(hg>ag){h.pg++;h.pts+=3;a.pp++}else if(hg<ag){a.pg++;a.pts+=3;h.pp++}else{h.pts+=1;a.pts+=1}
+    const hs=m.homeScore??0,as=m.awayScore??0;
+    h.pj++;a.pj++;h.gf+=hs;h.gc+=as;a.gf+=as;a.gc+=hs;
+    if(hs>as){h.pg++;h.pts+=3;a.pp++}
+    else if(hs<as){a.pg++;a.pts+=3;h.pp++}
+    else{h.pe=(h.pe||0)+1;a.pe=(a.pe||0)+1;h.pts++;a.pts++}
   });
 }
-function sorted(){recalc();return[...D.teams].sort((a,b)=>b.pts!==a.pts?b.pts-a.pts:(b.gf-b.gc)-(a.gf-a.gc))}
-function renderStandings(){
-  const s=sorted();
-  const mt=$('mini-tbl');
-  if(!s.length){mt.innerHTML='<div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div>';$('ftbody').innerHTML='<tr><td colspan="7"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr>';return}
-  mt.innerHTML=`<div class="stw"><table class="stt"><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>Pts</th></tr></thead><tbody>${s.slice(0,4).map((t,i)=>`<tr><td>${i+1}</td><td><div class="sttr"><div class="stcr">${t.logo?`<img src="${t.logo}"/>`:t.name.substring(0,3).toUpperCase()}</div>${t.name}</div></td><td>${t.pj}</td><td>${t.pts}</td></tr>`).join('')}</tbody></table></div>`;
-  $('ftbody').innerHTML=s.map((t,i)=>`<tr><td>${i+1}</td><td><div class="sttr"><div class="stcr">${t.logo?`<img src="${t.logo}"/>`:t.name.substring(0,3).toUpperCase()}</div>${t.name}</div></td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.gf-t.gc}</td><td>${t.pts}</td></tr>`).join('');
+function sortedTeams(){
+  calcStandings();
+  return D.teams.slice().sort((a,b)=>{
+    const ap=a.pts+(a.adj||0),bp=b.pts+(b.adj||0);
+    if(bp!==ap)return bp-ap;
+    return(b.gf-b.gc)-(a.gf-a.gc);
+  });
 }
-function renderSancInfo(){
-  const c=$('sanc-box');if(!D.sanctions.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sancionados</div></div>';return}
-  c.innerHTML=D.sanctions.map(s=>{const tm=team(s.teamId);const ico=s.type==='expulsion'?'&#x1F7E5;':s.type==='lesion'?'&#x1F3E5;':s.type==='otro'?'&#x1F4CC;':'&#x1F7E8;';return`<div class="sancrow"><div><div class="sancn">${s.player}</div><div class="sanct">${tm?.name||'&#x2014;'}</div></div><div style="text-align:right"><div style="font-size:16px">${ico}</div><div style="font-size:10px;color:var(--t3)">${s.duration||''}</div></div></div>`}).join('');
+function renderStandings(){
+  const tb=$('ftbody');if(!tb)return;
+  const ts=sortedTeams();
+  if(!ts.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr>';return}
+  tb.innerHTML=ts.map((t,i)=>`<tr><td>${i+1}</td><td><div class="sttr"><div class="stcr">${crEl(t.logo,t.name.substring(0,3))}</div><span>${t.name}</span></div></td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.gf-t.gc}</td><td>${t.pts+(t.adj||0)}</td></tr>`).join('');
+}
+function renderMiniTbl(){
+  const c=$('mini-tbl');if(!c)return;
+  const ts=sortedTeams().slice(0,5);
+  if(!ts.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div>';return}
+  c.innerHTML=`<div class="stw" style="margin:0 14px"><table class="stt"><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>Pts</th></tr></thead><tbody>${ts.map((t,i)=>`<tr><td>${i+1}</td><td><div class="sttr"><div class="stcr">${crEl(t.logo,t.name.substring(0,3))}</div><span>${t.name}</span></div></td><td>${t.pj}</td><td>${t.pts+(t.adj||0)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function renderSanc(){
+  const c=$('sanc-box');if(!c)return;
+  if(!D.sanctions.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sancionados</div></div>';return}
+  const ic={sancion:'🟨',expulsion:'🟥',lesion:'🏥',otro:'📋'};
+  c.innerHTML=D.sanctions.map(s=>`<div class="sancrow"><div><div class="sancn">${ic[s.type]||'📋'} ${s.player}</div><div class="sanct">${team(s.teamId)?.name||''} · ${s.duration||''}</div></div><div class="sanct">${s.notes||''}</div></div>`).join('');
 }
 
-/* ADMIN LISTS */
+/* ---- ADMIN LISTS ---- */
 function renderAdmLists(){
-  // MATCHES
-  const ml=$('adm-m-list');
-  ml.innerHTML=!D.matches.length?'<div class="empty" style="padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>'
-    :D.matches.map(m=>{const h=team(m.homeTeam),a=team(m.awayTeam);return`<div class="ali"><div class="alcr">${h?.logo?`<img src="${h.logo}"/>`:h?.name.substring(0,3).toUpperCase()||'?'}</div><div class="alinf"><div class="aln">${h?.name||'?'} vs ${a?.name||'?'}</div><div class="als">${new Date(m.datetime).toLocaleString('es-AR')} - ${stLbl(m.status)}</div></div><div class="alacts"><button class="albtn" onclick="openLiveEdit('${m.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button><button class="albtn del" onclick="delMatch('${m.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`}).join('');
-  // LIVE CONTROLS
-  const lc=$('live-ctrls');const active=D.matches.filter(m=>m.status==='en_vivo'||m.status==='proximo');
-  lc.innerHTML=!active.length?'<div class="empty" style="padding:14px 0"><div class="etit" style="font-size:12px">No hay partidos activos</div></div>'
-    :active.map(m=>{const h=team(m.homeTeam),a=team(m.awayTeam);return`<div class="lcbox"><div class="lctit">${h?.name||'L'} vs ${a?.name||'V'} - ${stLbl(m.status)}</div><div class="lcsc"><div class="lctn">${h?.name||'L'}</div><div class="scc"><button class="scb" onclick="chSc('${m.id}','h',1)">+</button><button class="scb" onclick="chSc('${m.id}','h',-1)">-</button></div><div class="lcn" id="lch-${m.id}">${m.homeScore??0}</div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--t3)">-</div><div class="lcn" id="lca-${m.id}">${m.awayScore??0}</div><div class="scc"><button class="scb" onclick="chSc('${m.id}','a',1)">+</button><button class="scb" onclick="chSc('${m.id}','a',-1)">-</button></div><div class="lctn">${a?.name||'V'}</div></div><div style="display:flex;gap:6px;margin-top:8px"><button class="abtn" style="flex:1;padding:9px;font-size:11px" onclick="setStatus('${m.id}','en_vivo')">LIVE</button><button class="abtn sec" style="flex:1;padding:9px;font-size:11px" onclick="setStatus('${m.id}','finalizado')">FINALIZAR</button></div><button class="abtn sec" style="margin-top:6px;padding:8px;font-size:11px" onclick="openLiveEdit('${m.id}')">Editar eventos / stats</button></div>`}).join('');
-  // TEAMS
-  $('adm-t-list').innerHTML=!D.teams.length?'<div class="empty" style="padding:14px 0"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div>'
-    :D.teams.map(t=>`<div class="ali"><div class="alcr">${t.logo?`<img src="${t.logo}"/>`:(t.name.substring(0,3).toUpperCase())}</div><div class="alinf"><div class="aln">${t.name}</div><div class="als">${t.pts||0} pts - ${t.pj||0} PJ</div></div><div class="alacts"><button class="albtn del" onclick="delTeam('${t.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join('');
-  // PLAYERS
-  const plc=$('adm-pl-list');
-  if(!D.players.length){plc.innerHTML='<div class="empty" style="padding:14px 0"><div class="etic">&#x1F464;</div><div class="etit">Sin jugadores</div></div>'}
-  else{const byT={};D.players.forEach(p=>{if(!byT[p.teamId])byT[p.teamId]=[];byT[p.teamId].push(p)});plc.innerHTML=Object.entries(byT).map(([tid,ps])=>{const tm=team(tid);return`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--t2);margin-bottom:6px">${tm?.name||'Equipo'}</div>${ps.map(p=>`<div class="ali"><div class="alcr" style="border-radius:50%">${p.photo?`<img src="${p.photo}" style="border-radius:50%"/>`:p.number||'?'}</div><div class="alinf"><div class="aln">${p.name}</div><div class="als">#${p.number||'-'} - ${p.position||'-'}</div></div><div class="alacts"><button class="albtn del" onclick="delPlayer('${p.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join('')}</div>`}).join('')}
-  // NEWS
-  $('adm-n-list').innerHTML=!D.news.length?'<div class="empty" style="padding:14px 0"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>'
-    :D.news.map(n=>`<div class="ali"><div class="alinf"><div class="aln">${n.title}</div><div class="als">${n.category} - ${fmtND(n.date)}</div></div><div class="alacts"><button class="albtn del" onclick="delNews('${n.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join('');
-  // CHANNELS
-  $('adm-ch-list').innerHTML=!D.channels.length?'<div class="empty" style="padding:14px 0"><div class="etic">&#x1F4FA;</div><div class="etit">Sin canales</div></div>'
-    :D.channels.map(c=>`<div class="ali"><div class="alcr">${c.logo?`<img src="${c.logo}"/>`:c.name.substring(0,2).toUpperCase()}</div><div class="alinf"><div class="aln">${c.name}</div><div class="als">${c.url||'Sin URL'}</div></div><div class="alacts"><button class="albtn del" onclick="delChannel('${c.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join('');
-  // SANCTIONS
-  $('adm-sa-list').innerHTML=!D.sanctions.length?'<div class="empty" style="padding:14px 0"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sanciones</div></div>'
-    :D.sanctions.map(s=>{const tm=team(s.teamId);const ico=s.type==='expulsion'?'&#x1F7E5;':s.type==='lesion'?'&#x1F3E5;':s.type==='otro'?'&#x1F4CC;':'&#x1F7E8;';return`<div class="ali"><div style="font-size:22px">${ico}</div><div class="alinf"><div class="aln">${s.player}</div><div class="als">${tm?.name||'-'} - ${s.duration||'-'}</div></div><div class="alacts"><button class="albtn del" onclick="delSanction('${s.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`}).join('');
+  const ml=$('adm-m-list');if(ml)ml.innerHTML=D.matches.length?D.matches.map(m=>{
+    const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
+    return`<div class="ali"><div class="alcr">${crEl(h.logo,h.name.substring(0,3))}</div><div class="alinf"><div class="aln">${h.name} ${m.homeScore??'-'} - ${m.awayScore??'-'} ${a.name}</div><div class="als">${stLabel(m.status)} · ${fmtND(m.datetime)}</div></div><div class="alacts">
+      <button class="albtn" onclick="openLiveEdit('${m.id}')" title="Editar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+      <button class="albtn" onclick="delMatch('${m.id}')" title="Eliminar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+    </div></div>`;
+  }).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';
+  const lc=$('live-ctrls');if(lc){const live=D.matches.filter(m=>m.status==='en_vivo');lc.innerHTML=live.length?live.map(m=>{const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';return`<div class="lcbox"><div class="lctit">${h.name} vs ${a.name}</div><div class="lcsc"><div class="lctn">${h.name}</div><div class="scc"><button class="scb" onclick="chSc('${m.id}','h',1)">+</button><button class="scb" onclick="chSc('${m.id}','h',-1)">-</button></div><div class="lcn" id="lch-${m.id}">${m.homeScore??0}</div><div style="font-family:'Bebas Neue';font-size:26px;color:var(--t3)">-</div><div class="lcn" id="lca-${m.id}">${m.awayScore??0}</div><div class="scc"><button class="scb" onclick="chSc('${m.id}','a',1)">+</button><button class="scb" onclick="chSc('${m.id}','a',-1)">-</button></div><div class="lctn">${a.name}</div></div></div>`}).join(''):'<div class="empty" style="padding:16px 0"><div class="etit" style="font-size:12px">No hay partidos activos</div></div>'}
+  const tl=$('adm-t-list');if(tl)tl.innerHTML=D.teams.length?D.teams.map(t=>`<div class="ali"><div class="alcr">${crEl(t.logo,t.name.substring(0,3))}</div><div class="alinf"><div class="aln">${t.name}</div><div class="als">PJ:${t.pj||0} Pts:${(t.pts+(t.adj||0))||0}</div></div><div class="alacts"><button class="albtn" onclick="delTeam('${t.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div>';
+  const pl=$('adm-pl-list');if(pl)pl.innerHTML=D.players.length?D.players.map(p=>{const t=team(p.teamId);return`<div class="ali"><div class="alcr" style="font-family:'Bebas Neue';font-size:13px">${p.number||'#'}</div><div class="alinf"><div class="aln">${p.name}</div><div class="als">${p.position} · ${t?.name||'?'}</div></div><div class="alacts"><button class="albtn" onclick="delPlayer('${p.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`}).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F464;</div><div class="etit">Sin jugadores</div></div>';
+  const nl=$('adm-n-list');if(nl)nl.innerHTML=D.news.length?D.news.map(n=>`<div class="ali"><div class="alinf"><div class="aln">${n.title}</div><div class="als">${n.category} · ${fmtND(n.date)}</div></div><div class="alacts"><button class="albtn" onclick="delNews('${n.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';
+  const chl=$('adm-ch-list');if(chl)chl.innerHTML=D.channels.length?D.channels.map(c=>`<div class="ali"><div class="alcr">${crEl(c.logo,c.name.substring(0,2))}</div><div class="alinf"><div class="aln">${c.name}</div><div class="als">${c.url||'Sin URL'}</div></div><div class="alacts"><button class="albtn" onclick="delChannel('${c.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F4FA;</div><div class="etit">Sin canales</div></div>';
+  const sl=$('adm-sa-list');if(sl)sl.innerHTML=D.sanctions.length?D.sanctions.map(s=>`<div class="ali"><div class="alinf"><div class="aln">${s.player}</div><div class="als">${s.type} · ${s.duration||''}</div></div><div class="alacts"><button class="albtn" onclick="delSanction('${s.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:16px 0"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sanciones</div></div>';
 }
+
+/* ---- ADMIN SELECTS ---- */
 function populateSels(){
   const opts='<option value="">Seleccionar...</option>'+D.teams.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
   ['mh-team','ma-team','sa-team','pl-team','pts-team'].forEach(id=>{const el=$(id);if(el){const v=el.value;el.innerHTML=opts;el.value=v}});
   const mch=$('m-ch');if(mch){mch.innerHTML='<option value="">Sin canal</option>'+D.channels.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
 }
 function updateAdmCfg(){
-  const c=D.cfg;
-  if($('cfg-name'))$('cfg-name').value=c.name||'';if($('cfg-short'))$('cfg-short').value=c.short||'';
-  if($('cfg-rules'))$('cfg-rules').value=c.rules||'';if($('sea-name'))$('sea-name').value=c.season||'';
-  if($('sea-status'))$('sea-status').value=c.status||'en_curso';if($('sea-desc'))$('sea-desc').value=c.seasonDesc||'';
+  if($('cfg-name'))$('cfg-name').value=D.cfg.name||'';
+  if($('cfg-short'))$('cfg-short').value=D.cfg.short||'';
+  if($('cfg-rules'))$('cfg-rules').value=D.cfg.rules||'';
+  if($('sea-name'))$('sea-name').value=D.cfg.season||'';
+  if($('sea-status'))$('sea-status').value=D.cfg.status||'en_curso';
+  if($('sea-desc'))$('sea-desc').value=D.cfg.seasonDesc||'';
 }
 
-/* SAVES */
+/* ---- SAVES ---- */
 function saveMatch(){
   const h=$('mh-team').value,a=$('ma-team').value,dt=$('m-dt').value;
   if(!h||!a||!dt){toast('Completa los campos requeridos');return}
   if(h===a){toast('Los equipos deben ser diferentes');return}
-  D.matches.push({id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,datetime:new Date(dt).toISOString(),status:$('m-st').value,stadium:$('m-stad').value.trim(),channel:$('m-ch').value,events:[],stats:{}});
-  save();renderAll();['mh-team','ma-team','m-dt','m-stad'].forEach(id=>{const el=$(id);if(el)el.value=''});
-  addNotif('Nuevo partido','Partido programado');toast('Partido guardado');
+  D.matches.push({id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,
+    datetime:new Date(dt).toISOString(),status:$('m-st').value,
+    stadium:$('m-stad').value.trim(),channel:$('m-ch').value,events:[],stats:{}});
+  save();renderAll();
+  ['mh-team','ma-team','m-dt','m-stad'].forEach(id=>{const el=$(id);if(el)el.value=''});
+  addNotif('Nuevo partido','Partido programado');toast('✅ Partido guardado');broadcastUpdate();
 }
-function delMatch(id){if(!confirm('Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();toast('Eliminado')}
-function setStatus(id,st){const m=D.matches.find(x=>x.id===id);if(m){m.status=st;save();renderAll()}}
+function delMatch(id){if(!confirm('¿Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminado')}
+function setStatus(id,st){const m=D.matches.find(x=>x.id===id);if(m){m.status=st;save();renderAll();broadcastUpdate()}}
 function chSc(id,side,d){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
-  if(side==='h')m.homeScore=Math.max(0,(m.homeScore??0)+d);else m.awayScore=Math.max(0,(m.awayScore??0)+d);
-  const el=$(side==='h'?`lch-${id}`:`lca-${id}`);
-  if(el){el.textContent=side==='h'?m.homeScore:m.awayScore;el.classList.remove('scfl');void el.offsetWidth;el.classList.add('scfl')}
-  save();renderFeatM();renderMList();
+  if(side==='h')m.homeScore=Math.max(0,(m.homeScore??0)+d);
+  else m.awayScore=Math.max(0,(m.awayScore??0)+d);
+  if(d>0){[`lch-${id}`,`lca-${id}`,`mdh-${id}`,`mda-${id}`,`fcmh-${id}`,`fcma-${id}`,`rmh-${id}`,`rma-${id}`].forEach(eid=>{const el=$(eid);if(el){el.classList.remove('scfl');void el.offsetWidth;el.classList.add('scfl')}})}
+  [`lch-${id}`,`mdh-${id}`,`fcmh-${id}`,`rmh-${id}`].forEach(eid=>{const el=$(eid);if(el)el.textContent=m.homeScore??0});
+  [`lca-${id}`,`mda-${id}`,`fcma-${id}`,`rma-${id}`].forEach(eid=>{const el=$(eid);if(el)el.textContent=m.awayScore??0});
+  save();broadcastUpdate();
 }
 function saveTeam(){
   const name=$('t-name').value.trim();if(!name){toast('Ingresa un nombre');return}
-  D.teams.push({id:Date.now().toString(),name,logo:pending.pendingTeamLogo||'',pj:0,pg:0,pp:0,gf:0,gc:0,pts:0,adj:0});
-  save();pending.pendingTeamLogo=null;$('t-name').value='';resetFup('t-logo-btn','t-logo-txt','Subir escudo');renderAll();toast('Equipo guardado');
+  D.teams.push({id:Date.now().toString(),name,logo:pending.pendingTeamLogo||'',pj:0,pg:0,pp:0,pe:0,gf:0,gc:0,pts:0,adj:0});
+  save();pending.pendingTeamLogo=null;$('t-name').value='';resetFup('t-logo-btn','t-logo-txt','Subir escudo desde galería');renderAll();toast('✅ Equipo guardado');broadcastUpdate();
 }
-function delTeam(id){if(!confirm('Eliminar equipo?'))return;D.teams=D.teams.filter(t=>t.id!==id);D.matches=D.matches.filter(m=>m.homeTeam!==id&&m.awayTeam!==id);D.players=D.players.filter(p=>p.teamId!==id);save();renderAll();toast('Eliminado')}
+function delTeam(id){if(!confirm('¿Eliminar equipo?'))return;D.teams=D.teams.filter(t=>t.id!==id);D.matches=D.matches.filter(m=>m.homeTeam!==id&&m.awayTeam!==id);D.players=D.players.filter(p=>p.teamId!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminado')}
 function savePlayer(){
   const name=$('pl-name').value.trim(),tid=$('pl-team').value;if(!name||!tid){toast('Nombre y equipo requeridos');return}
   D.players.push({id:Date.now().toString(),name,number:$('pl-num').value,position:$('pl-pos').value,teamId:tid,photo:pending.pendingPlayerPhoto||''});
-  pending.pendingPlayerPhoto=null;save();$('pl-name').value='';$('pl-num').value='';resetFup('pl-photo-btn','pl-photo-txt','Foto (opcional)');renderAdmLists();toast('Jugador agregado');
+  pending.pendingPlayerPhoto=null;save();$('pl-name').value='';$('pl-num').value='';resetFup('pl-photo-btn','pl-photo-txt','Foto (opcional)');renderAdmLists();toast('✅ Jugador agregado');
 }
-function delPlayer(id){D.players=D.players.filter(p=>p.id!==id);save();renderAdmLists();toast('Eliminado')}
+function delPlayer(id){D.players=D.players.filter(p=>p.id!==id);save();renderAdmLists();toast('🗑️ Eliminado')}
 function saveNews(){
   const t=$('n-title').value.trim(),ex=$('n-excerpt').value.trim(),body=$('n-body').value.trim();
   if(!t||!ex||!body){toast('Completa todos los campos');return}
   D.news.unshift({id:Date.now().toString(),title:t,category:$('n-cat').value,excerpt:ex,content:body,image:pending.pendingNewsImg||'',date:new Date().toISOString()});
-  pending.pendingNewsImg=null;save();['n-title','n-excerpt','n-body'].forEach(id=>{const el=$(id);if(el)el.value=''});
-  resetFup('n-img-btn','n-img-txt','Subir imagen');addNotif('Nueva noticia',t);renderAll();toast('Noticia publicada');
+  pending.pendingNewsImg=null;save();
+  ['n-title','n-excerpt','n-body'].forEach(id=>{const el=$(id);if(el)el.value=''});
+  resetFup('n-img-btn','n-img-txt','Subir imagen desde galería');
+  addNotif('Nueva noticia',t);renderAll();toast('✅ Noticia publicada');broadcastUpdate();
 }
-function delNews(id){if(!confirm('Eliminar?'))return;D.news=D.news.filter(n=>n.id!==id);save();renderAll();toast('Eliminada')}
+function delNews(id){if(!confirm('¿Eliminar?'))return;D.news=D.news.filter(n=>n.id!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminada')}
 function saveChannel(){
   const name=$('ch-name').value.trim();if(!name){toast('Ingresa un nombre');return}
   D.channels.push({id:Date.now().toString(),name,url:$('ch-url').value.trim(),logo:pending.pendingChLogo||''});
-  pending.pendingChLogo=null;save();$('ch-name').value='';$('ch-url').value='';resetFup('ch-logo-btn','ch-logo-txt','Logo del canal');populateSels();renderAdmLists();toast('Canal guardado');
+  pending.pendingChLogo=null;save();$('ch-name').value='';$('ch-url').value='';resetFup('ch-logo-btn','ch-logo-txt','Logo del canal');populateSels();renderAdmLists();toast('✅ Canal guardado');
 }
-function delChannel(id){D.channels=D.channels.filter(c=>c.id!==id);save();populateSels();renderAdmLists();toast('Eliminado')}
+function delChannel(id){D.channels=D.channels.filter(c=>c.id!==id);save();populateSels();renderAdmLists();toast('🗑️ Eliminado')}
 function saveSanction(){
   const player=$('sa-player').value.trim(),tid=$('sa-team').value;if(!player||!tid){toast('Jugador y equipo requeridos');return}
   D.sanctions.push({id:Date.now().toString(),player,teamId:tid,type:$('sa-type').value,duration:$('sa-dur').value.trim(),notes:$('sa-notes').value.trim()});
-  save();['sa-player','sa-dur','sa-notes'].forEach(id=>{const el=$(id);if(el)el.value=''});renderAll();toast('Sancion registrada');
+  save();['sa-player','sa-dur','sa-notes'].forEach(id=>{const el=$(id);if(el)el.value=''});renderAll();toast('✅ Sanción registrada');
 }
-function delSanction(id){D.sanctions=D.sanctions.filter(s=>s.id!==id);save();renderAll();toast('Eliminada')}
+function delSanction(id){D.sanctions=D.sanctions.filter(s=>s.id!==id);save();renderAll();toast('🗑️ Eliminada')}
 function saveSeason(){
   const name=$('sea-name').value.trim();if(!name){toast('Ingresa un nombre');return}
   if(D.cfg.season&&D.cfg.season!==name)D.seasons.push({name:D.cfg.season,date:new Date().toISOString()});
   D.cfg.season=name;D.cfg.status=$('sea-status').value;D.cfg.seasonDesc=$('sea-desc').value.trim();
   save();updateHdr();updateGreet();
-  const sl=$('adm-sea-list');sl.innerHTML=D.seasons.map(s=>`<div class="ali"><div class="alinf"><div class="aln">${s.name}</div><div class="als">${fmtND(s.date)}</div></div></div>`).join('')||'<div class="empty" style="padding:14px 0"><div class="etic">&#x1F3C5;</div><div class="etit">Sin historial</div></div>';
-  toast('Temporada actualizada');
+  const sl=$('adm-sea-list');if(sl)sl.innerHTML=D.seasons.map(s=>`<div class="ali"><div class="alinf"><div class="aln">${s.name}</div><div class="als">${fmtND(s.date)}</div></div></div>`).join('')||'<div class="empty" style="padding:14px 0"><div class="etic">🏅</div><div class="etit">Sin historial</div></div>';
+  toast('✅ Temporada actualizada');broadcastUpdate();
 }
 function adjustPoints(){
   const tid=$('pts-team').value,delta=parseInt($('pts-delta').value);if(!tid||isNaN(delta)){toast('Selecciona equipo y puntos');return}
   const t=team(tid);if(!t)return;t.adj=(t.adj||0)+delta;save();renderStandings();toast(`${delta>0?'+':''}${delta} pts para ${t.name}`);
 }
 function saveConfig(){
-  D.cfg.name=$('cfg-name').value.trim()||D.cfg.name;D.cfg.short=$('cfg-short').value.trim()||D.cfg.short;D.cfg.rules=$('cfg-rules').value.trim();
-  if(pending.pendingCfgLogo)D.cfg.logo=pending.pendingCfgLogo;pending.pendingCfgLogo=null;save();
-  updateHdr();$('rules-txt').textContent=D.cfg.rules||'El reglamento sera publicado pronto.';resetFup('cfg-logo-btn','cfg-logo-txt','Cambiar logo');toast('Config guardada');
+  D.cfg.name=$('cfg-name').value.trim()||D.cfg.name;
+  D.cfg.short=$('cfg-short').value.trim()||D.cfg.short;
+  D.cfg.rules=$('cfg-rules').value.trim();
+  const newPass=$('cfg-pass').value;if(newPass&&newPass.length>=4)D.cfg.adminPass=newPass;
+  if(pending.pendingCfgLogo)D.cfg.logo=pending.pendingCfgLogo;
+  pending.pendingCfgLogo=null;save();
+  updateHdr();$('rules-txt').textContent=D.cfg.rules||'El reglamento será publicado pronto.';
+  resetFup('cfg-logo-btn','cfg-logo-txt','Cambiar logo');
+  if($('cfg-pass'))$('cfg-pass').value='';
+  toast('✅ Config guardada');broadcastUpdate();
 }
-function resetApp(){if(!confirm('Esto borrara TODOS los datos. Continuar?'))return;localStorage.removeItem(STORE);location.reload()}
+function resetApp(){if(!confirm('¿Esto borrará TODOS los datos?'))return;localStorage.removeItem(STORE);location.reload()}
+function exportJSON(){const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`lsl-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('✅ Exportado')}
+function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const imp=JSON.parse(ev.target.result);D=deepMerge(D,imp);save();renderAll();updateHdr();updateUser();toast('✅ Datos importados');broadcastUpdate()}catch(err){toast('❌ Archivo inválido')}};r.readAsText(f);e.target.value=''}
 
-/* LIVE EDIT */
+/* ---- LIVE EDIT ---- */
 function openLiveEdit(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
   const h=team(m.homeTeam),a=team(m.awayTeam);
@@ -1028,7 +1865,7 @@ function openLiveEdit(id){
     <div class="sect" style="margin-bottom:14px">${h?.name||'L'} vs ${a?.name||'V'}</div>
     <div class="fl">Estado</div>
     <select class="fsel" id="le-st" onchange="setStatus('${id}',this.value)">
-      <option value="proximo" ${m.status==='proximo'?'selected':''}>Proximo</option>
+      <option value="proximo" ${m.status==='proximo'?'selected':''}>Próximo</option>
       <option value="en_vivo" ${m.status==='en_vivo'?'selected':''}>En Vivo</option>
       <option value="finalizado" ${m.status==='finalizado'?'selected':''}>Finalizado</option>
       <option value="pausado" ${m.status==='pausado'?'selected':''}>Pausado</option>
@@ -1039,96 +1876,166 @@ function openLiveEdit(id){
     </div>
     <div class="fl" style="margin-top:10px">Agregar evento</div>
     <div class="aform" style="padding:12px">
-      <div class="fl">Tipo</div><select class="fsel" id="le-et"><option value="goal">Gol</option><option value="yellow">Amarilla</option><option value="red">Roja</option></select>
+      <div class="fl">Tipo</div><select class="fsel" id="le-et"><option value="goal">⚽ Gol</option><option value="yellow">🟨 Amarilla</option><option value="red">🟥 Roja</option></select>
       <div style="display:flex;gap:8px">
         <div style="flex:1"><div class="fl">Jugador</div><input type="text" class="fi" id="le-ep" placeholder="Nombre..." style="margin-bottom:0"/></div>
         <div style="flex:1"><div class="fl">Minuto</div><input type="number" class="fi" id="le-em" placeholder="45" min="1" max="120" style="margin-bottom:0"/></div>
       </div>
       <div class="fl" style="margin-top:8px">Equipo</div>
       <select class="fsel" id="le-eteam"><option value="home">${h?.name||'Local'}</option><option value="away">${a?.name||'Visita'}</option></select>
-      <button class="abtn" onclick="addEvent('${id}')">AGREGAR</button>
+      <button class="abtn" onclick="addEvent('${id}')">AGREGAR EVENTO</button>
     </div>
-    <div class="fl">Stats - Posesion ${h?.name||'L'} (%)</div>
-    <input type="number" class="fi" id="le-poss" value="${m.stats?.possession??''}" min="0" max="100"/>
+    <div class="fl">Posesión ${h?.name||'L'} (%)</div>
+    <input type="number" class="fi" id="le-poss" value="${m.stats?.possession??50}" min="0" max="100"/>
     <div style="display:flex;gap:8px;margin-bottom:10px">
-      <div style="flex:1"><div class="fl">Remates L</div><input type="number" class="fi" id="le-sh" value="${m.stats?.shots??''}" style="margin-bottom:0"/></div>
-      <div style="flex:1"><div class="fl">Remates V</div><input type="number" class="fi" id="le-sha" value="${m.stats?.shotsAway??''}" style="margin-bottom:0"/></div>
+      <div style="flex:1"><div class="fl">Remates L</div><input type="number" class="fi" id="le-sh" value="${m.stats?.shots??0}" style="margin-bottom:0"/></div>
+      <div style="flex:1"><div class="fl">Remates V</div><input type="number" class="fi" id="le-sha" value="${m.stats?.shotsAway??0}" style="margin-bottom:0"/></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
-      <div style="flex:1"><div class="fl">Faltas L</div><input type="number" class="fi" id="le-fo" value="${m.stats?.fouls??''}" style="margin-bottom:0"/></div>
-      <div style="flex:1"><div class="fl">Faltas V</div><input type="number" class="fi" id="le-foa" value="${m.stats?.foulsAway??''}" style="margin-bottom:0"/></div>
+      <div style="flex:1"><div class="fl">Faltas L</div><input type="number" class="fi" id="le-fo" value="${m.stats?.fouls??0}" style="margin-bottom:0"/></div>
+      <div style="flex:1"><div class="fl">Faltas V</div><input type="number" class="fi" id="le-foa" value="${m.stats?.foulsAway??0}" style="margin-bottom:0"/></div>
     </div>
     <button class="abtn" onclick="saveLiveEdit('${id}')">GUARDAR CAMBIOS</button>
-    <div class="fl" style="margin-top:14px">Eventos (${(m.events||[]).length})</div>
-    <div>${(m.events||[]).length?(m.events||[]).map((e,i)=>`<div class="ali"><div style="font-size:18px">${e.type==='goal'?'&#x26BD;':e.type==='yellow'?'&#x1F7E8;':'&#x1F7E5;'}</div><div class="alinf"><div class="aln">${e.player} (${e.minute}')</div><div class="als">${e.team==='home'?(h?.name||'L'):(a?.name||'V')}</div></div><div class="alacts"><button class="albtn del" onclick="delEv('${id}',${i})"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:10px 0"><div class="etit" style="font-size:12px">Sin eventos</div></div>'}</div>
-  `;openOv('le-ov');
+    <div class="fl" style="margin-top:14px">Eventos</div>
+    <div>${(m.events||[]).length?(m.events||[]).map((ev,i)=>`<div class="ali"><div style="font-size:18px">${ev.type==='goal'?'⚽':ev.type==='yellow'?'🟨':'🟥'}</div><div class="alinf"><div class="aln">${ev.player} (${ev.minute}')</div><div class="als">${ev.team==='home'?(h?.name||'L'):(a?.name||'V')}</div></div><div class="alacts"><button class="albtn" onclick="delEv('${id}',${i})"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:10px 0"><div class="etit" style="font-size:12px">Sin eventos</div></div>'}</div>
+  `;
+  openOv('le-ov');
 }
 function addEvent(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;if(!m.events)m.events=[];
   const player=$('le-ep').value.trim(),min=parseInt($('le-em').value);
   if(!player||!min){toast('Completa jugador y minuto');return}
   m.events.push({type:$('le-et').value,player,minute:min,team:$('le-eteam').value});
-  m.events.sort((a,b)=>a.minute-b.minute);save();renderAll();openLiveEdit(id);toast('Evento agregado');
+  m.events.sort((a,b)=>a.minute-b.minute);save();renderAll();openLiveEdit(id);toast('✅ Evento agregado');broadcastUpdate();
 }
-function delEv(id,i){const m=D.matches.find(x=>x.id===id);if(m?.events){m.events.splice(i,1);save();renderAll();openLiveEdit(id)}}
+function delEv(id,i){const m=D.matches.find(x=>x.id===id);if(m?.events){m.events.splice(i,1);save();renderAll();openLiveEdit(id);broadcastUpdate()}}
 function saveLiveEdit(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
   m.homeScore=parseInt($('le-hs').value)||0;m.awayScore=parseInt($('le-as').value)||0;
-  m.stats={possession:+$('le-poss').value||undefined,shots:+$('le-sh').value||undefined,shotsAway:+$('le-sha').value||undefined,fouls:+$('le-fo').value||undefined,foulsAway:+$('le-foa').value||undefined};
-  save();renderAll();toast('Partido actualizado');
+  m.stats={possession:+$('le-poss').value||50,shots:+$('le-sh').value||0,shotsAway:+$('le-sha').value||0,fouls:+$('le-fo').value||0,foulsAway:+$('le-foa').value||0};
+  save();renderAll();broadcastUpdate();toast('✅ Partido actualizado');
 }
 
-/* FILES */
+/* ---- FILE HANDLING (con compresión automática) ---- */
+const MAX_FILE=5*1024*1024;
+const VALID_TYPES=['image/jpeg','image/png','image/webp'];
 function handleFile(e,key,btnId,txtId){
-  const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{pending[key]=ev.target.result;$(btnId)?.classList.add('has');if($(txtId))$(txtId).textContent=f.name};r.readAsDataURL(f);
+  const f=e.target.files[0];if(!f)return;
+  if(!VALID_TYPES.includes(f.type)){toast('❌ Solo JPG, PNG o WebP');return}
+  const process=(src)=>{
+    pending[key]=src;$(btnId)?.classList.add('has');if($(txtId))$(txtId).textContent=f.name;
+  };
+  // FIX: siempre usar FileReader + canvas para garantizar img.onload
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    if(f.size>MAX_FILE){
+      // Comprimir via canvas
+      const img=new Image();
+      img.onload=()=>{
+        const MAX_DIM=1200;
+        let {width:w,height:h}=img;
+        if(w>MAX_DIM||h>MAX_DIM){const r=MAX_DIM/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r)}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        process(cv.toDataURL('image/jpeg',0.78));
+        toast(`📐 Imagen comprimida: ${f.name}`);
+      };
+      img.onerror=()=>process(ev.target.result);
+      img.src=ev.target.result;
+    }else{process(ev.target.result)}
+  };
+  reader.onerror=()=>toast('❌ Error al leer el archivo');
+  reader.readAsDataURL(f);
 }
 function resetFup(btnId,txtId,label){$(btnId)?.classList.remove('has');if($(txtId))$(txtId).textContent=label}
-function handleAvatarUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{D.user.avatar=ev.target.result;save();updateUser();toast('Avatar actualizado')};r.readAsDataURL(f)}
-function handleBannerUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{D.user.banner=ev.target.result;save();updateUser();toast('Banner actualizado')};r.readAsDataURL(f)}
+function handleAvatarUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{D.user.avatar=ev.target.result;save();updateUser();toast('✅ Avatar actualizado')};r.readAsDataURL(f)}
+function handleBannerUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{D.user.banner=ev.target.result;save();updateUser();toast('✅ Banner actualizado')};r.readAsDataURL(f)}
 function triggerAvatar(){$('avatar-fi').click()}
 function triggerBanner(){$('banner-fi').click()}
 
-/* PROFILE */
+/* ---- PROFILE ---- */
 function openProfEdit(){$('pe-name').value=D.user.name||'';$('pe-bio').value=D.user.bio||'';openOv('pe-ov')}
-function saveProfEdit(){const n=$('pe-name').value.trim();if(!n){toast('Nombre no puede estar vacio');return}D.user.name=n;D.user.bio=$('pe-bio').value.trim();save();updateUser();updateGreet();closeOv('pe-ov');toast('Perfil actualizado')}
+function saveProfEdit(){const n=$('pe-name').value.trim();if(!n){toast('Nombre no puede estar vacío');return}D.user.name=n;D.user.bio=$('pe-bio').value.trim();save();updateUser();updateGreet();closeOv('pe-ov');toast('✅ Perfil actualizado')}
 function openTeamPicker(){
   const c=$('tp-list');
-  if(!D.teams.length){c.innerHTML='<div class="empty"><div class="etic">&#x26BD;</div><div class="etit">Sin equipos</div></div>';openOv('tp-ov');return}
-  c.innerHTML=D.teams.map(t=>`<div class="tpit${D.user.favTeam===t.id?' sel':''}" onclick="pickTeam('${t.id}')"><div class="alcr" style="border-radius:9px">${t.logo?`<img src="${t.logo}"/>`:t.name.substring(0,3).toUpperCase()}</div><div style="font-size:14px;font-weight:700;color:var(--text)">${t.name}</div><div class="tpck">${D.user.favTeam===t.id?'&#x2713;':''}</div></div>`).join('');
+  if(!D.teams.length){c.innerHTML='<div class="empty"><div class="etic">⚽</div><div class="etit">Sin equipos</div></div>';openOv('tp-ov');return}
+  c.innerHTML=D.teams.map(t=>`<div class="tpit${D.user.favTeam===t.id?' sel':''}" onclick="pickTeam('${t.id}')"><div class="alcr" style="border-radius:9px">${crEl(t.logo,t.name.substring(0,3))}</div><div style="font-size:14px;font-weight:700;color:var(--text)">${t.name}</div><div class="tpck">${D.user.favTeam===t.id?'✓':''}</div></div>`).join('');
   openOv('tp-ov');
 }
-function pickTeam(id){D.user.favTeam=id;save();updateUser();closeOv('tp-ov');toast('Equipo favorito guardado')}
+function pickTeam(id){D.user.favTeam=id;save();updateUser();closeOv('tp-ov');toast('✅ Equipo guardado')}
 
-/* NOTIFS */
-function addNotif(title,sub){D.notifications.unshift({id:Date.now().toString(),title,sub,read:false,date:new Date().toISOString()});save();updateUser()}
+/* ---- NOTIFICATIONS ---- */
+function addNotif(title,sub){
+  D.notifications.unshift({id:Date.now().toString(),title,sub,read:false,date:new Date().toISOString()});
+  if(D.notifications.length>50)D.notifications=D.notifications.slice(0,50);
+  save();updateUser();
+  if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body:sub,icon:D.cfg.logo||'/icon.png'});
+}
 function openNotifs(){
   const c=$('notif-list');
-  if(!D.notifications.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F514;</div><div class="etit">Sin notificaciones</div></div>'}
-  else c.innerHTML=D.notifications.slice(0,20).map(n=>`<div style="padding:12px 18px;border-bottom:1px solid var(--bdr);${n.read?'':'background:rgba(255,255,255,.02)'}"><div style="font-size:13px;font-weight:600;color:var(--text)">${n.title}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${n.sub} - ${fmtND(n.date)}</div></div>`).join('');
+  const iconMap={'Nuevo partido':'⚽','Partido en vivo':'🔴','Recordatorio':'🔔','Resultado':'🏆','Cambio de horario':'⏰'};
+  if(!D.notifications.length){
+    c.innerHTML='<div class="empty"><div class="etic">🔔</div><div class="etit">Sin notificaciones</div><div class="esub">Aquí verás goles, cambios de horario y más</div></div>';
+  } else {
+    c.innerHTML=D.notifications.slice(0,30).map(n=>{
+      const ico=Object.entries(iconMap).find(([k])=>n.title.includes(k))?.[1]||'📣';
+      return`<div class="notif-item">
+        <div class="notif-ico">${ico}</div>
+        <div class="notif-body">
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-sub">${n.sub}</div>
+          <div class="notif-date">${fmtND(n.date)}</div>
+        </div>
+        ${!n.read?'<div class="notif-unread"></div>':''}
+      </div>`;
+    }).join('');
+  }
   D.notifications.forEach(n=>n.read=true);save();updateUser();openOv('notif-ov');
 }
+function clearNotifs(){D.notifications=[]; save(); updateUser(); openNotifs(); toast('🗑️ Notificaciones borradas')}
 
-/* MODALS */
+/* ---- Stubs para nuevas funciones del menú ---- */
+function openFriends(){toast('👥 Próximamente: Gestión de Amigos')}
+function openBetHistory(){toast('📋 Próximamente: Historial de Apuestas')}
+function openAccountSettings(){toast('⚙️ Próximamente: Configuración de Cuenta')}
+
+/* ---- SEARCH ---- */
+function openSearch(){$('srch-ov').classList.add('open');setTimeout(()=>$('srch-inp')?.focus(),200)}
+function closeSearch(){$('srch-ov').classList.remove('open');$('srch-inp').value='';$('srch-res').innerHTML=''}
+function doSearch(q){
+  const c=$('srch-res');if(!q||q.length<2){c.innerHTML='';return}
+  const ql=q.toLowerCase();
+  const tRes=D.teams.filter(t=>t.name.toLowerCase().includes(ql));
+  const nRes=D.news.filter(n=>n.title.toLowerCase().includes(ql)||n.excerpt?.toLowerCase().includes(ql));
+  const pRes=D.players.filter(p=>p.name.toLowerCase().includes(ql));
+  const mRes=D.matches.filter(m=>{const h=team(m.homeTeam),a=team(m.awayTeam);return h?.name.toLowerCase().includes(ql)||a?.name.toLowerCase().includes(ql)});
+  if(!tRes.length&&!nRes.length&&!pRes.length&&!mRes.length){c.innerHTML='<div class="empty"><div class="etic">🔍</div><div class="etit">Sin resultados</div></div>';return}
+  c.innerHTML=`
+    ${tRes.length?`<div class="atit" style="padding:14px 14px 6px">Equipos</div>${tRes.map(t=>`<div class="mr" onclick="closeSearch();go('info')"><div class="mrcr">${crEl(t.logo,t.name.substring(0,3))}</div><div class="mrtn">${t.name}</div></div>`).join('')}`:''}
+    ${pRes.length?`<div class="atit" style="padding:14px 14px 6px">Jugadores</div>${pRes.map(p=>`<div class="mr"><div style="font-size:20px;width:22px;text-align:center">#${p.number||'?'}</div><div class="mrts"><div class="mrtn">${p.name}</div><div style="font-size:11px;color:var(--t3)">${p.position} · ${team(p.teamId)?.name||'?'}</div></div></div>`).join('')}`:''}
+    ${mRes.length?`<div class="atit" style="padding:14px 14px 6px">Partidos</div>${mRes.map(m=>{const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';return`<div class="mr" onclick="closeSearch();openMatch('${m.id}')"><div class="mrts"><div class="mrtn">${h.name} vs ${a.name}</div><div style="font-size:11px;color:var(--t3)">${stLabel(m.status)} · ${fmtND(m.datetime)}</div></div></div>`}).join('')}`:''}
+    ${nRes.length?`<div class="atit" style="padding:14px 14px 6px">Noticias</div>${nRes.map(n=>`<div class="mr" onclick="closeSearch();openNews('${n.id}')"><div class="mrts"><div class="mrtn">${n.title}</div><div style="font-size:11px;color:var(--t3)">${n.category||''}</div></div></div>`).join('')}`:''}
+  `;
+}
+
+/* ---- MODALS ---- */
 function openOv(id){$(id).classList.add('open');document.body.style.overflow='hidden'}
 function closeOv(id){$(id).classList.remove('open');document.body.style.overflow=''}
 function ovClick(e,id){if(e.target.id===id)closeOv(id)}
-
-/* MENU */
 function openMenu(){$('smov').classList.add('open')}
 function closeMenu(){$('smov').classList.remove('open')}
 function closeSMOv(e){if(e.target.id==='smov')closeMenu()}
-
-/* ADMIN TABS */
 function admTab(name,el){document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.apane').forEach(p=>p.classList.remove('on'));el.classList.add('on');$('adm-'+name).classList.add('on')}
 
-/* SEARCH */
-function openSearch(){const q=prompt('Buscar...');if(!q)return;const r=[...D.news.filter(n=>n.title.toLowerCase().includes(q.toLowerCase())),...D.teams.filter(t=>t.name.toLowerCase().includes(q.toLowerCase()))];toast(r.length?`${r.length} resultado(s) para "${q}"`:`Sin resultados para "${q}"`)}
-
-/* TOAST */
+/* ---- TOAST ---- */
 let toastT=null;
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800)}
 
-document.addEventListener('DOMContentLoaded',init);
+/* ---- AMBIENT SCROLL LISTENER ---- */
+document.addEventListener('DOMContentLoaded',()=>{
+  init();
+  $('scroll')?.addEventListener('scroll',()=>{clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,200)},{passive:true});
+});
 </script>
 </body>
 </html>
