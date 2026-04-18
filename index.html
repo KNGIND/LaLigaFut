@@ -1330,6 +1330,7 @@ function init(){
   if(_sbEnabled)startNotifPolling();
   setInterval(updateGreet,60000);
   setTimeout(maybeShowPWABanner,4500);
+  setTimeout(prefillMatchDate,300);
 }
 
 /* ---- LOGIN SYSTEM ---- */
@@ -1603,6 +1604,8 @@ function go(p){
   if(ni)ni.classList.add('on');
   $('scroll').scrollTop=0;closeMenu();
   clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,100);
+  // Refresh admin panel data when navigating to admin
+  if(p==='admin'){populateSels();renderAdmLists();updateAdmCfg();prefillMatchDate();}
 }
 
 /* ---- THEME ---- */
@@ -2057,17 +2060,60 @@ function updateAdmCfg(){
 }
 
 /* ---- SAVES ---- */
-function saveMatch(){
-  const h=$('mh-team').value,a=$('ma-team').value,dt=$('m-dt').value;
-  if(!h||!a||!dt){toast('Completa los campos requeridos');return}
-  if(h===a){toast('Los equipos deben ser diferentes');return}
-  D.matches.push({id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,
-    datetime:new Date(dt).toISOString(),status:$('m-st').value,
-    stadium:$('m-stad').value.trim(),channel:$('m-ch').value,events:[],stats:{}});
-  save();renderAll();
-  ['mh-team','ma-team','m-dt','m-stad'].forEach(id=>{const el=$(id);if(el)el.value=''});
-  addNotif('Nuevo partido','Partido programado');toast('✅ Partido guardado');broadcastUpdate();
+function prefillMatchDate(){
+  const el=$('m-dt');
+  if(el&&!el.value){
+    // Pre-fill with today's date and next round hour
+    const now=new Date();
+    now.setMinutes(0,0,0);
+    now.setHours(now.getHours()+1);
+    // Format as yyyy-MM-ddTHH:mm (required for datetime-local)
+    const pad=n=>String(n).padStart(2,'0');
+    el.value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:00`;
+  }
 }
+function saveMatch(){
+  const h=$('mh-team')?.value||'';
+  const a=$('ma-team')?.value||'';
+  const dt=$('m-dt')?.value||'';
+  const st=$('m-st')?.value||'proximo';
+  const stad=$('m-stad')?.value.trim()||'';
+  const ch=$('m-ch')?.value||'';
+  // Validate with specific messages
+  if(!h&&!a&&!dt){toast('⚠️ Completá: local, visitante y fecha');return}
+  if(!h){toast('⚠️ Seleccioná el equipo Local');$('mh-team')?.focus();return}
+  if(!a){toast('⚠️ Seleccioná el equipo Visitante');$('ma-team')?.focus();return}
+  if(!dt){toast('⚠️ Ingresá la fecha y hora del partido');$('m-dt')?.focus();return}
+  if(h===a){toast('⚠️ El local y visitante deben ser equipos distintos');return}
+  // Parse date safely
+  let isoDate;
+  try{isoDate=new Date(dt).toISOString()}catch(e){toast('⚠️ Fecha inválida');return}
+  const newMatch={
+    id:Date.now().toString(),
+    homeTeam:h,awayTeam:a,
+    homeScore:0,awayScore:0,
+    datetime:isoDate,
+    status:st,
+    stadium:stad,
+    channel:ch,
+    events:[],stats:{}
+  };
+  D.matches.push(newMatch);
+  save();
+  renderAll();
+  // Reset form but keep date pre-filled
+  const hSel=$('mh-team'),aSel=$('ma-team');
+  if(hSel)hSel.value='';
+  if(aSel)aSel.value='';
+  const stadEl=$('m-stad');if(stadEl)stadEl.value='';
+  prefillMatchDate();
+  addNotif('Nuevo partido',`${teamName(h)} vs ${teamName(a)}`);
+  toast('✅ Partido guardado correctamente');
+  broadcastUpdate();
+  // Auto-sync if Supabase active
+  if(_sb&&_sbEnabled)pushToSupabase();
+}
+function teamName(id){return D.teams.find(t=>t.id===id)?.name||id}
 function delMatch(id){if(!confirm('¿Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminado')}
 function setStatus(id,st){const m=D.matches.find(x=>x.id===id);if(m){m.status=st;save();renderAll();broadcastUpdate()}}
 function chSc(id,side,d){
@@ -2779,6 +2825,7 @@ function admTab(name,el){
   if(name==='supabase')updateAdmSupabase();
   if(name==='codeeditor')loadCustomCode();
   if(name==='stats')updateStatsPanel();
+  if(name==='matches'){populateSels();prefillMatchDate();}
 }
 </script>
 </body>
