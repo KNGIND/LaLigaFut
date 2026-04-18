@@ -644,6 +644,11 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .snippet-btn{width:100%;padding:11px 14px;border-radius:12px;background:var(--surf2);border:1px solid var(--bdr);font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:background .15s,transform .12s var(--spring)}
 .snippet-btn:active{transform:scale(.97);background:var(--surf3)}
 
+/* FILE UPLOAD: uploading state */
+.fupbtn.uploading{opacity:.7;pointer-events:none}
+.fupbtn.uploading::after{content:'⏳';margin-left:8px}
+.fupbtn.has{border-color:var(--accent);color:var(--accent)}
+
 /* PUSH NOTIF SETUP */
 .push-card{background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px}
 .push-card-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
@@ -1251,6 +1256,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ===================================================== */
 const STORE='lsl_v5';
 const ADMIN_DEFAULT='Admin123';
+// ---- SUPABASE — credenciales hardcodeadas ----
+const SB_URL='https://swvvbnnsryqjkwpcqcte.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3dnZibm5zcnlxamt3cGNxY3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMjUyOTksImV4cCI6MjA4OTkwMTI5OX0.9Yaf2obt8omQVHkc_SJCPxpnERCKfSS_QTMgpDcMocY';
+const SB_BUCKET='lsl-images';
 let D={
   cfg:{name:'La Súper Liga',short:'LSL',season:'T9 "Reinicio"',status:'en_curso',seasonDesc:'',logo:'',rules:'',adminPass:ADMIN_DEFAULT},
   user:{name:'joelito',bio:'',avatar:'',banner:'',favTeam:'',isAdmin:false},
@@ -1327,7 +1336,8 @@ function init(){
   updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   initSupabase();
-  if(_sbEnabled)startNotifPolling();
+  // Auto-pull from cloud on every page load (so all users see latest data)
+  setTimeout(()=>syncOnLoad(),800);
   setInterval(updateGreet,60000);
   setTimeout(maybeShowPWABanner,4500);
   setTimeout(prefillMatchDate,300);
@@ -2110,12 +2120,11 @@ function saveMatch(){
   addNotif('Nuevo partido',`${teamName(h)} vs ${teamName(a)}`);
   toast('✅ Partido guardado correctamente');
   broadcastUpdate();
-  // Auto-sync if Supabase active
-  if(_sb&&_sbEnabled)pushToSupabase();
+  adminSync();
 }
 function teamName(id){return D.teams.find(t=>t.id===id)?.name||id}
-function delMatch(id){if(!confirm('¿Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminado')}
-function setStatus(id,st){const m=D.matches.find(x=>x.id===id);if(m){m.status=st;save();renderAll();broadcastUpdate()}}
+function delMatch(id){if(!confirm('¿Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();broadcastUpdate();adminSync();toast('🗑️ Eliminado')}
+function setStatus(id,st){const m=D.matches.find(x=>x.id===id);if(m){m.status=st;save();renderAll();broadcastUpdate();adminSync()}}
 function chSc(id,side,d){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
   if(side==='h')m.homeScore=Math.max(0,(m.homeScore??0)+d);
@@ -2123,20 +2132,20 @@ function chSc(id,side,d){
   if(d>0){[`lch-${id}`,`lca-${id}`,`mdh-${id}`,`mda-${id}`,`fcmh-${id}`,`fcma-${id}`,`rmh-${id}`,`rma-${id}`].forEach(eid=>{const el=$(eid);if(el){el.classList.remove('scfl');void el.offsetWidth;el.classList.add('scfl')}})}
   [`lch-${id}`,`mdh-${id}`,`fcmh-${id}`,`rmh-${id}`].forEach(eid=>{const el=$(eid);if(el)el.textContent=m.homeScore??0});
   [`lca-${id}`,`mda-${id}`,`fcma-${id}`,`rma-${id}`].forEach(eid=>{const el=$(eid);if(el)el.textContent=m.awayScore??0});
-  save();broadcastUpdate();
+  save();broadcastUpdate();adminSync();
 }
 function saveTeam(){
   const name=$('t-name').value.trim();if(!name){toast('Ingresa un nombre');return}
   D.teams.push({id:Date.now().toString(),name,logo:pending.pendingTeamLogo||'',pj:0,pg:0,pp:0,pe:0,gf:0,gc:0,pts:0,adj:0});
-  save();pending.pendingTeamLogo=null;$('t-name').value='';resetFup('t-logo-btn','t-logo-txt','Subir escudo desde galería');renderAll();toast('✅ Equipo guardado');broadcastUpdate();
+  save();pending.pendingTeamLogo=null;$('t-name').value='';resetFup('t-logo-btn','t-logo-txt','Subir escudo desde galería');renderAll();toast('✅ Equipo guardado');broadcastUpdate();adminSync();
 }
-function delTeam(id){if(!confirm('¿Eliminar equipo?'))return;D.teams=D.teams.filter(t=>t.id!==id);D.matches=D.matches.filter(m=>m.homeTeam!==id&&m.awayTeam!==id);D.players=D.players.filter(p=>p.teamId!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminado')}
+function delTeam(id){if(!confirm('¿Eliminar equipo?'))return;D.teams=D.teams.filter(t=>t.id!==id);D.matches=D.matches.filter(m=>m.homeTeam!==id&&m.awayTeam!==id);D.players=D.players.filter(p=>p.teamId!==id);save();renderAll();broadcastUpdate();adminSync();toast('🗑️ Eliminado')}
 function savePlayer(){
   const name=$('pl-name').value.trim(),tid=$('pl-team').value;if(!name||!tid){toast('Nombre y equipo requeridos');return}
   D.players.push({id:Date.now().toString(),name,number:$('pl-num').value,position:$('pl-pos').value,teamId:tid,photo:pending.pendingPlayerPhoto||''});
-  pending.pendingPlayerPhoto=null;save();$('pl-name').value='';$('pl-num').value='';resetFup('pl-photo-btn','pl-photo-txt','Foto (opcional)');renderAdmLists();toast('✅ Jugador agregado');
+  pending.pendingPlayerPhoto=null;save();$('pl-name').value='';$('pl-num').value='';resetFup('pl-photo-btn','pl-photo-txt','Foto (opcional)');renderAdmLists();toast('✅ Jugador agregado');adminSync();
 }
-function delPlayer(id){D.players=D.players.filter(p=>p.id!==id);save();renderAdmLists();toast('🗑️ Eliminado')}
+function delPlayer(id){D.players=D.players.filter(p=>p.id!==id);save();renderAdmLists();toast('🗑️ Eliminado');adminSync();}
 function saveNews(){
   const t=$('n-title').value.trim(),ex=$('n-excerpt').value.trim(),body=$('n-body').value.trim();
   if(!t||!ex||!body){toast('Completa todos los campos');return}
@@ -2144,32 +2153,32 @@ function saveNews(){
   pending.pendingNewsImg=null;save();
   ['n-title','n-excerpt','n-body'].forEach(id=>{const el=$(id);if(el)el.value=''});
   resetFup('n-img-btn','n-img-txt','Subir imagen desde galería');
-  addNotif('Nueva noticia',t);renderAll();toast('✅ Noticia publicada');broadcastUpdate();
+  addNotif('Nueva noticia',t);renderAll();toast('✅ Noticia publicada');broadcastUpdate();adminSync();
 }
-function delNews(id){if(!confirm('¿Eliminar?'))return;D.news=D.news.filter(n=>n.id!==id);save();renderAll();broadcastUpdate();toast('🗑️ Eliminada')}
+function delNews(id){if(!confirm('¿Eliminar?'))return;D.news=D.news.filter(n=>n.id!==id);save();renderAll();broadcastUpdate();adminSync();toast('🗑️ Eliminada')}
 function saveChannel(){
   const name=$('ch-name').value.trim();if(!name){toast('Ingresa un nombre');return}
   D.channels.push({id:Date.now().toString(),name,url:$('ch-url').value.trim(),logo:pending.pendingChLogo||''});
-  pending.pendingChLogo=null;save();$('ch-name').value='';$('ch-url').value='';resetFup('ch-logo-btn','ch-logo-txt','Logo del canal');populateSels();renderAdmLists();toast('✅ Canal guardado');
+  pending.pendingChLogo=null;save();$('ch-name').value='';$('ch-url').value='';resetFup('ch-logo-btn','ch-logo-txt','Logo del canal');populateSels();renderAdmLists();toast('✅ Canal guardado');adminSync();
 }
-function delChannel(id){D.channels=D.channels.filter(c=>c.id!==id);save();populateSels();renderAdmLists();toast('🗑️ Eliminado')}
+function delChannel(id){D.channels=D.channels.filter(c=>c.id!==id);save();populateSels();renderAdmLists();toast('🗑️ Eliminado');adminSync();}
 function saveSanction(){
   const player=$('sa-player').value.trim(),tid=$('sa-team').value;if(!player||!tid){toast('Jugador y equipo requeridos');return}
   D.sanctions.push({id:Date.now().toString(),player,teamId:tid,type:$('sa-type').value,duration:$('sa-dur').value.trim(),notes:$('sa-notes').value.trim()});
-  save();['sa-player','sa-dur','sa-notes'].forEach(id=>{const el=$(id);if(el)el.value=''});renderAll();toast('✅ Sanción registrada');
+  save();['sa-player','sa-dur','sa-notes'].forEach(id=>{const el=$(id);if(el)el.value=''});renderAll();toast('✅ Sanción registrada');adminSync();
 }
-function delSanction(id){D.sanctions=D.sanctions.filter(s=>s.id!==id);save();renderAll();toast('🗑️ Eliminada')}
+function delSanction(id){D.sanctions=D.sanctions.filter(s=>s.id!==id);save();renderAll();toast('🗑️ Eliminada');adminSync();}
 function saveSeason(){
   const name=$('sea-name').value.trim();if(!name){toast('Ingresa un nombre');return}
   if(D.cfg.season&&D.cfg.season!==name)D.seasons.push({name:D.cfg.season,date:new Date().toISOString()});
   D.cfg.season=name;D.cfg.status=$('sea-status').value;D.cfg.seasonDesc=$('sea-desc').value.trim();
   save();updateHdr();updateGreet();
   const sl=$('adm-sea-list');if(sl)sl.innerHTML=D.seasons.map(s=>`<div class="ali"><div class="alinf"><div class="aln">${s.name}</div><div class="als">${fmtND(s.date)}</div></div></div>`).join('')||'<div class="empty" style="padding:14px 0"><div class="etic">🏅</div><div class="etit">Sin historial</div></div>';
-  toast('✅ Temporada actualizada');broadcastUpdate();
+  toast('✅ Temporada actualizada');broadcastUpdate();adminSync();
 }
 function adjustPoints(){
   const tid=$('pts-team').value,delta=parseInt($('pts-delta').value);if(!tid||isNaN(delta)){toast('Selecciona equipo y puntos');return}
-  const t=team(tid);if(!t)return;t.adj=(t.adj||0)+delta;save();renderStandings();toast(`${delta>0?'+':''}${delta} pts para ${t.name}`);
+  const t=team(tid);if(!t)return;t.adj=(t.adj||0)+delta;save();renderStandings();toast(`${delta>0?'+':''}${delta} pts para ${t.name}`);adminSync();
 }
 function saveConfig(){
   D.cfg.name=$('cfg-name').value.trim()||D.cfg.name;
@@ -2181,11 +2190,11 @@ function saveConfig(){
   updateHdr();$('rules-txt').textContent=D.cfg.rules||'El reglamento será publicado pronto.';
   resetFup('cfg-logo-btn','cfg-logo-txt','Cambiar logo');
   if($('cfg-pass'))$('cfg-pass').value='';
-  toast('✅ Config guardada');broadcastUpdate();
+  toast('✅ Config guardada');broadcastUpdate();adminSync();
 }
 function resetApp(){if(!confirm('¿Esto borrará TODOS los datos?'))return;localStorage.removeItem(STORE);location.reload()}
 function exportJSON(){const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`lsl-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('✅ Exportado')}
-function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const imp=JSON.parse(ev.target.result);D=deepMerge(D,imp);save();renderAll();updateHdr();updateUser();toast('✅ Datos importados');broadcastUpdate()}catch(err){toast('❌ Archivo inválido')}};r.readAsText(f);e.target.value=''}
+function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const imp=JSON.parse(ev.target.result);D=deepMerge(D,imp);save();renderAll();updateHdr();updateUser();adminSync();toast('✅ Datos importados');broadcastUpdate()}catch(err){toast('❌ Archivo inválido')}};r.readAsText(f);e.target.value=''}
 
 /* ---- LIVE EDIT ---- */
 function openLiveEdit(id){
@@ -2243,43 +2252,112 @@ function saveLiveEdit(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
   m.homeScore=parseInt($('le-hs').value)||0;m.awayScore=parseInt($('le-as').value)||0;
   m.stats={possession:+$('le-poss').value||50,shots:+$('le-sh').value||0,shotsAway:+$('le-sha').value||0,fouls:+$('le-fo').value||0,foulsAway:+$('le-foa').value||0};
-  save();renderAll();broadcastUpdate();toast('✅ Partido actualizado');
+  save();renderAll();broadcastUpdate();adminSync();toast('✅ Partido actualizado');
 }
 
 /* ---- FILE HANDLING (con compresión automática) ---- */
 const MAX_FILE=5*1024*1024;
 const VALID_TYPES=['image/jpeg','image/png','image/webp'];
-function handleFile(e,key,btnId,txtId){
-  const f=e.target.files[0];if(!f)return;
-  if(!VALID_TYPES.includes(f.type)){toast('❌ Solo JPG, PNG o WebP');return}
-  const process=(src)=>{
-    pending[key]=src;$(btnId)?.classList.add('has');if($(txtId))$(txtId).textContent=f.name;
-  };
-  // FIX: siempre usar FileReader + canvas para garantizar img.onload
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    if(f.size>MAX_FILE){
-      // Comprimir via canvas
+
+// Compress image to canvas blob
+function compressImage(file,maxDim=1200,quality=0.82){
+  return new Promise((resolve)=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
       const img=new Image();
       img.onload=()=>{
-        const MAX_DIM=1200;
         let {width:w,height:h}=img;
-        if(w>MAX_DIM||h>MAX_DIM){const r=MAX_DIM/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r)}
+        if(w>maxDim||h>maxDim){const r=maxDim/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r)}
         const cv=document.createElement('canvas');cv.width=w;cv.height=h;
         cv.getContext('2d').drawImage(img,0,0,w,h);
-        process(cv.toDataURL('image/jpeg',0.78));
-        toast(`📐 Imagen comprimida: ${f.name}`);
+        cv.toBlob(blob=>resolve(blob),'image/jpeg',quality);
       };
-      img.onerror=()=>process(ev.target.result);
+      img.onerror=()=>{
+        // fallback: use file as-is
+        resolve(file);
+      };
       img.src=ev.target.result;
-    }else{process(ev.target.result)}
-  };
-  reader.onerror=()=>toast('❌ Error al leer el archivo');
-  reader.readAsDataURL(f);
+    };
+    reader.onerror=()=>resolve(file);
+    reader.readAsDataURL(file);
+  });
 }
-function resetFup(btnId,txtId,label){$(btnId)?.classList.remove('has');if($(txtId))$(txtId).textContent=label}
-function handleAvatarUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{D.user.avatar=ev.target.result;save();updateUser();toast('✅ Avatar actualizado')};r.readAsDataURL(f)}
-function handleBannerUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{D.user.banner=ev.target.result;save();updateUser();toast('✅ Banner actualizado')};r.readAsDataURL(f)}
+
+// Main file handler: compress → upload to Supabase Storage → store URL
+// Falls back to base64 if Storage upload fails
+async function handleFile(e,key,btnId,txtId){
+  const f=e.target.files?.[0];if(!f)return;
+  if(!VALID_TYPES.includes(f.type)){toast('❌ Solo JPG, PNG o WebP');return}
+  // Show loading state
+  const btn=$(btnId),txt=$(txtId);
+  if(btn)btn.classList.add('uploading');
+  if(txt)txt.textContent='⏳ Subiendo...';
+  try{
+    // 1. Compress
+    const blob=await compressImage(f);
+    // 2. Try Supabase Storage upload
+    let url=null;
+    if(_sb){
+      url=await uploadToStorage(blob,'shared');
+    }
+    // 3. Fallback to base64 if Storage not available
+    if(!url){
+      url=await new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=ev=>res(ev.target.result);
+        r.onerror=()=>rej(new Error('read error'));
+        r.readAsDataURL(blob);
+      });
+    }
+    pending[key]=url;
+    if(btn){btn.classList.remove('uploading');btn.classList.add('has')}
+    if(txt)txt.textContent=url.startsWith('http')?'✅ '+f.name:f.name;
+    if(url.startsWith('http'))toast('☁️ Imagen subida a la nube');
+  }catch(err){
+    if(btn)btn.classList.remove('uploading');
+    if(txt)txt.textContent='❌ Error';
+    toast('❌ Error al subir imagen');
+    console.error(err);
+  }
+}
+
+function resetFup(btnId,txtId,label){
+  $(btnId)?.classList.remove('has','uploading');
+  if($(txtId))$(txtId).textContent=label;
+}
+
+// Avatar: upload to Storage under user-specific folder, store URL
+async function handleAvatarUpload(e){
+  const f=e.target.files?.[0];if(!f)return;
+  toast('⏳ Subiendo avatar...');
+  try{
+    const blob=await compressImage(f,400,0.85);
+    let url=null;
+    if(_sb)url=await uploadToStorage(blob,'avatars');
+    if(!url){
+      url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsDataURL(blob)});
+    }
+    D.user.avatar=url;save();updateUser();
+    toast('✅ Avatar actualizado');
+  }catch(err){toast('❌ Error al subir avatar')}
+}
+
+// Banner: same as avatar
+async function handleBannerUpload(e){
+  const f=e.target.files?.[0];if(!f)return;
+  toast('⏳ Subiendo banner...');
+  try{
+    const blob=await compressImage(f,1400,0.85);
+    let url=null;
+    if(_sb)url=await uploadToStorage(blob,'banners');
+    if(!url){
+      url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsDataURL(blob)});
+    }
+    D.user.banner=url;save();updateUser();
+    toast('✅ Banner actualizado');
+  }catch(err){toast('❌ Error al subir banner')}
+}
+
 function triggerAvatar(){$('avatar-fi').click()}
 function triggerBanner(){$('banner-fi').click()}
 
@@ -2437,95 +2515,46 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 /* ============================================================
-   SUPABASE — BASE DE DATOS COMPARTIDA
+   SUPABASE — CREDENCIALES HARDCODEADAS, AUTO-SYNC
    ============================================================ */
 let _sb=null;
-let _sbEnabled=false;
+let _sbEnabled=true;
 let _sbRT=false;
 
-function getSupabaseConfig(){
-  try{return JSON.parse(localStorage.getItem('lsl_sb_cfg')||'{}')}catch{return{}}
-}
-function saveSupabaseConfig(){
-  const url=$('sb-url')?.value.trim();
-  const key=$('sb-key')?.value.trim();
-  if(!url||!key){toast('⚠️ Completá URL y Key');return}
-  localStorage.setItem('lsl_sb_cfg',JSON.stringify({url,key,enabled:true}));
-  _sb=null;
-  initSupabase();
-  if(_sb){
-    toast('✅ Supabase configurado');
-    $('sb-status').textContent='✅ Conectado';
-    $('sb-status').style.color='#4ade80';
-    const tgl=$('tgl-sb');if(tgl)tgl.classList.add('on');
-  }
-}
 function initSupabase(){
-  const cfg=getSupabaseConfig();
-  if(!cfg.url||!cfg.key)return;
   try{
     if(window.supabase){
-      _sb=window.supabase.createClient(cfg.url,cfg.key);
-      _sbEnabled=cfg.enabled||false;
+      _sb=window.supabase.createClient(SB_URL,SB_KEY);
+      _sbEnabled=true;
+      console.log('✅ Supabase conectado');
     }
   }catch(e){console.warn('Supabase init error',e)}
 }
-function updateAdmSupabase(){
-  const cfg=getSupabaseConfig();
-  const u=$('sb-url'),k=$('sb-key');
-  if(u&&cfg.url)u.value=cfg.url;
-  if(k&&cfg.key)k.value=cfg.key;
-  const st=$('sb-status');
-  if(st){
-    if(_sb&&_sbEnabled){st.textContent='✅ Conectado y activo';st.style.color='#4ade80'}
-    else if(cfg.url){st.textContent='⚠️ Configurado pero no activo';st.style.color='#fbbf24'}
-    else{st.textContent='No configurado';st.style.color='var(--t3)'}
-  }
-  const tgl=$('tgl-sb');if(tgl)tgl.classList.toggle('on',!!(_sb&&_sbEnabled));
-  const tglRT=$('tgl-sb-rt');if(tglRT)tglRT.classList.toggle('on',_sbRT);
-}
-async function testSupabaseConn(){
-  const url=$('sb-url')?.value.trim();
-  const key=$('sb-key')?.value.trim();
-  const st=$('sb-status');
-  if(!url||!key){st.textContent='⚠️ Completá URL y Key';st.style.color='#fbbf24';return}
-  st.textContent='⏳ Probando conexión...';st.style.color='var(--t2)';
-  try{
-    const client=window.supabase.createClient(url,key);
-    const {error}=await client.from('lsl_config').select('id').limit(1);
-    if(error&&error.code!=='PGRST116'){
-      st.textContent='⚠️ Conectado, pero las tablas no existen aún. Copia el SQL de setup.';
-      st.style.color='#fbbf24';
-    }else{
-      st.textContent='✅ ¡Conexión exitosa!';st.style.color='#4ade80';
-    }
-  }catch(e){st.textContent='❌ Error: '+e.message;st.style.color='#f87171'}
-}
-function toggleSupabaseSync(){
-  _sbEnabled=!_sbEnabled;
-  const cfg=getSupabaseConfig();
-  localStorage.setItem('lsl_sb_cfg',JSON.stringify({...cfg,enabled:_sbEnabled}));
-  const tgl=$('tgl-sb');if(tgl)tgl.classList.toggle('on',_sbEnabled);
-  toast(_sbEnabled?'☁️ Sincronización activada':'Sincronización desactivada');
-}
-function toggleSupabaseRT(){
-  _sbRT=!_sbRT;
-  const tgl=$('tgl-sb-rt');if(tgl)tgl.classList.toggle('on',_sbRT);
-  toast(_sbRT?'⚡ Tiempo real activado':'Tiempo real desactivado');
-  if(_sbRT&&_sb)setupSupabaseRealtime();
-}
-function setupSupabaseRealtime(){
+
+// Pull silently on load — todos ven los datos del admin
+async function syncOnLoad(){
   if(!_sb)return;
-  _sb.channel('lsl-changes')
-    .on('postgres_changes',{event:'*',schema:'public',table:'lsl_data'},()=>{
-      pullFromSupabase();
-    }).subscribe();
-}
-async function pushToSupabase(){
-  if(!_sb){toast('❌ Supabase no configurado');return}
-  toast('⬆️ Subiendo datos...');
   try{
-    // Serialize and split data by category for better image handling
+    const {data,error}=await _sb.from('lsl_data').select('*').eq('id','main').single();
+    if(error&&error.code!=='PGRST116')return;
+    if(data){
+      if(data.teams)D.teams=JSON.parse(data.teams);
+      if(data.matches)D.matches=JSON.parse(data.matches);
+      if(data.news)D.news=JSON.parse(data.news);
+      if(data.players)D.players=JSON.parse(data.players);
+      if(data.channels)D.channels=JSON.parse(data.channels);
+      if(data.sanctions)D.sanctions=JSON.parse(data.sanctions);
+      if(data.cfg)D.cfg={...D.cfg,...JSON.parse(data.cfg)};
+      localStorage.setItem(STORE,JSON.stringify(D));
+      renderAll();updateHdr();updateUser();populateSels();
+    }
+  }catch(e){console.warn('syncOnLoad error',e)}
+}
+
+// Admin: push everything after any write
+async function pushToSupabase(){
+  if(!_sb)return;
+  try{
     const payload={
       id:'main',
       teams:JSON.stringify(D.teams),
@@ -2539,133 +2568,126 @@ async function pushToSupabase(){
     };
     const {error}=await _sb.from('lsl_data').upsert(payload,{onConflict:'id'});
     if(error)throw error;
-    toast('✅ Datos subidos a la nube');
-  }catch(e){toast('❌ Error al subir: '+e.message)}
+    toast('☁️ Sincronizado');
+  }catch(e){console.warn('pushToSupabase error',e);toast('⚠️ Sync: '+e.message)}
 }
+
+// Pull manually from panel button
 async function pullFromSupabase(){
-  if(!_sb){toast('❌ Supabase no configurado');return}
-  toast('⬇️ Bajando datos...');
-  try{
-    const {data,error}=await _sb.from('lsl_data').select('*').eq('id','main').single();
-    if(error)throw error;
-    if(data){
-      if(data.teams)D.teams=JSON.parse(data.teams);
-      if(data.matches)D.matches=JSON.parse(data.matches);
-      if(data.news)D.news=JSON.parse(data.news);
-      if(data.players)D.players=JSON.parse(data.players);
-      if(data.channels)D.channels=JSON.parse(data.channels);
-      if(data.sanctions)D.sanctions=JSON.parse(data.sanctions);
-      if(data.cfg)D.cfg={...D.cfg,...JSON.parse(data.cfg)};
-      save();renderAll();updateHdr();
-      toast('✅ Datos actualizados desde la nube');
-    }
-  }catch(e){toast('❌ Error al bajar: '+e.message)}
+  if(!_sb){toast('❌ Sin conexión');return}
+  toast('⬇️ Actualizando...');
+  await syncOnLoad();
+  toast('✅ Datos actualizados');
 }
 
-// Upload image to Supabase Storage and return public URL
-async function uploadImageToSupabase(base64Data, bucket, filename){
-  if(!_sb)return null;
-  try{
-    // Convert base64 to blob
-    const arr=base64Data.split(',');
-    const mime=arr[0].match(/:(.*?);/)[1];
-    const bstr=atob(arr[1]);
-    let n=bstr.length;const u8arr=new Uint8Array(n);
-    while(n--)u8arr[n]=bstr.charCodeAt(n);
-    const blob=new Blob([u8arr],{type:mime});
-    const ext=mime.split('/')[1]||'jpg';
-    const path=`${filename}-${Date.now()}.${ext}`;
-    const {data,error}=await _sb.storage.from(bucket).upload(path,blob,{upsert:true,contentType:mime});
-    if(error)throw error;
-    const {data:{publicUrl}}=_sb.storage.from(bucket).getPublicUrl(path);
-    return publicUrl;
-  }catch(e){console.warn('Image upload error',e);return null}
+// Auto sync after admin writes
+function adminSync(){
+  if(_sb&&D.user.isAdmin){
+    clearTimeout(window._syncTimer);
+    window._syncTimer=setTimeout(()=>pushToSupabase(),500);
+  }
 }
 
+// Upload a file Blob to Supabase Storage → returns public URL, or null on fail
+async function uploadToStorage(blob,folder){
+  if(!_sb||!blob)return null;
+  try{
+    const ext=(blob.type||'image/jpeg').split('/')[1]||'jpg';
+    const path=`${folder}/${Date.now()}.${ext}`;
+    const {error}=await _sb.storage.from(SB_BUCKET).upload(path,blob,{
+      contentType:blob.type||'image/jpeg',
+      upsert:true
+    });
+    if(error)throw error;
+    const {data}=_sb.storage.from(SB_BUCKET).getPublicUrl(path);
+    return data.publicUrl;
+  }catch(e){console.warn('Storage upload error',e);return null}
+}
+
+// Base64 data URL → Blob
+function b64toBlob(b64){
+  const arr=b64.split(',');
+  const mime=arr[0].match(/:(.*?);/)[1];
+  const bstr=atob(arr[1]);
+  let n=bstr.length;const u8=new Uint8Array(n);
+  while(n--)u8[n]=bstr.charCodeAt(n);
+  return new Blob([u8],{type:mime});
+}
+
+function getSupabaseConfig(){return{url:SB_URL,key:SB_KEY,enabled:true}}
+
+function updateAdmSupabase(){
+  const u=$('sb-url'),k=$('sb-key');
+  if(u)u.value=SB_URL;
+  if(k)k.value='(configurado automáticamente)';
+  const st=$('sb-status');
+  if(st){
+    st.textContent=_sb?'✅ Conectado y activo (auto)':'⏳ Iniciando...';
+    st.style.color=_sb?'#4ade80':'#fbbf24';
+  }
+  const tgl=$('tgl-sb');if(tgl)tgl.classList.add('on');
+}
+async function saveSupabaseConfig(){
+  toast('✅ Supabase ya está configurado automáticamente');
+}
+async function testSupabaseConn(){
+  const st=$('sb-status');if(!st)return;
+  st.textContent='⏳ Probando...';st.style.color='var(--t2)';
+  try{
+    const {error}=await _sb.from('lsl_data').select('id').limit(1);
+    if(error&&error.code!=='PGRST116')throw error;
+    st.textContent='✅ Todo perfecto!';st.style.color='#4ade80';
+  }catch(e){st.textContent='❌ '+e.message;st.style.color='#f87171'}
+}
+function toggleSupabaseSync(){toast('✅ Siempre sincronizando automáticamente')}
+function toggleSupabaseRT(){
+  _sbRT=!_sbRT;
+  const tgl=$('tgl-sb-rt');if(tgl)tgl.classList.toggle('on',_sbRT);
+  if(_sbRT&&_sb)setupSupabaseRealtime();
+  toast(_sbRT?'⚡ Tiempo real ON':'Tiempo real OFF');
+}
+function setupSupabaseRealtime(){
+  if(!_sb)return;
+  _sb.channel('lsl-live')
+    .on('postgres_changes',{event:'*',schema:'public',table:'lsl_data'},()=>syncOnLoad())
+    .subscribe();
+}
 function copySupabaseSQL(){
-  const sql=`-- LSL: Crear tabla principal
+  const sql=`-- 1. Tabla de datos LSL
 CREATE TABLE IF NOT EXISTS lsl_data (
   id TEXT PRIMARY KEY,
   teams TEXT, matches TEXT, news TEXT, players TEXT,
   channels TEXT, sanctions TEXT, cfg TEXT,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
--- Habilitar acceso público (ajustar según seguridad deseada)
-ALTER TABLE lsl_data ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Lectura pública" ON lsl_data FOR SELECT USING (true);
-CREATE POLICY "Escritura admin" ON lsl_data FOR ALL USING (true);
--- Bucket para imágenes
-INSERT INTO storage.buckets (id, name, public) VALUES ('lsl-images', 'lsl-images', true)
-  ON CONFLICT DO NOTHING;`;
-  navigator.clipboard?.writeText(sql).then(()=>toast('📋 SQL copiado al portapapeles')).catch(()=>toast('No se pudo copiar'));
-}
 
-/* ============================================================
-   NOTIFICACIONES PUSH — MEJORADO
-   ============================================================ */
-async function requestNotifPerm(){
-  if(!('Notification' in window)){toast('No disponible en este navegador');return}
-  const p=await Notification.requestPermission();
-  updateNotifLabel();
-  if(p==='granted'){
-    toast('✅ Notificaciones activadas');
-    // Mostrar notificación de bienvenida
-    showLocalNotif(D.cfg.name||'La Súper Liga','¡Notificaciones activadas! ✓');
-    // Intentar suscribir a push si hay SW
-    trySubscribePush();
-  }else{
-    toast('❌ Permiso denegado');
-  }
+-- 2. Políticas RLS (acceso público)
+ALTER TABLE lsl_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "select_all" ON lsl_data FOR SELECT USING (true);
+CREATE POLICY "insert_all" ON lsl_data FOR INSERT WITH CHECK (true);
+CREATE POLICY "update_all" ON lsl_data FOR UPDATE USING (true);
+
+-- 3. Bucket de imágenes: ir a Storage > New Bucket
+-- Nombre: lsl-images | Public: SI`;
+  navigator.clipboard?.writeText(sql)
+    .then(()=>toast('📋 SQL copiado'))
+    .catch(()=>{});
 }
-function showLocalNotif(title,body,icon){
-  if(Notification.permission!=='granted')return;
-  try{
-    if(window._swReg&&window._swReg.showNotification){
-      window._swReg.showNotification(title,{body,icon:icon||D.cfg.logo||'/favicon.ico',vibrate:[200,100,200],badge:'/favicon.ico'});
-    }else{
-      new Notification(title,{body,icon:icon||D.cfg.logo||'/favicon.ico'});
-    }
-  }catch(e){new Notification(title,{body})}
-}
-async function trySubscribePush(){
-  if(!window._swReg)return;
-  try{
-    // VAPID push requires server - store subscription locally for now
-    const sub=await window._swReg.pushManager.getSubscription();
-    if(!sub){
-      // Can't subscribe without VAPID key from server
-      console.log('Push: no VAPID key configured');
-    }
-  }catch(e){console.warn('Push subscription failed',e)}
-}
-function sendPushToAll(title,body){
-  // Send via local notification + store in DB
-  addNotif(title,body);
-  showLocalNotif(title,body);
-  // If Supabase is connected, store notification for other users to pick up
-  if(_sb&&_sbEnabled){
-    _sb.from('lsl_notifications').insert({title,body,created_at:new Date().toISOString()})
-      .then(({error})=>{if(!error)toast('📤 Notificación enviada a todos')})
-      .catch(()=>{});
-  }else{
-    toast('📤 Notificación local enviada');
-  }
-}
-// Poll for new notifications from Supabase (for other users)
 let _notifPollTimer=null;
 function startNotifPolling(){
-  if(!_sb||!_sbEnabled)return;
+  if(!_sb)return;
   _notifPollTimer=setInterval(async()=>{
     try{
       const last=localStorage.getItem('lsl_last_notif')||'2000-01-01';
-      const {data}=await _sb.from('lsl_notifications').select('*').gt('created_at',last).order('created_at',{ascending:false}).limit(5);
+      const {data}=await _sb.from('lsl_notifications').select('*').gt('created_at',last).limit(5);
       if(data&&data.length){
         data.forEach(n=>addNotif(n.title,n.body));
         localStorage.setItem('lsl_last_notif',data[0].created_at);
       }
     }catch(e){}
-  },30000); // Poll every 30s
+  },30000);
 }
+
 
 /* ============================================================
    CODE EDITOR — EDITOR DE CÓDIGO EN VIVO
