@@ -11,6 +11,7 @@
 <link rel="manifest" id="manifest-link"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 /* =========================================================
    VARIABLES — SOLO BLANCO Y NEGRO, SIN EXCEPCIONES
@@ -18,25 +19,29 @@
 :root{--spd:.26s;--slow:.55s;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1)}
 
 [data-theme="dark"]{
-  --bg:#000000;--bg2:#0a0a0a;--bg3:#141414;
-  --surf:#1a1a1a;--surf2:#222222;--surf3:#2a2a2a;
-  --bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.14);
-  --text:#f5f5f5;--t2:#888888;--t3:#444444;
-  --over:rgba(0,0,0,.92);
-  --hbg:rgba(0,0,0,.45);--nbg:rgba(8,8,8,.72);
+  --bg:#07080f;--bg2:#0d0e1a;--bg3:#131424;
+  --surf:#15162280;--surf2:#1e1f30;--surf3:#252638;
+  --bdr:rgba(120,130,255,.10);--bdr2:rgba(150,160,255,.18);
+  --text:#f0f2ff;--t2:#8890bb;--t3:#3d4260;
+  --over:rgba(7,8,15,.93);
+  --hbg:rgba(12,11,28,.58);--nbg:rgba(10,9,22,.75);
+  --accent:#6c7aff;--accent2:#a78bfa;
+  --grad:linear-gradient(135deg,#0e0c28 0%,#080d1e 40%,#0a1020 70%,#07080f 100%);
 }
 [data-theme="light"]{
-  --bg:#ffffff;--bg2:#f5f5f5;--bg3:#ebebeb;
-  --surf:#ffffff;--surf2:#f0f0f0;--surf3:#e5e5e5;
-  --bdr:rgba(0,0,0,.07);--bdr2:rgba(0,0,0,.13);
-  --text:#111111;--t2:#666666;--t3:#aaaaaa;
-  --over:rgba(255,255,255,.94);
-  --hbg:rgba(255,255,255,.55);--nbg:rgba(250,250,250,.70);
+  --bg:#f0f2ff;--bg2:#e8ebff;--bg3:#dde2ff;
+  --surf:rgba(255,255,255,.75);--surf2:rgba(240,242,255,.80);--surf3:#dde2ff;
+  --bdr:rgba(100,110,255,.10);--bdr2:rgba(100,110,255,.18);
+  --text:#12143d;--t2:#555888;--t3:#aab0dd;
+  --over:rgba(240,242,255,.95);
+  --hbg:rgba(255,255,255,.62);--nbg:rgba(248,249,255,.78);
+  --accent:#4f5eff;--accent2:#7c6aff;
+  --grad:linear-gradient(135deg,#e0e6ff 0%,#f0eaff 40%,#e8f5ff 70%,#f0f2ff 100%);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;outline:none!important;-webkit-tap-highlight-color:transparent}
 html{height:100%;overflow:hidden}
-body{font-family:"DM Sans",-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body{font-family:"DM Sans",-apple-system,sans-serif;background:var(--bg);background-image:var(--grad);color:var(--text);height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 img{max-width:100%;display:block}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,textarea,select{font-family:inherit;color:var(--text);background:transparent}
@@ -48,16 +53,16 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #ab-mid{width:340px;height:240px;top:40%;left:50%;transform:translateX(-50%)}
 
 /* ---- APP SHELL ---- */
-#app{display:flex;flex-direction:column;height:100dvh;position:relative;overflow:hidden;background:var(--bg);max-width:520px;margin:0 auto}
+#app{display:flex;flex-direction:column;height:100dvh;position:relative;overflow:hidden;background:var(--bg);background-image:var(--grad);max-width:520px;margin:0 auto}
 
 /* ---- HEADER ---- */
 #hdr{position:relative;z-index:100;flex-shrink:0;
   padding:calc(10px + env(safe-area-inset-top,0px)) 14px 12px;
   background:var(--hbg);
-  backdrop-filter:blur(48px) saturate(110%);
-  -webkit-backdrop-filter:blur(48px) saturate(110%);
-  border-bottom:1px solid rgba(255,255,255,.05);
-  box-shadow:0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(52px) saturate(180%) brightness(1.08);
+  -webkit-backdrop-filter:blur(52px) saturate(180%) brightness(1.08);
+  border-bottom:1px solid var(--bdr2);
+  box-shadow:0 1px 0 rgba(120,130,255,.08),0 4px 20px rgba(0,0,0,.15);
   transition:background .5s,border-color .5s,box-shadow .5s}
 
 .hrow{display:flex;align-items:center;gap:9px}
@@ -123,12 +128,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:520px;z-index:200;
   background:var(--nbg);
-  backdrop-filter:blur(40px) saturate(110%);
-  -webkit-backdrop-filter:blur(40px) saturate(110%);
-  border-top:1px solid var(--bdr);
+  backdrop-filter:blur(44px) saturate(180%) brightness(1.06);
+  -webkit-backdrop-filter:blur(44px) saturate(180%) brightness(1.06);
+  border-top:1px solid var(--bdr2);
   padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));
   display:flex;
-  transition:background 1.6s,border-color 1.6s}
+  transition:background 1.6s,border-color 1.6s;
+  box-shadow:0 -2px 20px rgba(80,90,255,.06)}
 .ni{display:flex;flex-direction:column;align-items:center;gap:2px;
   flex:1;padding:4px 4px;cursor:pointer;
   transition:all .22s var(--spring);position:relative}
@@ -137,7 +143,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 [data-theme="light"] .ni.on .niico{background:rgba(0,0,0,.08);border-radius:14px;padding:3px 20px}
 .nilbl{font-size:10px;font-weight:600;letter-spacing:.2px;
   color:var(--t3);transition:color .2s}
-.ni.on .nilbl{color:var(--text)}
+.ni.on .nilbl{color:var(--accent)}
 .ni.on::after{display:none}
 
 /* ---- SECTIONS ---- */
@@ -632,6 +638,17 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .scfl{animation:scfl .38s var(--spring)}
 @keyframes bdgPop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
 
+/* CODE EDITOR */
+.code-editor{background:var(--bg)!important;border:1px solid var(--bdr2)!important;color:var(--text)!important;border-radius:14px!important;padding:12px!important}
+.code-editor:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(108,122,255,.15)!important}
+.snippet-btn{width:100%;padding:11px 14px;border-radius:12px;background:var(--surf2);border:1px solid var(--bdr);font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:background .15s,transform .12s var(--spring)}
+.snippet-btn:active{transform:scale(.97);background:var(--surf3)}
+
+/* PUSH NOTIF SETUP */
+.push-card{background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px}
+.push-card-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.push-card-s{font-size:11px;color:var(--t2)}
+
 /* ---- LOGIN SCREEN ---- */
 #login-screen{position:fixed;inset:0;z-index:900;background:var(--bg);
   display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
@@ -656,8 +673,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .niico{width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   color:var(--t3);transition:color .2s,transform .22s var(--spring),filter .3s}
 .niico svg{width:24px;height:24px;filter:drop-shadow(0 0 0 transparent);transition:filter .3s}
-.ni.on .niico{color:var(--text);transform:translateY(-1px)}
-.ni.on .niico svg{filter:drop-shadow(0 0 12px currentColor) drop-shadow(0 2px 8px rgba(255,255,255,.3))}
+.ni.on .niico{color:var(--accent);transform:translateY(-1px)}
+.ni.on .niico svg{filter:drop-shadow(0 0 10px var(--accent)) drop-shadow(0 2px 6px var(--accent2))}
+[data-theme="dark"] .ni.on .niico{background:rgba(108,122,255,.15);border-radius:14px;padding:3px 20px}
+[data-theme="light"] .ni.on .niico{background:rgba(79,94,255,.12);border-radius:14px;padding:3px 20px}
 
 /* NOTIF ITEM mejorado */
 .notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 18px;
@@ -831,6 +850,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
     <div class="atab" onclick="admTab('season',this)">🏅 Temporada</div>
     <div class="atab" onclick="admTab('stats',this)">📊 Estadísticas</div>
     <div class="atab" onclick="admTab('config',this)">⚙️ Config</div>
+    <div class="atab" onclick="admTab('supabase',this)">☁️ Base de Datos</div>
+    <div class="atab" onclick="admTab('codeeditor',this)">💻 Código</div>
   </div>
   <!-- MATCHES PANE -->
   <div class="apane on" id="adm-matches">
@@ -1006,6 +1027,15 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
       <div class="fl">Reglamento</div><textarea class="fi" id="cfg-rules" rows="5" placeholder="Escribe el reglamento..." style="resize:vertical"></textarea>
       <button class="abtn" onclick="saveConfig()">GUARDAR CONFIG</button>
     </div>
+    <div class="atit" style="margin-top:4px">🔔 Notificaciones Push</div>
+    <div class="aform" style="margin-top:0">
+      <div class="fl">Título de la notificación</div>
+      <input type="text" class="fi" id="push-title" placeholder="Ej: ¡Partido en vivo!"/>
+      <div class="fl">Mensaje</div>
+      <input type="text" class="fi" id="push-body" placeholder="Ej: Lanza All vs La T De Dios - ¡Comenzó!"/>
+      <button class="abtn" onclick="sendAdminPush()" style="margin-top:4px">📤 ENVIAR NOTIFICACIÓN</button>
+      <button class="abtn sec" style="margin-top:8px" onclick="requestNotifPerm()">🔔 ACTIVAR EN ESTE DISPOSITIVO</button>
+    </div>
     <div class="aform">
       <div class="fl" style="margin-bottom:8px">Importar / Exportar</div>
       <div style="display:flex;gap:8px;margin-bottom:10px">
@@ -1016,29 +1046,104 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
       <button class="abtn dng" onclick="resetApp()">RESETEAR APP</button>
     </div>
   </div>
-</div>
+  <!-- SUPABASE / BASE DE DATOS -->
+  <div class="apane" id="adm-supabase">
+    <div class="atit">☁️ Base de Datos (Supabase)</div>
+    <div class="aform">
+      <div style="background:var(--surf2);border:1px solid var(--bdr2);border-radius:14px;padding:13px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:5px">¿Cómo funciona?</strong>
+        Al conectar Supabase, todos los datos (equipos, partidos, noticias, fotos) quedan compartidos en la nube y <strong>todos los usuarios</strong> ven lo mismo en tiempo real. Las imágenes se guardan en Supabase Storage.
+      </div>
+      <div class="fl">URL del proyecto Supabase</div>
+      <input type="url" class="fi" id="sb-url" placeholder="https://xxxxxxxxxxx.supabase.co"/>
+      <div class="fl">Anon Key (pública)</div>
+      <input type="text" class="fi" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."/>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="abtn sec" style="flex:1;font-size:11px" onclick="testSupabaseConn()">🔌 PROBAR CONEXIÓN</button>
+        <button class="abtn" style="flex:1;font-size:11px" onclick="saveSupabaseConfig()">GUARDAR Y ACTIVAR</button>
+      </div>
+      <div id="sb-status" style="margin-top:10px;font-size:12px;color:var(--t2);min-height:18px"></div>
+    </div>
+    <div class="atit" style="margin-top:4px">Estado</div>
+    <div class="aform" style="margin-top:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+        <span style="font-size:13px;color:var(--text)">Sincronización en nube</span>
+        <div class="tgl" id="tgl-sb" onclick="toggleSupabaseSync()"><div class="tglk"></div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--bdr)">
+        <span style="font-size:13px;color:var(--text)">Auto-sync en tiempo real</span>
+        <div class="tgl" id="tgl-sb-rt" onclick="toggleSupabaseRT()"><div class="tglk"></div></div>
+      </div>
+      <button class="abtn" style="margin-top:8px" onclick="pushToSupabase()">⬆️ SUBIR DATOS LOCALES A NUBE</button>
+      <button class="abtn sec" style="margin-top:8px" onclick="pullFromSupabase()">⬇️ BAJAR DATOS DE NUBE</button>
+    </div>
+    <div class="atit" style="margin-top:4px">Configurar tablas SQL</div>
+    <div style="padding:0 14px 10px;font-size:11px;color:var(--t2);line-height:1.7">
+      Ejecutá este SQL en el editor de Supabase para crear las tablas necesarias:
+      <button onclick="copySupabaseSQL()" style="margin-top:8px;width:100%;padding:9px;border-radius:10px;background:var(--surf3);border:1px solid var(--bdr2);font-size:11px;font-weight:700;color:var(--text);cursor:pointer">📋 COPIAR SQL DE SETUP</button>
+    </div>
+  </div>
+  <!-- CODE EDITOR -->
+  <div class="apane" id="adm-codeeditor">
+    <div class="atit">💻 Editor de Código</div>
+    <div style="padding:0 14px 10px;font-size:12px;color:var(--t2);line-height:1.5">
+      Agregá CSS y JavaScript personalizado que se aplica en tiempo real sin tocar el archivo. Se guarda automáticamente.
+    </div>
+    <div class="aform">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="fl" style="margin:0">CSS Personalizado</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="applyCustomCode()" style="padding:5px 12px;border-radius:8px;background:var(--accent);border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer">▶ APLICAR</button>
+          <button onclick="clearCustomCSS()" style="padding:5px 10px;border-radius:8px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">✕</button>
+        </div>
+      </div>
+      <textarea id="custom-css-editor" class="fi code-editor" rows="8" placeholder="/* Ej: cambiar color de acento */&#10;:root { --accent: #ff6b6b; }&#10;&#10;.mc { border-radius: 20px; }" style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6;tab-size:2"></textarea>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px">
+        <div class="fl" style="margin:0">JavaScript Personalizado</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="runCustomJS()" style="padding:5px 12px;border-radius:8px;background:var(--accent2);border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer">▶ EJECUTAR</button>
+          <button onclick="clearCustomJS()" style="padding:5px 10px;border-radius:8px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">✕</button>
+        </div>
+      </div>
+      <textarea id="custom-js-editor" class="fi code-editor" rows="6" placeholder="// Ej: mostrar mensaje de bienvenida&#10;toast('🎉 ¡Código ejecutado!');" style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6;tab-size:2"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="abtn" style="flex:2" onclick="saveCustomCode()">💾 GUARDAR</button>
+        <button class="abtn sec" style="flex:1;font-size:11px" onclick="exportCustomCode()">EXPORTAR</button>
+      </div>
+    </div>
+    <div class="atit" style="margin-top:4px">Snippets rápidos</div>
+    <div style="padding:0 14px 16px;display:flex;flex-direction:column;gap:7px">
+      <button onclick="insertSnippet('accent')" class="snippet-btn">🎨 Cambiar color de acento</button>
+      <button onclick="insertSnippet('font')" class="snippet-btn">🔤 Cambiar tipografía</button>
+      <button onclick="insertSnippet('roundedCards')" class="snippet-btn">⬜ Cards más redondeadas</button>
+      <button onclick="insertSnippet('customBg')" class="snippet-btn">🌈 Fondo personalizado</button>
+      <button onclick="insertSnippet('announce')" class="snippet-btn">📢 Anuncio emergente</button>
+    </div>
+    <div class="atit" style="margin-top:4px">Consola de salida</div>
+    <div id="code-console" style="margin:0 14px 16px;background:var(--bg);border:1px solid var(--bdr2);border-radius:12px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--t2);min-height:60px;max-height:120px;overflow-y:auto;white-space:pre-wrap"></div>
+  </div>
 </div><!-- /scroll -->
 
 <!-- NAV ISLAND -->
 <nav id="nav">
   <div class="ni on" id="ni-inicio" onclick="go('inicio')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12.8L12 4l9.5 8.8"/><path d="M5 10.5V20a1 1 0 001 1h4.5v-5h3v5H18a1 1 0 001-1v-9.5"/></svg></div>
     <div class="nilbl">Inicio</div>
   </div>
   <div class="ni" id="ni-partidos" onclick="go('partidos')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c0 0 2.5 4 2.5 9s-2.5 9-2.5 9M3 12h18M3.6 7.5h16.8M3.6 16.5h16.8"/></svg></div>
+    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5c0 0 3 5 3 9.5s-3 9.5-3 9.5M2.5 12h19M4 7h16M4 17h16"/></svg></div>
     <div class="nilbl">Partidos</div>
   </div>
   <div class="ni" id="ni-info" onclick="go('info')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg></div>
+    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
     <div class="nilbl">Info</div>
   </div>
   <div class="ni" id="ni-perfil" onclick="go('perfil')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21.5c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5"/></svg></div>
     <div class="nilbl">Perfil</div>
   </div>
   <div class="ni hidden" id="ni-admin" onclick="go('admin')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg></div>
+    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1.5l9 5v5.5c0 5.5-3.8 10.7-9 12C6.8 22.7 3 17.5 3 12V6.5l9-5z"/><path d="M9 12l2 2 4-4"/></svg></div>
     <div class="nilbl">Admin</div>
   </div>
 </nav>
@@ -1058,7 +1163,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
     <div class="smdiv"></div>
     <div class="smtgl"><div class="smtgll">Modo Oscuro</div><div class="tgl on" id="tgl-theme" onclick="toggleTheme()"><div class="tglk"></div></div></div>
     <div class="smdiv"></div>
-    <div class="smit" onclick="openNotifs();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div><div class="smlab">Notificaciones</div><div class="smsub" id="notif-perm-lbl">Toca para activar</div></div></div>
+    <div class="smit" onclick="requestNotifPerm();closeMenu()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div><div class="smlab">Notificaciones</div><div class="smsub" id="notif-perm-lbl">Toca para activar</div></div></div>
     <div class="smit" id="sm-pwa-btn" style="display:none" onclick="installPWA()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div><div class="smlab">Instalar app</div><div class="smsub">Agregar a inicio</div></div></div>
     <div class="smit" onclick="shareApp()"><div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div class="smlab">Compartir app</div></div>
     <div class="smdiv"></div>
@@ -1221,6 +1326,8 @@ function init(){
   applyTheme(D.settings.theme);
   updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
+  initSupabase();
+  if(_sbEnabled)startNotifPolling();
   setInterval(updateGreet,60000);
   setTimeout(maybeShowPWABanner,4500);
 }
@@ -1265,15 +1372,60 @@ function broadcastUpdate(){try{bc?.postMessage({ts:Date.now()})}catch(e){}}
 function setupPWA(){
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();deferredPWA=e;
-    $('sm-pwa-btn').style.display='flex';
+    const btn=$('sm-pwa-btn');if(btn)btn.style.display='flex';
+  });
+  window.addEventListener('appinstalled',()=>{
+    toast('✅ ¡App instalada correctamente!');
+    localStorage.setItem('lsl_pwa_ok','1');
   });
   if('serviceWorker' in navigator){
-    const sw=`const C='lsl-v5';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/'])));self.skipWaiting()});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim()});
-self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});
-self.addEventListener('push',e=>{const d=e.data?e.data.json():{title:'LSL',body:'Nueva notificación'};e.waitUntil(self.registration.showNotification(d.title,{body:d.body,icon:'/icon.png'}))});`;
-    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+    const sw=`
+const CACHE='lsl-v6';
+const ASSETS=['/'];
+self.addEventListener('install',e=>{
+  e.waitUntil(
+    caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
+  );
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(
+    caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+    .then(()=>self.clients.claim())
+  );
+});
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET')return;
+  e.respondWith(
+    fetch(e.request).then(r=>{
+      if(r&&r.status===200){
+        const rc=r.clone();
+        caches.open(CACHE).then(c=>c.put(e.request,rc));
+      }
+      return r;
+    }).catch(()=>caches.match(e.request))
+  );
+});
+self.addEventListener('push',e=>{
+  const d=e.data?e.data.json():{title:'LSL',body:'Nueva notificación',icon:'/favicon.ico'};
+  e.waitUntil(self.registration.showNotification(d.title,{
+    body:d.body,icon:d.icon||'/favicon.ico',badge:d.badge||'/favicon.ico',
+    vibrate:[200,100,200],data:d.data||{}
+  }));
+});
+self.addEventListener('notificationclick',e=>{
+  e.notification.close();
+  e.waitUntil(clients.openWindow(e.notification.data.url||'/'));
+});
+`;
+    try{
+      const blob=new Blob([sw],{type:'application/javascript'});
+      const url=URL.createObjectURL(blob);
+      navigator.serviceWorker.register(url,{scope:'/'}).then(reg=>{
+        console.log('SW registered');
+        // Store reg for push
+        window._swReg=reg;
+      }).catch(err=>console.warn('SW reg failed (normal in some browsers):',err));
+    }catch(e){console.warn('SW not supported',e)}
   }
 }
 function setupManifest(){
@@ -1315,10 +1467,6 @@ function installPWA(){
 }
 function dismissPWA(){$('pwa-banner').classList.remove('show');localStorage.setItem('lsl_pwa_ok','dismissed')}
 function shareApp(){if(navigator.share)navigator.share({title:D.cfg.name,url:location.href}).catch(()=>{});else{navigator.clipboard?.writeText(location.href);toast('Link copiado')}}
-function requestNotifPerm(){
-  if(!('Notification' in window)){toast('No disponible en este navegador');return}
-  Notification.requestPermission().then(p=>{updateNotifLabel();if(p==='granted'){toast('✅ Notificaciones activadas');new Notification(D.cfg.name,{body:'Notificaciones activadas ✓'})}else toast('❌ Permiso denegado')});
-}
 function updateNotifLabel(){
   const lbl=$('notif-perm-lbl');if(!lbl)return;
   const p='Notification' in window?Notification.permission:'not-supported';
@@ -2230,7 +2378,6 @@ function ovClick(e,id){if(e.target.id===id)closeOv(id)}
 function openMenu(){$('smov').classList.add('open')}
 function closeMenu(){$('smov').classList.remove('open')}
 function closeSMOv(e){if(e.target.id==='smov')closeMenu()}
-function admTab(name,el){document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.apane').forEach(p=>p.classList.remove('on'));el.classList.add('on');$('adm-'+name).classList.add('on')}
 
 /* ---- TOAST ---- */
 let toastT=null;
@@ -2240,7 +2387,399 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 document.addEventListener('DOMContentLoaded',()=>{
   init();
   $('scroll')?.addEventListener('scroll',()=>{clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,200)},{passive:true});
+  loadCustomCode();
 });
+
+/* ============================================================
+   SUPABASE — BASE DE DATOS COMPARTIDA
+   ============================================================ */
+let _sb=null;
+let _sbEnabled=false;
+let _sbRT=false;
+
+function getSupabaseConfig(){
+  try{return JSON.parse(localStorage.getItem('lsl_sb_cfg')||'{}')}catch{return{}}
+}
+function saveSupabaseConfig(){
+  const url=$('sb-url')?.value.trim();
+  const key=$('sb-key')?.value.trim();
+  if(!url||!key){toast('⚠️ Completá URL y Key');return}
+  localStorage.setItem('lsl_sb_cfg',JSON.stringify({url,key,enabled:true}));
+  _sb=null;
+  initSupabase();
+  if(_sb){
+    toast('✅ Supabase configurado');
+    $('sb-status').textContent='✅ Conectado';
+    $('sb-status').style.color='#4ade80';
+    const tgl=$('tgl-sb');if(tgl)tgl.classList.add('on');
+  }
+}
+function initSupabase(){
+  const cfg=getSupabaseConfig();
+  if(!cfg.url||!cfg.key)return;
+  try{
+    if(window.supabase){
+      _sb=window.supabase.createClient(cfg.url,cfg.key);
+      _sbEnabled=cfg.enabled||false;
+    }
+  }catch(e){console.warn('Supabase init error',e)}
+}
+function updateAdmSupabase(){
+  const cfg=getSupabaseConfig();
+  const u=$('sb-url'),k=$('sb-key');
+  if(u&&cfg.url)u.value=cfg.url;
+  if(k&&cfg.key)k.value=cfg.key;
+  const st=$('sb-status');
+  if(st){
+    if(_sb&&_sbEnabled){st.textContent='✅ Conectado y activo';st.style.color='#4ade80'}
+    else if(cfg.url){st.textContent='⚠️ Configurado pero no activo';st.style.color='#fbbf24'}
+    else{st.textContent='No configurado';st.style.color='var(--t3)'}
+  }
+  const tgl=$('tgl-sb');if(tgl)tgl.classList.toggle('on',!!(_sb&&_sbEnabled));
+  const tglRT=$('tgl-sb-rt');if(tglRT)tglRT.classList.toggle('on',_sbRT);
+}
+async function testSupabaseConn(){
+  const url=$('sb-url')?.value.trim();
+  const key=$('sb-key')?.value.trim();
+  const st=$('sb-status');
+  if(!url||!key){st.textContent='⚠️ Completá URL y Key';st.style.color='#fbbf24';return}
+  st.textContent='⏳ Probando conexión...';st.style.color='var(--t2)';
+  try{
+    const client=window.supabase.createClient(url,key);
+    const {error}=await client.from('lsl_config').select('id').limit(1);
+    if(error&&error.code!=='PGRST116'){
+      st.textContent='⚠️ Conectado, pero las tablas no existen aún. Copia el SQL de setup.';
+      st.style.color='#fbbf24';
+    }else{
+      st.textContent='✅ ¡Conexión exitosa!';st.style.color='#4ade80';
+    }
+  }catch(e){st.textContent='❌ Error: '+e.message;st.style.color='#f87171'}
+}
+function toggleSupabaseSync(){
+  _sbEnabled=!_sbEnabled;
+  const cfg=getSupabaseConfig();
+  localStorage.setItem('lsl_sb_cfg',JSON.stringify({...cfg,enabled:_sbEnabled}));
+  const tgl=$('tgl-sb');if(tgl)tgl.classList.toggle('on',_sbEnabled);
+  toast(_sbEnabled?'☁️ Sincronización activada':'Sincronización desactivada');
+}
+function toggleSupabaseRT(){
+  _sbRT=!_sbRT;
+  const tgl=$('tgl-sb-rt');if(tgl)tgl.classList.toggle('on',_sbRT);
+  toast(_sbRT?'⚡ Tiempo real activado':'Tiempo real desactivado');
+  if(_sbRT&&_sb)setupSupabaseRealtime();
+}
+function setupSupabaseRealtime(){
+  if(!_sb)return;
+  _sb.channel('lsl-changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'lsl_data'},()=>{
+      pullFromSupabase();
+    }).subscribe();
+}
+async function pushToSupabase(){
+  if(!_sb){toast('❌ Supabase no configurado');return}
+  toast('⬆️ Subiendo datos...');
+  try{
+    // Serialize and split data by category for better image handling
+    const payload={
+      id:'main',
+      teams:JSON.stringify(D.teams),
+      matches:JSON.stringify(D.matches),
+      news:JSON.stringify(D.news),
+      players:JSON.stringify(D.players),
+      channels:JSON.stringify(D.channels),
+      sanctions:JSON.stringify(D.sanctions),
+      cfg:JSON.stringify(D.cfg),
+      updated_at:new Date().toISOString()
+    };
+    const {error}=await _sb.from('lsl_data').upsert(payload,{onConflict:'id'});
+    if(error)throw error;
+    toast('✅ Datos subidos a la nube');
+  }catch(e){toast('❌ Error al subir: '+e.message)}
+}
+async function pullFromSupabase(){
+  if(!_sb){toast('❌ Supabase no configurado');return}
+  toast('⬇️ Bajando datos...');
+  try{
+    const {data,error}=await _sb.from('lsl_data').select('*').eq('id','main').single();
+    if(error)throw error;
+    if(data){
+      if(data.teams)D.teams=JSON.parse(data.teams);
+      if(data.matches)D.matches=JSON.parse(data.matches);
+      if(data.news)D.news=JSON.parse(data.news);
+      if(data.players)D.players=JSON.parse(data.players);
+      if(data.channels)D.channels=JSON.parse(data.channels);
+      if(data.sanctions)D.sanctions=JSON.parse(data.sanctions);
+      if(data.cfg)D.cfg={...D.cfg,...JSON.parse(data.cfg)};
+      save();renderAll();updateHdr();
+      toast('✅ Datos actualizados desde la nube');
+    }
+  }catch(e){toast('❌ Error al bajar: '+e.message)}
+}
+
+// Upload image to Supabase Storage and return public URL
+async function uploadImageToSupabase(base64Data, bucket, filename){
+  if(!_sb)return null;
+  try{
+    // Convert base64 to blob
+    const arr=base64Data.split(',');
+    const mime=arr[0].match(/:(.*?);/)[1];
+    const bstr=atob(arr[1]);
+    let n=bstr.length;const u8arr=new Uint8Array(n);
+    while(n--)u8arr[n]=bstr.charCodeAt(n);
+    const blob=new Blob([u8arr],{type:mime});
+    const ext=mime.split('/')[1]||'jpg';
+    const path=`${filename}-${Date.now()}.${ext}`;
+    const {data,error}=await _sb.storage.from(bucket).upload(path,blob,{upsert:true,contentType:mime});
+    if(error)throw error;
+    const {data:{publicUrl}}=_sb.storage.from(bucket).getPublicUrl(path);
+    return publicUrl;
+  }catch(e){console.warn('Image upload error',e);return null}
+}
+
+function copySupabaseSQL(){
+  const sql=`-- LSL: Crear tabla principal
+CREATE TABLE IF NOT EXISTS lsl_data (
+  id TEXT PRIMARY KEY,
+  teams TEXT, matches TEXT, news TEXT, players TEXT,
+  channels TEXT, sanctions TEXT, cfg TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+-- Habilitar acceso público (ajustar según seguridad deseada)
+ALTER TABLE lsl_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Lectura pública" ON lsl_data FOR SELECT USING (true);
+CREATE POLICY "Escritura admin" ON lsl_data FOR ALL USING (true);
+-- Bucket para imágenes
+INSERT INTO storage.buckets (id, name, public) VALUES ('lsl-images', 'lsl-images', true)
+  ON CONFLICT DO NOTHING;`;
+  navigator.clipboard?.writeText(sql).then(()=>toast('📋 SQL copiado al portapapeles')).catch(()=>toast('No se pudo copiar'));
+}
+
+/* ============================================================
+   NOTIFICACIONES PUSH — MEJORADO
+   ============================================================ */
+async function requestNotifPerm(){
+  if(!('Notification' in window)){toast('No disponible en este navegador');return}
+  const p=await Notification.requestPermission();
+  updateNotifLabel();
+  if(p==='granted'){
+    toast('✅ Notificaciones activadas');
+    // Mostrar notificación de bienvenida
+    showLocalNotif(D.cfg.name||'La Súper Liga','¡Notificaciones activadas! ✓');
+    // Intentar suscribir a push si hay SW
+    trySubscribePush();
+  }else{
+    toast('❌ Permiso denegado');
+  }
+}
+function showLocalNotif(title,body,icon){
+  if(Notification.permission!=='granted')return;
+  try{
+    if(window._swReg&&window._swReg.showNotification){
+      window._swReg.showNotification(title,{body,icon:icon||D.cfg.logo||'/favicon.ico',vibrate:[200,100,200],badge:'/favicon.ico'});
+    }else{
+      new Notification(title,{body,icon:icon||D.cfg.logo||'/favicon.ico'});
+    }
+  }catch(e){new Notification(title,{body})}
+}
+async function trySubscribePush(){
+  if(!window._swReg)return;
+  try{
+    // VAPID push requires server - store subscription locally for now
+    const sub=await window._swReg.pushManager.getSubscription();
+    if(!sub){
+      // Can't subscribe without VAPID key from server
+      console.log('Push: no VAPID key configured');
+    }
+  }catch(e){console.warn('Push subscription failed',e)}
+}
+function sendPushToAll(title,body){
+  // Send via local notification + store in DB
+  addNotif(title,body);
+  showLocalNotif(title,body);
+  // If Supabase is connected, store notification for other users to pick up
+  if(_sb&&_sbEnabled){
+    _sb.from('lsl_notifications').insert({title,body,created_at:new Date().toISOString()})
+      .then(({error})=>{if(!error)toast('📤 Notificación enviada a todos')})
+      .catch(()=>{});
+  }else{
+    toast('📤 Notificación local enviada');
+  }
+}
+// Poll for new notifications from Supabase (for other users)
+let _notifPollTimer=null;
+function startNotifPolling(){
+  if(!_sb||!_sbEnabled)return;
+  _notifPollTimer=setInterval(async()=>{
+    try{
+      const last=localStorage.getItem('lsl_last_notif')||'2000-01-01';
+      const {data}=await _sb.from('lsl_notifications').select('*').gt('created_at',last).order('created_at',{ascending:false}).limit(5);
+      if(data&&data.length){
+        data.forEach(n=>addNotif(n.title,n.body));
+        localStorage.setItem('lsl_last_notif',data[0].created_at);
+      }
+    }catch(e){}
+  },30000); // Poll every 30s
+}
+
+/* ============================================================
+   CODE EDITOR — EDITOR DE CÓDIGO EN VIVO
+   ============================================================ */
+let _customStyleEl=null;
+
+function loadCustomCode(){
+  const css=localStorage.getItem('lsl_custom_css')||'';
+  const js=localStorage.getItem('lsl_custom_js')||'';
+  const cssEd=$('custom-css-editor');
+  const jsEd=$('custom-js-editor');
+  if(cssEd)cssEd.value=css;
+  if(jsEd)jsEd.value=js;
+  // Auto-apply saved CSS on load
+  if(css)injectCSS(css);
+}
+
+function injectCSS(css){
+  if(!_customStyleEl){
+    _customStyleEl=document.createElement('style');
+    _customStyleEl.id='lsl-custom-style';
+    document.head.appendChild(_customStyleEl);
+  }
+  _customStyleEl.textContent=css;
+}
+
+function applyCustomCode(){
+  const css=$('custom-css-editor')?.value||'';
+  try{
+    injectCSS(css);
+    logConsole('✅ CSS aplicado correctamente');
+    toast('🎨 CSS aplicado');
+  }catch(e){
+    logConsole('❌ Error en CSS: '+e.message);
+    toast('❌ Error en CSS');
+  }
+}
+
+function runCustomJS(){
+  const js=$('custom-js-editor')?.value||'';
+  if(!js.trim()){toast('⚠️ No hay código JS');return}
+  try{
+    // Redirect console.log to our console panel
+    const origLog=console.log;
+    const origErr=console.error;
+    console.log=(...a)=>{origLog(...a);logConsole(a.map(String).join(' '))};
+    console.error=(...a)=>{origErr(...a);logConsole('❌ '+a.map(String).join(' '))};
+    // Execute user code
+    const fn=new Function(js);
+    fn();
+    console.log=origLog;console.error=origErr;
+    logConsole('✅ JS ejecutado');
+    toast('⚡ JS ejecutado');
+  }catch(e){
+    logConsole('❌ Error: '+e.message);
+    toast('❌ Error en JS: '+e.message);
+  }
+}
+
+function logConsole(msg){
+  const el=$('code-console');
+  if(!el)return;
+  const time=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  el.textContent+=`[${time}] ${msg}\n`;
+  el.scrollTop=el.scrollHeight;
+}
+
+function saveCustomCode(){
+  const css=$('custom-css-editor')?.value||'';
+  const js=$('custom-js-editor')?.value||'';
+  localStorage.setItem('lsl_custom_css',css);
+  localStorage.setItem('lsl_custom_js',js);
+  applyCustomCode();
+  toast('💾 Código guardado');
+  logConsole('💾 Código guardado en localStorage');
+}
+
+function clearCustomCSS(){
+  const el=$('custom-css-editor');if(el)el.value='';
+  injectCSS('');
+  localStorage.removeItem('lsl_custom_css');
+  toast('🗑️ CSS limpiado');
+}
+
+function clearCustomJS(){
+  const el=$('custom-js-editor');if(el)el.value='';
+  localStorage.removeItem('lsl_custom_js');
+  toast('🗑️ JS limpiado');
+}
+
+function exportCustomCode(){
+  const css=localStorage.getItem('lsl_custom_css')||'';
+  const js=localStorage.getItem('lsl_custom_js')||'';
+  const content=`/* === LSL Custom CSS ===\n${css}\n*/\n\n/* === LSL Custom JS ===\n${js}\n*/`;
+  const blob=new Blob([content],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='lsl-custom-code.txt';
+  a.click();
+  toast('📤 Código exportado');
+}
+
+const SNIPPETS={
+  accent:`/* Cambiar color de acento */
+:root {
+  --accent: #ff6b6b;
+  --accent2: #ff8e53;
+}`,
+  font:`/* Importar y usar fuente personalizada */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+.hn, .sect, .mcsc { font-family: 'Rajdhani', sans-serif; }`,
+  roundedCards:`/* Cards más redondeadas */
+.mc { border-radius: 40px !important; }
+.mr { border-radius: 18px !important; margin: 4px 14px !important; }
+.stw { border-radius: 28px !important; }`,
+  customBg:`/* Fondo degradado personalizado */
+[data-theme="dark"] {
+  --grad: linear-gradient(135deg, #0d1b2a 0%, #1b2838 50%, #0d1b2a 100%);
+}
+#app { background-image: var(--grad) !important; }`,
+  announce:`/* En JS: anuncio emergente */`
+};
+
+const JS_SNIPPETS={
+  announce:`// Anuncio emergente de bienvenida
+setTimeout(() => {
+  toast('📢 ¡Bienvenidos a la nueva temporada!');
+}, 1000);`
+};
+
+function insertSnippet(type){
+  const cssEd=$('custom-css-editor');
+  const jsEd=$('custom-js-editor');
+  if(type==='announce'){
+    if(jsEd)jsEd.value=(jsEd.value+'\n\n'+JS_SNIPPETS.announce).trim();
+    toast('📝 Snippet JS insertado');
+  }else{
+    if(cssEd&&SNIPPETS[type])cssEd.value=(cssEd.value+'\n\n'+SNIPPETS[type]).trim();
+    toast('📝 Snippet CSS insertado');
+  }
+}
+
+function sendAdminPush(){
+  const title=$('push-title')?.value.trim()||D.cfg.name;
+  const body=$('push-body')?.value.trim();
+  if(!body){toast('⚠️ Escribí un mensaje');return}
+  sendPushToAll(title,body);
+  $('push-title').value='';$('push-body').value='';
+}
+
+/* Actualizar panel de supabase cuando se abre */
+function admTab(name,el){
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.apane').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  $('adm-'+name).classList.add('on');
+  if(name==='supabase')updateAdmSupabase();
+  if(name==='codeeditor')loadCustomCode();
+  if(name==='stats')updateStatsPanel();
+}
 </script>
 </body>
 </html>
