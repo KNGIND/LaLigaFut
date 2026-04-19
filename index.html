@@ -7,16 +7,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#000000" id="theme-color-meta"/>
+<meta name="color-scheme" content="dark light"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <title id="app-title">La Súper Liga</title>
 <link rel="manifest" id="manifest-link"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<!-- Supabase REST API directo — sin SDK pesado -->
 <style>
 /* =========================================================
    VARIABLES — SOLO BLANCO Y NEGRO, SIN EXCEPCIONES
    ========================================================= */
-:root{--spd:.26s;--slow:.55s;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+:root{--spd:.2s;--slow:.38s;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.4,.64,1)}
 
 [data-theme="dark"]{
   --bg:#07080f;--bg2:#0d0e1a;--bg3:#131424;
@@ -47,7 +50,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,textarea,select{font-family:inherit;color:var(--text);background:transparent}
 
 /* ---- AMBIENT GLOW ---- */
-.amb{position:fixed;pointer-events:none;border-radius:50%;filter:blur(90px);opacity:0;transition:background 2s ease,opacity 1.8s ease;z-index:1;will-change:opacity,background}
+.amb{position:fixed;pointer-events:none;border-radius:50%;filter:blur(60px);opacity:0;transition:background .8s ease,opacity .8s ease;z-index:1}
 #ab-top{width:500px;height:360px;top:-150px;left:50%;transform:translateX(-50%)}
 #ab-bot{width:480px;height:320px;bottom:-140px;left:50%;transform:translateX(-50%)}
 #ab-mid{width:340px;height:240px;top:40%;left:50%;transform:translateX(-50%)}
@@ -59,11 +62,12 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #hdr{position:relative;z-index:100;flex-shrink:0;
   padding:calc(10px + env(safe-area-inset-top,0px)) 14px 12px;
   background:var(--hbg);
-  backdrop-filter:blur(52px) saturate(180%) brightness(1.08);
-  -webkit-backdrop-filter:blur(52px) saturate(180%) brightness(1.08);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
   border-bottom:1px solid var(--bdr2);
-  box-shadow:0 1px 0 rgba(120,130,255,.08),0 4px 20px rgba(0,0,0,.15);
-  transition:background .5s,border-color .5s,box-shadow .5s}
+  box-shadow:0 1px 0 rgba(120,130,255,.08),0 2px 12px rgba(0,0,0,.12);
+  transform:translateZ(0);
+  transition:background .3s}
 
 .hrow{display:flex;align-items:center;gap:9px}
 .hl{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
@@ -120,30 +124,25 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #scroll::-webkit-scrollbar{display:none}
 
 /* ---- PAGES ---- */
-.page{display:none;animation:pgi .26s var(--ease) both}
+.page{display:none;animation:pgi .18s var(--ease) both;content-visibility:auto}
 .page.active{display:block}
-@keyframes pgi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pgi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
 /* ---- NAV ISLAND ---- */
 #nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:520px;z-index:200;
   background:var(--nbg);
-  backdrop-filter:blur(44px) saturate(180%) brightness(1.06);
-  -webkit-backdrop-filter:blur(44px) saturate(180%) brightness(1.06);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
   border-top:1px solid var(--bdr2);
   padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));
   display:flex;
-  transition:background 1.6s,border-color 1.6s;
+  transition:background .3s,border-color .3s;
   box-shadow:0 -2px 20px rgba(80,90,255,.06)}
 .ni{display:flex;flex-direction:column;align-items:center;gap:2px;
   flex:1;padding:4px 4px;cursor:pointer;
   transition:all .22s var(--spring);position:relative}
 .ni:active{transform:scale(.88)}
-[data-theme="dark"] .ni.on .niico{background:rgba(255,255,255,.12);border-radius:14px;padding:3px 20px}
-[data-theme="light"] .ni.on .niico{background:rgba(0,0,0,.08);border-radius:14px;padding:3px 20px}
-.nilbl{font-size:10px;font-weight:600;letter-spacing:.2px;
-  color:var(--t3);transition:color .2s}
-.ni.on .nilbl{color:var(--accent)}
 .ni.on::after{display:none}
 
 /* ---- SECTIONS ---- */
@@ -153,13 +152,16 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .secm{font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;padding:3px 0}
 .secm:active{opacity:.6}
 
+/* Wave solo en inicio */
+.wv{font-size:26px;display:inline-block;transform-origin:70% 70%}
+/* Pulsing dot - solo para live, más ligero */
+@keyframes sbl{0%,100%{opacity:.5}50%{opacity:.15}}
+
 /* ---- GREETING ---- */
 .greet{padding:18px 14px 0}
 .ghi{font-size:12px;font-weight:500;color:var(--t3);letter-spacing:.3px;margin-bottom:2px}
 .gnm{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.8px;
   color:var(--text);line-height:1;display:flex;align-items:center;gap:8px}
-.wv{font-size:26px;display:inline-block;animation:wva 2.8s ease infinite;transform-origin:70% 70%}
-@keyframes wva{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-8deg)}30%{transform:rotate(14deg)}40%{transform:rotate(-4deg)}50%{transform:rotate(10deg)}}
 .gsea{font-size:11px;font-weight:600;color:var(--t2);letter-spacing:.6px;text-transform:uppercase;margin-top:5px}
 
 /* ---- HSCROLL ---- */
@@ -176,9 +178,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .mc::before{content:"";position:absolute;inset:0;
   background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none}
 .mc:active{transform:scale(.97)}
-.mc.live{animation:lp 3s ease infinite}
-@keyframes lp{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,.18),0 0 0 2px rgba(255,255,255,.12)}
-              50%{box-shadow:0 6px 28px rgba(0,0,0,.24),0 0 0 3px rgba(255,255,255,.24)}}
+.mc.live{box-shadow:0 4px 20px rgba(0,0,0,.18),0 0 0 2px rgba(255,255,255,.15)}
 .mcst{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
   letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
 .mcst.lv{color:var(--text)}
@@ -202,12 +202,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .chl{width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0}
 
 /* ---- MATCH ROW (list) ---- */
-
 .jornhd{display:flex;align-items:center;gap:10px;padding:16px 14px 8px}
 .jornt{font-family:"Bebas Neue",sans-serif;font-size:13px;letter-spacing:.8px;color:var(--t3)}
 .jornl{flex:1;height:1px;background:var(--bdr)}
 .mr{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;
-  background:var(--bg);border-bottom:1px solid var(--bdr);transition:background .14s}
+  background:var(--bg);border-bottom:1px solid var(--bdr);transition:background .1s;
+  contain:layout style}
+.mr:active{background:var(--surf)}
 .mr:active{background:var(--surf)}
 .mrts{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px}
 .mrt{display:flex;align-items:center;gap:9px}
@@ -335,7 +336,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #nw-ov .ovs,#pe-ov .ovs,#notif-ov .ovs,#tp-ov .ovs,#le-ov .ovs{border-radius:28px 28px 0 0}
 
 .ovs{background:var(--bg2);
-  backdrop-filter:blur(40px) saturate(110%);-webkit-backdrop-filter:blur(40px) saturate(110%);
+  backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%);
   border-radius:28px 28px 0 0;
   width:100%;
   max-height:90dvh;overflow-y:auto;
@@ -438,8 +439,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #smov::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.65);
   backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 #sm{position:absolute;top:0;right:0;bottom:0;width:300px;
-  background:var(--nbg);
-  backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);
+  background:var(--bg2);
+  backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);
   transform:translateX(100%);transition:transform var(--spd) var(--ease);
   display:flex;flex-direction:column;
   padding:calc(16px + env(safe-area-inset-top,0px)) 0 calc(24px + env(safe-area-inset-bottom,0px));
@@ -674,14 +675,29 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .login-btn:active{transform:scale(.97);opacity:.88}
 
-/* NAV ICONS mejorados con glow */
-.niico{width:26px;height:26px;display:flex;align-items:center;justify-content:center;
-  color:var(--t3);transition:color .2s,transform .22s var(--spring),filter .3s}
-.niico svg{width:24px;height:24px;filter:drop-shadow(0 0 0 transparent);transition:filter .3s}
-.ni.on .niico{color:var(--accent);transform:translateY(-1px)}
-.ni.on .niico svg{filter:drop-shadow(0 0 10px var(--accent)) drop-shadow(0 2px 6px var(--accent2))}
-[data-theme="dark"] .ni.on .niico{background:rgba(108,122,255,.15);border-radius:14px;padding:3px 20px}
-[data-theme="light"] .ni.on .niico{background:rgba(79,94,255,.12);border-radius:14px;padding:3px 20px}
+/* NAV ICONS — filled activo, blanco, sin pill */
+.nilbl{font-size:10px;font-weight:600;letter-spacing:.2px;color:var(--t3);transition:color .18s}
+.ni.on .nilbl{color:#fff;font-weight:700}
+
+.niico{width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:color .18s,transform .22s var(--spring)}
+.niico svg{width:24px;height:24px;transition:transform .22s var(--spring)}
+
+/* Por defecto: mostrar solo trazo outlined, ocultar filled */
+.niico .ico-fill{display:none}
+.niico .ico-stroke{display:block}
+
+/* Activo: mostrar filled, ocultar stroke, escalar, blanco */
+.ni.on .niico{color:#fff;transform:scale(1.22) translateY(-2px)}
+.ni.on .niico .ico-fill{display:block;fill:#fff}
+.ni.on .niico .ico-stroke{display:none}
+.ni.on .niico svg{filter:drop-shadow(0 1px 5px rgba(255,255,255,.3))}
+.ni.on .nilbl{color:#fff;font-weight:700}
+/* En tema claro: ícono oscuro para que se vea sobre fondo claro */
+[data-theme="light"] .ni.on .niico{color:var(--text)}
+[data-theme="light"] .ni.on .niico .ico-fill{fill:var(--text)}
+[data-theme="light"] .ni.on .niico svg{filter:none}
+[data-theme="light"] .ni.on .nilbl{color:var(--text)}
 
 /* NOTIF ITEM mejorado */
 .notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 18px;
@@ -1132,23 +1148,50 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 <!-- NAV ISLAND -->
 <nav id="nav">
   <div class="ni on" id="ni-inicio" onclick="go('inicio')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12.8L12 4l9.5 8.8"/><path d="M5 10.5V20a1 1 0 001 1h4.5v-5h3v5H18a1 1 0 001-1v-9.5"/></svg></div>
+    <div class="niico">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-fill" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 12L12 4l9 8M5 10v10h5v-5h4v5h5V10"/>
+      </svg>
+    </div>
     <div class="nilbl">Inicio</div>
   </div>
   <div class="ni" id="ni-partidos" onclick="go('partidos')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5c0 0 3 5 3 9.5s-3 9.5-3 9.5M2.5 12h19M4 7h16M4 17h16"/></svg></div>
+    <div class="niico">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-fill" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.93V15h2v1.93c-2.06-.25-3.72-1.67-4.58-3.6L10 12.5V11h4v1.5l1.58.83C14.72 15.26 13.06 16.68 11 16.93z"/>
+        <circle class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" cx="12" cy="12" r="9.5"/>
+        <path class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 2.5c0 0 2.5 4.5 2.5 9.5s-2.5 9.5-2.5 9.5M2.5 12h19M4.5 7.5h15M4.5 16.5h15"/>
+      </svg>
+    </div>
     <div class="nilbl">Partidos</div>
   </div>
   <div class="ni" id="ni-info" onclick="go('info')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    <div class="niico">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-fill" d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zM16.2 13h2.8v6h-2.8v-6z"/>
+        <path class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 9h4v10H4V9zM10 5h4v14h-4V5zM16 13h4v6h-4v-6z"/>
+      </svg>
+    </div>
     <div class="nilbl">Info</div>
   </div>
   <div class="ni" id="ni-perfil" onclick="go('perfil')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21.5c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5"/></svg></div>
+    <div class="niico">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-fill" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z"/>
+        <path class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 11.5a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 3.58-7 8-7s8 3 8 7"/>
+      </svg>
+    </div>
     <div class="nilbl">Perfil</div>
   </div>
   <div class="ni hidden" id="ni-admin" onclick="go('admin')">
-    <div class="niico"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1.5l9 5v5.5c0 5.5-3.8 10.7-9 12C6.8 22.7 3 17.5 3 12V6.5l9-5z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <div class="niico">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-fill" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+        <path class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 2L3 6v5.5c0 5.5 3.84 10.7 9 12 5.16-1.3 9-6.5 9-12V6L12 2z"/>
+        <path class="ico-stroke" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
     <div class="nilbl">Admin</div>
   </div>
 </nav>
@@ -1275,19 +1318,31 @@ let ambientDebounce=null;
 let reminders={};
 let editMode=false;
 
-/* ---- FIX: Persistencia robusta ---- */
+let _saveTimer=null;
+/* ---- Persistencia con debounce — evita stringify repetido ---- */
 function save(){
+  // Guardar inmediatamente para datos críticos
+  _doSave();
+}
+function saveLater(){
+  // Para cambios rápidos (scores en vivo), esperar 300ms
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(_doSave,300);
+}
+function _doSave(){
   try{
     localStorage.setItem(STORE,JSON.stringify(D));
   }catch(e){
-    // Storage lleno: comprimir imágenes
     try{
+      // Storage lleno — limpiar base64 de imágenes (ya están en Supabase)
       const D2=JSON.parse(JSON.stringify(D));
-      D2.teams=D2.teams.map(t=>({...t,logo:t.logo&&t.logo.length>5000?'':t.logo}));
-      D2.cfg.logo=D2.cfg.logo&&D2.cfg.logo.length>5000?'':D2.cfg.logo;
+      const strip=s=>s&&s.startsWith('data:')?'':s;
+      D2.teams=D2.teams.map(t=>({...t,logo:strip(t.logo)}));
+      D2.players=D2.players.map(p=>({...p,photo:strip(p.photo)}));
+      D2.news=D2.news.map(n=>({...n,image:strip(n.image)}));
+      D2.cfg.logo=strip(D2.cfg.logo);
       localStorage.setItem(STORE,JSON.stringify(D2));
-      toast('⚠️ Algunas imágenes no pudieron guardarse (almacenamiento lleno)');
-    }catch(e2){toast('❌ Error al guardar. Limpia el almacenamiento del navegador.')}
+    }catch(e2){console.warn('localStorage lleno')}
   }
 }
 function load(){
@@ -1336,11 +1391,11 @@ function init(){
   updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   initSupabase();
-  // Auto-pull from cloud on every page load (so all users see latest data)
-  setTimeout(()=>syncOnLoad(),800);
+  // Defer cloud sync — no bloquea el render inicial
+  setTimeout(()=>syncOnLoad(), 1200);
   setInterval(updateGreet,60000);
-  setTimeout(maybeShowPWABanner,4500);
-  setTimeout(prefillMatchDate,300);
+  setTimeout(maybeShowPWABanner,5000);
+  setTimeout(prefillMatchDate,400);
 }
 
 /* ---- LOGIN SYSTEM ---- */
@@ -1613,8 +1668,9 @@ function go(p){
   if(pg){pg.classList.add('active');curPage=p}
   if(ni)ni.classList.add('on');
   $('scroll').scrollTop=0;closeMenu();
-  clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,100);
-  // Refresh admin panel data when navigating to admin
+  clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,150);
+  // Render only the navigated page
+  renderPage(p);
   if(p==='admin'){populateSels();renderAdmLists();updateAdmCfg();prefillMatchDate();}
 }
 
@@ -1626,72 +1682,18 @@ function applyTheme(t){
 }
 function toggleTheme(){applyTheme(D.settings.theme==='dark'?'light':'dark');save();setTimeout(updateAmbient,50)}
 
-/* ====================================================
-   FIX CRÍTICO: Ambient con img.onload garantizado
-   ==================================================== */
-function extractColor(imgEl){
-  return new Promise((resolve)=>{
-    const doExtract=()=>{
-      try{
-        const canvas=document.createElement('canvas');
-        canvas.width=20;canvas.height=20;
-        const ctx=canvas.getContext('2d');
-        ctx.drawImage(imgEl,0,0,20,20);
-        const data=ctx.getImageData(0,0,20,20).data;
-        let r=0,g=0,b=0,n=0;
-        for(let i=0;i<data.length;i+=16){
-          const pa=data[i+3];if(pa<40)continue;
-          const pr=data[i],pg=data[i+1],pb=data[i+2];
-          const br=(pr+pg+pb)/3;
-          // Skip near-white and near-black pixels
-          if(br>228||br<16)continue;
-          r+=pr;g+=pg;b+=pb;n++;
-        }
-        if(!n){resolve(null);return}
-        resolve({r:Math.round(r/n),g:Math.round(g/n),b:Math.round(b/n)});
-      }catch(e){resolve(null)}
-    };
-    // FIX: Esperar a que la imagen esté completamente cargada
-    if(imgEl.complete&&imgEl.naturalWidth>0){
-      doExtract();
-    }else{
-      imgEl.addEventListener('load',doExtract,{once:true});
-      imgEl.addEventListener('error',()=>resolve(null),{once:true});
-    }
-  });
-}
-function saturate(r,g,b,f=1.9){
-  const a=(r+g+b)/3;
-  return{r:Math.min(255,Math.round(a+(r-a)*f)),g:Math.min(255,Math.round(a+(g-a)*f)),b:Math.min(255,Math.round(a+(b-a)*f))};
-}
-async function updateAmbient(){
-  const imgs=[...document.querySelectorAll('.page.active img')].filter(i=>!i.src.startsWith('data:image/svg'));
-  if(!imgs.length){
-    // No hay imágenes: fade a neutro
-    ['ab-top','ab-bot','ab-mid'].forEach(id=>{if($(id))$(id).style.opacity='0'});
-    if($('hdr'))$('hdr').style.boxShadow='';
-    if($('nav'))$('nav').style.boxShadow='0 24px 64px rgba(0,0,0,.36),0 4px 16px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.06)';
-    return;
-  }
-  const col=await extractColor(imgs[0]);
-  if(!col){
-    ['ab-top','ab-bot','ab-mid'].forEach(id=>{if($(id))$(id).style.opacity='0'});
-    return;
-  }
-  const s=saturate(col.r,col.g,col.b);
+/* Ambient: solo glow estático del acento — sin canvas, sin scroll */
+function updateAmbient(){
   const live=D.matches.some(m=>m.status==='en_vivo');
-  const opTop=live?0.32:0.2;
-  const opBot=live?0.16:0.09;
-  const opMid=live?0.14:0.07;
-  const colStr=`${s.r},${s.g},${s.b}`;
-  const rawStr=`${col.r},${col.g},${col.b}`;
-  const abt=$('ab-top');if(abt){abt.style.background=`rgb(${colStr})`;abt.style.opacity=opTop}
-  const abb=$('ab-bot');if(abb){abb.style.background=`rgb(${rawStr})`;abb.style.opacity=opBot}
-  const abm=$('ab-mid');if(abm){abm.style.background=`rgb(${colStr})`;abm.style.opacity=opMid}
-  // Sutil tinte en header y nav
-  if($('hdr'))$('hdr').style.boxShadow=`0 1px 0 rgba(${colStr},.1)`;
-  if($('nav'))$('nav').style.boxShadow=`0 24px 64px rgba(0,0,0,.36),0 4px 16px rgba(0,0,0,.18),0 0 0 1px rgba(${colStr},.12),inset 0 1px 0 rgba(255,255,255,.06)`;
+  const op=live?0.18:0.10;
+  const abt=$('ab-top');
+  if(abt){abt.style.background='var(--accent)';abt.style.opacity=op}
+  const abb=$('ab-bot');
+  if(abb){abb.style.background='var(--accent2)';abb.style.opacity=op*0.5}
+  // ab-mid desactivado para ahorrar GPU
+  const abm=$('ab-mid');if(abm)abm.style.opacity='0';
 }
+
 
 /* ---- HDR / GREET / USER ---- */
 function updateHdr(){
@@ -1736,12 +1738,29 @@ function updateUser(){
   $('nbadge').textContent=unread;$('nbadge').classList.toggle('hidden',!unread);
 }
 
-/* ---- RENDER ALL ---- */
-function renderAll(){renderFeatM();renderMList();renderFeatN();renderAllN();renderStandings();renderMiniTbl();renderSanc();renderAdmLists();populateSels();updateAdmCfg()}
+/* ---- RENDER INTELIGENTE — solo renderiza la página visible ---- */
+function renderAll(){
+  // Siempre renderizar las partes del header y datos globales
+  renderFeatM();
+  renderMiniTbl();
+  // Renderizar solo la página activa
+  renderPage(curPage);
+  // Admin: solo si está visible
+  if(curPage==='admin')renderAdmLists();
+  populateSels();
+  updateAdmCfg();
+}
+
+function renderPage(p){
+  if(p==='inicio'){renderFeatN()}
+  if(p==='partidos'){renderMList()}
+  if(p==='info'){renderAllN();renderStandings();renderSanc()}
+  if(p==='admin'){renderAdmLists()}
+}
 
 /* ---- HELPERS ---- */
 function stLabel(s){return{proximo:'Próximo',en_vivo:'EN VIVO',finalizado:'Final',pausado:'Pausado'}[s]||s}
-function crEl(logo,initials,cls=''){return logo?`<img src="${logo}" loading="lazy" class="${cls}"/>`:`<span>${initials}</span>`}
+function crEl(logo,initials,cls=''){return logo?`<img src="${logo}" loading="lazy" decoding="async" class="${cls}"/>`:`<span>${initials}</span>`}
 function fmtND(d){try{return new Date(d).toLocaleDateString('es-AR',{day:'numeric',month:'short',year:'numeric'})}catch(e){return d}}
 function fmtDT(d){try{const dt=new Date(d);return dt.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'})+' '+dt.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}catch(e){return d}}
 function fmtTime(d){try{return new Date(d).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
@@ -2132,7 +2151,7 @@ function chSc(id,side,d){
   if(d>0){[`lch-${id}`,`lca-${id}`,`mdh-${id}`,`mda-${id}`,`fcmh-${id}`,`fcma-${id}`,`rmh-${id}`,`rma-${id}`].forEach(eid=>{const el=$(eid);if(el){el.classList.remove('scfl');void el.offsetWidth;el.classList.add('scfl')}})}
   [`lch-${id}`,`mdh-${id}`,`fcmh-${id}`,`rmh-${id}`].forEach(eid=>{const el=$(eid);if(el)el.textContent=m.homeScore??0});
   [`lca-${id}`,`mda-${id}`,`fcma-${id}`,`rma-${id}`].forEach(eid=>{const el=$(eid);if(el)el.textContent=m.awayScore??0});
-  save();broadcastUpdate();adminSync();
+  saveLater();broadcastUpdate();adminSync();
 }
 function saveTeam(){
   const name=$('t-name').value.trim();if(!name){toast('Ingresa un nombre');return}
@@ -2510,52 +2529,75 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 /* ---- AMBIENT SCROLL LISTENER ---- */
 document.addEventListener('DOMContentLoaded',()=>{
   init();
-  $('scroll')?.addEventListener('scroll',()=>{clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,200)},{passive:true});
+  // Ambient: solo al cargar, no en cada scroll
+  setTimeout(updateAmbient, 600);
   loadCustomCode();
 });
 
+
 /* ============================================================
-   SUPABASE — CREDENCIALES HARDCODEADAS, AUTO-SYNC
+   SUPABASE — REST API DIRECTO (sin SDK, ultra liviano)
    ============================================================ */
-let _sb=null;
-let _sbEnabled=true;
+let _sbReady=false;
 let _sbRT=false;
 
+// Lightweight REST wrapper — reemplaza todo el SDK (~200KB ahorrados)
+const SB={
+  _h(){return{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'resolution=merge-duplicates'}},
+  async get(table,query=''){
+    const r=await fetch(`${SB_URL}/rest/v1/${table}?${query}`,{headers:this._h()});
+    if(!r.ok)throw new Error(await r.text());
+    return r.json();
+  },
+  async upsert(table,body){
+    const r=await fetch(`${SB_URL}/rest/v1/${table}`,{
+      method:'POST',
+      headers:{...this._h(),'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok)throw new Error(await r.text());
+    return r.status;
+  },
+  async uploadFile(bucket,path,blob){
+    const r=await fetch(`${SB_URL}/storage/v1/object/${bucket}/${path}`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':blob.type||'image/jpeg','x-upsert':'true'},
+      body:blob
+    });
+    if(!r.ok)throw new Error(await r.text());
+    return `${SB_URL}/storage/v1/object/public/${bucket}/${path}`;
+  }
+};
+
 function initSupabase(){
-  try{
-    if(window.supabase){
-      _sb=window.supabase.createClient(SB_URL,SB_KEY);
-      _sbEnabled=true;
-      console.log('✅ Supabase conectado');
-    }
-  }catch(e){console.warn('Supabase init error',e)}
+  _sbReady=true;
+  console.log('✅ Supabase REST listo (sin SDK)');
 }
 
-// Pull silently on load — todos ven los datos del admin
+// Pull silently — todos los usuarios ven los datos del admin
 async function syncOnLoad(){
-  if(!_sb)return;
+  if(!_sbReady)return;
   try{
-    const {data,error}=await _sb.from('lsl_data').select('*').eq('id','main').single();
-    if(error&&error.code!=='PGRST116')return;
-    if(data){
-      if(data.teams)D.teams=JSON.parse(data.teams);
-      if(data.matches)D.matches=JSON.parse(data.matches);
-      if(data.news)D.news=JSON.parse(data.news);
-      if(data.players)D.players=JSON.parse(data.players);
-      if(data.channels)D.channels=JSON.parse(data.channels);
-      if(data.sanctions)D.sanctions=JSON.parse(data.sanctions);
-      if(data.cfg)D.cfg={...D.cfg,...JSON.parse(data.cfg)};
-      localStorage.setItem(STORE,JSON.stringify(D));
-      renderAll();updateHdr();updateUser();populateSels();
-    }
-  }catch(e){console.warn('syncOnLoad error',e)}
+    const rows=await SB.get('lsl_data','id=eq.main&select=*');
+    const data=rows?.[0];
+    if(!data)return;
+    if(data.teams)D.teams=JSON.parse(data.teams);
+    if(data.matches)D.matches=JSON.parse(data.matches);
+    if(data.news)D.news=JSON.parse(data.news);
+    if(data.players)D.players=JSON.parse(data.players);
+    if(data.channels)D.channels=JSON.parse(data.channels);
+    if(data.sanctions)D.sanctions=JSON.parse(data.sanctions);
+    if(data.cfg)D.cfg={...D.cfg,...JSON.parse(data.cfg)};
+    localStorage.setItem(STORE,JSON.stringify(D));
+    renderAll();updateHdr();updateUser();populateSels();
+  }catch(e){console.warn('syncOnLoad:',e.message)}
 }
 
-// Admin: push everything after any write
+// Admin: push data to cloud
 async function pushToSupabase(){
-  if(!_sb)return;
+  if(!_sbReady)return;
   try{
-    const payload={
+    await SB.upsert('lsl_data',{
       id:'main',
       teams:JSON.stringify(D.teams),
       matches:JSON.stringify(D.matches),
@@ -2565,128 +2607,100 @@ async function pushToSupabase(){
       sanctions:JSON.stringify(D.sanctions),
       cfg:JSON.stringify(D.cfg),
       updated_at:new Date().toISOString()
-    };
-    const {error}=await _sb.from('lsl_data').upsert(payload,{onConflict:'id'});
-    if(error)throw error;
+    });
     toast('☁️ Sincronizado');
-  }catch(e){console.warn('pushToSupabase error',e);toast('⚠️ Sync: '+e.message)}
+  }catch(e){console.warn('push:',e.message);toast('⚠️ Sync error')}
 }
 
-// Pull manually from panel button
 async function pullFromSupabase(){
-  if(!_sb){toast('❌ Sin conexión');return}
   toast('⬇️ Actualizando...');
   await syncOnLoad();
   toast('✅ Datos actualizados');
 }
 
-// Auto sync after admin writes
 function adminSync(){
-  if(_sb&&D.user.isAdmin){
+  if(_sbReady&&D.user.isAdmin){
     clearTimeout(window._syncTimer);
-    window._syncTimer=setTimeout(()=>pushToSupabase(),500);
+    window._syncTimer=setTimeout(()=>pushToSupabase(),600);
   }
 }
 
-// Upload a file Blob to Supabase Storage → returns public URL, or null on fail
+// Upload Blob to Supabase Storage → returns public URL
 async function uploadToStorage(blob,folder){
-  if(!_sb||!blob)return null;
+  if(!_sbReady||!blob)return null;
   try{
     const ext=(blob.type||'image/jpeg').split('/')[1]||'jpg';
     const path=`${folder}/${Date.now()}.${ext}`;
-    const {error}=await _sb.storage.from(SB_BUCKET).upload(path,blob,{
-      contentType:blob.type||'image/jpeg',
-      upsert:true
-    });
-    if(error)throw error;
-    const {data}=_sb.storage.from(SB_BUCKET).getPublicUrl(path);
-    return data.publicUrl;
-  }catch(e){console.warn('Storage upload error',e);return null}
+    const url=await SB.uploadFile(SB_BUCKET,path,blob);
+    return url;
+  }catch(e){console.warn('Storage upload:',e.message);return null}
 }
 
-// Base64 data URL → Blob
 function b64toBlob(b64){
   const arr=b64.split(',');
   const mime=arr[0].match(/:(.*?);/)[1];
-  const bstr=atob(arr[1]);
-  let n=bstr.length;const u8=new Uint8Array(n);
+  const bstr=atob(arr[1]);let n=bstr.length;const u8=new Uint8Array(n);
   while(n--)u8[n]=bstr.charCodeAt(n);
   return new Blob([u8],{type:mime});
 }
 
 function getSupabaseConfig(){return{url:SB_URL,key:SB_KEY,enabled:true}}
-
 function updateAdmSupabase(){
   const u=$('sb-url'),k=$('sb-key');
   if(u)u.value=SB_URL;
-  if(k)k.value='(configurado automáticamente)';
+  if(k)k.value='(auto)';
   const st=$('sb-status');
-  if(st){
-    st.textContent=_sb?'✅ Conectado y activo (auto)':'⏳ Iniciando...';
-    st.style.color=_sb?'#4ade80':'#fbbf24';
-  }
+  if(st){st.textContent='✅ REST API activo (ultra liviano)';st.style.color='#4ade80'}
   const tgl=$('tgl-sb');if(tgl)tgl.classList.add('on');
 }
-async function saveSupabaseConfig(){
-  toast('✅ Supabase ya está configurado automáticamente');
-}
+async function saveSupabaseConfig(){toast('✅ Supabase configurado automáticamente')}
 async function testSupabaseConn(){
   const st=$('sb-status');if(!st)return;
   st.textContent='⏳ Probando...';st.style.color='var(--t2)';
   try{
-    const {error}=await _sb.from('lsl_data').select('id').limit(1);
-    if(error&&error.code!=='PGRST116')throw error;
-    st.textContent='✅ Todo perfecto!';st.style.color='#4ade80';
+    await SB.get('lsl_data','id=eq.main&select=id');
+    st.textContent='✅ Conexión perfecta!';st.style.color='#4ade80';
   }catch(e){st.textContent='❌ '+e.message;st.style.color='#f87171'}
 }
-function toggleSupabaseSync(){toast('✅ Siempre sincronizando automáticamente')}
+function toggleSupabaseSync(){toast('✅ Siempre activo')}
 function toggleSupabaseRT(){
   _sbRT=!_sbRT;
   const tgl=$('tgl-sb-rt');if(tgl)tgl.classList.toggle('on',_sbRT);
-  if(_sbRT&&_sb)setupSupabaseRealtime();
-  toast(_sbRT?'⚡ Tiempo real ON':'Tiempo real OFF');
+  toast(_sbRT?'⚡ Polling activo':'Polling OFF');
+  if(_sbRT)startNotifPolling();
 }
-function setupSupabaseRealtime(){
-  if(!_sb)return;
-  _sb.channel('lsl-live')
-    .on('postgres_changes',{event:'*',schema:'public',table:'lsl_data'},()=>syncOnLoad())
-    .subscribe();
-}
+function setupSupabaseRealtime(){startNotifPolling()}
 function copySupabaseSQL(){
-  const sql=`-- 1. Tabla de datos LSL
+  const sql=`-- 1. Tabla principal
 CREATE TABLE IF NOT EXISTS lsl_data (
   id TEXT PRIMARY KEY,
   teams TEXT, matches TEXT, news TEXT, players TEXT,
   channels TEXT, sanctions TEXT, cfg TEXT,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- 2. Políticas RLS (acceso público)
+-- 2. Políticas RLS
 ALTER TABLE lsl_data ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "select_all" ON lsl_data FOR SELECT USING (true);
-CREATE POLICY "insert_all" ON lsl_data FOR INSERT WITH CHECK (true);
-CREATE POLICY "update_all" ON lsl_data FOR UPDATE USING (true);
-
--- 3. Bucket de imágenes: ir a Storage > New Bucket
--- Nombre: lsl-images | Public: SI`;
-  navigator.clipboard?.writeText(sql)
-    .then(()=>toast('📋 SQL copiado'))
-    .catch(()=>{});
+CREATE POLICY "sel" ON lsl_data FOR SELECT USING (true);
+CREATE POLICY "ins" ON lsl_data FOR INSERT WITH CHECK (true);
+CREATE POLICY "upd" ON lsl_data FOR UPDATE USING (true);
+-- 3. Bucket Storage: Storage > New Bucket > nombre: lsl-images > Public: SI`;
+  navigator.clipboard?.writeText(sql).then(()=>toast('📋 SQL copiado')).catch(()=>{});
 }
 let _notifPollTimer=null;
 function startNotifPolling(){
-  if(!_sb)return;
+  clearInterval(_notifPollTimer);
   _notifPollTimer=setInterval(async()=>{
     try{
       const last=localStorage.getItem('lsl_last_notif')||'2000-01-01';
-      const {data}=await _sb.from('lsl_notifications').select('*').gt('created_at',last).limit(5);
-      if(data&&data.length){
-        data.forEach(n=>addNotif(n.title,n.body));
-        localStorage.setItem('lsl_last_notif',data[0].created_at);
+      const rows=await SB.get('lsl_notifications',`created_at=gt.${last}&select=*&limit=5`);
+      if(rows?.length){
+        rows.forEach(n=>addNotif(n.title,n.body));
+        localStorage.setItem('lsl_last_notif',rows[0].created_at);
       }
     }catch(e){}
   },30000);
 }
+
 
 
 /* ============================================================
