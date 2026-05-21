@@ -688,7 +688,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .push-card-s{font-size:11px;color:var(--t2)}
 
 /* ---- LOGIN SCREEN ---- */
-#login-screen{position:fixed;inset:0;z-index:900;background:var(--bg);
+#login-screen{position:fixed;inset:0;z-index:900;
+  background:#080c14;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(99,102,241,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 90% 110%,rgba(34,211,238,.09) 0%,transparent 60%);
   display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
   max-width:520px;left:50%;transform:translateX(-50%)}
 #login-screen.hidden{display:none}
@@ -816,6 +817,37 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .form-dot.G{background:#16a34a}
 .form-dot.E{background:#52525b}
 .form-dot.P{background:#dc2626}
+
+/* ---- CODE EDITOR TABS ---- */
+.code-tab{flex-shrink:0;padding:7px 14px;border-radius:8px;
+  border:1px solid rgba(var(--amb-color),.15);background:transparent;
+  font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;
+  transition:all .15s ease;white-space:nowrap}
+.code-tab.on{background:rgba(var(--amb-color),.16);color:var(--accent2);
+  border-color:rgba(var(--amb-color),.4)}
+.code-panel{display:none}
+.code-panel.on{display:block}
+
+/* ---- ADMIN PANEL SECTIONS ---- */
+.adm-section-header{display:flex;align-items:center;gap:10px;
+  margin:0 0 14px;padding:12px 14px;border-radius:14px;
+  font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.5px;
+  position:relative;overflow:hidden}
+.adm-section-header::before{content:"";position:absolute;inset:0;opacity:.12;background:currentColor}
+.adm-section-header .adm-sec-ico{font-size:22px;flex-shrink:0}
+.adm-section-header .adm-sec-lbl{flex:1;color:#fff}
+.adm-section-header .adm-sec-count{font-size:11px;font-family:"DM Sans",sans-serif;
+  font-weight:600;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:99px;color:#fff}
+/* Colores por sección */
+.adm-sec-matches{color:#818cf8;border:1px solid rgba(129,140,248,.25)}
+.adm-sec-teams{color:#34d399;border:1px solid rgba(52,211,153,.25)}
+.adm-sec-news{color:#fb923c;border:1px solid rgba(251,146,60,.25)}
+.adm-sec-players{color:#f472b6;border:1px solid rgba(244,114,182,.25)}
+.adm-sec-sanctions{color:#facc15;border:1px solid rgba(250,204,21,.25)}
+.adm-sec-channels{color:#22d3ee;border:1px solid rgba(34,211,238,.25)}
+.adm-sec-stats{color:#a78bfa;border:1px solid rgba(167,139,250,.25)}
+.adm-sec-db{color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.adm-sec-code{color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
 
 /* ---- SETTINGS OVERLAY ---- */
 .cfg-section{background:var(--surf2);border-radius:16px;border:1px solid rgba(var(--amb-color),.10);
@@ -968,6 +1000,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- MATCHES PANE -->
   <div class="apane on" id="adm-matches">
+    <div class="adm-section-header adm-sec-matches"><div class="adm-sec-ico">⚽</div><div class="adm-sec-lbl">PARTIDOS</div><div class="adm-sec-count" id="adm-match-count">0</div></div>
     <div class="atit">Nuevo partido</div>
     <div class="aform">
       <div class="fl">Local</div><select class="fsel" id="mh-team"></select>
@@ -988,6 +1021,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- TEAMS -->
   <div class="apane" id="adm-teams">
+    <div class="adm-section-header adm-sec-teams"><div class="adm-sec-ico">🛡️</div><div class="adm-sec-lbl">EQUIPOS</div><div class="adm-sec-count" id="adm-team-count">0</div></div>
     <div class="atit">Nuevo equipo</div>
     <div class="aform">
       <div class="fl">Nombre</div><input type="text" class="fi" id="t-name" placeholder="Nombre del equipo..."/>
@@ -1001,6 +1035,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- PLAYERS -->
   <div class="apane" id="adm-players">
+    <div class="adm-section-header adm-sec-players"><div class="adm-sec-ico">👕</div><div class="adm-sec-lbl">JUGADORES</div><div class="adm-sec-count" id="adm-player-count">0</div></div>
     <div class="atit">Agregar jugador</div>
     <div class="aform">
       <div class="fl">Nombre</div><input type="text" class="fi" id="pl-name" placeholder="Nombre..."/>
@@ -1018,6 +1053,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- NEWS -->
   <div class="apane" id="adm-news">
+    <div class="adm-section-header adm-sec-news"><div class="adm-sec-ico">📰</div><div class="adm-sec-lbl">NOTICIAS</div><div class="adm-sec-count" id="adm-news-count">0</div></div>
     <div class="atit">Nueva noticia</div>
     <div class="aform">
       <div class="fl">Título</div><input type="text" class="fi" id="n-title" placeholder="Título..."/>
@@ -1074,6 +1110,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- STATS -->
   <div class="apane" id="adm-stats">
+    <div class="adm-section-header adm-sec-stats"><div class="adm-sec-ico">📈</div><div class="adm-sec-lbl">ESTADÍSTICAS</div></div>
     <div class="atit">Exportar estadísticas</div>
     <div class="aform">
       <button class="abtn sec" onclick="exportStatsCSV()">📊 EXPORTAR TABLA A CSV</button>
@@ -1161,7 +1198,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- SUPABASE / BASE DE DATOS -->
   <div class="apane" id="adm-supabase">
-    <div class="atit">☁️ Base de Datos (Supabase)</div>
+    <div class="adm-section-header adm-sec-db"><div class="adm-sec-ico">☁️</div><div class="adm-sec-lbl">BASE DE DATOS</div></div>
+    <div class="atit">Supabase</div>
     <div class="aform">
       <div style="background:var(--surf2);border:1px solid var(--bdr2);border-radius:14px;padding:13px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.6">
         <strong style="color:var(--text);display:block;margin-bottom:5px">¿Cómo funciona?</strong>
@@ -1198,7 +1236,11 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- CODE EDITOR — mejorado -->
   <div class="apane" id="adm-codeeditor">
-    <div class="atit">💻 Editor de Código Avanzado</div>
+    <div class="adm-section-header adm-sec-code" style="margin:0 0 0">
+      <div class="adm-sec-ico">💻</div>
+      <div class="adm-sec-lbl">EDITOR DE CÓDIGO</div>
+    </div>
+
     <div style="padding:0 14px 12px;font-size:12px;color:var(--t2);line-height:1.6">
       Modificá CSS, JS, y variables de diseño en tiempo real sin editar el archivo HTML.
     </div>
@@ -1683,6 +1725,14 @@ function init(){
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   initSupabase();
   // Sync inicial — sin bloquear render
+    // Aplicar settings guardados
+  if(D.settings){
+    const s=D.settings;
+    if(s.anims===false){const r=document.documentElement;r.style.setProperty('--spd','0s');r.style.setProperty('--slow','0s');}
+    if(s.glass===false){const h=$('hdr'),n=$('nav');if(h)h.style.backdropFilter='none';if(n)n.style.backdropFilter='none';}
+    if(s.accentHex)document.documentElement.style.setProperty('--accent',s.accentHex);
+    if(s.accentRgb)document.documentElement.style.setProperty('--amb-color',s.accentRgb);
+  }
   setTimeout(()=>syncOnLoad(), 1500);
   // Polling cada 45s — todos los usuarios ven cambios del admin
   setInterval(()=>{if(_sbReady&&!D.user.isAdmin)syncOnLoad()},45000);
@@ -3042,6 +3092,14 @@ function downloadCSV(content,filename){
   link.download=filename;
   link.click();
 }
+function updateAdminCounts(){
+  const setC=(id,n)=>{const el=$(id);if(el)el.textContent=n};
+  setC('adm-match-count',D.matches.length);
+  setC('adm-team-count',D.teams.length);
+  setC('adm-news-count',D.news.length);
+  setC('adm-player-count',D.players.length);
+}
+
 function updateStatsPanel(){
   if(!$('stat-matches'))return;
   const finished=D.matches.filter(m=>m.status==='finalizado');
@@ -3405,43 +3463,266 @@ function exportCustomCode(){
 }
 
 const SNIPPETS={
-  accent:`/* Cambiar color de acento */
-:root {
+  accent:`:root {
   --accent: #ff6b6b;
   --accent2: #ff8e53;
+  --amb-color: 255,107,107;
 }`,
-  font:`/* Importar y usar fuente personalizada */
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
-.hn, .sect, .mcsc { font-family: 'Rajdhani', sans-serif; }`,
-  roundedCards:`/* Cards más redondeadas */
-.mc { border-radius: 40px !important; }
-.mr { border-radius: 18px !important; margin: 4px 14px !important; }
-.stw { border-radius: 28px !important; }`,
-  customBg:`/* Fondo degradado personalizado */
-:root {
-  --grad: linear-gradient(135deg, #1a1208 0%, #2a1f10 50%, #1a1208 100%);
-}
-#app { background-image: var(--grad) !important; }`,
-  announce:`/* En JS: anuncio emergente */`
+  font:`@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+.hn, .sect { font-family: 'Rajdhani', sans-serif; }`,
+  roundedCards:`.mc { border-radius: 40px !important; }
+.mr { border-radius: 18px !important; margin: 4px 14px !important; }`,
+  customBg:`:root {
+  --bg: #0a1628;
+  --grad: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,.15) 0%, transparent 60%), #0a1628;
+}`,
+  announce:`/* Banner anuncio — pegar en inicio-top desde HTML tab */`,
+  hideSection:`.greet { display: none !important; }
+/* Cambiá .greet por: .sec, .chips, etc. */`,
+  bigTitle:`.hn { font-size: 42px !important; letter-spacing: 1px; }
+.gnm { font-size: 38px !important; }`,
+  liveEffect:`.mr.live { box-shadow: 0 0 0 1.5px #22c55e, 0 4px 20px rgba(34,197,94,.2); }
+.ldot { animation: pulse 0.8s infinite !important; }`
 };
 
 const JS_SNIPPETS={
-  announce:`// Anuncio emergente de bienvenida
-setTimeout(() => {
-  toast('📢 ¡Bienvenidos a la nueva temporada!');
-}, 1000);`
+  announce:`setTimeout(()=>{toast('📢 ¡Bienvenidos a la nueva temporada!');},800);`,
+  hideSection:`// Ocultar elemento por clase o id
+document.querySelector('.greet').style.display='none';`,
+  bigTitle:`document.querySelectorAll('.sect').forEach(el=>{el.style.fontSize='22px';});`,
+  liveEffect:`document.querySelectorAll('.mr').forEach(el=>{
+  if(el.classList.contains('live'))el.style.boxShadow='0 0 0 2px #22c55e';
+});`
 };
 
 function insertSnippet(type){
+  const activeTab=document.querySelector('.code-tab.on')?.id||'ctab-css';
+  const isJS=activeTab==='ctab-js';
   const cssEd=$('custom-css-editor');
   const jsEd=$('custom-js-editor');
-  if(type==='announce'){
-    if(jsEd)jsEd.value=(jsEd.value+'\n\n'+JS_SNIPPETS.announce).trim();
+  if(isJS||type==='announce'){
+    const snip=JS_SNIPPETS[type]||JS_SNIPPETS.announce;
+    if(jsEd)jsEd.value=(jsEd.value+'\n\n'+snip).trim();
+    if(!isJS)switchCodeTab('js');
     toast('📝 Snippet JS insertado');
   }else{
-    if(cssEd&&SNIPPETS[type])cssEd.value=(cssEd.value+'\n\n'+SNIPPETS[type]).trim();
+    const snip=SNIPPETS[type]||'';
+    if(cssEd&&snip)cssEd.value=(cssEd.value+'\n\n'+snip).trim();
     toast('📝 Snippet CSS insertado');
   }
+}
+
+/* ════════════════════════════════════════════════
+   SETTINGS — Funciones completas
+   ════════════════════════════════════════════════ */
+
+function openSettings(){
+  openOv('cfg-ov');
+  // Sincronizar estado de toggles con D.settings
+  const s=D.settings||{};
+  const setTgl=(id,val)=>{const t=$(id);if(t)t.classList.toggle('on',val!==false)}
+  setTgl('tgl-ambient',s.ambient!==false);
+  setTgl('tgl-anims', s.anims!==false);
+  setTgl('tgl-glass', s.glass!==false);
+  // Estado de notificaciones
+  const ns=$('cfg-notif-state');
+  if(ns){
+    if(Notification&&Notification.permission==='granted')ns.textContent='✅ Activas';
+    else if(Notification&&Notification.permission==='denied')ns.textContent='🚫 Bloqueadas por el sistema';
+    else ns.textContent='Toca para activar';
+  }
+  // Marcar el acento activo
+  document.querySelectorAll('.accent-dot').forEach(d=>{
+    const matches=d.style.background===getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    d.classList.toggle('active',matches);
+  });
+}
+
+function toggleCfg(key){
+  if(!D.settings)D.settings={};
+  D.settings[key]=!( D.settings[key]!==false );
+  const tgl=$('tgl-'+key);
+  if(tgl)tgl.classList.toggle('on', D.settings[key]);
+  save();
+  // Aplicar cambio inmediato
+  if(key==='ambient'){
+    if(D.settings.ambient!==false)updateAmbient();
+    else{resetAmbient();}
+    toast(D.settings.ambient!==false?'🌈 Ambient activado':'Ambient desactivado');
+  }
+  if(key==='anims'){
+    const root=document.documentElement;
+    if(D.settings.anims===false){
+      root.style.setProperty('--spd','0s');
+      root.style.setProperty('--slow','0s');
+      root.style.setProperty('--spring','linear');
+    }else{
+      root.style.removeProperty('--spd');
+      root.style.removeProperty('--slow');
+      root.style.removeProperty('--spring');
+    }
+    toast(D.settings.anims!==false?'✨ Animaciones ON':'Animaciones OFF');
+  }
+  if(key==='glass'){
+    const hdr=$('hdr'),nav=$('nav');
+    const bf=D.settings.glass===false?'none':'blur(28px) saturate(180%)';
+    if(hdr)hdr.style.backdropFilter=bf;
+    if(nav)nav.style.backdropFilter=bf;
+    toast(D.settings.glass!==false?'🔲 Vidrio ON':'Vidrio OFF');
+  }
+}
+
+function setAccent(hex,rgb){
+  const root=document.documentElement;
+  root.style.setProperty('--accent',hex);
+  // accent2 = versión más clara
+  root.style.setProperty('--accent2',hex+'cc');
+  root.style.setProperty('--amb-color',rgb);
+  root.style.setProperty('--amb-tint-hdr',`rgba(${rgb},.10)`);
+  root.style.setProperty('--amb-tint-nav',`rgba(${rgb},.06)`);
+  document.querySelectorAll('.accent-dot').forEach(d=>d.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  if(!D.settings)D.settings={};
+  D.settings.accentHex=hex;D.settings.accentRgb=rgb;
+  save();toast('🎨 Color aplicado');
+}
+
+function requestNotifPerm(){
+  if(!('Notification' in window)){toast('❌ Este browser no soporta notificaciones');return}
+  Notification.requestPermission().then(p=>{
+    const ns=$('cfg-notif-state');
+    if(p==='granted'){if(ns)ns.textContent='✅ Activas';toast('🔔 Notificaciones activadas');}
+    else{if(ns)ns.textContent='🚫 Bloqueadas';toast('❌ Notificaciones bloqueadas');}
+  });
+}
+
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`lsl-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();toast('📤 Backup descargado');
+}
+
+function shareApp(){
+  const url=window.location.href;
+  if(navigator.share){
+    navigator.share({title:'La Súper Liga',text:'Seguí todos los partidos en tiempo real 🏟️',url});
+  }else{
+    navigator.clipboard?.writeText(url).then(()=>toast('🔗 Link copiado'));
+  }
+}
+
+/* ════════════════════════════════════════════════
+   CODE EDITOR — Funciones nuevas
+   ════════════════════════════════════════════════ */
+
+function switchCodeTab(tab){
+  document.querySelectorAll('.code-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.code-panel').forEach(p=>p.classList.remove('on'));
+  const bt=$('ctab-'+tab), bp=$('cpanel-'+tab);
+  if(bt)bt.classList.add('on');
+  if(bp)bp.classList.add('on');
+  if(tab==='vars')buildVarsEditor();
+  logConsole(`📂 Tab: ${tab}`);
+}
+
+function buildVarsEditor(){
+  const el=$('vars-editor-list');if(!el)return;
+  const vars=[
+    {key:'--bg',label:'Fondo principal',type:'color'},
+    {key:'--bg2',label:'Fondo modales',type:'color'},
+    {key:'--accent',label:'Color acento',type:'color'},
+    {key:'--text',label:'Texto',type:'color'},
+    {key:'--t2',label:'Texto secundario',type:'color'},
+    {key:'--bdr2',label:'Bordes',type:'color'},
+    {key:'--spd',label:'Velocidad animaciones',type:'text'},
+  ];
+  const root=getComputedStyle(document.documentElement);
+  el.innerHTML=vars.map(v=>{
+    const cur=root.getPropertyValue(v.key).trim();
+    return v.type==='color'
+      ?`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <input type="color" id="var-${v.key.slice(2)}" value="${cur||'#000000'}"
+            style="width:36px;height:36px;border:none;border-radius:8px;cursor:pointer;background:none"
+            onchange="document.documentElement.style.setProperty('${v.key}',this.value)"/>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">${v.label}</div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--t2)">${v.key}</div></div>
+        </div>`
+      :`<div style="margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">${v.label} <span style="color:var(--t3);font-size:10px">${v.key}</span></div>
+          <input class="fi" id="var-${v.key.slice(2)}" value="${cur}"
+            style="font-family:'DM Mono',monospace;font-size:12px;padding:8px 12px"
+            oninput="document.documentElement.style.setProperty('${v.key}',this.value)"/>
+        </div>`;
+  }).join('');
+}
+
+function applyVarsEditor(){
+  const vars=['--bg','--bg2','--accent','--text','--t2','--bdr2','--spd'];
+  const root=document.documentElement;
+  vars.forEach(v=>{
+    const el=document.getElementById('var-'+v.slice(2));
+    if(el&&el.value)root.style.setProperty(v,el.value);
+  });
+  // Guardar como CSS custom
+  const css=vars.map(v=>{
+    const el=document.getElementById('var-'+v.slice(2));
+    return el?`  ${v}: ${el.value};`:'';
+  }).filter(Boolean).join('\n');
+  const cssEd=$('custom-css-editor');
+  if(cssEd)cssEd.value=(cssEd.value+'\n\n:root {\n'+css+'\n}').trim();
+  injectCSS(`:root{${vars.map(v=>{const el=document.getElementById('var-'+v.slice(2));return el?`${v}:${el.value}`:'';}).filter(Boolean).join(';')}}`);
+  logConsole('✅ Variables aplicadas');
+  toast('🎛️ Variables aplicadas');
+}
+
+const _injectedHTML={};
+function injectHTML(){
+  const target=$('html-target')?.value||'inicio-top';
+  const html=$('custom-html-editor')?.value||'';
+  if(!html.trim()){toast('⚠️ Escribí algo de HTML');return}
+  try{
+    const targetMap={
+      'inicio-top':'pg-inicio','inicio-bottom':'pg-inicio',
+      'partidos-top':'pg-partidos','info-top':'pg-info'
+    };
+    if(target==='custom-widget'){
+      let w=document.getElementById('custom-widget');
+      if(!w){w=document.createElement('div');w.id='custom-widget';
+        w.style.cssText='position:fixed;bottom:90px;right:14px;z-index:500;max-width:200px';
+        document.getElementById('app').appendChild(w);}
+      w.innerHTML=html;
+      _injectedHTML['widget']=html;
+      toast('✅ Widget inyectado');
+    }else{
+      const pg=document.getElementById(targetMap[target]);
+      if(!pg){toast('❌ Sección no encontrada');return}
+      let wrapper=pg.querySelector('.custom-inject-'+target);
+      if(!wrapper){
+        wrapper=document.createElement('div');
+        wrapper.className='custom-inject-'+target;
+        if(target.endsWith('-top'))pg.prepend(wrapper);
+        else pg.appendChild(wrapper);
+      }
+      wrapper.innerHTML=html;
+      _injectedHTML[target]=html;
+      toast('✅ HTML inyectado en '+target);
+    }
+    logConsole(`✅ HTML inyectado en: ${target}`);
+  }catch(e){logConsole('❌ Error: '+e.message);toast('❌ Error en HTML: '+e.message)}
+}
+
+function removeInjectedHTML(){
+  const target=$('html-target')?.value||'inicio-top';
+  if(target==='custom-widget'){
+    const w=document.getElementById('custom-widget');if(w)w.remove();
+  }else{
+    document.querySelectorAll('.custom-inject-'+target).forEach(el=>el.remove());
+  }
+  delete _injectedHTML[target];
+  toast('🗑️ HTML quitado');
+  logConsole('🗑️ HTML removido de: '+target);
 }
 
 function sendAdminPush(){
@@ -3459,8 +3740,9 @@ function admTab(name,el){
   el.classList.add('on');
   $('adm-'+name).classList.add('on');
   if(name==='supabase')updateAdmSupabase();
-  if(name==='codeeditor')loadCustomCode();
+  if(name==='codeeditor'){loadCustomCode();switchCodeTab('css');}
   if(name==='stats')updateStatsPanel();
+  updateAdminCounts();
   if(name==='matches'){populateSels();prefillMatchDate();}
 }
 </script>
