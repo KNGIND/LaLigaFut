@@ -2915,7 +2915,7 @@ async function handleFile(e,key,btnId,txtId){
     const blob=await compressImage(f);
     // 2. Try Supabase Storage upload
     let url=null;
-    if(_sb){
+    if(_sbReady){
       url=await uploadToStorage(blob,'shared');
     }
     // 3. Fallback to base64 if Storage not available
@@ -2930,11 +2930,12 @@ async function handleFile(e,key,btnId,txtId){
     pending[key]=url;
     if(btn){btn.classList.remove('uploading');btn.classList.add('has')}
     if(txt)txt.textContent=url.startsWith('http')?'✅ '+f.name:f.name;
-    if(url.startsWith('http'))toast('☁️ Imagen subida a la nube');
+    if(url.startsWith('http'))toast('☁️ Imagen en la nube');
+    else if(url.startsWith('data:'))toast('💾 Imagen guardada localmente');
   }catch(err){
     if(btn)btn.classList.remove('uploading');
     if(txt)txt.textContent='❌ Error';
-    toast('❌ Error al subir imagen');
+    toast('❌ Error al procesar imagen');
     console.error(err);
   }
 }
@@ -2951,13 +2952,17 @@ async function handleAvatarUpload(e){
   try{
     const blob=await compressImage(f,400,0.85);
     let url=null;
-    if(_sb)url=await uploadToStorage(blob,'avatars');
+    if(_sbReady)url=await uploadToStorage(blob,'avatars');
     if(!url){
       url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsDataURL(blob)});
+      console.log('Avatar guardado como base64');
     }
     D.user.avatar=url;save();updateUser();
     toast('✅ Avatar actualizado');
-  }catch(err){toast('❌ Error al subir avatar')}
+  }catch(err){
+    console.error('Avatar error:',err);
+    toast('❌ Error al subir avatar');
+  }
 }
 
 // Banner: same as avatar
@@ -2967,13 +2972,17 @@ async function handleBannerUpload(e){
   try{
     const blob=await compressImage(f,1400,0.85);
     let url=null;
-    if(_sb)url=await uploadToStorage(blob,'banners');
+    if(_sbReady)url=await uploadToStorage(blob,'banners');
     if(!url){
       url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsDataURL(blob)});
+      console.log('Banner guardado como base64');
     }
     D.user.banner=url;save();updateUser();
     toast('✅ Banner actualizado');
-  }catch(err){toast('❌ Error al subir banner')}
+  }catch(err){
+    console.error('Banner error:',err);
+    toast('❌ Error al subir banner');
+  }
 }
 
 function triggerAvatar(){$('avatar-fi').click()}
@@ -3280,9 +3289,26 @@ async function uploadToStorage(blob,folder){
   try{
     const ext=(blob.type||'image/jpeg').split('/')[1]||'jpg';
     const path=`${folder}/${Date.now()}.${ext}`;
-    const url=await SB.uploadFile(SB_BUCKET,path,blob);
-    return url;
-  }catch(e){console.warn('Storage upload:',e.message);return null}
+    // Intentar con los buckets posibles
+    const buckets=['lsl-images','images','media','uploads','storage'];
+    let url=null;
+    for(const bucket of buckets){
+      try{
+        url=await SB.uploadFile(bucket,path,blob);
+        console.log(`✅ Upload exitoso en bucket: ${bucket}`);
+        return url;
+      }catch(e){
+        console.log(`❌ Bucket ${bucket} no disponible, intentando siguiente...`);
+        continue;
+      }
+    }
+    // Si ningún bucket funcionó, retornar null para usar fallback base64
+    if(!url)console.warn('Ningún bucket disponible, usando base64 local');
+    return null;
+  }catch(e){
+    console.warn('Storage upload:',e.message);
+    return null;
+  }
 }
 
 function b64toBlob(b64){
