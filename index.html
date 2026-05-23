@@ -239,12 +239,12 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 /* ---- NEWS ---- */
 .ncbig{border-radius:16px;background:var(--surf2);border:1px solid var(--bdr);
   overflow:hidden;cursor:pointer;transition:opacity .16s}
-.ncbig:active{opacity:.72}
+.ncbig:active{opacity:.7;transform:scale(0.98)}
 .ncbig-img{height:175px;background:var(--surf2);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .ncbig-img img{width:100%;height:100%;object-fit:cover}
 .ncbig-body{padding:14px}
 .nccat{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
-.ncbig-t{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:.4px;
+.ncbig-t{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.3px;color:var(--text);line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   color:var(--text);line-height:1.15;margin-bottom:5px}
 .ncexc{font-size:12px;color:var(--t2);line-height:1.5;display:-webkit-box;
   -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -438,11 +438,11 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .stlbl{font-size:10px;font-weight:600;color:var(--t2);min-width:70px;text-align:center}
 
 /* Events timeline */
-.evit{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr)}
+.evit{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:none;background:rgba(255,255,255,.02);margin:5px 0;border-radius:10px;transition:background .12s}
 .evit:last-child{border-bottom:none}
-.evmin{font-family:"DM Mono",monospace;font-size:11px;color:var(--t2);width:28px;text-align:right;flex-shrink:0;padding-top:1px}
-.evico{font-size:15px;flex-shrink:0}
-.evnm{font-size:13px;font-weight:600;color:var(--text)}
+.evmin{font-family:"DM Mono",monospace;font-size:12px;font-weight:700;color:var(--t2);width:32px;text-align:center;flex-shrink:0}
+.evico{font-size:18px;flex-shrink:0;min-width:20px;text-align:center}
+.evnm{font-size:12px;font-weight:700;color:var(--text)}
 .evtm{font-size:11px;color:var(--t3)}
 
 /* NEWS MODAL */
@@ -1338,72 +1338,61 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 <!-- NAV ISLAND -->
 <nav id="nav">
-  <!-- INICIO — casa moderna -->
+  <!-- INICIO — Casa moderna minimalista -->
   <div class="ni on" id="ni-inicio" onclick="go('inicio')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
-          d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H15v-5h-6v5H4a1 1 0 01-1-1V10.5z"/>
-        <path class="ico-fill" fill="currentColor"
-          d="M12 2.2L2.3 10.1A1 1 0 001 11v9a2 2 0 002 2h5v-5h8v5h5a2 2 0 002-2v-9a1 1 0 00-.3-.7L12 2.2z"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path class="ico-stroke" d="M3 10L12 3l9 7v10a2 2 0 01-2 2h-3v-5h-4v5H5a2 2 0 01-2-2V10z"/>
+        <path class="ico-fill" fill="currentColor" d="M3 10L12 3l9 7v10a2 2 0 01-2 2h-3v-5h-4v5H5a2 2 0 01-2-2V10z" opacity="0.15"/>
       </svg>
     </div>
     <div class="nilbl">Inicio</div>
   </div>
 
-  <!-- PARTIDOS — balón de fútbol limpio -->
+  <!-- PARTIDOS — Balón con énfasis -->
   <div class="ni" id="ni-partidos" onclick="go('partidos')">
     <div class="niico">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.9" cx="12" cy="12" r="9"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
-          d="M12 6.5l2.5 1.8-.95 2.93H10.45L9.5 8.3 12 6.5zM12 6.5V3M9.5 8.3L6.5 9.5M14.5 8.3l3 1.2M10.45 11.23L9 14.5M13.55 11.23L15 14.5M9 14.5H15M9 14.5l-2 2.5M15 14.5l2 2.5"/>
-        <circle class="ico-fill" fill="currentColor" cx="12" cy="12" r="9.5"/>
-        <path class="ico-fill" fill="var(--bg)" stroke="none"
-          d="M12 5.5l3 2.1-1.15 3.4H10.15L9 7.6 12 5.5zM9 7.6L5.8 8.9m-1.2 4.8 3.6-2.27M19.4 13.7l-3.6-2.27M9.2 14.63 7.5 17.5m2.1-2.73h4.8M14.8 14.77l1.7 2.73"/>
+        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.8" cx="12" cy="12" r="10"/>
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 2v20M2 12h20"/>
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M7 8h10M7 16h10M10 5v14M14 5v14"/>
+        <circle class="ico-fill" fill="currentColor" cx="12" cy="12" r="10" opacity="0.12"/>
       </svg>
     </div>
     <div class="nilbl">Partidos</div>
   </div>
 
-  <!-- INFO — tabla/podio -->
+  <!-- TABLA — Estadísticas / Clasificación -->
   <div class="ni" id="ni-info" onclick="go('info')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect class="ico-stroke" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" x="3" y="3" width="18" height="18" rx="3"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
-          d="M3 9h18M9 9v12M7 13h2M7 17h2M13 13h4M13 17h4"/>
-        <rect class="ico-fill" fill="currentColor" x="2" y="2" width="20" height="20" rx="4"/>
-        <path class="ico-fill" fill="var(--bg)" stroke="none"
-          d="M3 8.5h18v1.5H3zM8.5 10v12h1.5V10zM6 13h3v1.5H6zM6 17h3v1.5H6zM12 13h6v1.5h-6zM12 17h6v1.5h-6z"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <rect class="ico-stroke" x="3" y="5" width="18" height="16" rx="2"/>
+        <path class="ico-stroke" d="M3 10h18M9 10v11M15 10v11"/>
+        <rect class="ico-fill" fill="currentColor" x="3" y="5" width="18" height="16" rx="2" opacity="0.1"/>
       </svg>
     </div>
     <div class="nilbl">Liga</div>
   </div>
 
-  <!-- PERFIL — persona con círculo -->
+  <!-- PERFIL — Usuario -->
   <div class="ni" id="ni-perfil" onclick="go('perfil')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
-          d="M12 11a4 4 0 100-8 4 4 0 000 8zM5 21c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
-        <path class="ico-fill" fill="currentColor"
-          d="M12 2a5 5 0 100 10A5 5 0 0012 2zM4 22c0-4.42 3.58-8 8-8s8 3.58 8 8H4z"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle class="ico-stroke" cx="12" cy="8" r="4"/>
+        <path class="ico-stroke" d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6"/>
+        <circle class="ico-fill" fill="currentColor" cx="12" cy="8" r="4" opacity="0.12"/>
       </svg>
     </div>
     <div class="nilbl">Perfil</div>
   </div>
 
-  <!-- ADMIN — escudo -->
+  <!-- ADMIN — Escudo protección -->
   <div class="ni hidden" id="ni-admin" onclick="go('admin')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
-          d="M12 2L4 6v6c0 5.1 3.4 9.9 8 11 4.6-1.1 8-5.9 8-11V6L12 2z"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          d="M9 12l2 2 4-4"/>
-        <path class="ico-fill" fill="currentColor"
-          d="M12 1L3 5.5V12c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5.5L12 1zm-2 15l-4-4 1.4-1.4 2.6 2.57 5.6-5.6L17 9l-7 7z"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path class="ico-stroke" d="M12 1L3 5v7c0 5.5 4 10.5 9 12 5-1.5 9-6.5 9-12V5L12 1z"/>
+        <path class="ico-fill" fill="currentColor" d="M12 1L3 5v7c0 5.5 4 10.5 9 12 5-1.5 9-6.5 9-12V5L12 1z" opacity="0.1"/>
+        <path class="ico-stroke" d="M9 13l2 2 4-4"/>
       </svg>
     </div>
     <div class="nilbl">Admin</div>
@@ -1629,8 +1618,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 const STORE='lsl_v5';
 const ADMIN_DEFAULT='Admin123';
 // ---- SUPABASE — credenciales hardcodeadas ----
-const SB_URL='https://swvvbnnsryqjkwpcqcte.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3dnZibm5zcnlxamt3cGNxY3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMjUyOTksImV4cCI6MjA4OTkwMTI5OX0.9Yaf2obt8omQVHkc_SJCPxpnERCKfSS_QTMgpDcMocY';
+const SB_URL='https://szojprkfdmggfegxksgk.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6b2pwcmtmZG1nZ2ZlZ3hrc2drIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MDMxNDcsImV4cCI6MjA5NDk3OTE0N30.ocRZTP3CH-fb8ZnMm7zuMlGqlkIBFYxrINn4fxkdoxk';
 const SB_BUCKET='lsl-images';
 let D={
   cfg:{name:'La Súper Liga',short:'LSL',season:'T9 "Reinicio"',status:'en_curso',seasonDesc:'',logo:'',rules:'',adminPass:ADMIN_DEFAULT},
@@ -2287,45 +2276,45 @@ function openMatch(id){
       <div id="cd-${id}" style="font-family:'DM Mono',monospace;font-size:13px;
         color:var(--t2);letter-spacing:2px;margin-bottom:6px">${getCountdown(m.datetime)}</div>`:''}
 
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%">
         <!-- Local -->
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div style="width:82px;height:82px;display:flex;align-items:center;justify-content:center">
-            ${h.logo?`<img src="${h.logo}" style="width:78px;height:78px;object-fit:contain"/>`:
-            `<div style="width:78px;height:78px;border-radius:50%;background:var(--surf2);
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0">
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            ${h.logo?`<img src="${h.logo}" style="width:48px;height:48px;object-fit:contain"/>`:
+            `<div style="width:48px;height:48px;border-radius:50%;background:var(--surf2);
               display:flex;align-items:center;justify-content:center;
-              font-family:'Bebas Neue';font-size:20px;color:var(--text)">${h.name.substring(0,3)}</div>`}
+              font-family:'Bebas Neue';font-size:16px;color:var(--text)">${h.name.substring(0,2)}</div>`}
           </div>
-          <div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.2;
-            text-align:center;max-width:90px">${h.name}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.1;
+            text-align:center;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.name}</div>
         </div>
 
-        <!-- Centro: marcador o hora -->
-        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px">
+        <!-- Centro: marcador o hora COMPACTO -->
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 4px">
           ${m.status==='proximo'
-            ?`<div style="font-size:38px;font-weight:700;color:var(--text);
-                font-family:'DM Mono',monospace;letter-spacing:1px">${fmtTime(m.datetime)}</div>
-               <div style="font-size:11px;color:var(--t2)">${fmtDate(m.datetime)}</div>`
-            :`<div class="mdscn" id="mdscn-${id}" style="font-size:62px;letter-spacing:4px">
+            ?`<div style="font-size:24px;font-weight:700;color:var(--text);
+                font-family:'DM Mono',monospace;letter-spacing:0.5px">${fmtTime(m.datetime)}</div>
+               <div style="font-size:9px;color:var(--t2)">${fmtDate(m.datetime)}</div>`
+            :`<div class="mdscn" id="mdscn-${id}" style="font-size:42px;letter-spacing:2px">
                 <span id="mdh-${id}">${hs}</span>
-                <span class="mddsh" style="opacity:.35"> - </span>
+                <span style="opacity:.3">-</span>
                 <span id="mda-${id}">${as}</span>
               </div>`}
-          <div class="mdstl${live?' mcst lv':''}" style="font-size:11px;color:${live?'#f87171':'var(--t2)'}">
-            ${live?'🔴 EN VIVO':stLabel(m.status)}
+          <div style="font-size:9px;color:${live?'#22c55e':'var(--t2)'};font-weight:600">
+            ${live?'🔴 VIVO':stLabel(m.status)}
           </div>
         </div>
 
         <!-- Visitante -->
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div style="width:82px;height:82px;display:flex;align-items:center;justify-content:center">
-            ${a.logo?`<img src="${a.logo}" style="width:78px;height:78px;object-fit:contain"/>`:
-            `<div style="width:78px;height:78px;border-radius:50%;background:var(--surf2);
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0">
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            ${a.logo?`<img src="${a.logo}" style="width:48px;height:48px;object-fit:contain"/>`:
+            `<div style="width:48px;height:48px;border-radius:50%;background:var(--surf2);
               display:flex;align-items:center;justify-content:center;
-              font-family:'Bebas Neue';font-size:20px;color:var(--text)">${a.name.substring(0,3)}</div>`}
+              font-family:'Bebas Neue';font-size:16px;color:var(--text)">${a.name.substring(0,2)}</div>`}
           </div>
-          <div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.2;
-            text-align:center;max-width:90px">${a.name}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.1;
+            text-align:center;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</div>
         </div>
       </div>
     </div>
@@ -2367,13 +2356,15 @@ function openMatch(id){
 
     <!-- EVENTOS -->
     <div class="mdtc${(done||live)?' on':''}" id="mdt-ev-${id}">
-      ${events.length?events.map(ev=>`
-        <div class="evit">
-          <div class="evmin">${ev.minute}'</div>
-          <div class="evico">${ev.type==='goal'?'⚽':ev.type==='yellow'?'🟨':'🟥'}</div>
+      ${events.length?events.map(ev=>{
+        const eico={'goal':'⚽','yellow':'🟨','red':'🟥'}[ev.type]||'📍';
+        const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171'}[ev.type]||'#888';
+        return `<div class="evit" style="border-left:3px solid ${ecolor}">
+          <div class="evmin" style="color:${ecolor};font-weight:700;font-size:12px">${ev.minute}'</div>
+          <div class="evico" style="color:${ecolor};font-size:18px">${eico}</div>
           <div><div class="evnm">${ev.player}</div><div class="evtm">${ev.team==='home'?h.name:a.name}</div></div>
-        </div>
-      `).join(''):`<div class="empty" style="padding:24px 0"><div class="etic">📋</div><div class="etit">Sin eventos registrados</div></div>`}
+        </div>`;
+      }).join(''):`<div class="empty" style="padding:24px 0"><div class="etic">📋</div><div class="etit">Sin eventos registrados</div></div>`}
       ${D.user.isAdmin?`<div style="padding:8px 0 4px"><button class="abtn sec" style="font-size:12px;padding:10px" onclick="closeOv('md-ov');openLiveEdit('${id}')">⚙️ Editar partido</button></div>`:''}
     </div>
 
