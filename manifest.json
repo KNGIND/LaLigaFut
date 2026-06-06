@@ -1,15 +1,19 @@
 {
-  "name": "La Super Liga App 2026",
-  "short_name": "LSL 2026",
-  "description": "Resultados y posiciones en tiempo real",
+  "name": "La Liga SúperLiga",
+  "short_name": "LLF",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#1e1b4b",
+  "background_color": "#121212",
+  "theme_color": "#121212",
   "icons": [
     {
-      "src": "logoliga.png",
-      "sizes": "500x500",
+      "src": "assets/logos/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logos/logo-512.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
