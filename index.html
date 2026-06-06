@@ -3939,6 +3939,9 @@ function admTab(name,el){
   updateAdminCounts();
   if(name==='matches'){populateSels();prefillMatchDate();}
 }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
 </script>
 </body>
 </html>
