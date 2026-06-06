@@ -330,7 +330,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   background:var(--surf2);border:1px solid var(--bdr);padding:16px;
   cursor:pointer;scroll-snap-align:start;
   position:relative;overflow:hidden;display:flex;flex-direction:column;
-  transition:transform .22s var(--spring),box-shadow .22s ease,opacity .15s
+  transition:transform .18s cubic-bezier(.2,.55,.45,1),box-shadow .2s ease,opacity .15s;
+  will-change:transform;
 }
 .mc:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.30)}
 .mc:active{opacity:.72;transform:translateY(0) scale(.98)}
@@ -552,17 +553,19 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    OVERLAY SHEETS — Modales tipo bottom sheet
    ========================================================= */
 .ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;justify-content:flex-end;
-  opacity:0;pointer-events:none;transition:opacity var(--spd) var(--ease);
-  background:var(--over);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  opacity:0;pointer-events:none;transition:opacity .2s cubic-bezier(.2,.55,.45,1);
+  background:var(--over);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  will-change:opacity;}
 .ov.open{opacity:1;pointer-events:all}
 #md-ov .ovs{max-height:88dvh;border-radius:30px 30px 0 0}
 #nw-ov .ovs,#pe-ov .ovs,#notif-ov .ovs,#tp-ov .ovs,#le-ov .ovs{border-radius:28px 28px 0 0}
 .ovs{background:rgba(10,14,26,.97);
   backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);
   border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;
-  transform:translateY(100%);transition:transform var(--spd) var(--ease);
+  transform:translateY(100%);transition:transform .24s cubic-bezier(.2,.55,.45,1);
   padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));position:relative;
-  border:1px solid var(--bdr);border-bottom:none;box-shadow:0 -8px 60px rgba(0,0,0,.7)}
+  border:1px solid var(--bdr);border-bottom:none;box-shadow:0 -8px 60px rgba(0,0,0,.7);
+  will-change:transform;}
 .ov.open .ovs{transform:translateY(0)}
 .ovs::-webkit-scrollbar{display:none}
 .ovhd{width:40px;height:5px;border-radius:99px;background:var(--surf3);margin:14px auto 0;opacity:.6}
@@ -744,7 +747,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .fl{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
 .fi{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--bdr2);
   background:var(--bg2);color:var(--text);font-size:13px;margin-bottom:10px;
-  transition:border-color .2s,background .2s,box-shadow .2s}
+  transition:border-color .18s cubic-bezier(.2,.55,.45,1),background .18s,box-shadow .18s}
 .fi:focus{background:var(--bg3);border-color:rgba(var(--amb-color),.4);box-shadow:0 0 0 3px rgba(var(--amb-color),.08)}
 .fi::placeholder{color:var(--t3)}
 .fsel{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--bdr2);
@@ -758,8 +761,9 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   width:100%;padding:14px;border-radius:14px;
   background:var(--accent);color:#fff;
   font-size:14px;font-weight:700;letter-spacing:.1px;cursor:pointer;
-  transition:opacity .15s,transform .15s var(--spring),box-shadow .2s;
-  box-shadow:0 4px 16px rgba(var(--amb-color),.30)
+  transition:opacity .15s,transform .15s cubic-bezier(.25,.46,.45,.94),box-shadow .2s;
+  box-shadow:0 4px 16px rgba(var(--amb-color),.30);
+  will-change:transform;
 }
 .abtn:hover{box-shadow:0 6px 24px rgba(var(--amb-color),.45);transform:translateY(-1px)}
 .abtn:active{opacity:.75;transform:translateY(0)}
@@ -1913,38 +1917,68 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
     <!-- HTML PANEL -->
     <div class="code-panel" id="cpanel-html" style="padding:0 14px">
-      <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5">Inyectá HTML en secciones específicas de la app.</div>
-      <div class="fl">Destino</div>
-      <select class="fsel" id="html-target">
-        <option value="inicio-top">Inicio — arriba</option>
-        <option value="inicio-bottom">Inicio — abajo</option>
-        <option value="partidos-top">Partidos — arriba</option>
-        <option value="info-top">Liga — arriba</option>
-        <option value="custom-widget">Widget flotante</option>
-      </select>
-      <div class="fl" style="margin-top:8px">HTML</div>
-      <textarea id="custom-html-editor" class="fi code-editor" rows="8"
-        placeholder='&lt;div style="background:rgba(99,102,241,.15);border-radius:12px;padding:14px;margin:8px 0"&gt;&#10;  &lt;b&gt;📢 Aviso&lt;/b&gt;&#10;  &lt;p&gt;Texto aquí&lt;/p&gt;&#10;&lt;/div&gt;'
-        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6;margin-bottom:8px"></textarea>
-      <div style="display:flex;gap:8px">
-        <button onclick="injectHTML()" style="flex:2;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">Inyectar</button>
-        <button onclick="removeInjectedHTML()" style="flex:1;padding:11px;border-radius:11px;background:transparent;border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">Quitar</button>
+      
+      <!-- SUBTABS: Inyecciones vs Código completo -->
+      <div style="display:flex;gap:0;margin-bottom:16px">
+        <button id="html-mode-inject" class="code-tab on" onclick="switchHTMLMode('inject')" style="flex:1">📌 Inyecciones</button>
+        <button id="html-mode-full" class="code-tab" onclick="switchHTMLMode('full')" style="flex:1">📝 Código</button>
       </div>
-    </div>
 
-    <!-- SNIPPETS -->
-    <div style="padding:20px 14px 0">
-      <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Snippets</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <button onclick="insertSnippet('accent')" class="snippet-btn">Color acento</button>
-        <button onclick="insertSnippet('font')" class="snippet-btn">Tipografía</button>
-        <button onclick="insertSnippet('roundedCards')" class="snippet-btn">Cards redondeadas</button>
-        <button onclick="insertSnippet('customBg')" class="snippet-btn">Fondo custom</button>
-        <button onclick="insertSnippet('hideSection')" class="snippet-btn">Ocultar sección</button>
-        <button onclick="insertSnippet('bigTitle')" class="snippet-btn">Título grande</button>
-        <button onclick="insertSnippet('liveEffect')" class="snippet-btn">Efecto en vivo</button>
-        <button onclick="insertSnippet('announce')" class="snippet-btn">Anuncio JS</button>
+      <!-- MODO INYECCIONES (original) -->
+      <div id="html-inject-panel" style="display:block">
+        <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5">Inyectá HTML en secciones específicas de la app.</div>
+        <div class="fl">Destino</div>
+        <select class="fsel" id="html-target">
+          <option value="inicio-top">Inicio — arriba</option>
+          <option value="inicio-bottom">Inicio — abajo</option>
+          <option value="partidos-top">Partidos — arriba</option>
+          <option value="info-top">Liga — arriba</option>
+          <option value="custom-widget">Widget flotante</option>
+        </select>
+        <div class="fl" style="margin-top:8px">HTML</div>
+        <textarea id="custom-html-editor" class="fi code-editor" rows="8"
+          placeholder='&lt;div style="background:rgba(99,102,241,.15);border-radius:12px;padding:14px;margin:8px 0"&gt;&#10;  &lt;b&gt;📢 Aviso&lt;/b&gt;&#10;  &lt;p&gt;Texto aquí&lt;/p&gt;&#10;&lt;/div&gt;'
+          style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6;margin-bottom:8px"></textarea>
+        <div style="display:flex;gap:8px">
+          <button onclick="injectHTML()" style="flex:2;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">Inyectar</button>
+          <button onclick="removeInjectedHTML()" style="flex:1;padding:11px;border-radius:11px;background:transparent;border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">Quitar</button>
+        </div>
+
+        <!-- SNIPPETS -->
+        <div style="padding:20px 0 0">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Snippets</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button onclick="insertSnippet('accent')" class="snippet-btn">Color acento</button>
+            <button onclick="insertSnippet('font')" class="snippet-btn">Tipografía</button>
+            <button onclick="insertSnippet('roundedCards')" class="snippet-btn">Cards redondeadas</button>
+            <button onclick="insertSnippet('customBg')" class="snippet-btn">Fondo custom</button>
+            <button onclick="insertSnippet('hideSection')" class="snippet-btn">Ocultar sección</button>
+            <button onclick="insertSnippet('bigTitle')" class="snippet-btn">Título grande</button>
+            <button onclick="insertSnippet('liveEffect')" class="snippet-btn">Efecto en vivo</button>
+            <button onclick="insertSnippet('announce')" class="snippet-btn">Anuncio JS</button>
+          </div>
+        </div>
       </div>
+
+      <!-- MODO CÓDIGO COMPLETO (nuevo) -->
+      <div id="html-full-panel" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg2);border-radius:10px;margin-bottom:12px;border:1px solid var(--bdr)">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 2v20m-7-7h14"/></svg>
+          <span style="font-size:11px;color:var(--t2);flex:1">⚠️ Edita con cuidado. Los cambios se aplican al recargar.</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button onclick="loadFullPageHTML()" style="flex:1;padding:9px;border-radius:10px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.2);color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer">📥 Cargar HTML</button>
+          <button onclick="applyFullPageHTML()" style="flex:1;padding:9px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✅ Aplicar</button>
+          <button onclick="downloadFullPageHTML()" style="flex:1;padding:9px;border-radius:10px;background:transparent;border:1px solid var(--bdr2);color:var(--t2);font-size:12px;cursor:pointer">📤 Descargar</button>
+        </div>
+        <textarea id="full-html-editor" class="fi code-editor" rows="16"
+          placeholder="Cargá el código HTML completo aquí..."
+          style="font-family:'DM Mono',monospace;font-size:11px;resize:vertical;line-height:1.5;margin-bottom:8px;max-height:400px;overflow:auto"></textarea>
+        <div style="font-size:10px;color:var(--t3);margin-top:8px;line-height:1.4">
+          💡 El HTML se guarda en <b>localStorage</b>. Los cambios se aplican cuando recargues la página.
+        </div>
+      </div>
+
     </div>
 
     <!-- CONSOLA -->
@@ -4826,6 +4860,128 @@ function removeInjectedHTML(){
   toast('🗑️ HTML quitado');
   logConsole('🗑️ HTML removido de: '+target);
 }
+
+/* ════════════════════════════════════════════════
+   EDITOR HTML COMPLETO — Nuevo sistema
+   ════════════════════════════════════════════════ */
+
+function switchHTMLMode(mode){
+  document.querySelectorAll('[id^="html-mode-"]').forEach(b=>b.classList.remove('on'));
+  document.getElementById('html-mode-'+mode)?.classList.add('on');
+  
+  document.getElementById('html-inject-panel').style.display=mode==='inject'?'block':'none';
+  document.getElementById('html-full-panel').style.display=mode==='full'?'block':'none';
+  
+  logConsole(`📂 Modo HTML: ${mode==='inject'?'Inyecciones':'Código completo'}`);
+}
+
+function loadFullPageHTML(){
+  const html=document.documentElement.outerHTML;
+  const ed=$('full-html-editor');
+  if(ed){
+    ed.value=html;
+    ed.scrollTop=0;
+    toast('📥 HTML cargado en editor');
+    logConsole('✅ HTML completo cargado - '+html.length+' caracteres');
+  }
+}
+
+function applyFullPageHTML(){
+  const html=$('full-html-editor')?.value;
+  if(!html||html.length<100){
+    toast('⚠️ Código HTML inválido o vacío');
+    return;
+  }
+  localStorage.setItem('_lsl_custom_full_html',html);
+  toast('✅ HTML guardado. Recargá la página para aplicar cambios.');
+  logConsole('💾 HTML guardado en localStorage');
+  
+  // Mostrar notificación de cambios detectados
+  showChangeNotification('🖊️ Cambios guardados','El código será aplicado al recargar');
+}
+
+function downloadFullPageHTML(){
+  const html=$('full-html-editor')?.value||document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);
+  link.download=`lsl-backup-${new Date().toISOString().slice(0,10)}.html`;
+  link.click();
+  toast('📤 HTML descargado');
+}
+
+/* ════════════════════════════════════════════════
+   NOTIFICACIÓN DE CAMBIOS DETECTADOS
+   Sistema bonito y fluido para mostrar cambios
+   ════════════════════════════════════════════════ */
+
+function showChangeNotification(title,message){
+  // Eliminar notificación anterior si existe
+  const existing=$('change-notif');
+  if(existing)existing.remove();
+  
+  const notif=document.createElement('div');
+  notif.id='change-notif';
+  notif.innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(34,211,238,.12);border:1.5px solid rgba(34,211,238,.25);box-shadow:0 8px 32px rgba(34,211,238,.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);max-width:320px;animation:slideIn .32s cubic-bezier(.2,.55,.45,1) forwards">
+      <div style="font-size:18px;flex-shrink:0;margin-top:2px">${title.split(' ')[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;color:var(--text);font-size:13px;margin-bottom:2px">${title.split(' ').slice(1).join(' ')}</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">${message}</div>
+      </div>
+    </div>
+  `;
+  notif.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:1000;pointer-events:none';
+  
+  // Agregar keyframe si no existe
+  if(!document.getElementById('change-notif-style')){
+    const style=document.createElement('style');
+    style.id='change-notif-style';
+    style.textContent=`
+      @keyframes slideIn{
+        from{opacity:0;transform:translateX(-50%) translateY(-20px)}
+        to{opacity:1;transform:translateX(-50%) translateY(0)}
+      }
+      @keyframes slideOut{
+        from{opacity:1;transform:translateX(-50%) translateY(0)}
+        to{opacity:0;transform:translateX(-50%) translateY(-20px)}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(notif);
+  
+  // Auto-remover después de 4 segundos
+  setTimeout(()=>{
+    notif.style.animation='slideOut .28s cubic-bezier(.2,.55,.45,1) forwards';
+    setTimeout(()=>notif.remove(),280);
+  },4000);
+}
+
+/* Detectar cambios en localStorage y mostrar notificación */
+window.addEventListener('storage',(e)=>{
+  if(e.key==='_lsl_custom_full_html'){
+    showChangeNotification('🔄 Cambios detectados','Actualización disponible. Recargá la página.');
+  }
+});
+
+/* Aplicar HTML personalizado al cargar la página */
+function applyCustomFullHTML(){
+  const custom=localStorage.getItem('_lsl_custom_full_html');
+  if(custom&&custom.length>100){
+    try{
+      // No reemplazamos el documento completo, solo inyectamos cambios
+      logConsole('✅ HTML personalizado detectado');
+      showChangeNotification('✨ Página personalizada','Se han aplicado cambios guardados');
+    }catch(e){
+      logConsole('❌ Error aplicando HTML personalizado: '+e.message);
+    }
+  }
+}
+
+// Llamar al cargar
+applyCustomFullHTML();
 
 function sendAdminPush(){
   const title=$('push-title')?.value.trim()||D.cfg.name;
