@@ -72,28 +72,63 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    BARRA DE NAVEGACIÓN SUPERIOR (HEADER)
    Logo, nombre de la liga, íconos de acción.
    ========================================================= */
+/* =========================================================
+   BARRA DE NAVEGACIÓN SUPERIOR (HEADER) — v2
+   Tamaño expandido + shrink al hacer scroll.
+   CSS vars controladas por JS: --hdr-pad, --hdr-logo, --hdr-title
+   ========================================================= */
+:root{
+  --hdr-pad-top: calc(16px + env(safe-area-inset-top,0px));
+  --hdr-pad-bot: 14px;
+  --hdr-logo-sz: 48px;
+  --hdr-logo-r: 15px;
+  --hdr-title: 20px;
+  --hdr-blur: 32px;
+  --hdr-sat: 200%;
+  --hdr-opacity: 1;
+}
 #hdr{
   position:relative;z-index:100;flex-shrink:0;
-  padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;
-  background: var(--amb-tint-hdr), rgba(8,12,22,.80);
-  backdrop-filter:blur(28px) saturate(180%);
-  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  padding:var(--hdr-pad-top) 18px var(--hdr-pad-bot);
+  background: var(--amb-tint-hdr), rgba(8,12,22,.82);
+  backdrop-filter:blur(var(--hdr-blur)) saturate(var(--hdr-sat));
+  -webkit-backdrop-filter:blur(var(--hdr-blur)) saturate(var(--hdr-sat));
   border-bottom:1px solid rgba(255,255,255,.07);
-  box-shadow:0 1px 0 rgba(var(--amb-color),.08);
-  transition:background 1.4s ease, box-shadow 1.4s ease;
-  transform:translateZ(0)
+  box-shadow:0 1px 0 rgba(var(--amb-color),.08),0 4px 24px rgba(0,0,0,.18);
+  transition:
+    background 1.4s ease,
+    box-shadow 1.4s ease,
+    padding .28s cubic-bezier(.22,1,.36,1),
+    opacity .28s ease;
+  transform:translateZ(0);
+  opacity:var(--hdr-opacity);
 }
-.hrow{display:flex;align-items:center;gap:9px}
-.hl{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+/* Clase que añade JS cuando el header está contraído */
+#hdr.hdr-compact{
+  --hdr-pad-top: calc(8px + env(safe-area-inset-top,0px));
+  --hdr-pad-bot: 8px;
+  --hdr-logo-sz: 36px;
+  --hdr-logo-r: 10px;
+  --hdr-title: 16px;
+  --hdr-blur: 20px;
+  --hdr-sat: 160%;
+}
+.hrow{display:flex;align-items:center;gap:10px}
+.hl{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
 .hi{min-width:0;flex:1}
 
-/* Logo del header */
+/* Logo del header — tamaño variable */
 #hlogo{
-  width:40px;height:40px;border-radius:12px;
+  width:var(--hdr-logo-sz);height:var(--hdr-logo-sz);
+  border-radius:var(--hdr-logo-r);
   border:1.5px solid var(--bdr2);background:var(--surf);
   overflow:hidden;display:flex;align-items:center;justify-content:center;
   cursor:pointer;flex-shrink:0;
-  transition:transform .18s var(--spring), box-shadow .2s ease;
+  transition:width .28s cubic-bezier(.22,1,.36,1),
+             height .28s cubic-bezier(.22,1,.36,1),
+             border-radius .28s cubic-bezier(.22,1,.36,1),
+             transform .18s var(--spring),
+             box-shadow .2s ease;
   position:relative;user-select:none
 }
 #hlogo:hover{box-shadow:0 0 0 3px rgba(var(--amb-color),.20)}
@@ -106,8 +141,11 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   -webkit-mask-composite:destination-out;mask-composite:exclude;
   opacity:0;transition:opacity .2s}
 
-.hn{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.8px;
-  color:var(--text);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hn{font-family:"Bebas Neue",sans-serif;
+  font-size:var(--hdr-title);letter-spacing:.8px;
+  color:var(--text);line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:font-size .28s cubic-bezier(.22,1,.36,1)}
 .hsub{display:flex;align-items:center;gap:5px;margin-top:3px}
 .hse{font-size:10px;font-weight:600;color:var(--t2);letter-spacing:.6px;text-transform:uppercase}
 .spill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;
@@ -118,21 +156,24 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .sdot.live{background:var(--live);opacity:1;animation:sbl 1.1s ease infinite;box-shadow:0 0 5px var(--live)}
 
 /* Botones de acción en header */
-.hacts{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.hacts{display:flex;align-items:center;gap:7px;flex-shrink:0}
 .hbtn{
-  width:36px;height:36px;border-radius:10px;
+  width:40px;height:40px;border-radius:12px;
   border:1px solid var(--bdr2);background:var(--surf);color:var(--t2);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;position:relative;
-  transition:transform .15s var(--spring),background .2s,color .2s,box-shadow .2s;
+  transition:transform .15s var(--spring),background .2s,color .2s,box-shadow .2s,
+             width .28s cubic-bezier(.22,1,.36,1),height .28s cubic-bezier(.22,1,.36,1);
   box-shadow:0 1px 4px rgba(0,0,0,.12)
 }
+#hdr.hdr-compact .hbtn{width:34px;height:34px;border-radius:10px}
 .hbtn:hover{background:var(--surf2);color:var(--text);box-shadow:0 2px 10px rgba(var(--amb-color),.15)}
 .hbtn:active{transform:scale(.84);background:var(--surf2)}
-.hbtn svg{width:16px;height:16px}
+.hbtn svg{width:17px;height:17px;transition:width .28s,height .28s}
+#hdr.hdr-compact .hbtn svg{width:15px;height:15px}
 .hbtn.rnd{border-radius:50%;border-width:2px;overflow:hidden;background:var(--surf2)}
 .hbtn.rnd img{width:100%;height:100%;object-fit:cover}
-.avi{font-family:"Bebas Neue",sans-serif;font-size:14px;color:var(--text)}
+.avi{font-family:"Bebas Neue",sans-serif;font-size:15px;color:var(--text)}
 
 /* Badge de notificaciones */
 .nbadge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:99px;
@@ -142,13 +183,15 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 /* Botón hamburguesa */
 .mbtn{
-  width:36px;height:36px;border-radius:10px;
+  width:40px;height:40px;border-radius:12px;
   border:1px solid var(--bdr2);background:var(--surf);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
   cursor:pointer;padding:0;
-  transition:transform .15s var(--spring),background .2s,box-shadow .2s;
+  transition:transform .15s var(--spring),background .2s,box-shadow .2s,
+             width .28s cubic-bezier(.22,1,.36,1),height .28s cubic-bezier(.22,1,.36,1);
   box-shadow:0 1px 4px rgba(0,0,0,.12)
 }
+#hdr.hdr-compact .mbtn{width:34px;height:34px;border-radius:10px}
 .mbtn:hover{background:var(--surf2);box-shadow:0 2px 10px rgba(var(--amb-color),.15)}
 .mbtn:active{transform:scale(.84);background:var(--surf2)}
 .mbtn span{display:block;height:1.5px;border-radius:2px;background:var(--t2);transition:all .28s var(--ease)}
@@ -171,46 +214,85 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 @keyframes pgi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* =========================================================
-   BARRA DE NAVEGACIÓN INFERIOR (NAV ISLAND)
-   Vidrio con efecto ambient dinámico.
+   BARRA DE NAVEGACIÓN INFERIOR (NAV ISLAND) — v2
+   Pill activo + glow + animación de rebote al cambiar.
    ========================================================= */
 #nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:520px;z-index:200;
-  background: var(--amb-tint-nav), rgba(6,10,20,.94);
-  backdrop-filter:blur(32px) saturate(180%);
-  -webkit-backdrop-filter:blur(32px) saturate(180%);
-  border-top:1px solid rgba(var(--amb-color),.12);
-  padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));
-  display:flex;
+  background: var(--amb-tint-nav), rgba(6,10,20,.90);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border-top:1px solid rgba(var(--amb-color),.10);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+  display:flex;gap:4px;
   transition:background 1.4s ease, border-color 1.4s ease
 }
 
 /* Ítem de navegación */
 .ni{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  flex:1;padding:7px 4px 5px;cursor:pointer;
-  transition:opacity .15s ease, transform .2s var(--spring);
-  position:relative;border-radius:12px
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  flex:1;padding:6px 4px 5px;cursor:pointer;
+  transition:transform .22s var(--spring);
+  position:relative;border-radius:16px;
+  -webkit-tap-highlight-color:transparent;
 }
-.ni:active{opacity:.55;transform:scale(.88)}
-.ni.on{background:transparent}
-.ni.on::after{display:none}
-.nilbl{font-size:11px;font-weight:500;color:var(--t3);transition:color .15s;letter-spacing:0}
-.ni.on .nilbl{color:var(--accent2);font-weight:600}
-.ni.on::after{
-  content:"";display:block;position:absolute;
-  bottom:3px;left:50%;transform:translateX(-50%);
-  width:4px;height:4px;border-radius:50%;
-  background:var(--accent2);box-shadow:0 0 6px rgba(var(--amb-color),.8)
+.ni:active{transform:scale(.84)}
+
+/* Pill de fondo activo */
+.ni.on{background:rgba(var(--amb-color),.10)}
+
+/* Ícono container */
+.niico{
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t2);
+  transition:color .2s ease, transform .28s var(--spring), filter .2s ease;
+  border-radius:10px;
 }
-.niico{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
-  color:var(--t3);transition:color .15s, transform .2s var(--spring)}
-.niico svg{width:26px;height:26px}
+.niico svg{width:24px;height:24px;transition:all .2s ease}
 .niico .ico-fill{display:none}
 .niico .ico-stroke{display:block}
-.ni.on .niico{color:var(--accent2);filter:drop-shadow(0 0 8px rgba(var(--amb-color),.55));transform:translateY(-2px)}
+
+/* Estado activo del ícono */
+.ni.on .niico{
+  color:var(--accent2);
+  transform:translateY(-3px) scale(1.08);
+  filter:drop-shadow(0 0 10px rgba(var(--amb-color),.6));
+}
 .ni.on .niico .ico-fill{display:block;fill:var(--accent2)}
+.ni.on .niico svg{filter:none}
+
+/* Animación de rebote al activar */
+@keyframes niPop{
+  0%{transform:translateY(0) scale(1)}
+  40%{transform:translateY(-6px) scale(1.14)}
+  65%{transform:translateY(-1px) scale(.96)}
+  80%{transform:translateY(-3px) scale(1.04)}
+  100%{transform:translateY(-3px) scale(1.08)}
+}
+.ni.on .niico{animation:niPop .38s var(--spring) both}
+
+/* Label */
+.nilbl{
+  font-size:10px;font-weight:500;color:var(--t3);
+  transition:color .2s ease, font-weight .2s;letter-spacing:.1px;
+}
+.ni.on .nilbl{color:var(--accent2);font-weight:700}
+
+/* Barra indicadora bajo el ícono activo */
+.ni.on::after{
+  content:"";
+  position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+  width:20px;height:2.5px;border-radius:99px;
+  background:var(--accent2);
+  box-shadow:0 0 8px rgba(var(--amb-color),.8);
+  animation:niBar .32s var(--spring) both;
+}
+@keyframes niBar{
+  from{width:0;opacity:0}
+  to{width:20px;opacity:1}
+}
 
 /* =========================================================
    SECCIONES — Bloques de contenido con títulos
@@ -848,9 +930,15 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ========================================================= */
 .code-editor{background:var(--bg)!important;border:1px solid var(--bdr2)!important;color:var(--text)!important;border-radius:14px!important;padding:12px!important}
 .code-editor:focus{border-color:rgba(255,255,255,.3)!important;box-shadow:0 0 0 3px rgba(255,255,255,.06)!important}
-.snippet-btn{width:100%;padding:11px 14px;border-radius:12px;background:var(--surf2);border:1px solid var(--bdr);font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:background .15s,transform .12s var(--spring)}
-.snippet-btn:hover{background:var(--surf3)}
-.snippet-btn:active{transform:scale(.97);background:var(--surf3)}
+.snippet-btn{
+  width:100%;padding:11px 14px;border-radius:12px;
+  background:var(--bg2);border:1px solid var(--bdr);
+  font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;text-align:center;
+  transition:background .15s,color .15s,transform .12s var(--spring);
+  letter-spacing:.1px;
+}
+.snippet-btn:hover{background:var(--surf);color:var(--text);border-color:var(--bdr2)}
+.snippet-btn:active{transform:scale(.96);background:var(--surf2)}
 .fupbtn.uploading{opacity:.7;pointer-events:none}
 .fupbtn.uploading::after{content:'⏳';margin-left:8px}
 .fupbtn.has{border-color:var(--accent);color:var(--accent)}
@@ -992,11 +1080,15 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 /* =========================================================
    TABS DEL EDITOR DE CÓDIGO
    ========================================================= */
-.code-tab{flex-shrink:0;padding:7px 14px;border-radius:8px;
-  border:1px solid rgba(var(--amb-color),.15);background:transparent;
-  font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;
-  transition:all .15s ease;white-space:nowrap}
-.code-tab.on{background:rgba(var(--amb-color),.16);color:var(--accent2);border-color:rgba(var(--amb-color),.4)}
+.code-tab{
+  flex-shrink:0;padding:8px 0;border-radius:9px;
+  border:none;background:transparent;
+  font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;
+  transition:all .18s ease;white-space:nowrap;
+  letter-spacing:.1px;
+}
+.code-tab.on{background:var(--surf3);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.code-tab:hover:not(.on){color:var(--text);background:rgba(255,255,255,.04)}
 .code-panel{display:none}
 .code-panel.on{display:block}
 
@@ -1413,103 +1505,127 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   </div>
   <!-- CODE EDITOR — mejorado -->
   <div class="apane" id="adm-codeeditor">
-    <div class="adm-section-header adm-sec-code" style="margin:0 0 0">
-      <div class="adm-sec-ico">💻</div>
-      <div class="adm-sec-lbl">EDITOR DE CÓDIGO</div>
-    </div>
 
-    <div style="padding:0 14px 12px;font-size:12px;color:var(--t2);line-height:1.6">
-      Modificá CSS, JS, y variables de diseño en tiempo real sin editar el archivo HTML.
-    </div>
-
-    <!-- Pestañas del editor -->
-    <div style="display:flex;gap:6px;padding:0 14px 12px;overflow-x:auto">
-      <button class="code-tab on" id="ctab-css" onclick="switchCodeTab('css')">🎨 CSS</button>
-      <button class="code-tab" id="ctab-js" onclick="switchCodeTab('js')">⚡ JavaScript</button>
-      <button class="code-tab" id="ctab-vars" onclick="switchCodeTab('vars')">🎛️ Variables</button>
-      <button class="code-tab" id="ctab-html" onclick="switchCodeTab('html')">🏗️ HTML/Body</button>
-    </div>
-
-    <!-- CSS Panel -->
-    <div class="aform code-panel on" id="cpanel-css">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:11px;color:var(--t2)">Aplicado automáticamente al guardar</span>
+    <!-- HEADER DEL EDITOR -->
+    <div style="padding:0 14px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.6px;color:var(--text)">Editor de Código</div>
         <div style="display:flex;gap:6px">
-          <button onclick="applyCustomCode()" style="padding:5px 12px;border-radius:8px;background:var(--accent);border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer">▶ Aplicar</button>
-          <button onclick="clearCustomCSS()" style="padding:5px 10px;border-radius:8px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">Limpiar</button>
+          <button onclick="saveCustomCode()" style="display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.2px">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar
+          </button>
+          <button onclick="exportCustomCode()" style="padding:7px 12px;border-radius:10px;background:transparent;border:1px solid var(--bdr2);color:var(--t2);font-size:12px;cursor:pointer">Exportar</button>
         </div>
       </div>
-      <textarea id="custom-css-editor" class="fi code-editor" rows="10"
-        placeholder="/* Ejemplos: */&#10;:root { --accent: #ff6b6b; }&#10;.mc { border-radius: 24px; }&#10;#nav { border-top: 2px solid var(--accent); }&#10;.sect::before { background: #ff6b6b; }"
-        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6"></textarea>
+      <div style="font-size:12px;color:var(--t3);line-height:1.5">CSS y JS se guardan en el dispositivo y se aplican automáticamente.</div>
     </div>
 
-    <!-- JS Panel -->
-    <div class="aform code-panel" id="cpanel-js">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:11px;color:var(--t2)">Tiene acceso a D, toast(), go(), save()</span>
-        <div style="display:flex;gap:6px">
-          <button onclick="runCustomJS()" style="padding:5px 12px;border-radius:8px;background:var(--accent);border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer">▶ Ejecutar</button>
-          <button onclick="clearCustomJS()" style="padding:5px 10px;border-radius:8px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">Limpiar</button>
-        </div>
+    <!-- TABS MINIMALISTAS -->
+    <div style="display:flex;gap:0;padding:0 14px 16px">
+      <div style="display:flex;background:var(--bg2);border-radius:12px;padding:3px;gap:2px;overflow-x:auto;scrollbar-width:none;width:100%">
+        <button class="code-tab on" id="ctab-css" onclick="switchCodeTab('css')" style="flex:1;min-width:60px">CSS</button>
+        <button class="code-tab" id="ctab-js" onclick="switchCodeTab('js')" style="flex:1;min-width:60px">JS</button>
+        <button class="code-tab" id="ctab-vars" onclick="switchCodeTab('vars')" style="flex:1;min-width:60px">Vars</button>
+        <button class="code-tab" id="ctab-html" onclick="switchCodeTab('html')" style="flex:1;min-width:60px">HTML</button>
       </div>
-      <textarea id="custom-js-editor" class="fi code-editor" rows="10"
-        placeholder="// Variables disponibles: D (datos), toast(), go(), save()&#10;// Ejemplos:&#10;toast('¡Hola desde el editor!');&#10;// D.cfg.name = 'Mi Liga';&#10;// go('partidos');&#10;// document.querySelector('.sect').style.color = 'red';"
-        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6"></textarea>
     </div>
 
-    <!-- CSS Variables Panel -->
-    <div class="aform code-panel" id="cpanel-vars">
-      <div style="font-size:11px;color:var(--t2);margin-bottom:12px">Editá las variables de diseño globales. Se aplican instantáneamente.</div>
+    <!-- CSS PANEL -->
+    <div class="code-panel on" id="cpanel-css" style="padding:0 14px">
+
+      <!-- Status del CSS guardado -->
+      <div id="css-status-bar" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg2);border-radius:10px;margin-bottom:10px;border:1px solid var(--bdr)">
+        <div id="css-status-dot" style="width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background .3s"></div>
+        <span id="css-status-txt" style="font-size:11px;color:var(--t2);flex:1">Sin CSS guardado</span>
+        <button onclick="removeAppliedCSS()" id="css-remove-btn" style="display:none;padding:3px 10px;border-radius:7px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.25);color:#f87171;font-size:10px;font-weight:700;cursor:pointer">Remover</button>
+      </div>
+
+      <!-- Toolbar acciones CSS -->
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button onclick="applyCustomCode()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:10px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.2);color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer;transition:background .2s">
+          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Vista previa
+        </button>
+        <button onclick="clearCustomCSS()" style="display:flex;align-items:center;justify-content:center;gap:4px;padding:9px 14px;border-radius:10px;background:transparent;border:1px solid var(--bdr);color:var(--t2);font-size:12px;cursor:pointer">
+          <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></polyline></svg>
+          Limpiar editor
+        </button>
+      </div>
+
+      <textarea id="custom-css-editor" class="fi code-editor" rows="12"
+        placeholder="/* Tu CSS personalizado */&#10;&#10;/* Ejemplo — tarjetas redondeadas: */&#10;.mc { border-radius: 32px !important; }&#10;.mr {&#10;  border-radius: 20px !important;&#10;  background: var(--surf2) !important;&#10;  margin: 8px 14px !important;&#10;}"
+        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;margin-bottom:0"></textarea>
+    </div>
+
+    <!-- JS PANEL -->
+    <div class="code-panel" id="cpanel-js" style="padding:0 14px">
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button onclick="runCustomJS()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:10px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.2);color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer">
+          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Ejecutar
+        </button>
+        <button onclick="clearCustomJS()" style="display:flex;align-items:center;justify-content:center;gap:4px;padding:9px 14px;border-radius:10px;background:transparent;border:1px solid var(--bdr);color:var(--t2);font-size:12px;cursor:pointer">
+          <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></polyline></svg>
+          Limpiar
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:8px;padding:8px 10px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)">Acceso a: <code style="color:var(--accent2);font-size:11px">D</code>, <code style="color:var(--accent2);font-size:11px">toast()</code>, <code style="color:var(--accent2);font-size:11px">go()</code>, <code style="color:var(--accent2);font-size:11px">save()</code></div>
+      <textarea id="custom-js-editor" class="fi code-editor" rows="12"
+        placeholder="// Ejemplos:&#10;toast('¡Hola!');&#10;go('partidos');&#10;document.querySelector('.sect').style.color='red';"
+        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;margin-bottom:0"></textarea>
+    </div>
+
+    <!-- CSS VARIABLES PANEL -->
+    <div class="code-panel" id="cpanel-vars" style="padding:0 14px">
+      <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5">Variables globales de diseño. Los cambios se aplican al instante.</div>
       <div id="vars-editor-list"></div>
-      <button onclick="applyVarsEditor()" style="margin-top:10px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">▶ Aplicar variables</button>
+      <button onclick="applyVarsEditor()" style="margin-top:12px;width:100%;padding:12px;border-radius:12px;background:var(--accent);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.2px">Aplicar variables</button>
     </div>
 
-    <!-- HTML/Body Panel -->
-    <div class="aform code-panel" id="cpanel-html">
-      <div style="font-size:11px;color:var(--t2);margin-bottom:10px">
-        Inyectá HTML en secciones específicas. Ideal para agregar widgets, banners, o contenido extra.
-      </div>
+    <!-- HTML PANEL -->
+    <div class="code-panel" id="cpanel-html" style="padding:0 14px">
+      <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5">Inyectá HTML en secciones específicas de la app.</div>
       <div class="fl">Destino</div>
       <select class="fsel" id="html-target">
-        <option value="inicio-top">Inicio — arriba de todo</option>
-        <option value="inicio-bottom">Inicio — abajo del todo</option>
+        <option value="inicio-top">Inicio — arriba</option>
+        <option value="inicio-bottom">Inicio — abajo</option>
         <option value="partidos-top">Partidos — arriba</option>
         <option value="info-top">Liga — arriba</option>
-        <option value="custom-widget">Widget flotante (esquina)</option>
+        <option value="custom-widget">Widget flotante</option>
       </select>
-      <div class="fl" style="margin-top:8px">Código HTML</div>
+      <div class="fl" style="margin-top:8px">HTML</div>
       <textarea id="custom-html-editor" class="fi code-editor" rows="8"
-        placeholder='&lt;div style="background:rgba(99,102,241,.15);border-radius:12px;padding:14px;margin:8px 0"&gt;&#10;  &lt;b&gt;📢 Aviso&lt;/b&gt;&#10;  &lt;p&gt;Próximo partido el sábado 21hs&lt;/p&gt;&#10;&lt;/div&gt;'
-        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6"></textarea>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button onclick="injectHTML()" style="flex:2;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">▶ Inyectar</button>
-        <button onclick="removeInjectedHTML()" style="flex:1;padding:10px;border-radius:10px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">Quitar</button>
+        placeholder='&lt;div style="background:rgba(99,102,241,.15);border-radius:12px;padding:14px;margin:8px 0"&gt;&#10;  &lt;b&gt;📢 Aviso&lt;/b&gt;&#10;  &lt;p&gt;Texto aquí&lt;/p&gt;&#10;&lt;/div&gt;'
+        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.6;margin-bottom:8px"></textarea>
+      <div style="display:flex;gap:8px">
+        <button onclick="injectHTML()" style="flex:2;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">Inyectar</button>
+        <button onclick="removeInjectedHTML()" style="flex:1;padding:11px;border-radius:11px;background:transparent;border:1px solid var(--bdr2);color:var(--t2);font-size:11px;cursor:pointer">Quitar</button>
       </div>
     </div>
 
-    <!-- Guardar / Exportar -->
-    <div style="padding:0 14px;display:flex;gap:8px;margin-bottom:12px">
-      <button class="abtn" style="flex:2" onclick="saveCustomCode()">💾 Guardar todo</button>
-      <button class="abtn sec" style="flex:1;font-size:11px" onclick="exportCustomCode()">Exportar</button>
+    <!-- SNIPPETS -->
+    <div style="padding:20px 14px 0">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Snippets</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button onclick="insertSnippet('accent')" class="snippet-btn">Color acento</button>
+        <button onclick="insertSnippet('font')" class="snippet-btn">Tipografía</button>
+        <button onclick="insertSnippet('roundedCards')" class="snippet-btn">Cards redondeadas</button>
+        <button onclick="insertSnippet('customBg')" class="snippet-btn">Fondo custom</button>
+        <button onclick="insertSnippet('hideSection')" class="snippet-btn">Ocultar sección</button>
+        <button onclick="insertSnippet('bigTitle')" class="snippet-btn">Título grande</button>
+        <button onclick="insertSnippet('liveEffect')" class="snippet-btn">Efecto en vivo</button>
+        <button onclick="insertSnippet('announce')" class="snippet-btn">Anuncio JS</button>
+      </div>
     </div>
 
-    <!-- Snippets -->
-    <div class="atit" style="margin-top:0">📦 Snippets rápidos</div>
-    <div style="padding:0 14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:7px">
-      <button onclick="insertSnippet('accent')" class="snippet-btn">🎨 Color acento</button>
-      <button onclick="insertSnippet('font')" class="snippet-btn">🔤 Tipografía</button>
-      <button onclick="insertSnippet('roundedCards')" class="snippet-btn">⬜ Cards redondeadas</button>
-      <button onclick="insertSnippet('customBg')" class="snippet-btn">🌈 Fondo custom</button>
-      <button onclick="insertSnippet('announce')" class="snippet-btn">📢 Anuncio</button>
-      <button onclick="insertSnippet('hideSection')" class="snippet-btn">👁️ Ocultar sección</button>
-      <button onclick="insertSnippet('bigTitle')" class="snippet-btn">🔠 Título grande</button>
-      <button onclick="insertSnippet('liveEffect')" class="snippet-btn">🔴 Efecto en vivo</button>
+    <!-- CONSOLA -->
+    <div style="padding:20px 14px 24px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Consola</div>
+      <div id="code-console" style="background:#040710;border:1px solid rgba(var(--amb-color),.12);border-radius:12px;padding:12px;font-family:'DM Mono',monospace;font-size:11px;color:#4ade80;min-height:90px;max-height:180px;overflow-y:auto;white-space:pre-wrap;line-height:1.7"></div>
+      <button onclick="document.getElementById('code-console').textContent=''" style="margin-top:6px;padding:5px 12px;border-radius:7px;background:transparent;border:1px solid var(--bdr);color:var(--t3);font-size:10px;cursor:pointer">Limpiar consola</button>
     </div>
 
-    <!-- Consola -->
-    <div class="atit" style="margin-top:0">🖥️ Consola</div>
-    <div id="code-console" style="margin:0 14px 16px;background:#050810;border:1px solid rgba(var(--amb-color),.15);border-radius:12px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;color:#4ade80;min-height:80px;max-height:160px;overflow-y:auto;white-space:pre-wrap;line-height:1.7"></div>
   </div>
 </div><!-- /scroll -->
 
@@ -3346,10 +3462,29 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 /* ---- AMBIENT SCROLL LISTENER ---- */
 document.addEventListener('DOMContentLoaded',()=>{
   init();
+  initHeaderShrink();
   // Ambient: solo al cargar, no en cada scroll
   setTimeout(updateAmbient, 600);
   loadCustomCode();
 });
+
+/* ---- HEADER SCROLL SHRINK ---- */
+function initHeaderShrink(){
+  const scr=document.getElementById('scroll');
+  const hdr=document.getElementById('hdr');
+  if(!scr||!hdr)return;
+  let ticking=false;
+  scr.addEventListener('scroll',function(){
+    if(!ticking){
+      requestAnimationFrame(function(){
+        const y=scr.scrollTop;
+        hdr.classList.toggle('hdr-compact', y>52);
+        ticking=false;
+      });
+      ticking=true;
+    }
+  },{passive:true});
+}
 
 
 /* ============================================================
@@ -3569,6 +3704,23 @@ function loadCustomCode(){
   if(jsEd)jsEd.value=js;
   // Auto-apply saved CSS on load
   if(css)injectCSS(css);
+  updateCSSStatusBar(css);
+}
+
+function updateCSSStatusBar(css){
+  const dot=$('css-status-dot');
+  const txt=$('css-status-txt');
+  const btn=$('css-remove-btn');
+  if(!dot)return;
+  if(css&&css.trim()!==''){
+    dot.style.background='#4ade80';
+    txt.textContent=`CSS activo · ${css.split('\n').length} líneas`;
+    if(btn)btn.style.display='block';
+  }else{
+    dot.style.background='var(--t3)';
+    txt.textContent='Sin CSS guardado';
+    if(btn)btn.style.display='none';
+  }
 }
 
 function injectCSS(css){
@@ -3627,15 +3779,33 @@ function saveCustomCode(){
   localStorage.setItem('lsl_custom_css',css);
   localStorage.setItem('lsl_custom_js',js);
   applyCustomCode();
+  updateCSSStatusBar(css);
   toast('💾 Código guardado');
   logConsole('💾 Código guardado en localStorage');
 }
 
 function clearCustomCSS(){
+  // "Limpiar" solo borra el textarea, NO toca el CSS aplicado ni localStorage
+  // Para remover el CSS aplicado se debe borrar el texto y luego guardar
+  const el=$('custom-css-editor');
+  if(!el)return;
+  if(el.value.trim()===''){
+    toast('ℹ️ El editor ya está vacío');
+    return;
+  }
+  if(!confirm('¿Limpiar el editor? El CSS guardado seguirá aplicado hasta que guardes el cambio.')){return;}
+  el.value='';
+  logConsole('✏️ Editor CSS limpiado. El CSS aplicado sigue activo. Guardá vacío para removerlo.');
+  toast('✏️ Editor limpiado (CSS activo intacto)');
+}
+
+function removeAppliedCSS(){
+  // Remueve el CSS aplicado Y lo borra de localStorage
   const el=$('custom-css-editor');if(el)el.value='';
   injectCSS('');
   localStorage.removeItem('lsl_custom_css');
-  toast('🗑️ CSS limpiado');
+  logConsole('🗑️ CSS removido completamente');
+  toast('🗑️ CSS removido');
 }
 
 function clearCustomJS(){
