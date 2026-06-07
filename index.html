@@ -214,85 +214,77 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 @keyframes pgi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* =========================================================
-   BARRA DE NAVEGACIÓN INFERIOR (NAV ISLAND) — v2
-   Pill activo + glow + animación de rebote al cambiar.
+   BARRA DE NAVEGACIÓN INFERIOR — v3 Floating Island
+   Íconos grandes con pill activo y glow. Inspirado en HyperOS/iOS.
    ========================================================= */
 #nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:520px;z-index:200;
-  background: var(--amb-tint-nav), rgba(6,10,20,.90);
-  backdrop-filter:blur(28px) saturate(160%);
-  -webkit-backdrop-filter:blur(28px) saturate(160%);
-  border-top:1px solid rgba(var(--amb-color),.10);
-  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
-  display:flex;gap:4px;
+  background: var(--amb-tint-nav), rgba(6,10,20,.92);
+  backdrop-filter:blur(32px) saturate(180%);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);
+  border-top:1px solid rgba(var(--amb-color),.12);
+  padding:4px 6px calc(4px + env(safe-area-inset-bottom,0px));
+  display:flex;gap:2px;
+  box-shadow:0 -1px 0 rgba(var(--amb-color),.08), 0 -8px 32px rgba(0,0,0,.3);
   transition:background 1.4s ease, border-color 1.4s ease
 }
 
 /* Ítem de navegación */
 .ni{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  flex:1;padding:6px 4px 5px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  flex:1;padding:5px 2px 4px;cursor:pointer;
   transition:transform .22s var(--spring);
-  position:relative;border-radius:16px;
+  position:relative;border-radius:18px;
   -webkit-tap-highlight-color:transparent;
 }
-.ni:active{transform:scale(.84)}
+.ni:active{transform:scale(.82)}
 
 /* Pill de fondo activo */
 .ni.on{background:rgba(var(--amb-color),.10)}
 
-/* Ícono container */
+/* Ícono container — ahora con pill redondeado visible */
 .niico{
-  width:32px;height:32px;
+  width:44px;height:28px;
   display:flex;align-items:center;justify-content:center;
   color:var(--t2);
   transition:color .2s ease, transform .28s var(--spring), filter .2s ease;
-  border-radius:10px;
+  border-radius:14px;
+  position:relative;
 }
-.niico svg{width:24px;height:24px;transition:all .2s ease}
+.niico svg{width:22px;height:22px;transition:all .2s ease}
 .niico .ico-fill{display:none}
 .niico .ico-stroke{display:block}
 
-/* Estado activo del ícono */
+/* Pill de fondo del ícono cuando está activo */
 .ni.on .niico{
+  background:rgba(var(--amb-color),.18);
   color:var(--accent2);
-  transform:translateY(-3px) scale(1.08);
-  filter:drop-shadow(0 0 10px rgba(var(--amb-color),.6));
+  transform:translateY(-1px);
+  filter:drop-shadow(0 2px 8px rgba(var(--amb-color),.45));
 }
 .ni.on .niico .ico-fill{display:block;fill:var(--accent2)}
 .ni.on .niico svg{filter:none}
 
 /* Animación de rebote al activar */
 @keyframes niPop{
-  0%{transform:translateY(0) scale(1)}
-  40%{transform:translateY(-6px) scale(1.14)}
-  65%{transform:translateY(-1px) scale(.96)}
-  80%{transform:translateY(-3px) scale(1.04)}
-  100%{transform:translateY(-3px) scale(1.08)}
+  0%{transform:scale(1)}
+  35%{transform:scale(1.18) translateY(-2px)}
+  60%{transform:scale(.95) translateY(0)}
+  80%{transform:scale(1.04) translateY(-1px)}
+  100%{transform:scale(1) translateY(-1px)}
 }
-.ni.on .niico{animation:niPop .38s var(--spring) both}
+.ni.on .niico{animation:niPop .36s var(--spring) both}
 
 /* Label */
 .nilbl{
-  font-size:10px;font-weight:500;color:var(--t3);
+  font-size:9.5px;font-weight:500;color:var(--t3);
   transition:color .2s ease, font-weight .2s;letter-spacing:.1px;
 }
 .ni.on .nilbl{color:var(--accent2);font-weight:700}
 
-/* Barra indicadora bajo el ícono activo */
-.ni.on::after{
-  content:"";
-  position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
-  width:20px;height:2.5px;border-radius:99px;
-  background:var(--accent2);
-  box-shadow:0 0 8px rgba(var(--amb-color),.8);
-  animation:niBar .32s var(--spring) both;
-}
-@keyframes niBar{
-  from{width:0;opacity:0}
-  to{width:20px;opacity:1}
-}
+/* Sin la línea inferior — el pill es suficiente */
+.ni.on::after{display:none}
 
 /* =========================================================
    SECCIONES — Bloques de contenido con títulos
@@ -1467,6 +1459,241 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .accent-dot:hover{transform:scale(1.1)}
 .accent-dot:active{transform:scale(.88)}
 .accent-dot.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+
+/* =========================================================
+   DYNAMIC ISLAND — Música estilo HyperOS / iPhone
+   ========================================================= */
+#dyn-island{
+  position:fixed;top:calc(6px + env(safe-area-inset-top,0px));
+  left:50%;transform:translateX(-50%);
+  z-index:9500;
+  background:#000;border-radius:40px;
+  display:flex;align-items:center;
+  overflow:hidden;
+  cursor:pointer;
+  transition:
+    width .45s cubic-bezier(.34,1.1,.64,1),
+    height .45s cubic-bezier(.34,1.1,.64,1),
+    border-radius .45s cubic-bezier(.34,1.1,.64,1),
+    padding .35s ease;
+  box-shadow:0 4px 24px rgba(0,0,0,.6),0 0 0 1.5px rgba(255,255,255,.08);
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+/* Estado colapsado */
+#dyn-island.di-collapsed{
+  width:120px;height:32px;padding:0 10px;gap:6px;
+}
+/* Estado expandido */
+#dyn-island.di-expanded{
+  width:calc(100% - 28px);max-width:360px;
+  height:88px;padding:10px 14px;
+  border-radius:28px;
+  flex-direction:row;gap:10px;align-items:center;
+}
+/* ── Elementos colapsados ── */
+#di-mini-art{
+  width:20px;height:20px;border-radius:6px;
+  overflow:hidden;flex-shrink:0;
+  transition:all .4s cubic-bezier(.34,1.1,.64,1);
+}
+#di-mini-art img{width:100%;height:100%;object-fit:cover}
+#di-mini-waves{
+  display:flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0;
+}
+.di-wave{width:2.5px;border-radius:99px;background:var(--live);
+  animation:diWave 1s ease-in-out infinite;transform-origin:bottom}
+.di-wave:nth-child(1){animation-delay:0s}
+.di-wave:nth-child(2){animation-delay:.15s}
+.di-wave:nth-child(3){animation-delay:.3s}
+.di-wave:nth-child(4){animation-delay:.1s}
+@keyframes diWave{
+  0%,100%{height:3px;opacity:.5}
+  50%{height:14px;opacity:1}
+}
+#di-mini-title{
+  font-size:10px;font-weight:600;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  flex:1;min-width:0;
+  transition:opacity .2s;
+}
+/* ── Elementos expandidos ── */
+#di-exp{
+  display:none;flex:1;min-width:0;
+  flex-direction:row;gap:12px;align-items:center;
+}
+#dyn-island.di-expanded #di-exp{display:flex}
+#dyn-island.di-expanded #di-mini-title,
+#dyn-island.di-expanded #di-mini-waves,
+#dyn-island.di-expanded #di-mini-art{opacity:0;pointer-events:none}
+#di-art{
+  width:64px;height:64px;border-radius:14px;
+  overflow:hidden;flex-shrink:0;
+  box-shadow:0 2px 12px rgba(0,0,0,.5);
+  transition:all .4s cubic-bezier(.34,1.1,.64,1);
+}
+#di-art img{width:100%;height:100%;object-fit:cover}
+#di-info{flex:1;min-width:0}
+#di-song{font-size:13px;font-weight:700;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+#di-artist{font-size:11px;font-weight:500;color:rgba(255,255,255,.6);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}
+#di-controls{display:flex;align-items:center;gap:6px}
+.di-btn{
+  width:28px;height:28px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .15s,transform .15s var(--spring);
+  color:#fff;flex-shrink:0;
+}
+.di-btn:hover{background:rgba(255,255,255,.2)}
+.di-btn:active{transform:scale(.84);background:rgba(255,255,255,.25)}
+.di-btn svg{width:13px;height:13px}
+.di-btn.play{width:32px;height:32px;background:rgba(255,255,255,.18)}
+.di-btn.play svg{width:15px;height:15px}
+#di-vol{
+  display:flex;align-items:center;gap:6px;margin-top:6px;
+}
+#di-vol-bar{
+  flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.2);
+  position:relative;cursor:pointer;
+}
+#di-vol-fill{height:100%;border-radius:99px;background:#fff;
+  transition:width .1s ease;pointer-events:none}
+.di-vol-ico{width:10px;height:10px;color:rgba(255,255,255,.5);flex-shrink:0}
+
+/* ── Estilos del color palette picker en settings ── */
+.color-palette-grid{display:flex;gap:6px;flex-wrap:wrap}
+.color-palette-item{
+  width:36px;height:36px;border-radius:10px;cursor:pointer;
+  transition:transform .15s var(--spring),box-shadow .15s;
+  border:2px solid transparent;flex-shrink:0;
+}
+.color-palette-item:hover{transform:scale(1.12)}
+.color-palette-item.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+
+/* =========================================================
+   PAGE SECTION HEADERS — Para partidos, liga, perfil, admin
+   ========================================================= */
+.page-hdr{
+  padding:calc(14px + env(safe-area-inset-top,0px)) 18px 12px;
+  position:sticky;top:0;z-index:50;
+  background:var(--amb-tint-hdr), rgba(8,12,22,.88);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid rgba(var(--amb-color),.08);
+  transition:background 1.4s ease;
+}
+.page-hdr-title{
+  font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.8px;
+  color:var(--text);line-height:1;display:flex;align-items:center;gap:8px;
+}
+.page-hdr-title::before{
+  content:"";width:4px;height:22px;border-radius:99px;
+  background:var(--accent);display:inline-block;flex-shrink:0;
+  box-shadow:0 0 10px rgba(var(--amb-color),.5);
+}
+.page-hdr-sub{font-size:11px;font-weight:500;color:var(--t2);margin-top:3px;letter-spacing:.2px}
+
+/* =========================================================
+   EDIT UI PANEL — Ajustes de diseño
+   ========================================================= */
+#edit-ui-panel{
+  position:fixed;inset:0;z-index:700;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
+  max-width:520px;left:50%;transform:translateX(-50%);
+}
+#edit-ui-panel.open{opacity:1;pointer-events:all}
+#edit-ui-box{
+  width:100%;background:rgba(10,14,26,.98);
+  border-radius:24px 24px 0 0;
+  border:1px solid rgba(255,255,255,.10);border-bottom:none;
+  padding:8px 0 calc(24px + env(safe-area-inset-bottom,0px));
+  transform:translateY(60px);transition:transform .28s cubic-bezier(.22,1,.36,1);
+  max-height:85dvh;overflow-y:auto;
+}
+#edit-ui-panel.open #edit-ui-box{transform:translateY(0)}
+.eui-drag{width:36px;height:4px;border-radius:99px;background:rgba(255,255,255,.15);margin:12px auto 16px}
+.eui-title{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.5px;
+  color:var(--text);padding:0 18px 16px;border-bottom:1px solid var(--bdr)}
+.eui-section{padding:14px 18px 0}
+.eui-sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.eui-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--bdr);gap:12px}
+.eui-row:last-child{border-bottom:none}
+.eui-row-lbl{font-size:13px;font-weight:600;color:var(--text)}
+.eui-row-sub{font-size:10px;color:var(--t2);margin-top:1px}
+.eui-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.eui-slider{width:100px;-webkit-appearance:none;appearance:none;
+  height:4px;border-radius:99px;background:var(--surf2);outline:none;cursor:pointer}
+.eui-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 6px rgba(var(--amb-color),.5)}
+.eui-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--t2);min-width:28px;text-align:right}
+.eui-close{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;border-radius:50%;background:var(--surf2);
+  border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--t2);
+}
+
+/* =========================================================
+   REGLAS — Ordenadas con numeración
+   ========================================================= */
+.rules-list{list-style:none;padding:0;margin:0}
+.rules-list li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--bdr);font-size:13px;color:var(--t2);line-height:1.6;
+}
+.rules-list li:last-child{border-bottom:none}
+.rules-num{
+  font-family:"Bebas Neue",sans-serif;font-size:16px;color:var(--accent);
+  flex-shrink:0;min-width:22px;line-height:1.4;
+}
+
+/* =========================================================
+   COLOR THEME GRID — Gradientes oscuros como HyperOS
+   ========================================================= */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.theme-item{
+  height:60px;border-radius:14px;cursor:pointer;position:relative;overflow:hidden;
+  border:2px solid transparent;transition:transform .18s var(--spring),border-color .18s;
+}
+.theme-item:hover{transform:scale(1.04)}
+.theme-item:active{transform:scale(.94)}
+.theme-item.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.theme-item-check{
+  position:absolute;bottom:5px;right:5px;width:18px;height:18px;
+  border-radius:50%;background:rgba(255,255,255,.9);
+  display:none;align-items:center;justify-content:center;font-size:10px;
+}
+.theme-item.active .theme-item-check{display:flex}
+
+/* =========================================================
+   CODE SEARCH (buscador en panel código)
+   ========================================================= */
+.code-search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;
+  padding:7px 10px;margin-bottom:10px;transition:border-color .18s,box-shadow .18s;
+}
+.code-search-bar:focus-within{border-color:rgba(var(--amb-color),.4);box-shadow:0 0 0 3px rgba(var(--amb-color),.08)}
+.code-search-bar input{flex:1;border:none;background:transparent;color:var(--text);font-size:12px;font-family:'DM Mono',monospace}
+.code-search-bar input::placeholder{color:var(--t3)}
+.code-search-bar svg{width:13px;height:13px;color:var(--t3);flex-shrink:0}
+.code-search-nav{display:flex;align-items:center;gap:4px}
+.code-search-nav button{
+  width:24px;height:24px;border-radius:6px;background:var(--surf);border:1px solid var(--bdr2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);
+  transition:background .15s}
+.code-search-nav button:hover{background:var(--surf2);color:var(--text)}
+.code-search-nav button svg{width:12px;height:12px}
+.code-search-count{font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;min-width:36px;text-align:center}
+mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-radius:2px}
 </style>
 </head>
 <body>
@@ -1522,6 +1749,49 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   <button class="edit-mode-btn" onclick="saveEditMode()">Guardar</button>
 </div>
 
+<!-- DYNAMIC ISLAND — Música -->
+<div id="dyn-island" class="di-collapsed" onclick="diToggle()">
+  <!-- Mini view (colapsado) -->
+  <div id="di-mini-art">
+    <img id="di-mini-img" src="https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg" alt=""/>
+  </div>
+  <div id="di-mini-waves">
+    <div class="di-wave" style="height:5px"></div>
+    <div class="di-wave" style="height:10px"></div>
+    <div class="di-wave" style="height:7px"></div>
+    <div class="di-wave" style="height:12px"></div>
+  </div>
+  <div id="di-mini-title">BABY HELLO</div>
+  <!-- Expanded view -->
+  <div id="di-exp">
+    <div id="di-art"><img id="di-art-img" src="https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg" alt=""/></div>
+    <div style="flex:1;min-width:0">
+      <div id="di-info">
+        <div id="di-song">BABY HELLO</div>
+        <div id="di-artist">Rauw Alejandro y Bizarrap</div>
+        <div id="di-controls">
+          <button class="di-btn" onclick="diPrev(event)" title="Anterior">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          </button>
+          <button class="di-btn play" id="di-playbtn" onclick="diPlayPause(event)" title="Play/Pausa">
+            <svg id="di-play-ico" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14l11-7z" style="display:none"/><path id="di-pause-path" d="M6 19h4V5H6v14zm8-14v14l11-7z" style="display:none"/><path id="di-play-path" d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="di-btn" onclick="diNext(event)" title="Siguiente">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="di-vol" style="display:flex;align-items:center;gap:6px;margin-top:4px">
+        <svg class="di-vol-ico" fill="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;color:rgba(255,255,255,.4)"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+        <div id="di-vol-bar" onclick="diSetVol(event)" style="flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.18);position:relative;cursor:pointer">
+          <div id="di-vol-fill" style="width:70%;height:100%;border-radius:99px;background:#fff"></div>
+        </div>
+        <svg class="di-vol-ico" fill="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;color:rgba(255,255,255,.4)"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="scroll">
 
 <!-- INICIO -->
@@ -1539,6 +1809,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 <!-- PARTIDOS -->
 <div class="page" id="pg-partidos">
+  <div class="page-hdr">
+    <div class="page-hdr-title">Partidos</div>
+    <div class="page-hdr-sub" id="ph-partidos-sub">Todos los encuentros</div>
+  </div>
   <div class="chips">
     <div class="chip on" onclick="flt('todos',this)">Todos</div>
     <div class="chip" onclick="flt('proximo',this)">Próximos</div>
@@ -1550,13 +1824,23 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 <!-- INFO -->
 <div class="page" id="pg-info">
+  <div class="page-hdr">
+    <div class="page-hdr-title">Liga</div>
+    <div class="page-hdr-sub" id="ph-liga-sub">Tabla, reglamento y noticias</div>
+  </div>
   <div style="padding:16px 0 0">
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Tabla de posiciones</div></div>
-    <div style="padding:0 14px 14px"><div class="stw"><table class="stt"><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>GD</th><th>Pts</th></tr></thead><tbody id="ftbody"><tr><td colspan="7"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr></tbody></table></div></div>
+    <div style="padding:0 14px 14px;overflow-x:auto">
+      <div class="stw" style="min-width:340px">
+        <table class="stt"><thead><tr>
+          <th>#</th><th>Equipo</th><th title="Partidos Jugados">PJ</th><th title="Ganados">PG</th><th title="Empates">PE</th><th title="Perdidos">PP</th><th title="Goles a Favor">GF</th><th title="Goles en Contra">GC</th><th title="Diferencia de Goles">DG</th><th title="Puntos">Pts</th>
+        </tr></thead><tbody id="ftbody"><tr><td colspan="10"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr></tbody></table>
+      </div>
+    </div>
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Sanciones / Lesiones</div></div>
     <div style="padding:0 14px 14px"><div class="ibox" id="sanc-box"><div class="empty"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sancionados</div></div></div></div>
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Reglamento</div></div>
-    <div style="padding:0 14px 14px"><div class="ibox"><div class="ibxt" id="rules-txt">El reglamento será publicado pronto.</div></div></div>
+    <div style="padding:0 14px 14px"><div class="ibox"><ol class="rules-list" id="rules-list"><li style="color:var(--t2);font-size:13px">El reglamento será publicado pronto.</li></ol></div></div>
     <div class="sechd" style="padding:0 14px 12px"><div class="sect">Noticias</div></div>
     <div style="padding:0 14px 24px" id="all-n"><div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div></div>
   </div>
@@ -1564,6 +1848,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 <!-- PERFIL -->
 <div class="page" id="pg-perfil">
+  <div class="page-hdr">
+    <div class="page-hdr-title">Perfil</div>
+    <div class="page-hdr-sub">Tu cuenta y estadísticas</div>
+  </div>
   <div class="pban" onclick="triggerBanner()"><img id="pban-img" src="" alt="" style="display:none"/><div class="pbanph" id="pbanph"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Agregar banner</span></div><div class="pbanedit">Cambiar</div></div>
   <div class="phdr">
     <div class="pavw"><div class="pav" id="pav"><img id="pav-img" src="" style="display:none"/><span id="pav-init">J</span></div><div class="paved" onclick="triggerAvatar()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div></div>
@@ -1580,7 +1868,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   <div style="padding:18px 14px 10px;display:flex;align-items:center;justify-content:space-between">
     <div class="sect">Panel Admin</div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button onclick="toggleEditMode()" style="padding:4px 12px;border-radius:8px;background:var(--surf2);border:1px solid var(--bdr2);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);cursor:pointer" id="edit-mode-toggle">✏️ Editar UI</button>
+      <button onclick="openEditUI()" style="padding:4px 12px;border-radius:8px;background:var(--surf2);border:1px solid var(--bdr2);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);cursor:pointer" id="edit-mode-toggle">✏️ Editar UI</button>
       <span style="background:var(--surf2);border:1px solid var(--bdr2);border-radius:6px;padding:2px 8px;font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2)">Admin</span>
     </div>
   </div>
@@ -1966,6 +2254,17 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M12 2v20m-7-7h14"/></svg>
           <span style="font-size:11px;color:var(--t2);flex:1">⚠️ Edita con cuidado. Los cambios se aplican al recargar.</span>
         </div>
+        <!-- BUSCADOR DE CÓDIGO -->
+        <div class="code-search-bar">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="code-search-input" placeholder="Buscar en el código..." oninput="codeSearch(this.value)" onkeydown="if(event.key==='Enter'){codeSearchNav(1)}if(event.key==='Escape'){clearCodeSearch()}"/>
+          <span class="code-search-count" id="code-search-count"></span>
+          <div class="code-search-nav">
+            <button onclick="codeSearchNav(-1)" title="Anterior"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg></button>
+            <button onclick="codeSearchNav(1)" title="Siguiente"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <button onclick="clearCodeSearch()" title="Cerrar" style="opacity:.6">✕</button>
+          </div>
+        </div>
         <div style="display:flex;gap:6px;margin-bottom:12px">
           <button onclick="loadFullPageHTML()" style="flex:1;padding:9px;border-radius:10px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.2);color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer">📥 Cargar HTML</button>
           <button onclick="applyFullPageHTML()" style="flex:1;padding:9px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✅ Aplicar</button>
@@ -2055,6 +2354,94 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 </nav>
 </div><!-- /app -->
 
+<!-- EDIT UI PANEL — Ajustes de diseño avanzados -->
+<div id="edit-ui-panel" onclick="if(event.target===this)closeEditUI()">
+  <div id="edit-ui-box">
+    <div class="eui-drag"></div>
+    <div class="eui-title">✏️ Editar UI</div>
+
+    <!-- HEADER -->
+    <div class="eui-section">
+      <div class="eui-sec-title">Header</div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Tamaño del logo</div><div class="eui-row-sub">Ícono en la barra superior</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="32" max="68" value="48" id="eui-logo-size" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-logo-size-val">48px</span>
+        </div>
+      </div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Tamaño del título</div><div class="eui-row-sub">Nombre de la liga en header</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="14" max="30" value="20" id="eui-title-size" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-title-size-val">20px</span>
+        </div>
+      </div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Header transparente al scroll</div><div class="eui-row-sub">Se hace más pequeño al bajar</div></div>
+        <div class="eui-ctrl">
+          <div class="tgl on" id="eui-tgl-hdr-shrink" onclick="euiToggle('hdrShrink',this)"><div class="tglk"></div></div>
+        </div>
+      </div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Blur del header</div><div class="eui-row-sub">Intensidad del efecto vidrio</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="0" max="60" value="32" id="eui-hdr-blur" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-hdr-blur-val">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="eui-section">
+      <div class="eui-sec-title">Tarjetas</div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Redondeado de tarjetas</div><div class="eui-row-sub">Partidos y secciones</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="8" max="40" value="20" id="eui-card-radius" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-card-radius-val">20px</span>
+        </div>
+      </div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Ancho de bordes</div><div class="eui-row-sub">Líneas de las cards</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="0" max="3" step=".5" value="1" id="eui-border-width" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-border-width-val">1px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUENTES -->
+    <div class="eui-section">
+      <div class="eui-sec-title">Tipografía</div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Tamaño de texto base</div><div class="eui-row-sub">Cuerpo general de la app</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="11" max="17" value="13" id="eui-font-size" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-font-size-val">13px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <div class="eui-section">
+      <div class="eui-sec-title">Navegación inferior</div>
+      <div class="eui-row">
+        <div><div class="eui-row-lbl">Blur de la nav</div><div class="eui-row-sub">Intensidad del efecto vidrio</div></div>
+        <div class="eui-ctrl">
+          <input type="range" class="eui-slider" min="0" max="60" value="32" id="eui-nav-blur" oninput="euiApply()"/>
+          <span class="eui-val" id="eui-nav-blur-val">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:16px 18px 8px;display:flex;gap:8px">
+      <button class="abtn sec" onclick="euiReset()" style="flex:1;padding:12px;font-size:12px">Resetear</button>
+      <button class="abtn" onclick="euiSave()" style="flex:2;padding:12px;font-size:12px">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS OVERLAY -->
 <div class="ov" id="cfg-ov" onclick="ovClick(event,'cfg-ov')">
   <div class="ovs" style="max-height:92dvh">
@@ -2097,6 +2484,38 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
           <div class="accent-dot" style="background:#facc15" onclick="setAccent('#facc15','250,204,21')" title="Amarillo"></div>
           <div class="accent-dot" style="background:#e879f9" onclick="setAccent('#e879f9','232,121,249')" title="Violeta"></div>
           <div class="accent-dot" style="background:#f87171" onclick="setAccent('#f87171','248,113,113')" title="Rojo"></div>
+        </div>
+      </div>
+
+      <!-- TEMAS DE COLOR (Gradientes oscuros — HyperOS style) -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Tema de color</div>
+      <div class="theme-grid">
+        <div class="theme-item active" id="theme-default" onclick="applyColorTheme('default',this)" style="background:linear-gradient(135deg,#0d1117 0%,#1a1f35 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-purple" onclick="applyColorTheme('purple',this)" style="background:linear-gradient(135deg,#1a0533 0%,#2d1052 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-teal" onclick="applyColorTheme('teal',this)" style="background:linear-gradient(135deg,#001a1a 0%,#023535 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-blue" onclick="applyColorTheme('blue',this)" style="background:linear-gradient(135deg,#021433 0%,#052a6e 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-darkblue" onclick="applyColorTheme('darkblue',this)" style="background:linear-gradient(135deg,#0a0e1a 0%,#1e2b4a 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-charcoal" onclick="applyColorTheme('charcoal',this)" style="background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-green" onclick="applyColorTheme('green',this)" style="background:linear-gradient(135deg,#001a0a 0%,#01330f 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-brown" onclick="applyColorTheme('brown',this)" style="background:linear-gradient(135deg,#1a0a00 0%,#3d1a00 100%)">
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-lilac" onclick="applyColorTheme('lilac',this)" style="background:linear-gradient(135deg,#1a1033 0%,#2a2052 100%)">
+          <div class="theme-item-check">✓</div>
         </div>
       </div>
 
@@ -2811,7 +3230,7 @@ function renderAll(){
 function renderPage(p){
   if(p==='inicio'){renderFeatN()}
   if(p==='partidos'){renderMList()}
-  if(p==='info'){renderAllN();renderStandings();renderSanc()}
+  if(p==='info'){renderAllN();renderStandings();renderSanc();renderRules()}
   if(p==='admin'){renderAdmLists()}
 }
 
@@ -3675,14 +4094,14 @@ function openNews(id){
 
 /* ---- STANDINGS ---- */
 function calcStandings(){
-  D.teams.forEach(t=>{t.pj=0;t.pg=0;t.pp=0;t.pe=t.pe||0;t.gf=0;t.gc=0;t.pts=0});
+  D.teams.forEach(t=>{t.pj=0;t.pg=0;t.pp=0;t.pe=0;t.gf=0;t.gc=0;t.pts=0});
   D.matches.filter(m=>m.status==='finalizado').forEach(m=>{
     const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return;
     const hs=m.homeScore??0,as=m.awayScore??0;
     h.pj++;a.pj++;h.gf+=hs;h.gc+=as;a.gf+=as;a.gc+=hs;
     if(hs>as){h.pg++;h.pts+=3;a.pp++}
     else if(hs<as){a.pg++;a.pts+=3;h.pp++}
-    else{h.pe=(h.pe||0)+1;a.pe=(a.pe||0)+1;h.pts++;a.pts++}
+    else{h.pe++;a.pe++;h.pts++;a.pts++}
   });
 }
 function sortedTeams(){
@@ -3696,8 +4115,20 @@ function sortedTeams(){
 function renderStandings(){
   const tb=$('ftbody');if(!tb)return;
   const ts=sortedTeams();
-  if(!ts.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr>';return}
-  tb.innerHTML=ts.map((t,i)=>`<tr><td>${i+1}</td><td><div class="sttr"><div class="stcr">${crEl(t.logo,t.name.substring(0,3))}</div><span>${t.name}</span></div></td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.gf-t.gc}</td><td>${t.pts+(t.adj||0)}</td></tr>`).join('');
+  if(!ts.length){tb.innerHTML='<tr><td colspan="10"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr>';return}
+  tb.innerHTML=ts.map((t,i)=>{
+    const pts=t.pts+(t.adj||0);
+    const dg=t.gf-t.gc;
+    const dgTxt=dg>0?`+${dg}`:dg===0?'0':dg;
+    return`<tr>
+      <td>${i+1}</td>
+      <td><div class="sttr"><div class="stcr">${crEl(t.logo,t.name.substring(0,3))}</div><span>${t.name}</span></div></td>
+      <td>${t.pj}</td><td>${t.pg}</td><td>${t.pe||0}</td><td>${t.pp}</td>
+      <td>${t.gf}</td><td>${t.gc}</td>
+      <td style="color:${dg>0?'var(--live)':dg<0?'var(--danger)':'var(--t2)'}">${dgTxt}</td>
+      <td>${pts}</td>
+    </tr>`;
+  }).join('');
 }
 function renderMiniTbl(){
   const c=$('mini-tbl');if(!c)return;
@@ -3870,10 +4301,22 @@ function saveConfig(){
   const newPass=$('cfg-pass').value;if(newPass&&newPass.length>=4)D.cfg.adminPass=newPass;
   if(pending.pendingCfgLogo)D.cfg.logo=pending.pendingCfgLogo;
   pending.pendingCfgLogo=null;save();
-  updateHdr();$('rules-txt').textContent=D.cfg.rules||'El reglamento será publicado pronto.';
+  updateHdr();renderRules();
   resetFup('cfg-logo-btn','cfg-logo-txt','Cambiar logo');
   if($('cfg-pass'))$('cfg-pass').value='';
   toast('✅ Config guardada');broadcastUpdate();adminSync();
+}
+function renderRules(){
+  const el=$('rules-list');if(!el)return;
+  const txt=D.cfg.rules||'';
+  if(!txt.trim()){el.innerHTML='<li style="color:var(--t2);font-size:13px;list-style:none">El reglamento será publicado pronto.</li>';return}
+  // Split by newlines, filter empty, number them
+  const lines=txt.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  el.innerHTML=lines.map((line,i)=>{
+    // Remove leading number if already there (1., 1-, etc.)
+    const clean=line.replace(/^[\d]+[\.\-\)]\s*/,'');
+    return`<li><span class="rules-num">${i+1}</span><span>${clean}</span></li>`;
+  }).join('');
 }
 function resetApp(){if(!confirm('¿Esto borrará TODOS los datos?'))return;localStorage.removeItem(STORE);location.reload()}
 function exportJSON(){const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`lsl-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('✅ Exportado')}
@@ -5006,6 +5449,285 @@ function admTab(name,el){
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
   }
+
+/* ════════════════════════════════════════════════
+   DYNAMIC ISLAND — Música
+   ════════════════════════════════════════════════ */
+let _diExpanded=false;
+let _diPlaying=true;
+let _diVol=0.70;
+let _diAudio=null;
+let _diTrackInfo={
+  title:'BABY HELLO',
+  artist:'Rauw Alejandro y Bizarrap',
+  art:'https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg',
+  src:'https://music.youtube.com/watch?v=lFQdcPTTzSg'
+};
+
+function diInit(){
+  const di=$('dyn-island');if(!di)return;
+  // Floating on top
+  di.style.display='flex';
+  // Keep hidden until first interaction on mobile for performance
+  setTimeout(()=>{
+    di.style.opacity='1';
+    di.style.pointerEvents='all';
+  },1200);
+}
+
+function diToggle(){
+  _diExpanded=!_diExpanded;
+  const di=$('dyn-island');
+  if(_diExpanded){
+    di.classList.remove('di-collapsed');
+    di.classList.add('di-expanded');
+  }else{
+    di.classList.remove('di-expanded');
+    di.classList.add('di-collapsed');
+  }
+}
+
+function diPlayPause(e){
+  if(e){e.stopPropagation();}
+  _diPlaying=!_diPlaying;
+  // Toggle play/pause icon
+  const path=$('di-play-path');
+  if(path){
+    if(_diPlaying){
+      // Show pause icon
+      path.setAttribute('d','M6 19h4V5H6v14zm8-14v14h2V5h-2z');
+    }else{
+      // Show play icon
+      path.setAttribute('d','M8 5v14l11-7z');
+    }
+  }
+  // Animate waves
+  document.querySelectorAll('.di-wave').forEach(w=>{
+    w.style.animationPlayState=_diPlaying?'running':'paused';
+  });
+  toast(_diPlaying?'▶️ Reproduciendo':'⏸️ Pausado');
+}
+
+function diPrev(e){
+  e.stopPropagation();
+  toast('⏮️ Canción anterior');
+}
+function diNext(e){
+  e.stopPropagation();
+  toast('⏭️ Siguiente canción');
+}
+function diSetVol(e){
+  const bar=$('di-vol-bar');if(!bar)return;
+  const rect=bar.getBoundingClientRect();
+  const x=Math.max(0,Math.min(e.clientX-rect.left,rect.width));
+  _diVol=x/rect.width;
+  $('di-vol-fill').style.width=(_diVol*100)+'%';
+}
+
+/* ════════════════════════════════════════════════
+   EDIT UI PANEL — Controles de diseño
+   ════════════════════════════════════════════════ */
+let _euiSettings={
+  logoSize:48,titleSize:20,hdrBlur:32,cardRadius:20,
+  borderWidth:1,fontSize:13,navBlur:32,hdrShrink:true
+};
+
+function openEditUI(){
+  $('edit-ui-panel').classList.add('open');
+  euiLoadSettings();
+}
+function closeEditUI(){
+  $('edit-ui-panel').classList.remove('open');
+}
+function euiLoadSettings(){
+  const s=D.euiSettings||_euiSettings;
+  Object.assign(_euiSettings,s);
+  const set=(id,val)=>{const el=$(id);if(el){el.value=val;const v=$(id+'-val');if(v)v.textContent=val+'px';}};
+  set('eui-logo-size',_euiSettings.logoSize);
+  set('eui-title-size',_euiSettings.titleSize);
+  set('eui-hdr-blur',_euiSettings.hdrBlur);
+  set('eui-card-radius',_euiSettings.cardRadius);
+  set('eui-border-width',_euiSettings.borderWidth);
+  set('eui-font-size',_euiSettings.fontSize);
+  set('eui-nav-blur',_euiSettings.navBlur);
+  const hdrTgl=$('eui-tgl-hdr-shrink');
+  if(hdrTgl)hdrTgl.classList.toggle('on',_euiSettings.hdrShrink!==false);
+}
+function euiApply(){
+  // Read all sliders
+  const r=(id)=>{const el=$(id);return el?parseFloat(el.value):null};
+  const logoSz=r('eui-logo-size'),titleSz=r('eui-title-size'),hdrBlur=r('eui-hdr-blur');
+  const cardR=r('eui-card-radius'),bw=r('eui-border-width'),fs=r('eui-font-size'),navBlur=r('eui-nav-blur');
+  // Update value labels
+  const setLbl=(id,val,unit='px')=>{const el=$(id+'-val');if(el)el.textContent=val+unit;};
+  setLbl('eui-logo-size',logoSz);setLbl('eui-title-size',titleSz);setLbl('eui-hdr-blur',hdrBlur);
+  setLbl('eui-card-radius',cardR);setLbl('eui-border-width',bw);setLbl('eui-font-size',fs);setLbl('eui-nav-blur',navBlur);
+  // Apply to CSS vars
+  const root=document.documentElement;
+  root.style.setProperty('--hdr-logo-sz',logoSz+'px');
+  root.style.setProperty('--hdr-title',titleSz+'px');
+  root.style.setProperty('--hdr-blur',hdrBlur+'px');
+  root.style.setProperty('--hdr-sat','200%');
+  const nav=$('nav');if(nav&&navBlur!==null)nav.style.backdropFilter=`blur(${navBlur}px) saturate(180%)`;
+  // Card radius via injected CSS
+  const css=`
+    .mc{border-radius:${cardR}px!important}
+    .mr{border-radius:${Math.min(cardR,14)}px!important}
+    .aform{border-radius:${cardR}px!important}
+    .ibox{border-radius:${cardR}px!important}
+    .stw{border-radius:${cardR}px!important}
+    body{font-size:${fs}px!important}
+    .stt td{font-size:${Math.max(10,fs-2)}px!important}
+    .stt th{font-size:${Math.max(8,fs-4)}px!important}
+  `;
+  injectCSS(':root{}'+css);
+}
+function euiToggle(key,tglEl){
+  tglEl.classList.toggle('on');
+  _euiSettings[key]=tglEl.classList.contains('on');
+  if(key==='hdrShrink'){
+    // Toggle header compact on scroll behavior
+    D.euiSettings=D.euiSettings||{};
+    D.euiSettings.hdrShrink=_euiSettings.hdrShrink;
+  }
+}
+function euiSave(){
+  _euiSettings.logoSize=parseFloat($('eui-logo-size')?.value||48);
+  _euiSettings.titleSize=parseFloat($('eui-title-size')?.value||20);
+  _euiSettings.hdrBlur=parseFloat($('eui-hdr-blur')?.value||32);
+  _euiSettings.cardRadius=parseFloat($('eui-card-radius')?.value||20);
+  _euiSettings.borderWidth=parseFloat($('eui-border-width')?.value||1);
+  _euiSettings.fontSize=parseFloat($('eui-font-size')?.value||13);
+  _euiSettings.navBlur=parseFloat($('eui-nav-blur')?.value||32);
+  D.euiSettings=Object.assign({},_euiSettings);
+  save();euiApply();closeEditUI();
+  toast('✅ UI guardada');
+}
+function euiReset(){
+  _euiSettings={logoSize:48,titleSize:20,hdrBlur:32,cardRadius:20,borderWidth:1,fontSize:13,navBlur:32,hdrShrink:true};
+  D.euiSettings=null;save();euiLoadSettings();euiApply();
+  toast('🔄 UI reseteada');
+}
+function loadEuiSettings(){
+  if(!D.euiSettings)return;
+  Object.assign(_euiSettings,D.euiSettings);
+  euiApply();
+}
+
+/* ════════════════════════════════════════════════
+   COLOR THEMES — Gradientes oscuros estilo HyperOS
+   ════════════════════════════════════════════════ */
+const COLOR_THEMES={
+  default:{bg:'#080c14',bg2:'#0e1220',bg3:'#141828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.14) 0%,transparent 70%),#080c14',accent:'#818cf8',accentRgb:'129,140,248'},
+  purple:{bg:'#0d0118',bg2:'#180328',bg3:'#200535',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(139,92,246,.20) 0%,transparent 70%),#0d0118',accent:'#a78bfa',accentRgb:'167,139,250'},
+  teal:{bg:'#001212',bg2:'#001e1e',bg3:'#002828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(20,184,166,.18) 0%,transparent 70%),#001212',accent:'#2dd4bf',accentRgb:'45,212,191'},
+  blue:{bg:'#020c20',bg2:'#061428',bg3:'#0a1c36',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(59,130,246,.20) 0%,transparent 70%),#020c20',accent:'#60a5fa',accentRgb:'96,165,250'},
+  darkblue:{bg:'#06090f',bg2:'#0d1322',bg3:'#141c30',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(30,58,138,.22) 0%,transparent 70%),#06090f',accent:'#818cf8',accentRgb:'129,140,248'},
+  charcoal:{bg:'#111111',bg2:'#1a1a1a',bg3:'#222222',grad:'linear-gradient(#111111,#1a1a1a)',accent:'#e2e8f0',accentRgb:'226,232,240'},
+  green:{bg:'#010f05',bg2:'#011a0a',bg3:'#022210',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(22,163,74,.18) 0%,transparent 70%),#010f05',accent:'#4ade80',accentRgb:'74,222,128'},
+  brown:{bg:'#120800',bg2:'#1e0f00',bg3:'#291500',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(180,83,9,.18) 0%,transparent 70%),#120800',accent:'#fb923c',accentRgb:'251,146,60'},
+  lilac:{bg:'#100a22',bg2:'#1a1230',bg3:'#22183e',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(192,132,252,.18) 0%,transparent 70%),#100a22',accent:'#e879f9',accentRgb:'232,121,249'},
+};
+function applyColorTheme(name,el){
+  const t=COLOR_THEMES[name];if(!t)return;
+  const root=document.documentElement;
+  root.style.setProperty('--bg',t.bg);
+  root.style.setProperty('--bg2',t.bg2);
+  root.style.setProperty('--bg3',t.bg3);
+  root.style.setProperty('--accent',t.accent);
+  root.style.setProperty('--amb-color',t.accentRgb);
+  root.style.setProperty('--amb-tint-hdr',`rgba(${t.accentRgb},.10)`);
+  root.style.setProperty('--amb-tint-nav',`rgba(${t.accentRgb},.06)`);
+  document.body.style.background=t.bg;
+  document.body.style.backgroundImage=t.grad;
+  // Mark active
+  document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active'));
+  if(el)el.classList.add('active');
+  // Save
+  if(!D.settings)D.settings={};
+  D.settings.colorTheme=name;
+  D.settings.accentHex=t.accent;
+  D.settings.accentRgb=t.accentRgb;
+  save();
+  toast('🎨 Tema aplicado');
+}
+function loadColorTheme(){
+  const name=D.settings?.colorTheme;
+  if(!name||name==='default')return;
+  const el=document.getElementById('theme-'+name);
+  applyColorTheme(name,el);
+}
+
+/* ════════════════════════════════════════════════
+   CODE SEARCH — Buscador en editor
+   ════════════════════════════════════════════════ */
+let _codeSearchMatches=[];
+let _codeSearchIdx=0;
+function codeSearch(q){
+  const ed=$('full-html-editor');
+  const cnt=$('code-search-count');
+  if(!q||q.length<2){if(cnt)cnt.textContent='';return}
+  const text=ed?ed.value:'';
+  const regex=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+  const matches=[...text.matchAll(regex)];
+  _codeSearchMatches=matches;
+  _codeSearchIdx=0;
+  if(cnt)cnt.textContent=matches.length>0?`1/${matches.length}`:'0';
+  if(matches.length>0)codeScrollToMatch(0);
+}
+function codeSearchNav(dir){
+  if(!_codeSearchMatches.length)return;
+  _codeSearchIdx=(_codeSearchIdx+dir+_codeSearchMatches.length)%_codeSearchMatches.length;
+  codeScrollToMatch(_codeSearchIdx);
+  const cnt=$('code-search-count');
+  if(cnt)cnt.textContent=`${_codeSearchIdx+1}/${_codeSearchMatches.length}`;
+}
+function codeScrollToMatch(idx){
+  const ed=$('full-html-editor');if(!ed||!_codeSearchMatches[idx])return;
+  const m=_codeSearchMatches[idx];
+  ed.focus();
+  ed.setSelectionRange(m.index,m.index+m[0].length);
+  // Scroll textarea to show selection
+  const lines=ed.value.substring(0,m.index).split('\n').length;
+  const lineH=parseInt(getComputedStyle(ed).lineHeight)||18;
+  ed.scrollTop=Math.max(0,(lines-3)*lineH);
+}
+function clearCodeSearch(){
+  $('code-search-input').value='';
+  _codeSearchMatches=[];
+  const cnt=$('code-search-count');
+  if(cnt)cnt.textContent='';
+}
+
+/* ════════════════════════════════════════════════
+   PERFORMANCE — Optimizaciones para móviles lentos
+   ════════════════════════════════════════════════ */
+function applyPerformanceMode(){
+  // Detect slow device: use navigator.hardwareConcurrency or memory
+  const slow=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||
+              (navigator.deviceMemory&&navigator.deviceMemory<=2);
+  if(slow||D.settings?.perf==='eco'){
+    const root=document.documentElement;
+    // Reduce animation complexity
+    root.style.setProperty('--spd','.12s');
+    root.style.setProperty('--slow','.22s');
+    // Disable ambient blobs
+    document.querySelectorAll('.amb').forEach(el=>el.style.display='none');
+    // Simpler backdrop on nav/header
+    $('nav')&&($('nav').style.backdropFilter='blur(12px)');
+    $('hdr')&&($('hdr').style.backdropFilter='blur(12px)');
+    console.log('⚡ Modo rendimiento activado');
+  }
+}
+
+/* init additions */
+(function(){
+  diInit();
+  setTimeout(loadEuiSettings,300);
+  setTimeout(loadColorTheme,200);
+  setTimeout(applyPerformanceMode,500);
+  setTimeout(renderRules,800);
+})();
 </script>
 </body>
 </html>
