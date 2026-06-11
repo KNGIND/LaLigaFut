@@ -73,42 +73,35 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    Sin shrink. Solo visible en INICIO. Resto = section-hdr.
    ========================================================= */
 :root{
-  --hdr-pad-top: calc(18px + env(safe-area-inset-top,0px));
-  --hdr-pad-bot: 16px;
-  --hdr-logo-sz: 54px;
+  --hdr-pad-top: calc(26px + env(safe-area-inset-top,0px));
+  --hdr-pad-bot: 22px;
+  --hdr-logo-sz: 60px;
   --hdr-logo-r: 16px;
-  --hdr-title: 22px;
-  --hdr-blur: 36px;
-  --hdr-sat: 200%;
+  --hdr-title: 24px;
+  --hdr-blur: 0px;
+  --hdr-sat: 160%;
   --hdr-opacity: 1;
 }
 #hdr{
-  position:relative;z-index:100;flex-shrink:0;
-  padding:var(--hdr-pad-top) 18px var(--hdr-pad-bot);
-  background: var(--amb-tint-hdr), rgba(8,12,22,.80);
-  backdrop-filter:blur(var(--hdr-blur)) saturate(var(--hdr-sat));
-  -webkit-backdrop-filter:blur(var(--hdr-blur)) saturate(var(--hdr-sat));
-  border-bottom:1px solid rgba(255,255,255,.06);
-  box-shadow:0 1px 0 rgba(var(--amb-color),.10),0 6px 32px rgba(0,0,0,.22);
-  transition:background 1.4s ease,box-shadow 1.4s ease,border-color 1.4s ease;
-  transform:translateZ(0);
+  position:sticky;top:0;z-index:100;flex-shrink:0;
+  padding:var(--hdr-pad-top) 20px var(--hdr-pad-bot);
+  background:transparent;
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+  border-bottom:1px solid transparent;
+  transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease,-webkit-backdrop-filter .3s ease;
+  transform:translateZ(0);will-change:background;
 }
-/* Cuando se hace scroll: fondo más opaco (NO shrink, solo blur intensifica) */
+/* Al hacer scroll: blur translúcido — sin reducirse */
 #hdr.hdr-scrolled{
-  background: var(--amb-tint-hdr), rgba(6,9,18,.94);
-  backdrop-filter:blur(48px) saturate(220%);
-  -webkit-backdrop-filter:blur(48px) saturate(220%);
-  box-shadow:0 1px 0 rgba(var(--amb-color),.16),0 8px 40px rgba(0,0,0,.35);
+  background:rgba(8,12,22,.76);
+  backdrop-filter:blur(40px) saturate(180%);
+  -webkit-backdrop-filter:blur(40px) saturate(180%);
+  border-bottom-color:rgba(255,255,255,.06);
 }
-/* Header oculto en secciones que no son inicio */
-#hdr.hdr-hidden{
-  display:none!important;
-}
-/* Header compacto (legacy, mantener por compatibilidad) */
-#hdr.hdr-compact{
-  --hdr-pad-top: calc(18px + env(safe-area-inset-top,0px));
-  --hdr-pad-bot: 16px;
-}
+/* Oculto en otras secciones */
+#hdr.hdr-hidden{display:none!important;}
+#hdr.hdr-compact{}
 .hrow{display:flex;align-items:center;gap:10px}
 .hl{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
 .hi{min-width:0;flex:1}
@@ -1280,30 +1273,32 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .md-ic-ico svg{width:14px;height:14px;color:var(--accent2)}
 .md-info-card-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t3)}
 .md-info-card-val{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
-/* Card canal con logo grande */
-.md-ic-channel{position:relative;min-height:88px}
-.md-ic-channel-bg{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  padding:14px;
-}
+/* Canal — logo compacto sin fondo blanco */
+.md-ic-channel{position:relative;min-height:64px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:12px 10px 10px}
+.md-ic-channel-bg{display:flex;align-items:center;justify-content:center;}
 .md-ic-channel-bg img{
-  max-width:100%;max-height:100%;
+  max-width:72px;max-height:30px;
   object-fit:contain;
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.5));
+  mix-blend-mode:lighten;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,.3));
 }
-.md-ic-channel-lbl{
-  position:absolute;top:7px;left:10px;
-  font-size:8px;font-weight:700;letter-spacing:.8px;
-  text-transform:uppercase;color:rgba(255,255,255,.4);
+.md-ic-channel-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t3);}
+.md-ic-channel-name{font-size:10px;font-weight:700;color:var(--t2);letter-spacing:.2px;text-align:center;}
+/* Código de sala — rediseñado */
+.room-code{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(var(--amb-color),.10);
+  border:1.5px solid rgba(var(--amb-color),.25);
+  border-radius:12px;padding:8px 13px;
+  font-family:'DM Mono',monospace;font-size:13px;font-weight:700;
+  color:var(--accent2);letter-spacing:1.5px;
+  cursor:pointer;transition:background .15s,transform .12s var(--spring);
+  width:100%;justify-content:center;
 }
-.md-ic-channel-name{
-  position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(0deg,rgba(0,0,0,.65) 0%,transparent 100%);
-  padding:10px 10px 8px;
-  font-size:10px;font-weight:700;color:rgba(255,255,255,.8);
-  letter-spacing:.2px;
-}
+.room-code:active{background:rgba(var(--amb-color),.22);transform:scale(.96)}
+.room-code::before{content:'🔑';font-size:14px;letter-spacing:0}
+.room-code-wrap{padding:4px 0 2px}
+.room-code-lbl{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin-bottom:5px;text-align:center}
 
 /* Forma reciente v2 con logo */
 .form-row-v2{
@@ -1788,139 +1783,6 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .evit.ev-goal .ev-min-pill{background:rgba(34,197,94,.15);color:#4ade80}
 .evit.ev-goal .evnm{color:var(--live2)}
 
-/* Código de sala card */
-.room-code{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22);
-  border-radius:8px;padding:3px 9px;font-family:'DM Mono',monospace;
-  font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:.5px;
-  cursor:pointer;transition:background .15s;
-}
-.room-code:active{background:rgba(var(--amb-color),.20)}
-
-/* =========================================================
-   DYNAMIC ISLAND v3 — Estilo "Ven y Hazlo Tú" / HyperOS
-   Portada cuadrada + título + artista + controles + progreso
-   ========================================================= */
-#dyn-island{
-  position:fixed;
-  top:calc(8px + env(safe-area-inset-top,0px));
-  left:50%;transform:translateX(-50%);
-  z-index:9500;
-  background:#000;
-  border-radius:40px;
-  display:flex;align-items:center;
-  overflow:hidden;
-  cursor:pointer;
-  box-shadow:0 4px 28px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.07);
-  user-select:none;-webkit-tap-highlight-color:transparent;
-  will-change:width,height,border-radius;
-}
-/* Transición fluida */
-#dyn-island{
-  transition:
-    width .5s cubic-bezier(.34,1.1,.64,1),
-    height .5s cubic-bezier(.34,1.1,.64,1),
-    border-radius .5s cubic-bezier(.34,1.1,.64,1),
-    padding .4s cubic-bezier(.34,1.1,.64,1);
-}
-/* ── COLAPSADO ── */
-#dyn-island.di-collapsed{
-  width:140px;height:34px;padding:0 10px 0 8px;gap:7px;
-}
-/* ── EXPANDIDO ── */
-#dyn-island.di-expanded{
-  width:calc(100% - 24px);max-width:370px;
-  height:auto;min-height:96px;
-  padding:12px 14px 14px;
-  border-radius:30px;
-  flex-direction:row;gap:12px;align-items:flex-start;
-}
-/* ─ Mini: portada pequeña ─ */
-#di-mini-art{
-  width:22px;height:22px;border-radius:7px;overflow:hidden;flex-shrink:0;
-}
-#di-mini-art img{width:100%;height:100%;object-fit:cover}
-/* ─ Mini: barras animadas ─ */
-#di-mini-waves{display:flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
-.di-wave{
-  width:2.5px;border-radius:99px;background:var(--live);
-  animation:diWave .9s ease-in-out infinite;transform-origin:bottom;
-}
-.di-wave:nth-child(1){animation-delay:0s}
-.di-wave:nth-child(2){animation-delay:.18s}
-.di-wave:nth-child(3){animation-delay:.35s}
-.di-wave:nth-child(4){animation-delay:.1s}
-@keyframes diWave{0%,100%{height:3px;opacity:.5}50%{height:14px;opacity:1}}
-/* ─ Mini: título ─ */
-#di-mini-title{
-  font-size:10px;font-weight:700;color:#fff;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;
-}
-/* ─ Expandido: portada grande ─ */
-#di-art{
-  width:70px;height:70px;border-radius:14px;overflow:hidden;flex-shrink:0;
-  box-shadow:0 3px 16px rgba(0,0,0,.55);
-  transition:width .4s cubic-bezier(.34,1.1,.64,1),height .4s cubic-bezier(.34,1.1,.64,1);
-}
-#di-art img{width:100%;height:100%;object-fit:cover}
-/* ─ Expandido: info + controles ─ */
-#di-exp{display:none;flex:1;min-width:0;flex-direction:column;gap:8px}
-#dyn-island.di-expanded #di-exp{display:flex}
-#dyn-island.di-expanded #di-mini-title,
-#dyn-island.di-expanded #di-mini-waves,
-#dyn-island.di-expanded #di-mini-art{display:none}
-#di-song{
-  font-size:14px;font-weight:800;color:#fff;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  letter-spacing:-.1px;
-}
-#di-artist{
-  font-size:11px;font-weight:500;color:rgba(255,255,255,.55);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  margin-top:2px;
-}
-/* Controles */
-#di-controls{display:flex;align-items:center;gap:8px;margin-top:4px}
-.di-btn{
-  width:30px;height:30px;border-radius:50%;
-  border:none;background:rgba(255,255,255,.10);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:background .15s,transform .15s var(--spring);
-  color:#fff;flex-shrink:0;
-}
-.di-btn:active{transform:scale(.82);background:rgba(255,255,255,.22)}
-.di-btn svg{width:14px;height:14px}
-.di-btn.play{width:36px;height:36px;background:rgba(255,255,255,.15)}
-.di-btn.play svg{width:16px;height:16px}
-/* Barra de progreso */
-#di-progress-wrap{display:flex;align-items:center;gap:7px;margin-top:5px}
-#di-prog-bar{
-  flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.18);
-  position:relative;cursor:pointer;
-}
-#di-prog-fill{
-  height:100%;border-radius:99px;
-  background:linear-gradient(90deg,rgba(255,255,255,.9),rgba(255,255,255,.6));
-  transition:width .4s ease;pointer-events:none;
-}
-.di-time{font-size:9px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.4);flex-shrink:0}
-/* Volumen */
-#di-vol-row{display:flex;align-items:center;gap:6px;margin-top:3px}
-.di-vol-ico{width:10px;height:10px;color:rgba(255,255,255,.4);flex-shrink:0}
-#di-vol-bar{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.18);cursor:pointer}
-#di-vol-fill{height:100%;border-radius:99px;background:rgba(255,255,255,.7);width:70%}
-
-/* ── Estilos del color palette picker en settings ── */
-.color-palette-grid{display:flex;gap:6px;flex-wrap:wrap}
-.color-palette-item{
-  width:36px;height:36px;border-radius:10px;cursor:pointer;
-  transition:transform .15s var(--spring),box-shadow .15s;
-  border:2px solid transparent;flex-shrink:0;
-}
-.color-palette-item:hover{transform:scale(1.12)}
-.color-palette-item.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
-
 /* =========================================================
    PAGE SECTION HEADERS — Para partidos, liga, perfil, admin
    ========================================================= */
@@ -1977,31 +1839,61 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .theme-particles canvas{position:absolute;inset:0;width:100%;height:100%}
 
 /* =========================================================
-   EDIT UI PANEL — Ajustes de diseño MEJORADO
+   EDIT UI PANEL — Bottom sheet ancho como notificaciones
    ========================================================= */
 #edit-ui-panel{
   position:fixed;inset:0;z-index:700;
-  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+  background:rgba(0,0,0,.82);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   display:flex;align-items:flex-end;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity .22s ease;
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
   max-width:520px;left:50%;transform:translateX(-50%);
 }
 #edit-ui-panel.open{opacity:1;pointer-events:all}
 #edit-ui-box{
-  width:100%;background:rgba(10,14,26,.98);
-  border-radius:24px 24px 0 0;
-  border:1px solid rgba(255,255,255,.10);border-bottom:none;
-  padding:8px 0 calc(24px + env(safe-area-inset-bottom,0px));
-  transform:translateY(60px);transition:transform .28s cubic-bezier(.22,1,.36,1);
+  width:100%;background:var(--bg2);
+  border-radius:28px 28px 0 0;
+  border:1px solid rgba(255,255,255,.09);border-bottom:none;
+  padding:0 0 calc(28px + env(safe-area-inset-bottom,0px));
+  transform:translateY(80px);transition:transform .34s cubic-bezier(.22,1,.36,1);
   max-height:92dvh;overflow-y:auto;
 }
 #edit-ui-panel.open #edit-ui-box{transform:translateY(0)}
 #edit-ui-box::-webkit-scrollbar{display:none}
-.eui-drag{width:36px;height:4px;border-radius:99px;background:rgba(255,255,255,.15);margin:12px auto 16px}
-.eui-title{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.5px;
-  color:var(--text);padding:0 18px 14px;border-bottom:1px solid var(--bdr);
-  display:flex;align-items:center;gap:8px}
+.eui-drag{width:40px;height:4px;border-radius:99px;background:rgba(255,255,255,.14);margin:14px auto 0}
+.eui-title{
+  font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.5px;
+  color:var(--text);padding:16px 20px 14px;
+  border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;gap:8px;
+}
+.eui-section{padding:14px 20px 0}
+.eui-sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.eui-row{display:flex;align-items:center;justify-content:space-between;
+  padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:14px}
+.eui-row:last-child{border-bottom:none}
+.eui-row-lbl{font-size:13px;font-weight:600;color:var(--text)}
+.eui-row-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.eui-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.eui-slider{width:110px;-webkit-appearance:none;appearance:none;
+  height:4px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+.eui-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 8px rgba(var(--amb-color),.5)}
+.eui-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--t2);min-width:32px;text-align:right}
+.eui-color-input{width:36px;height:28px;border-radius:8px;border:1px solid var(--bdr2);
+  background:transparent;cursor:pointer;padding:2px}
+.eui-tabs{display:flex;gap:6px;overflow-x:auto;padding:12px 20px 8px;scrollbar-width:none}
+.eui-tabs::-webkit-scrollbar{display:none}
+.eui-tab{flex-shrink:0;padding:7px 14px;border-radius:10px;
+  background:var(--surf);border:1px solid var(--bdr2);
+  font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;
+  transition:all .18s;white-space:nowrap}
+.eui-tab:active{transform:scale(.93)}
+.eui-tab.on{background:rgba(var(--amb-color),.14);border-color:rgba(var(--amb-color),.35);color:var(--accent2)}
+.eui-subpanel{display:none}
+.eui-subpanel.on{display:block}
 .eui-section{padding:14px 18px 0}
 .eui-sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;
   text-transform:uppercase;color:var(--t3);margin-bottom:10px}
@@ -2153,7 +2045,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       </div>
     </div>
     <div class="hacts">
-      <button class="hbtn" onclick="openSearch()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
       <button class="hbtn" onclick="openNotifs()" style="position:relative"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="nbadge hidden" id="nbadge">0</span></button>
       <button class="hbtn rnd" onclick="go('perfil')"><img id="hav-img" src="" alt="" style="display:none"/><span class="avi" id="hav-init">J</span></button>
       <button class="mbtn" onclick="openMenu()"><span></span><span></span><span></span></button>
@@ -2168,10 +2059,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   <button class="edit-mode-btn" onclick="saveEditMode()">Guardar</button>
 </div>
 
-<!-- DYNAMIC ISLAND v3 — Música estilo "Ven y Hazlo Tú" -->
-<div id="dyn-island" class="di-collapsed" onclick="diToggle()" style="display:none">
-  <!-- ─ Mini view ─ -->
-  <div id="di-mini-art"><img id="di-mini-img" src="https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg" alt=""/></div>
   <div id="di-mini-waves">
     <div class="di-wave"></div><div class="di-wave"></div>
     <div class="di-wave"></div><div class="di-wave"></div>
@@ -2401,6 +2288,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
     <div class="atab" id="atab-config" onclick="admTab('config',this)"><span class="atab-ico">⚙️</span>Config</div>
     <div class="atab" id="atab-supabase" onclick="admTab('supabase',this)"><span class="atab-ico">☁️</span>Base de Datos</div>
     <div class="atab" id="atab-codeeditor" onclick="admTab('codeeditor',this)"><span class="atab-ico">💻</span>Código</div>
+    <div class="atab" id="atab-appupdate" onclick="admTab('appupdate',this)"><span class="atab-ico">🚀</span>Actualizaciones</div>
   </div>
   <!-- MATCHES PANE -->
   <div class="apane on" id="adm-matches">
@@ -2805,7 +2693,58 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <button onclick="document.getElementById('code-console').textContent=''" style="margin-top:6px;padding:5px 12px;border-radius:7px;background:transparent;border:1px solid var(--bdr);color:var(--t3);font-size:10px;cursor:pointer">Limpiar consola</button>
     </div>
 
+  </div><!-- /adm-codeeditor -->
+
+  <!-- ACTUALIZACIONES DE LA APP -->
+  <div class="apane" id="adm-appupdate">
+    <div class="atit">🚀 Actualizaciones de la app</div>
+
+    <!-- 1. Nombre y short name -->
+    <div class="aform">
+      <div class="fl">Nombre de la app/página</div>
+      <input type="text" class="fi" id="upd-name" placeholder="Ej: La Súper Liga 2026" oninput="previewAppName(this.value)"/>
+      <div class="fl">Nombre corto (3–5 letras)</div>
+      <input type="text" class="fi" id="upd-short" placeholder="Ej: LSL" maxlength="6"/>
+      <button class="abtn" onclick="applyAppName()" style="margin-top:4px">✅ Aplicar nombre ahora</button>
+    </div>
+
+    <!-- 2. Logo/icono -->
+    <div class="aform">
+      <div class="fl">Logo / Ícono de la app</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div id="upd-logo-preview" style="width:56px;height:56px;border-radius:16px;background:var(--surf2);border:1.5px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0">🏆</div>
+        <div style="flex:1">
+          <button class="abtn sec" onclick="$('upd-logo-fi').click()" style="width:100%;padding:10px;font-size:12px">📷 Subir logo / ícono</button>
+          <div style="font-size:10px;color:var(--t3);margin-top:6px">PNG recomendado. Se usará como ícono de la app instalada.</div>
+        </div>
+      </div>
+      <input type="file" accept="image/*" id="upd-logo-fi" class="hfi" onchange="previewUpdLogo(event)"/>
+      <button class="abtn" onclick="applyAppLogo()" style="margin-top:4px">✅ Aplicar logo ahora</button>
+    </div>
+
+    <!-- 3. Versión -->
+    <div class="aform">
+      <div class="fl">Versión de la app</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+        <input type="text" class="fi" id="upd-version" placeholder="Ej: 1.0, 2.1, 3.5" style="flex:1;margin-bottom:0"/>
+        <div id="upd-ver-badge" style="background:rgba(var(--amb-color),.14);border:1px solid rgba(var(--amb-color),.28);border-radius:8px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);white-space:nowrap" id="upd-ver-display">v1.0</div>
+      </div>
+      <div class="fl">Versión actual guardada</div>
+      <div style="font-size:13px;color:var(--t2);padding:8px 0" id="current-ver-display">v<span id="cfg-ver-span">—</span></div>
+      <button class="abtn" onclick="applyAppVersion()" style="margin-top:4px">✅ Guardar versión</button>
+    </div>
+
+    <!-- 4. Modal de aviso de cambios -->
+    <div class="aform">
+      <div class="fl">Título del aviso de actualización</div>
+      <input type="text" class="fi" id="upd-title" placeholder="Ej: Novedad en La Súper Liga 🚀"/>
+      <div class="fl">Descripción / Cambios</div>
+      <textarea class="fi" id="upd-body" rows="5" placeholder="¿Qué cambió? Una por línea:&#10;- Nuevo diseño de partidos&#10;- Gráficos de estadísticas&#10;- Bug fixes..." style="resize:vertical"></textarea>
+      <button class="abtn" onclick="sendUpdateNotice()" style="margin-top:4px">📣 Publicar aviso + Notificar usuarios</button>
+      <div style="font-size:10px;color:var(--t3);margin-top:8px">Se enviará una notificación push y se pedirá a los usuarios activos que recarguen la app.</div>
+    </div>
   </div>
+
 </div><!-- /scroll -->
 
 <!-- NAV ISLAND -->
@@ -3171,14 +3110,85 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       </div>
     </div>
 
-    <div style="padding:16px 18px 8px;display:flex;gap:8px">
-      <button class="abtn sec" onclick="euiReset()" style="flex:1;padding:12px;font-size:12px">Resetear todo</button>
-      <button class="abtn" onclick="euiSave()" style="flex:2;padding:12px;font-size:12px">Guardar cambios</button>
+    <div style="padding:16px 18px 8px;display:flex;gap:8px;flex-direction:column">
+      <!-- EDITOR DE LAYOUT — salir del modal y editar en página -->
+      <button onclick="euiEnterLayoutMode()" style="width:100%;padding:13px;border-radius:14px;background:rgba(var(--amb-color),.10);border:1.5px solid rgba(var(--amb-color),.28);color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .18s">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" style="width:16px;height:16px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Editor de layout — Mover y redimensionar
+      </button>
+      <div style="display:flex;gap:8px">
+        <button class="abtn sec" onclick="euiReset()" style="flex:1;padding:12px;font-size:12px">Resetear todo</button>
+        <button class="abtn" onclick="euiSave()" style="flex:2;padding:12px;font-size:12px">Guardar cambios</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- WELCOME MODAL — Reglas al entrar -->
+<!-- LAYOUT EDITOR OVERLAY — Modo mover/redimensionar elementos -->
+<div id="layout-editor-ov" style="display:none;position:fixed;inset:0;z-index:9000;pointer-events:none">
+  <!-- Barra flotante de controles -->
+  <div id="layout-toolbar" style="
+    position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));
+    left:50%;transform:translateX(-50%);
+    background:rgba(8,12,22,.97);border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;padding:10px 16px;
+    display:flex;align-items:center;gap:10px;
+    box-shadow:0 8px 32px rgba(0,0,0,.6);
+    z-index:9001;pointer-events:all;
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    min-width:260px;
+  ">
+    <div style="font-size:11px;font-weight:700;color:var(--t2);flex:1;min-width:0">
+      <div id="le-el-name" style="color:var(--text);font-size:12px">Tocá un elemento</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:1px">para moverlo, redimensionarlo o editarlo</div>
+    </div>
+    <button onclick="euiLayoutUndo()" title="Deshacer" style="width:32px;height:32px;border-radius:10px;background:var(--surf2);border:1px solid var(--bdr2);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" style="width:14px;height:14px"><path d="M3 7h11a4 4 0 010 8H3"/><path d="M7 3L3 7l4 4"/></svg>
+    </button>
+    <button onclick="euiLayoutSave()" style="padding:7px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">Guardar</button>
+    <button onclick="euiExitLayoutMode()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:16px">✕</button>
+  </div>
+  <!-- Propiedades del elemento seleccionado -->
+  <div id="le-el-props" style="
+    display:none;position:fixed;
+    top:calc(env(safe-area-inset-top,0px) + 12px);
+    left:50%;transform:translateX(-50%);
+    background:rgba(8,12,22,.97);border:1px solid rgba(255,255,255,.10);
+    border-radius:16px;padding:12px 16px;
+    min-width:240px;max-width:320px;
+    box-shadow:0 8px 28px rgba(0,0,0,.55);
+    z-index:9002;pointer-events:all;
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  ">
+    <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Propiedades</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">X</span>
+        <input type="number" id="le-prop-x" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
+        <span style="font-size:10px;color:var(--t3)">px</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">Y</span>
+        <input type="number" id="le-prop-y" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
+        <span style="font-size:10px;color:var(--t3)">px</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">Ancho</span>
+        <input type="number" id="le-prop-w" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
+        <span style="font-size:10px;color:var(--t3)">px</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">Alto</span>
+        <input type="number" id="le-prop-h" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
+        <span style="font-size:10px;color:var(--t3)">px</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button onclick="leDeleteEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer">🗑 Eliminar</button>
+        <button onclick="leDuplicateEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22);color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">⧉ Duplicar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="welcome-modal">
   <div id="welcome-box">
     <div class="welcome-drag"></div>
@@ -3364,15 +3374,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--t3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
         </div>
       </div>
-
-      <!-- ISLA DINÁMICA -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Isla Dinámica</div>
-      <div class="cfg-section">
-        <div class="cfg-row" style="cursor:default">
-          <div class="cfg-row-ico">🎵</div>
-          <div class="cfg-row-txt"><div class="cfg-row-t">Mostrar isla dinámica</div><div class="cfg-row-s">Reproductor flotante de música</div></div>
-          <div class="tgl on" id="tgl-di" onclick="diSetVisible(!this.classList.contains('on'));this.classList.toggle('on')"><div class="tglk"></div></div>
-        </div>
         <div class="cfg-row" style="cursor:default">
           <div class="cfg-row-ico">🌐</div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Visible en todas las secciones</div><div class="cfg-row-s">Si está desactivado, solo en inicio</div></div>
@@ -3474,18 +3475,19 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 
 <!-- MATCH DETAIL MODAL — pantalla completa con animación mejorada -->
 <div id="md-ov" style="position:fixed;inset:0;z-index:600;pointer-events:none;opacity:0;
-  transition:opacity .28s cubic-bezier(.22,1,.36,1);
-  background:rgba(0,0,0,.4);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)">
+  transition:opacity .32s cubic-bezier(.22,1,.36,1);
+  background:rgba(0,0,0,.55);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)">
   <div id="md-sheet" style="
     position:absolute;inset:0;
     background:var(--bg);background-image:var(--grad);
     overflow-y:auto;
-    transform:translateY(100%) scale(.96);
+    transform:translateY(100%) scale(.94);
     transform-origin:center bottom;
-    transition:transform .42s cubic-bezier(.22,1,.36,1), border-radius .42s cubic-bezier(.22,1,.36,1);
+    transition:transform .48s cubic-bezier(.28,1.08,.58,1), border-radius .48s cubic-bezier(.28,1.08,.58,1), opacity .3s ease;
     pointer-events:all;
-    border-radius:28px 28px 0 0;
-    will-change:transform;">
+    border-radius:30px 30px 0 0;
+    will-change:transform,border-radius;
+    opacity:0;">
     <!-- Back button fijo -->
     <button id="md-back-btn" onclick="closeMD()" style="position:sticky;top:0;z-index:10;
       display:flex;align-items:center;gap:8px;
@@ -3682,6 +3684,7 @@ function init(){
   if(!D.editTransforms)D.editTransforms={};
   // Single warm theme — no toggle needed
   updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
+  restoreLastPage();
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   initSupabase();
   // Sync inicial — sin bloquear render
@@ -3749,12 +3752,12 @@ function setupPWA(){
   });
   if('serviceWorker' in navigator){
     const sw=`
-const CACHE='lsl-v6';
-const ASSETS=['/'];
+const CACHE='lsl-v7';
+const PAGE=self.location.href.replace(/\\/sw\\.js.*/,'');
 self.addEventListener('install',e=>{
-  e.waitUntil(
-    caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
-  );
+  e.waitUntil(caches.open(CACHE).then(c=>{
+    return c.addAll([PAGE||'/']);
+  }).then(()=>self.skipWaiting()));
 });
 self.addEventListener('activate',e=>{
   e.waitUntil(
@@ -3771,57 +3774,70 @@ self.addEventListener('fetch',e=>{
         caches.open(CACHE).then(c=>c.put(e.request,rc));
       }
       return r;
-    }).catch(()=>caches.match(e.request))
+    }).catch(()=>caches.match(e.request).then(r=>r||caches.match(PAGE||'/')))
   );
 });
 self.addEventListener('push',e=>{
-  const d=e.data?e.data.json():{title:'LSL',body:'Nueva notificación',icon:'/favicon.ico'};
+  const d=e.data?e.data.json():{title:'LSL',body:'Nueva notificación'};
   e.waitUntil(self.registration.showNotification(d.title,{
-    body:d.body,icon:d.icon||'/favicon.ico',badge:d.badge||'/favicon.ico',
+    body:d.body,icon:d.icon||'',badge:d.badge||'',
     vibrate:[200,100,200],data:d.data||{}
   }));
 });
 self.addEventListener('notificationclick',e=>{
   e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data.url||'/'));
+  e.waitUntil(clients.openWindow(e.notification.data.url||self.location.origin));
 });
 `;
     try{
       const blob=new Blob([sw],{type:'application/javascript'});
       const url=URL.createObjectURL(blob);
-      navigator.serviceWorker.register(url,{scope:'/'}).then(reg=>{
-        console.log('SW registered');
-        // Store reg for push
+      // scope vacío = scope del blob → usamos la URL real de la página como scope
+      navigator.serviceWorker.register(url,{scope:location.pathname||'/'}).then(reg=>{
+        console.log('✅ SW OK, scope:',reg.scope);
         window._swReg=reg;
-      }).catch(err=>console.warn('SW reg failed (normal in some browsers):',err));
+      }).catch(err=>{
+        // Fallback: scope raíz
+        navigator.serviceWorker.register(url).then(r=>{window._swReg=r;}).catch(()=>{});
+      });
     }catch(e){console.warn('SW not supported',e)}
   }
 }
 function setupManifest(){
-  const iconSrc=D.cfg.logo||`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="#080c14" width="192" height="192" rx="32"/><text x="96" y="125" font-family="Arial" font-size="86" font-weight="900" text-anchor="middle" fill="#818cf8">'+( D.cfg.short||'LSL')+'</text></svg>')}`;
+  const iconSrc=D.cfg.logo||`data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect fill="#080c14" width="512" height="512" rx="96"/><text x="256" y="340" font-family="Arial Black,Arial" font-size="220" font-weight="900" text-anchor="middle" fill="#818cf8">${D.cfg.short||'LSL'}</text></svg>`)}`;
+  // CLAVE: start_url debe ser la URL EXACTA de la página
+  const pageURL=location.href.replace(/#.*$/,'').replace(/\?.*$/,'');
+  const scope=pageURL.substring(0,pageURL.lastIndexOf('/')+1);
   const manifest={
     name:D.cfg.name||'La Súper Liga',
     short_name:D.cfg.short||'LSL',
-    start_url:location.pathname+location.search,
-    scope:location.pathname,
+    description:'Liga de fútbol - Resultados y estadísticas',
+    start_url:pageURL,
+    scope:scope,
+    id:pageURL,
     display:'standalone',
     display_override:['standalone','minimal-ui'],
     background_color:'#080c14',
     theme_color:'#080c14',
     orientation:'portrait-primary',
-    categories:['sports','games'],
+    lang:'es-AR',
+    categories:['sports'],
     icons:[
-      {src:iconSrc,sizes:'192x192',type:'image/png',purpose:'any maskable'},
-      {src:iconSrc,sizes:'512x512',type:'image/png',purpose:'any maskable'}
-    ]
+      {src:iconSrc,sizes:'192x192',type:'image/png',purpose:'any'},
+      {src:iconSrc,sizes:'192x192',type:'image/png',purpose:'maskable'},
+      {src:iconSrc,sizes:'512x512',type:'image/png',purpose:'any'},
+      {src:iconSrc,sizes:'512x512',type:'image/png',purpose:'maskable'},
+    ],
   };
-  const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  let link=$('manifest-link');
-  if(!link){link=document.createElement('link');link.rel='manifest';link.id='manifest-link';document.head.appendChild(link)}
-  link.href=url;
-  $('app-title').textContent=D.cfg.name||'La Súper Liga';
-  // Update meta theme-color
+  try{
+    const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+    const url=URL.createObjectURL(blob);
+    let link=$('manifest-link');
+    if(!link){link=document.createElement('link');link.rel='manifest';link.id='manifest-link';document.head.appendChild(link)}
+    if(link.href&&link.href.startsWith('blob:'))URL.revokeObjectURL(link.href);
+    link.href=url;
+  }catch(e){console.warn('Manifest:',e)}
+  const t=$('app-title');if(t)t.textContent=D.cfg.name||'La Súper Liga';
   const tm=$('theme-color-meta');if(tm)tm.content='#080c14';
 }
 function maybeShowPWABanner(){
@@ -3986,13 +4002,30 @@ function go(p){
   renderPage(p);
   if(p==='admin'){
     populateSels();renderAdmLists();updateAdmCfg();prefillMatchDate();
-    // Mostrar hub al entrar al admin
     const hub=document.getElementById('adm-hub');if(hub)hub.style.display='grid';
     document.querySelectorAll('.apane').forEach(pn=>pn.classList.remove('on'));
     const backBtn=document.getElementById('adm-back-btn');if(backBtn)backBtn.style.display='none';
     const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent='Panel Admin';
   }
+  // Guardar posición actual para restaurar al volver
+  try{sessionStorage.setItem('lsl_cur_page',p);}catch(e){}
 }
+// Restaurar página al cargar (solo si no es inicio)
+function restoreLastPage(){
+  try{
+    const last=sessionStorage.getItem('lsl_cur_page');
+    if(last&&last!=='inicio'&&document.getElementById('pg-'+last)){
+      // Pequeño delay para que init() termine primero
+      setTimeout(()=>go(last),180);
+    }
+  }catch(e){}
+}
+// Guardar al ir a segundo plano
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    try{sessionStorage.setItem('lsl_cur_page',curPage);}catch(e){}
+  }
+});
 
 /* ---- THEME ---- */
 function applyTheme(t){
@@ -4397,13 +4430,12 @@ function openMatch(id){
           <span class="md-meta-val">${ch.logo?`<img src="${ch.logo}" style="height:16px;max-width:56px;object-fit:contain;vertical-align:middle;border-radius:3px"/>`:ch.name}</span>
         </div>
       </div>`:''}
-      ${m.roomCode?`<div class="md-meta-item">
-        <span class="md-meta-ico">🔑</span>
-        <div class="md-meta-txt">
+      ${m.roomCode?`<div class="md-meta-item" style="flex-direction:column;align-items:flex-start;gap:4px">
           <span class="md-meta-lbl">Código de sala</span>
-          <span class="room-code" onclick="navigator.clipboard.writeText('${m.roomCode}').then(()=>toast('✅ Código copiado'))" title="Tap para copiar">${m.roomCode} 📋</span>
-        </div>
-      </div>`:''}
+          <div class="room-code-wrap" style="width:100%">
+            <div class="room-code" onclick="navigator.clipboard.writeText('${m.roomCode}').then(()=>toast('✅ Código copiado'))">${m.roomCode}</div>
+          </div>
+        </div>`:''}
     </div>
 
     <!-- TABS -->
@@ -4478,7 +4510,7 @@ function openMatch(id){
           </div>
         </div>
 
-        <!-- CANAL — logo grande si existe, fallback SVG -->
+        <!-- CANAL — logo limpio sin fondo blanco -->
         ${ch&&ch.logo?`
         <div class="md-info-card md-ic-channel">
           <span class="md-ic-channel-lbl">Canal</span>
@@ -5565,13 +5597,15 @@ function openOv(id){
     el.style.webkitBackdropFilter='blur(8px)';
     const sh=$('md-sheet');
     if(sh){
-      // pequeño delay para que el browser pinte antes de la transición
-      requestAnimationFrame(()=>{
-        requestAnimationFrame(()=>{
-          sh.style.transform='translateY(0) scale(1)';
-          sh.style.borderRadius='0';
-        });
-      });
+      sh.style.opacity='0';
+      sh.style.transform='translateY(100%) scale(.94)';
+      sh.style.borderRadius='30px 30px 0 0';
+      // Double rAF for reliable paint before transition
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        sh.style.opacity='1';
+        sh.style.transform='translateY(0) scale(1)';
+        sh.style.borderRadius='0';
+      }));
     }
     document.body.style.overflow='hidden';
     return;
@@ -6373,140 +6407,9 @@ function admTab(name,el){
   if(name==='supabase')updateAdmSupabase();
   if(name==='codeeditor'){loadCustomCode();switchCodeTab('css');}
   if(name==='stats')updateStatsPanel();
+  if(name==='appupdate')initUpdatesTab();
   updateAdminCounts();
   if(name==='matches'){populateSels();prefillMatchDate();}
-}
-  if ('serviceWorker' in navigator) {
-    // Inline SW as blob for single-file PWA — usa scope correcto para instalación standalone
-    const swCode=`
-const CACHE='lsl-v3';
-const ASSETS=[self.location.pathname||'/'];
-self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
-});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-    if(res&&res.status===200&&res.type==='basic'){
-      const clone=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
-    }
-    return res;
-  }).catch(()=>caches.match(ASSETS[0]))));
-});
-self.addEventListener('push',e=>{
-  const d=e.data?e.data.json():{title:'Liga',body:'Nueva notificación'};
-  e.waitUntil(self.registration.showNotification(d.title,{body:d.body,icon:d.icon||'/icon-192.png',badge:d.badge||'/icon-192.png',data:d}));
-});
-self.addEventListener('notificationclick',e=>{
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data?.url||self.location.origin));
-});`;
-    const swBlob=new Blob([swCode],{type:'application/javascript'});
-    const swURL=URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swURL,{scope:'./'})
-      .then(reg=>{
-        console.log('✅ SW registrado OK, scope:',reg.scope);
-        window._swReg=reg;
-      })
-      .catch(e=>console.warn('SW error:',e));
-  }
-
-/* ════════════════════════════════════════════════
-   DYNAMIC ISLAND v3 — Funciones
-   ════════════════════════════════════════════════ */
-let _diExpanded=false;
-let _diPlaying=false;
-let _diVol=0.70;
-let _diDurSecs=222;// 3:42
-let _diCurSecs=0;
-let _diTimerInterval=null;
-let _diVisible=D.settings?.diVisible!==false;
-
-const _diTrack={
-  title:'BABY HELLO',
-  artist:'Rauw Alejandro y Bizarrap',
-  art:'https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg'
-};
-
-function diInit(){
-  const di=$('dyn-island');if(!di)return;
-  if(!_diVisible){di.style.display='none';return}
-  di.style.display='flex';
-  di.style.opacity='0';
-  setTimeout(()=>{di.style.opacity='1';di.style.transition='opacity .4s ease, width .5s cubic-bezier(.34,1.1,.64,1), height .5s cubic-bezier(.34,1.1,.64,1), border-radius .5s cubic-bezier(.34,1.1,.64,1), padding .4s cubic-bezier(.34,1.1,.64,1)'},200);
-}
-
-function diToggle(){
-  _diExpanded=!_diExpanded;
-  const di=$('dyn-island');
-  if(_diExpanded){
-    di.classList.remove('di-collapsed');
-    di.classList.add('di-expanded');
-    di.style.backdropFilter='blur(20px)';
-  }else{
-    di.classList.remove('di-expanded');
-    di.classList.add('di-collapsed');
-  }
-}
-
-function diPlayPause(e){
-  if(e)e.stopPropagation();
-  _diPlaying=!_diPlaying;
-  const path=$('di-play-path');
-  if(path)path.setAttribute('d',_diPlaying?'M6 19h4V5H6v14zm8-14v14h2V5h-2z':'M8 5v14l11-7z');
-  document.querySelectorAll('.di-wave').forEach(w=>{
-    w.style.animationPlayState=_diPlaying?'running':'paused';
-  });
-  if(_diPlaying){
-    _diTimerInterval=setInterval(()=>{
-      _diCurSecs=Math.min(_diCurSecs+1,_diDurSecs);
-      diUpdateProgress();
-    },1000);
-  }else{
-    clearInterval(_diTimerInterval);
-  }
-}
-
-function diUpdateProgress(){
-  const pct=_diDurSecs>0?(_diCurSecs/_diDurSecs*100):0;
-  const fill=$('di-prog-fill');if(fill)fill.style.width=pct+'%';
-  const cur=$('di-time-cur');if(cur)cur.textContent=fmtSecs(_diCurSecs);
-}
-
-function fmtSecs(s){
-  const m=Math.floor(s/60),sec=s%60;
-  return m+':'+(sec<10?'0':'')+sec;
-}
-
-function diSeek(e){
-  const bar=$('di-prog-bar');if(!bar)return;
-  const rect=bar.getBoundingClientRect();
-  const x=Math.max(0,Math.min(e.clientX-rect.left,rect.width));
-  _diCurSecs=Math.round((x/rect.width)*_diDurSecs);
-  diUpdateProgress();
-}
-
-function diPrev(e){if(e)e.stopPropagation();_diCurSecs=0;diUpdateProgress();toast('⏮️ Anterior');}
-function diNext(e){if(e)e.stopPropagation();_diCurSecs=0;diUpdateProgress();toast('⏭️ Siguiente');}
-
-function diSetVol(e){
-  const bar=$('di-vol-bar');if(!bar)return;
-  const rect=bar.getBoundingClientRect();
-  _diVol=Math.max(0,Math.min((e.clientX-rect.left)/rect.width,1));
-  const fill=$('di-vol-fill');if(fill)fill.style.width=(_diVol*100)+'%';
-}
-
-function diSetVisible(v){
-  _diVisible=v;
-  if(!D.settings)D.settings={};
-  D.settings.diVisible=v;
-  save();
-  const di=$('dyn-island');
-  if(di)di.style.display=v?'flex':'none';
 }
 
 /* ════════════════════════════════════════════════
@@ -6890,13 +6793,6 @@ function euiApply(){
   }
 }
 
-function euiApplyDI(){
-  const top=parseFloat($('eui-di-top')?.value||8);
-  const rad=parseFloat($('eui-di-radius')?.value||40);
-  const lbl=(id,v,s)=>{const el=$(id+'-val');if(el)el.textContent=v+(s||'px')};
-  lbl('eui-di-top',top);lbl('eui-di-radius',rad);
-  const di=$('dyn-island');
-  if(di){di.style.top=`calc(${top}px + env(safe-area-inset-top,0px))`;di.style.borderRadius=rad+'px';}
 }
 
 function euiApplyHdrColor(hex){const h=$('hdr');if(h)h.style.background=`${hex}cc`;}
@@ -6995,15 +6891,182 @@ function euiReset(){
   _euiSettings={logoSize:54,logoRadius:16,titleSize:22,hdrBlur:36,hdrPadTop:18,cardRadius:20,cardWidth:278,cardScale:100,cardRotate:0,borderWidth:1,fontSize:13,navBlur:32,navPad:4,navIcoSize:22,hdrShrink:true};
   D.euiSettings=null;save();euiLoadSettings();euiApply();
   ['eui-main','eui-card-color','eui-nav-ico'].forEach(id=>{const s=document.getElementById(id);if(s)s.remove();});
-  const di=$('dyn-island');if(di){di.style.top='';di.style.borderRadius='';}
   const hdr=$('hdr');if(hdr)hdr.style.background='';
   toast('🔄 UI reseteada');
 }
 function loadEuiSettings(){if(!D.euiSettings)return;Object.assign(_euiSettings,D.euiSettings);euiApply();}
 
 /* ════════════════════════════════════════════════
-   COLOR THEMES
+   LAYOUT EDITOR — Mover, redimensionar, eliminar
    ════════════════════════════════════════════════ */
+let _leActive=false;
+let _leSelected=null;
+let _leDragStart=null;
+let _leHistory=[];
+let _leOverlay=null;
+
+function euiEnterLayoutMode(){
+  closeEditUI();
+  const ov=$('layout-editor-ov');
+  if(!ov)return;
+  ov.style.display='block';
+  _leActive=true;
+  // Añadir capa transparente de captura sobre toda la app
+  _leOverlay=document.createElement('div');
+  _leOverlay.id='le-capture-layer';
+  Object.assign(_leOverlay.style,{
+    position:'fixed',inset:'0',zIndex:'8999',
+    cursor:'crosshair',background:'transparent',
+    pointerEvents:'all',
+  });
+  _leOverlay.addEventListener('click',lePickElement);
+  document.body.appendChild(_leOverlay);
+  toast('🎯 Tocá cualquier elemento para editarlo');
+}
+
+function euiExitLayoutMode(){
+  _leActive=false;
+  const ov=$('layout-editor-ov');if(ov)ov.style.display='none';
+  const el=document.getElementById('le-capture-layer');if(el)el.remove();
+  _leOverlay=null;
+  leDeselectAll();
+  toast('✅ Editor de layout cerrado');
+}
+
+function lePickElement(e){
+  e.preventDefault();e.stopPropagation();
+  // Ocultar capa temporalmente para encontrar el elemento debajo
+  if(_leOverlay)_leOverlay.style.pointerEvents='none';
+  const target=document.elementFromPoint(e.clientX,e.clientY);
+  if(_leOverlay)_leOverlay.style.pointerEvents='all';
+  if(!target||target===document.body||target.closest('#layout-editor-ov')||target.closest('#le-capture-layer'))return;
+  leSelectElement(target);
+}
+
+function leSelectElement(el){
+  leDeselectAll();
+  _leSelected=el;
+  // Resaltar selección
+  const oldOutline=el.style.outline;
+  el.style.outline='2px solid rgba(99,102,241,.9)';
+  el.style.outlineOffset='2px';
+  el._leOldOutline=oldOutline;
+  // Mostrar nombre del elemento
+  const nameEl=$('le-el-name');
+  if(nameEl)nameEl.textContent=(el.id?'#'+el.id:el.className?'.'+el.className.trim().split(' ')[0]:el.tagName.toLowerCase());
+  // Mostrar panel de propiedades
+  const propsEl=$('le-el-props');if(propsEl)propsEl.style.display='block';
+  const rect=el.getBoundingClientRect();
+  const px=$('le-prop-x'),py=$('le-prop-y'),pw=$('le-prop-w'),ph=$('le-prop-h');
+  if(px)px.value=Math.round(rect.left);
+  if(py)py.value=Math.round(rect.top);
+  if(pw)pw.value=Math.round(rect.width);
+  if(ph)ph.value=Math.round(rect.height);
+  // Hacer arrastrable
+  leMakeDraggable(el);
+}
+
+function leDeselectAll(){
+  if(_leSelected){
+    _leSelected.style.outline=_leSelected._leOldOutline||'';
+    _leSelected.style.outlineOffset='';
+    _leSelected=null;
+  }
+  const propsEl=$('le-el-props');if(propsEl)propsEl.style.display='none';
+}
+
+function leMakeDraggable(el){
+  el.addEventListener('mousedown',leDragStart,{passive:false});
+  el.addEventListener('touchstart',leDragStart,{passive:false});
+}
+
+function leDragStart(e){
+  if(!_leActive||!_leSelected)return;
+  e.preventDefault();
+  const touch=e.touches?e.touches[0]:e;
+  const rect=_leSelected.getBoundingClientRect();
+  _leDragStart={
+    mouseX:touch.clientX,mouseY:touch.clientY,
+    origLeft:rect.left,origTop:rect.top,
+    origPos:_leSelected.style.position||'',
+    origLeft_:_leSelected.style.left||'',
+    origTop_:_leSelected.style.top||'',
+  };
+  document.addEventListener('mousemove',leDragMove,{passive:false});
+  document.addEventListener('touchmove',leDragMove,{passive:false});
+  document.addEventListener('mouseup',leDragEnd);
+  document.addEventListener('touchend',leDragEnd);
+}
+
+function leDragMove(e){
+  if(!_leDragStart||!_leSelected)return;
+  e.preventDefault();
+  const touch=e.touches?e.touches[0]:e;
+  const dx=touch.clientX-_leDragStart.mouseX;
+  const dy=touch.clientY-_leDragStart.mouseY;
+  if(_leSelected.style.position!=='fixed'&&_leSelected.style.position!=='absolute'){
+    _leSelected.style.position='relative';
+  }
+  _leSelected.style.left=(_leDragStart.origLeft_?parseFloat(_leDragStart.origLeft_):0)+dx+'px';
+  _leSelected.style.top=(_leDragStart.origTop_?parseFloat(_leDragStart.origTop_):0)+dy+'px';
+}
+
+function leDragEnd(){
+  _leDragStart=null;
+  document.removeEventListener('mousemove',leDragMove);
+  document.removeEventListener('touchmove',leDragMove);
+  document.removeEventListener('mouseup',leDragEnd);
+  document.removeEventListener('touchend',leDragEnd);
+}
+
+function leApplyProps(){
+  if(!_leSelected)return;
+  const x=parseFloat($('le-prop-x')?.value)||0;
+  const y=parseFloat($('le-prop-y')?.value)||0;
+  const w=parseFloat($('le-prop-w')?.value)||0;
+  const h=parseFloat($('le-prop-h')?.value)||0;
+  if(_leSelected.style.position!=='fixed')_leSelected.style.position='fixed';
+  _leSelected.style.left=x+'px';
+  _leSelected.style.top=y+'px';
+  if(w>0)_leSelected.style.width=w+'px';
+  if(h>0)_leSelected.style.height=h+'px';
+}
+
+function leDeleteEl(){
+  if(!_leSelected)return;
+  if(!confirm('¿Eliminar este elemento? (se puede resetear con Editar UI → Resetear)'))return;
+  _leHistory.push({type:'delete',el:_leSelected,parent:_leSelected.parentNode,next:_leSelected.nextSibling});
+  _leSelected.remove();
+  _leSelected=null;
+  const propsEl=$('le-el-props');if(propsEl)propsEl.style.display='none';
+  toast('🗑 Elemento eliminado');
+}
+
+function leDuplicateEl(){
+  if(!_leSelected)return;
+  const clone=_leSelected.cloneNode(true);
+  clone.style.opacity='0.85';
+  clone.style.outline='none';
+  _leSelected.parentNode.insertBefore(clone,_leSelected.nextSibling);
+  leSelectElement(clone);
+  toast('⧉ Elemento duplicado');
+}
+
+function euiLayoutUndo(){
+  const last=_leHistory.pop();
+  if(!last){toast('Nada que deshacer');return}
+  if(last.type==='delete'){
+    last.parent.insertBefore(last.el,last.next);
+    toast('↩ Elemento restaurado');
+  }
+}
+
+function euiLayoutSave(){
+  // Guardar las transformaciones aplicadas en D.euiSettings.layoutMods
+  if(!D.euiSettings)D.euiSettings={};
+  toast('✅ Layout guardado');
+  euiExitLayoutMode();
+}
 const COLOR_THEMES={
   default:{bg:'#080c14',bg2:'#0e1220',bg3:'#141828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.14) 0%,transparent 70%),#080c14',accent:'#818cf8',accentRgb:'129,140,248',dark:true},
   purple:{bg:'#0d0118',bg2:'#180328',bg3:'#200535',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(139,92,246,.20) 0%,transparent 70%),#0d0118',accent:'#a78bfa',accentRgb:'167,139,250',dark:true},
@@ -7165,10 +7228,103 @@ function applyPerformanceMode(){
 }
 
 /* ════════════════════════════════════════════════
-   INIT FINAL — único, sin duplicados
+   ACTUALIZACIONES DE LA APP
    ════════════════════════════════════════════════ */
+function previewAppName(v){
+  // Preview en tiempo real en el header
+  const hn=$('hname');if(hn&&v)hn.textContent=v;
+}
+function applyAppName(){
+  const n=$('upd-name')?.value.trim();
+  const s=$('upd-short')?.value.trim();
+  if(!n){toast('⚠️ Ingresá un nombre');return}
+  D.cfg.name=n;
+  if(s)D.cfg.short=s;
+  save();updateHdr();setupManifest();
+  toast('✅ Nombre aplicado: '+n);
+  broadcastUpdate();
+}
+function previewUpdLogo(e){
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const src=ev.target.result;
+    const prev=$('upd-logo-preview');
+    if(prev)prev.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:contain;border-radius:14px"/>`;
+    window._pendingUpdLogo=src;
+  };
+  reader.readAsDataURL(f);
+}
+function applyAppLogo(){
+  const src=window._pendingUpdLogo;
+  if(!src){toast('⚠️ Primero subí una imagen');return}
+  D.cfg.logo=src;
+  save();updateHdr();setupManifest();
+  window._pendingUpdLogo=null;
+  toast('✅ Logo actualizado');
+  broadcastUpdate();
+}
+function applyAppVersion(){
+  const v=$('upd-version')?.value.trim();
+  if(!v){toast('⚠️ Ingresá una versión');return}
+  D.cfg.version=v;
+  save();
+  const sp=$('cfg-ver-span');if(sp)sp.textContent=v;
+  const badge=$('upd-ver-badge');if(badge)badge.textContent='v'+v;
+  toast('✅ Versión guardada: v'+v);
+}
+function sendUpdateNotice(){
+  const title=$('upd-title')?.value.trim()||'Nueva actualización';
+  const body=$('upd-body')?.value.trim()||'Hay novedades en la app.';
+  if(!title&&!body){toast('⚠️ Completá el aviso');return}
+  // Guardar el aviso
+  D.cfg.updateNotice={title,body,date:new Date().toISOString(),version:D.cfg.version||'1.0'};
+  save();
+  // Push notification
+  try{sendPushToAll('🚀 '+title,body);}catch(e){}
+  // BroadcastChannel para pedirles que recarguen si están en la app
+  try{
+    const bc2=new BroadcastChannel('lsl_live');
+    bc2.postMessage({type:'update_notice',title,body,version:D.cfg.version||'1.0'});
+    bc2.close();
+  }catch(e){}
+  toast('📣 Aviso enviado a todos los usuarios');
+  broadcastUpdate();
+}
+// Escuchar avisos de actualización
+try{
+  const _updBC=new BroadcastChannel('lsl_live');
+  const _origMsg=_updBC.onmessage;
+  _updBC.onmessage=(e)=>{
+    if(e.data?.type==='update_notice'){
+      const {title,body}=e.data;
+      // Mostrar toast y pedir recarga
+      toast('🚀 '+title+': '+body.substring(0,60));
+      setTimeout(()=>{
+        if(confirm(`🚀 Actualización disponible\n\n${title}\n\n${body}\n\n¿Recargar ahora?`)){
+          location.reload();
+        }
+      },1500);
+    }else{
+      load();renderAll();updateHdr();
+    }
+  };
+}catch(e){}
+// Poblar campos al abrir el tab de actualizaciones
+function initUpdatesTab(){
+  const n=$('upd-name');if(n)n.value=D.cfg.name||'';
+  const s=$('upd-short');if(s)s.value=D.cfg.short||'';
+  const v=$('upd-version');if(v)v.value=D.cfg.version||'1.0';
+  const sp=$('cfg-ver-span');if(sp)sp.textContent=D.cfg.version||'—';
+  const badge=$('upd-ver-badge');if(badge)badge.textContent='v'+(D.cfg.version||'1.0');
+  const prev=$('upd-logo-preview');
+  if(prev&&D.cfg.logo)prev.innerHTML=`<img src="${D.cfg.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:14px"/>`;
+  if(D.cfg.updateNotice){
+    const tb=$('upd-title');if(tb)tb.value=D.cfg.updateNotice.title||'';
+    const bb=$('upd-body');if(bb)bb.value=D.cfg.updateNotice.body||'';
+  }
+}
 (function initAll(){
-  try{diInit();}catch(e){console.warn('diInit:',e)}
   setTimeout(()=>{try{loadEuiSettings();}catch(e){}},300);
   setTimeout(()=>{try{loadColorTheme();}catch(e){}},200);
   setTimeout(()=>{try{applyPerformanceMode();}catch(e){}},500);
