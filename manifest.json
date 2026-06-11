@@ -1,6 +1,6 @@
 {
-  "name": "La Liga SúperLiga",
-  "short_name": "LLF",
+  "name": "La Liga LLF",
+  "short_name": "LA Liga Fut v2",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#121212",
