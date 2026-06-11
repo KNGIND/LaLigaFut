@@ -174,25 +174,26 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   display:flex;align-items:center;justify-content:center;border:2.5px solid var(--bg);padding:0 4px;
   box-shadow:0 2px 6px rgba(229,62,62,.5);animation:bdgPop .3s var(--spring)}
 
-/* Botón hamburguesa */
+/* Botón hamburguesa — mejorado con gradiente y animación */
 .mbtn{
   width:42px;height:42px;border-radius:13px;
-  border:1px solid var(--bdr2);background:var(--surf);
+  border:1px solid rgba(var(--amb-color),.3);
+  background:linear-gradient(135deg,rgba(var(--amb-color),.15),rgba(var(--amb-color),.05));
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
   cursor:pointer;padding:0;
   transition:transform .15s var(--spring),background .2s,box-shadow .2s;
-  box-shadow:0 1px 4px rgba(0,0,0,.12)
+  box-shadow:0 1px 8px rgba(var(--amb-color),.12),inset 0 1px 0 rgba(255,255,255,.06)
 }
-.mbtn:hover{background:var(--surf2);box-shadow:0 2px 10px rgba(var(--amb-color),.15)}
-.mbtn:active{transform:scale(.84);background:var(--surf2)}
-.mbtn span{display:block;height:1.5px;border-radius:2px;background:var(--t2);transition:all .28s var(--ease)}
-.mbtn span:nth-child(1){width:14px}
-.mbtn span:nth-child(2){width:20px}
-.mbtn span:nth-child(3){width:10px}
-/* Menú abierto: X */
-#smov.open .mbtn span:nth-child(1){width:18px;transform:translateY(6.5px) rotate(45deg)}
+.mbtn:hover{background:linear-gradient(135deg,rgba(var(--amb-color),.25),rgba(var(--amb-color),.10));box-shadow:0 2px 14px rgba(var(--amb-color),.25)}
+.mbtn:active{transform:scale(.84)}
+.mbtn span{display:block;height:2px;border-radius:2px;background:var(--accent2);transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 4px rgba(var(--amb-color),.4)}
+.mbtn span:nth-child(1){width:16px;transform-origin:left center}
+.mbtn span:nth-child(2){width:22px}
+.mbtn span:nth-child(3){width:10px;transform-origin:left center}
+/* Menú abierto: X animada */
+#smov.open .mbtn span:nth-child(1){width:18px;transform:translateY(7px) rotate(45deg)}
 #smov.open .mbtn span:nth-child(2){opacity:0;transform:scaleX(0)}
-#smov.open .mbtn span:nth-child(3){width:18px;transform:translateY(-6.5px) rotate(-45deg)}
+#smov.open .mbtn span:nth-child(3){width:18px;transform:translateY(-7px) rotate(-45deg)}
 
 /* =========================================================
    SCROLL CONTAINER
@@ -238,38 +239,38 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 /* Pill de fondo activo */
 .ni.on{background:rgba(var(--amb-color),.10)}
 
-/* Ícono container — ahora con pill redondeado visible */
+/* Ícono container — pill más visible y moderno */
 .niico{
-  width:44px;height:28px;
+  width:48px;height:30px;
   display:flex;align-items:center;justify-content:center;
   color:var(--t2);
   transition:color .2s ease, transform .28s var(--spring), filter .2s ease;
-  border-radius:14px;
+  border-radius:15px;
   position:relative;
 }
-.niico svg{width:22px;height:22px;transition:all .2s ease}
+.niico svg{width:23px;height:23px;transition:all .22s ease}
 .niico .ico-fill{display:none}
 .niico .ico-stroke{display:block}
 
 /* Pill de fondo del ícono cuando está activo */
 .ni.on .niico{
-  background:rgba(var(--amb-color),.18);
+  background:rgba(var(--amb-color),.20);
   color:var(--accent2);
-  transform:translateY(-1px);
-  filter:drop-shadow(0 2px 8px rgba(var(--amb-color),.45));
+  transform:translateY(-2px);
+  filter:drop-shadow(0 3px 10px rgba(var(--amb-color),.50));
 }
 .ni.on .niico .ico-fill{display:block;fill:var(--accent2)}
 .ni.on .niico svg{filter:none}
 
-/* Animación de rebote al activar */
+/* Animación de rebote al activar — más expresiva */
 @keyframes niPop{
-  0%{transform:scale(1)}
-  35%{transform:scale(1.18) translateY(-2px)}
-  60%{transform:scale(.95) translateY(0)}
-  80%{transform:scale(1.04) translateY(-1px)}
-  100%{transform:scale(1) translateY(-1px)}
+  0%{transform:scale(1) translateY(0)}
+  25%{transform:scale(1.22) translateY(-4px)}
+  55%{transform:scale(.93) translateY(-1px)}
+  75%{transform:scale(1.06) translateY(-2px)}
+  100%{transform:scale(1) translateY(-2px)}
 }
-.ni.on .niico{animation:niPop .36s var(--spring) both}
+.ni.on .niico{animation:niPop .4s var(--spring) both}
 
 /* Label */
 .nilbl{
@@ -673,30 +674,80 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .adm-hdr-title::before{content:"";width:4px;height:20px;border-radius:99px;background:var(--accent);display:inline-block;flex-shrink:0;box-shadow:0 0 10px rgba(var(--amb-color),.5)}
 .adm-hdr-acts{display:flex;gap:8px;align-items:center;flex-shrink:0}
 
-/* Tabs: scrollable pills grandes */
-.atabs{
-  display:flex;gap:8px;overflow-x:auto;
-  padding:12px 14px 8px;scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
+/* Tabs: NUEVO DISEÑO — Grid de cards grandes al estilo imagen */
+.atabs{display:none} /* ocultar las tabs horizontales viejas */
+
+/* Hub de secciones admin — grid de cards */
+#adm-hub{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  padding:16px 14px 24px;
 }
-.atabs::-webkit-scrollbar{display:none}
-.atab{
-  flex-shrink:0;display:flex;align-items:center;gap:7px;
-  padding:10px 16px;border-radius:16px;
-  border:1.5px solid rgba(var(--amb-color),.18);
-  background:rgba(var(--amb-color),.06);
-  font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;
-  transition:all .2s var(--spring);white-space:nowrap;
-  letter-spacing:.1px;
+.adm-hub-card{
+  border-radius:20px;padding:18px 16px 16px;cursor:pointer;
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;overflow:hidden;
+  border:1.5px solid transparent;
+  transition:transform .2s var(--spring),box-shadow .2s,opacity .15s;
+  min-height:110px;
 }
-.atab:hover{border-color:rgba(var(--amb-color),.35);color:var(--text);background:rgba(var(--amb-color),.10)}
-.atab.on{
-  background:rgba(var(--amb-color),.18);
-  color:var(--accent2);border-color:rgba(var(--amb-color),.45);
-  box-shadow:0 2px 16px rgba(var(--amb-color),.22);
+.adm-hub-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.adm-hub-card:active{transform:scale(.96);opacity:.85}
+/* Glow de fondo sutil */
+.adm-hub-card::before{
+  content:"";position:absolute;inset:0;opacity:.12;
+  background:linear-gradient(135deg,currentColor 0%,transparent 70%);
 }
-.atab:active{transform:scale(.93)}
-.atab .atab-ico{font-size:15px;line-height:1}
+/* Icono grande */
+.adm-hub-ico{
+  width:44px;height:44px;border-radius:14px;
+  background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;position:relative;z-index:1;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+.adm-hub-lbl{
+  font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.4px;
+  color:#fff;line-height:1.1;position:relative;z-index:1;
+}
+.adm-hub-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.55);position:relative;z-index:1}
+/* Flecha */
+.adm-hub-arr{
+  position:absolute;bottom:14px;right:14px;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1;transition:transform .2s var(--spring);
+}
+.adm-hub-card:hover .adm-hub-arr{transform:translate(2px,-2px)}
+.adm-hub-arr svg{width:12px;height:12px;color:#fff}
+
+/* Colores para cada card de la hub */
+.adm-hub-matches{background:linear-gradient(135deg,#312e81,#4338ca);border-color:rgba(129,140,248,.3)}
+.adm-hub-teams{background:linear-gradient(135deg,#064e3b,#065f46);border-color:rgba(52,211,153,.3)}
+.adm-hub-players{background:linear-gradient(135deg,#500724,#881337);border-color:rgba(244,114,182,.3)}
+.adm-hub-referees{background:linear-gradient(135deg,#1e1b4b,#3730a3);border-color:rgba(167,139,250,.3)}
+.adm-hub-news{background:linear-gradient(135deg,#431407,#7c2d12);border-color:rgba(251,146,60,.3)}
+.adm-hub-channels{background:linear-gradient(135deg,#083344,#164e63);border-color:rgba(34,211,238,.3)}
+.adm-hub-sanctions{background:linear-gradient(135deg,#422006,#78350f);border-color:rgba(250,204,21,.3)}
+.adm-hub-sponsors{background:linear-gradient(135deg,#1e3a5f,#1e40af);border-color:rgba(96,165,250,.3)}
+.adm-hub-season{background:linear-gradient(135deg,#3b0764,#6b21a8);border-color:rgba(192,132,252,.3)}
+.adm-hub-stats{background:linear-gradient(135deg,#1a0533,#7c3aed);border-color:rgba(167,139,250,.3)}
+.adm-hub-config{background:linear-gradient(135deg,#171717,#404040);border-color:rgba(226,232,240,.2)}
+.adm-hub-db{background:linear-gradient(135deg,#052e16,#15803d);border-color:rgba(74,222,128,.3)}
+.adm-hub-code{background:linear-gradient(135deg,#0c1445,#1d4ed8);border-color:rgba(96,165,250,.3)}
+
+/* Botón volver al hub */
+.adm-back-btn{
+  display:flex;align-items:center;gap:8px;
+  margin:12px 14px 0;padding:9px 14px;
+  border-radius:12px;background:rgba(var(--amb-color),.08);
+  border:1px solid rgba(var(--amb-color),.2);
+  color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;
+  transition:background .18s,color .18s;width:fit-content;
+}
+.adm-back-btn:hover{background:rgba(var(--amb-color),.14);color:var(--text)}
+.adm-back-btn:active{transform:scale(.96)}
+.adm-back-btn svg{width:16px;height:16px}
 .apane{display:none;padding:0 14px 24px}
 .apane.on{display:block}
 .atit{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.4px;color:var(--text);margin:16px 0 12px;display:flex;align-items:center;gap:8px}
@@ -1624,23 +1675,24 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .pban video{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 
 /* =========================================================
-   M7 MENU LATERAL — Rediseño completo, más limpio y fluido
+   M7 MENU LATERAL — Rediseño completo, lado IZQUIERDO
    ========================================================= */
 #smov{position:fixed;inset:0;z-index:400;opacity:0;pointer-events:none;transition:opacity .22s ease;
   max-width:520px;right:0%;left:50%;transform:translateX(-50%)}
 #smov.open{opacity:1;pointer-events:all}
-#smov::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.6);
-  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#smov::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 #sm{
-  position:absolute;top:0;right:0;bottom:0;width:300px;
+  position:absolute;top:0;left:0;bottom:0;width:300px;
   background:rgba(8,12,22,.98);
   backdrop-filter:blur(40px) saturate(200%);-webkit-backdrop-filter:blur(40px) saturate(200%);
-  transform:translateX(110%);
-  transition:transform .3s cubic-bezier(.22,1,.36,1);
+  transform:translateX(-110%);
+  transition:transform .32s cubic-bezier(.22,1,.36,1);
   display:flex;flex-direction:column;
   padding:calc(16px + env(safe-area-inset-top,0px)) 0 calc(28px + env(safe-area-inset-bottom,0px));
-  overflow-y:auto;border-left:1px solid rgba(255,255,255,.07);
-  box-shadow:-20px 0 60px rgba(0,0,0,.8)
+  overflow-y:auto;
+  border-right:1px solid rgba(255,255,255,.07);
+  box-shadow:20px 0 60px rgba(0,0,0,.8);
 }
 #sm::-webkit-scrollbar{display:none}
 #smov.open #sm{transform:translateX(0)}
@@ -1893,7 +1945,39 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .page-hdr-sub{font-size:11px;font-weight:500;color:var(--t2);margin-top:3px;letter-spacing:.2px}
 
 /* =========================================================
-   EDIT UI PANEL — Ajustes de diseño
+   MODO CLARO / OSCURO — Sistema de temas
+   ========================================================= */
+[data-theme="light"]{
+  --bg:#f0f2f8;--bg2:#e4e8f4;--bg3:#d8ddf0;
+  --surf:rgba(255,255,255,.92);--surf2:#ffffff;--surf3:#eef0fa;
+  --bdr:rgba(0,0,30,.08);--bdr2:rgba(80,90,200,.18);
+  --text:#12163a;--t2:#4a5080;--t3:#8890b8;
+  --over:rgba(240,242,248,.85);
+  --hbg:rgba(240,242,248,.85);--nbg:rgba(235,238,250,.96);
+  --grad:
+    radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.10) 0%,transparent 70%),
+    #f0f2f8;
+}
+[data-theme="light"] body{background:var(--bg);background-image:var(--grad)}
+[data-theme="light"] #hdr{background:rgba(240,242,248,.88)}
+[data-theme="light"] #nav{background:rgba(235,238,250,.94)}
+[data-theme="light"] .ovs{background:rgba(240,242,250,.98)}
+[data-theme="light"] #sm{background:rgba(240,242,250,.98)}
+[data-theme="light"] .mc{color:var(--text)}
+[data-theme="light"] .mr{color:var(--text)}
+[data-theme="light"] #login-screen{background:#f0f2f8}
+[data-theme="light"] .adm-hdr{background:rgba(240,242,248,.94)}
+
+/* =========================================================
+   TEMAS CON EFECTOS DE MOVIMIENTO (PS4 style)
+   ========================================================= */
+.theme-particles{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.theme-particles canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* =========================================================
+   EDIT UI PANEL — Ajustes de diseño MEJORADO
    ========================================================= */
 #edit-ui-panel{
   position:fixed;inset:0;z-index:700;
@@ -1910,12 +1994,14 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   border:1px solid rgba(255,255,255,.10);border-bottom:none;
   padding:8px 0 calc(24px + env(safe-area-inset-bottom,0px));
   transform:translateY(60px);transition:transform .28s cubic-bezier(.22,1,.36,1);
-  max-height:85dvh;overflow-y:auto;
+  max-height:92dvh;overflow-y:auto;
 }
 #edit-ui-panel.open #edit-ui-box{transform:translateY(0)}
+#edit-ui-box::-webkit-scrollbar{display:none}
 .eui-drag{width:36px;height:4px;border-radius:99px;background:rgba(255,255,255,.15);margin:12px auto 16px}
 .eui-title{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.5px;
-  color:var(--text);padding:0 18px 16px;border-bottom:1px solid var(--bdr)}
+  color:var(--text);padding:0 18px 14px;border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;gap:8px}
 .eui-section{padding:14px 18px 0}
 .eui-sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;
   text-transform:uppercase;color:var(--t3);margin-bottom:10px}
@@ -1930,6 +2016,42 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .eui-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
   width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;
   box-shadow:0 0 6px rgba(var(--amb-color),.5)}
+/* Color picker inline */
+.eui-color-input{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--bdr2);
+  cursor:pointer;padding:2px;background:var(--surf2);
+  -webkit-appearance:none;appearance:none;overflow:hidden;
+}
+.eui-color-input::-webkit-color-swatch-wrapper{padding:0}
+.eui-color-input::-webkit-color-swatch{border:none;border-radius:8px}
+/* Element selector tabs */
+.eui-tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 18px 0;scrollbar-width:none}
+.eui-tabs::-webkit-scrollbar{display:none}
+.eui-tab{flex-shrink:0;padding:7px 14px;border-radius:10px;font-size:11px;font-weight:700;
+  border:1.5px solid rgba(var(--amb-color),.18);background:transparent;color:var(--t2);
+  cursor:pointer;transition:all .16s;letter-spacing:.1px}
+.eui-tab.on{background:rgba(var(--amb-color),.15);color:var(--accent2);border-color:rgba(var(--amb-color),.4)}
+.eui-tab:active{transform:scale(.93)}
+.eui-subpanel{display:none;padding-top:4px}
+.eui-subpanel.on{display:block}
+/* Transform controls */
+.eui-transform-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.eui-transform-cell{background:var(--surf2);border-radius:12px;border:1px solid var(--bdr);padding:10px 12px}
+.eui-transform-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+/* Element picker highlight */
+.eui-picking *{cursor:crosshair!important}
+.eui-highlight{
+  outline:2px solid var(--accent)!important;
+  outline-offset:2px!important;
+  box-shadow:0 0 0 4px rgba(var(--amb-color),.2)!important;
+  position:relative!important;
+  z-index:999!important;
+}
+/* Selected element */
+.eui-selected{
+  outline:2px dashed var(--accent2)!important;
+  outline-offset:2px!important;
+}
 .eui-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--t2);min-width:28px;text-align:right}
 .eui-close{
   position:absolute;top:14px;right:14px;
@@ -2175,26 +2297,110 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 <!-- ADMIN -->
 <div class="page" id="pg-admin">
   <div class="adm-hdr">
-    <div class="adm-hdr-title">Panel Admin</div>
+    <div class="adm-hdr-title" id="adm-hdr-title">Panel Admin</div>
     <div class="adm-hdr-acts">
       <button onclick="openEditUI()" style="padding:6px 13px;border-radius:10px;background:rgba(var(--amb-color),.12);border:1px solid rgba(var(--amb-color),.25);font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent2);cursor:pointer" id="edit-mode-toggle">✏️ Editar UI</button>
       <span style="background:rgba(var(--amb-color),.12);border:1px solid rgba(var(--amb-color),.25);border-radius:8px;padding:4px 10px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2)">ADMIN</span>
     </div>
   </div>
-  <div class="atabs">
-    <div class="atab on" onclick="admTab('matches',this)"><span class="atab-ico">⚽</span>Partidos</div>
-    <div class="atab" onclick="admTab('teams',this)"><span class="atab-ico">🏆</span>Equipos</div>
-    <div class="atab" onclick="admTab('players',this)"><span class="atab-ico">👤</span>Jugadores</div>
-    <div class="atab" onclick="admTab('referees',this)"><span class="atab-ico">👨‍⚖️</span>Árbitros</div>
-    <div class="atab" onclick="admTab('news',this)"><span class="atab-ico">📰</span>Noticias</div>
-    <div class="atab" onclick="admTab('channels',this)"><span class="atab-ico">📺</span>Canales</div>
-    <div class="atab" onclick="admTab('sanctions',this)"><span class="atab-ico">🟨</span>Sanciones</div>
-    <div class="atab" onclick="admTab('sponsors',this)"><span class="atab-ico">💼</span>Sponsors</div>
-    <div class="atab" onclick="admTab('season',this)"><span class="atab-ico">🏅</span>Temporada</div>
-    <div class="atab" onclick="admTab('stats',this)"><span class="atab-ico">📊</span>Stats</div>
-    <div class="atab" onclick="admTab('config',this)"><span class="atab-ico">⚙️</span>Config</div>
-    <div class="atab" onclick="admTab('supabase',this)"><span class="atab-ico">☁️</span>Base de Datos</div>
-    <div class="atab" onclick="admTab('codeeditor',this)"><span class="atab-ico">💻</span>Código</div>
+
+  <!-- HUB: Grid de secciones -->
+  <div id="adm-hub">
+    <div class="adm-hub-card adm-hub-matches" onclick="admGo('matches')">
+      <div class="adm-hub-ico">⚽</div>
+      <div class="adm-hub-lbl">Partidos</div>
+      <div class="adm-hub-sub">Crear y editar encuentros</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-teams" onclick="admGo('teams')">
+      <div class="adm-hub-ico">🏆</div>
+      <div class="adm-hub-lbl">Equipos</div>
+      <div class="adm-hub-sub">Gestionar los equipos</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-players" onclick="admGo('players')">
+      <div class="adm-hub-ico">👤</div>
+      <div class="adm-hub-lbl">Jugadores</div>
+      <div class="adm-hub-sub">Alta y baja de jugadores</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-referees" onclick="admGo('referees')">
+      <div class="adm-hub-ico">👨‍⚖️</div>
+      <div class="adm-hub-lbl">Árbitros</div>
+      <div class="adm-hub-sub">Lista de árbitros</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-news" onclick="admGo('news')">
+      <div class="adm-hub-ico">📰</div>
+      <div class="adm-hub-lbl">Noticias</div>
+      <div class="adm-hub-sub">Publicar novedades</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-channels" onclick="admGo('channels')">
+      <div class="adm-hub-ico">📺</div>
+      <div class="adm-hub-lbl">Canales</div>
+      <div class="adm-hub-sub">Dónde ver los partidos</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-sanctions" onclick="admGo('sanctions')">
+      <div class="adm-hub-ico">🟨</div>
+      <div class="adm-hub-lbl">Sanciones</div>
+      <div class="adm-hub-sub">Tarjetas y suspensiones</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-sponsors" onclick="admGo('sponsors')">
+      <div class="adm-hub-ico">💼</div>
+      <div class="adm-hub-lbl">Sponsors</div>
+      <div class="adm-hub-sub">Patrocinadores</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-season" onclick="admGo('season')">
+      <div class="adm-hub-ico">🏅</div>
+      <div class="adm-hub-lbl">Temporada</div>
+      <div class="adm-hub-sub">Configurar temporada</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-stats" onclick="admGo('stats')">
+      <div class="adm-hub-ico">📊</div>
+      <div class="adm-hub-lbl">Stats</div>
+      <div class="adm-hub-sub">Estadísticas globales</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-config" onclick="admGo('config')">
+      <div class="adm-hub-ico">⚙️</div>
+      <div class="adm-hub-lbl">Config</div>
+      <div class="adm-hub-sub">Ajustes de la liga</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-db" onclick="admGo('supabase')">
+      <div class="adm-hub-ico">☁️</div>
+      <div class="adm-hub-lbl">Base de Datos</div>
+      <div class="adm-hub-sub">Conectar Supabase</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-code" onclick="admGo('codeeditor')" style="grid-column:span 2">
+      <div class="adm-hub-ico">💻</div>
+      <div class="adm-hub-lbl">Editor de Código</div>
+      <div class="adm-hub-sub">Editar el HTML directamente en la app</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+  </div>
+
+  <!-- Tabs ocultas (solo para compatibilidad JS) -->
+  <div class="atabs" style="display:none">
+    <div class="atab on" id="atab-matches" onclick="admTab('matches',this)"><span class="atab-ico">⚽</span>Partidos</div>
+    <div class="atab" id="atab-teams" onclick="admTab('teams',this)"><span class="atab-ico">🏆</span>Equipos</div>
+    <div class="atab" id="atab-players" onclick="admTab('players',this)"><span class="atab-ico">👤</span>Jugadores</div>
+    <div class="atab" id="atab-referees" onclick="admTab('referees',this)"><span class="atab-ico">👨‍⚖️</span>Árbitros</div>
+    <div class="atab" id="atab-news" onclick="admTab('news',this)"><span class="atab-ico">📰</span>Noticias</div>
+    <div class="atab" id="atab-channels" onclick="admTab('channels',this)"><span class="atab-ico">📺</span>Canales</div>
+    <div class="atab" id="atab-sanctions" onclick="admTab('sanctions',this)"><span class="atab-ico">🟨</span>Sanciones</div>
+    <div class="atab" id="atab-sponsors" onclick="admTab('sponsors',this)"><span class="atab-ico">💼</span>Sponsors</div>
+    <div class="atab" id="atab-season" onclick="admTab('season',this)"><span class="atab-ico">🏅</span>Temporada</div>
+    <div class="atab" id="atab-stats" onclick="admTab('stats',this)"><span class="atab-ico">📊</span>Stats</div>
+    <div class="atab" id="atab-config" onclick="admTab('config',this)"><span class="atab-ico">⚙️</span>Config</div>
+    <div class="atab" id="atab-supabase" onclick="admTab('supabase',this)"><span class="atab-ico">☁️</span>Base de Datos</div>
+    <div class="atab" id="atab-codeeditor" onclick="admTab('codeeditor',this)"><span class="atab-ico">💻</span>Código</div>
   </div>
   <!-- MATCHES PANE -->
   <div class="apane on" id="adm-matches">
@@ -2604,75 +2810,106 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 
 <!-- NAV ISLAND -->
 <nav id="nav">
-  <!-- INICIO — Casa moderna minimalista -->
+  <!-- INICIO — Casa pill moderna -->
   <div class="ni on" id="ni-inicio" onclick="go('inicio')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path class="ico-stroke" d="M3 10L12 3l9 7v10a2 2 0 01-2 2h-3v-5h-4v5H5a2 2 0 01-2-2V10z"/>
-        <path class="ico-fill" fill="currentColor" d="M3 10L12 3l9 7v10a2 2 0 01-2 2h-3v-5h-4v5H5a2 2 0 01-2-2V10z" opacity="0.15"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stroke: casa vacía -->
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+          d="M2.5 10.8L12 3l9.5 7.8V21a1 1 0 01-1 1H15v-6H9v6H3.5a1 1 0 01-1-1V10.8z"/>
+        <!-- Fill: relleno interior semitransparente -->
+        <path class="ico-fill" fill="currentColor" opacity=".14"
+          d="M2.5 10.8L12 3l9.5 7.8V21a1 1 0 01-1 1H15v-6H9v6H3.5a1 1 0 01-1-1V10.8z"/>
+        <!-- Detalle: puerta -->
+        <rect class="ico-stroke" stroke="currentColor" stroke-width="1.4" x="9.5" y="15.5" width="5" height="6.5" rx=".8"/>
       </svg>
     </div>
     <div class="nilbl">Inicio</div>
   </div>
 
-  <!-- PARTIDOS — Balón con énfasis -->
+  <!-- PARTIDOS — Balón de fútbol realista -->
   <div class="ni" id="ni-partidos" onclick="go('partidos')">
     <div class="niico">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.8" cx="12" cy="12" r="10"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 2v20M2 12h20"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M7 8h10M7 16h10M10 5v14M14 5v14"/>
-        <circle class="ico-fill" fill="currentColor" cx="12" cy="12" r="10" opacity="0.12"/>
+        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.7" cx="12" cy="12" r="9.5"/>
+        <circle class="ico-fill" fill="currentColor" opacity=".1" cx="12" cy="12" r="9.5"/>
+        <!-- Hexágono central -->
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"
+          d="M12 8.2l3 2.2-.95 3.1h-4.1L9 10.4 12 8.2z"/>
+        <!-- Líneas exteriores del balón -->
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+          d="M12 2.5v5.7M9 10.4L4 8.7M9.95 13.5L8 18.8M14.05 13.5L16 18.8M15 10.4L20 8.7"/>
       </svg>
     </div>
     <div class="nilbl">Partidos</div>
   </div>
 
-  <!-- TABLA — Estadísticas / Clasificación -->
+  <!-- LIGA — Trofeo / copa -->
   <div class="ni" id="ni-info" onclick="go('info')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <rect class="ico-stroke" x="3" y="5" width="18" height="16" rx="2"/>
-        <path class="ico-stroke" d="M3 10h18M9 10v11M15 10v11"/>
-        <rect class="ico-fill" fill="currentColor" x="3" y="5" width="18" height="16" rx="2" opacity="0.1"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+          d="M8 3h8l-1.5 9a4.5 4.5 0 01-9 0L8 3z"/>
+        <path class="ico-fill" fill="currentColor" opacity=".12"
+          d="M8 3h8l-1.5 9a4.5 4.5 0 01-9 0L8 3z"/>
+        <!-- Asas de la copa -->
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          d="M6.5 5.5C4.5 5.5 3 7 3 9s1.5 3.5 3.5 3.5"/>
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          d="M17.5 5.5C19.5 5.5 21 7 21 9s-1.5 3.5-3.5 3.5"/>
+        <!-- Pie de la copa -->
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+          d="M12 16.5v3M9 21h6"/>
       </svg>
     </div>
     <div class="nilbl">Liga</div>
   </div>
 
-  <!-- PERFIL — Usuario -->
+  <!-- PERFIL — Silueta moderna con collar -->
   <div class="ni" id="ni-perfil" onclick="go('perfil')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <circle class="ico-stroke" cx="12" cy="8" r="4"/>
-        <path class="ico-stroke" d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6"/>
-        <circle class="ico-fill" fill="currentColor" cx="12" cy="8" r="4" opacity="0.12"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cabeza -->
+        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.7" cx="12" cy="7.5" r="3.8"/>
+        <circle class="ico-fill" fill="currentColor" opacity=".14" cx="12" cy="7.5" r="3.8"/>
+        <!-- Cuerpo curvo estilo card -->
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+          d="M3.5 20.5c0-3.6 3.8-6.5 8.5-6.5s8.5 2.9 8.5 6.5"/>
+        <path class="ico-fill" fill="currentColor" opacity=".08"
+          d="M3.5 20.5c0-3.6 3.8-6.5 8.5-6.5s8.5 2.9 8.5 6.5H3.5z"/>
       </svg>
     </div>
     <div class="nilbl">Perfil</div>
   </div>
 
-  <!-- SOCIAL — Personas -->
+  <!-- SOCIAL — Dos personas con conexión -->
   <div class="ni" id="ni-social" onclick="go('social')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <circle class="ico-stroke" cx="9" cy="7" r="3"/>
-        <circle class="ico-stroke" cx="17" cy="9" r="2.5"/>
-        <path class="ico-stroke" d="M1 20c0-2.76 3.134-5 7-5h4"/>
-        <path class="ico-stroke" d="M14 20c0-2.2 2.24-4 5-4s5 1.8 5 4"/>
-        <circle class="ico-fill" fill="currentColor" cx="9" cy="7" r="3" opacity="0.12"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Persona izquierda (detrás) -->
+        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.5" cx="8.5" cy="7" r="3"/>
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          d="M1 20.5c0-3.3 3.4-6 7.5-6"/>
+        <!-- Persona derecha (adelante) -->
+        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.7" cx="15.5" cy="8" r="3.3"/>
+        <circle class="ico-fill" fill="currentColor" opacity=".14" cx="15.5" cy="8" r="3.3"/>
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+          d="M8 20.5c0-3.6 3.4-6.5 7.5-6.5s7.5 2.9 7.5 6.5"/>
       </svg>
     </div>
     <div class="nilbl">Social</div>
   </div>
 
-  <!-- ADMIN — Escudo protección -->
+  <!-- ADMIN — Escudo con checkmark más moderno -->
   <div class="ni hidden" id="ni-admin" onclick="go('admin')">
     <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <path class="ico-stroke" d="M12 1L3 5v7c0 5.5 4 10.5 9 12 5-1.5 9-6.5 9-12V5L12 1z"/>
-        <path class="ico-fill" fill="currentColor" d="M12 1L3 5v7c0 5.5 4 10.5 9 12 5-1.5 9-6.5 9-12V5L12 1z" opacity="0.1"/>
-        <path class="ico-stroke" d="M9 13l2 2 4-4"/>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+          d="M12 2.5L3.5 6.5v5.8C3.5 17 7.3 21.3 12 22.5 16.7 21.3 20.5 17 20.5 12.3V6.5L12 2.5z"/>
+        <path class="ico-fill" fill="currentColor" opacity=".12"
+          d="M12 2.5L3.5 6.5v5.8C3.5 17 7.3 21.3 12 22.5 16.7 21.3 20.5 17 20.5 12.3V6.5L12 2.5z"/>
+        <path class="ico-stroke" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          d="M8.5 12.5l2.5 2.5 4.5-5"/>
       </svg>
     </div>
     <div class="nilbl">Admin</div>
@@ -2680,89 +2917,262 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 </nav>
 </div><!-- /app -->
 
-<!-- EDIT UI PANEL — Ajustes de diseño avanzados -->
+<!-- EDIT UI PANEL — Ajustes de diseño avanzados v2 -->
 <div id="edit-ui-panel" onclick="if(event.target===this)closeEditUI()">
   <div id="edit-ui-box">
     <div class="eui-drag"></div>
-    <div class="eui-title">✏️ Editar UI</div>
+    <div class="eui-title">✏️ Editar UI
+      <span style="font-size:10px;font-weight:500;color:var(--t2);font-family:'DM Sans',sans-serif;letter-spacing:0">— ajustá cualquier elemento</span>
+    </div>
+
+    <!-- TABS DE CATEGORÍA -->
+    <div class="eui-tabs">
+      <div class="eui-tab on" onclick="euiSwitchTab('global',this)">🌐 Global</div>
+      <div class="eui-tab" onclick="euiSwitchTab('header',this)">📌 Header</div>
+      <div class="eui-tab" onclick="euiSwitchTab('cards',this)">🃏 Cards</div>
+      <div class="eui-tab" onclick="euiSwitchTab('nav',this)">🧭 Nav</div>
+      <div class="eui-tab" onclick="euiSwitchTab('element',this)">🎯 Elemento</div>
+    </div>
+
+    <!-- GLOBAL -->
+    <div class="eui-subpanel on" id="eui-sub-global">
+      <div class="eui-section">
+        <div class="eui-sec-title">Tipografía</div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Tamaño base de texto</div><div class="eui-row-sub">Cuerpo general de la app</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="11" max="17" value="13" id="eui-font-size" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-font-size-val">13px</span>
+          </div>
+        </div>
+      </div>
+      <div class="eui-section">
+        <div class="eui-sec-title">Isla dinámica</div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Posición vertical</div><div class="eui-row-sub">Distancia desde arriba</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="40" value="8" id="eui-di-top" oninput="euiApplyDI()"/>
+            <span class="eui-val" id="eui-di-top-val">8px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Radio de esquinas</div><div class="eui-row-sub">Redondez de la isla</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="10" max="60" value="40" id="eui-di-radius" oninput="euiApplyDI()"/>
+            <span class="eui-val" id="eui-di-radius-val">40px</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- HEADER -->
-    <div class="eui-section">
-      <div class="eui-sec-title">Header</div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Tamaño del logo</div><div class="eui-row-sub">Ícono en la barra superior</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="32" max="68" value="48" id="eui-logo-size" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-logo-size-val">48px</span>
+    <div class="eui-subpanel" id="eui-sub-header">
+      <div class="eui-section">
+        <div class="eui-sec-title">Header</div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Tamaño del logo</div><div class="eui-row-sub">Ícono en la barra superior</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="32" max="80" value="54" id="eui-logo-size" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-logo-size-val">54px</span>
+          </div>
         </div>
-      </div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Tamaño del título</div><div class="eui-row-sub">Nombre de la liga en header</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="14" max="30" value="20" id="eui-title-size" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-title-size-val">20px</span>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Radio del logo</div><div class="eui-row-sub">Redondez del ícono</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="50" value="16" id="eui-logo-radius" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-logo-radius-val">16px</span>
+          </div>
         </div>
-      </div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Header transparente al scroll</div><div class="eui-row-sub">Se hace más pequeño al bajar</div></div>
-        <div class="eui-ctrl">
-          <div class="tgl on" id="eui-tgl-hdr-shrink" onclick="euiToggle('hdrShrink',this)"><div class="tglk"></div></div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Tamaño del título</div><div class="eui-row-sub">Nombre de la liga</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="14" max="32" value="22" id="eui-title-size" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-title-size-val">22px</span>
+          </div>
         </div>
-      </div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Blur del header</div><div class="eui-row-sub">Intensidad del efecto vidrio</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="0" max="60" value="32" id="eui-hdr-blur" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-hdr-blur-val">32px</span>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Blur del header</div><div class="eui-row-sub">Efecto vidrio</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="80" value="36" id="eui-hdr-blur" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-hdr-blur-val">36px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Padding superior</div><div class="eui-row-sub">Espacio desde arriba</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="40" value="18" id="eui-hdr-pad-top" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-hdr-pad-top-val">18px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Color de fondo</div><div class="eui-row-sub">Tinte del header</div></div>
+          <div class="eui-ctrl">
+            <input type="color" class="eui-color-input" id="eui-hdr-color" value="#080c14" oninput="euiApplyHdrColor(this.value)"/>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- CARDS -->
-    <div class="eui-section">
-      <div class="eui-sec-title">Tarjetas</div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Redondeado de tarjetas</div><div class="eui-row-sub">Partidos y secciones</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="8" max="40" value="20" id="eui-card-radius" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-card-radius-val">20px</span>
+    <div class="eui-subpanel" id="eui-sub-cards">
+      <div class="eui-section">
+        <div class="eui-sec-title">Tarjetas de partidos</div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Ancho de card</div><div class="eui-row-sub">Cards horizontales</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="200" max="360" value="278" id="eui-card-width" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-card-width-val">278px</span>
+          </div>
         </div>
-      </div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Ancho de bordes</div><div class="eui-row-sub">Líneas de las cards</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="0" max="3" step=".5" value="1" id="eui-border-width" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-border-width-val">1px</span>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Redondeado de tarjetas</div><div class="eui-row-sub">Todas las cards y forms</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="4" max="40" value="20" id="eui-card-radius" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-card-radius-val">20px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Ancho de bordes</div><div class="eui-row-sub">Líneas de las cards</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="4" step=".5" value="1" id="eui-border-width" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-border-width-val">1px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Escala de cards</div><div class="eui-row-sub">Tamaño general</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="70" max="130" value="100" id="eui-card-scale" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-card-scale-val">100%</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Rotación de cards</div><div class="eui-row-sub">Ángulo de inclinación</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="-15" max="15" value="0" id="eui-card-rotate" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-card-rotate-val">0°</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Color de fondo de cards</div></div>
+          <div class="eui-ctrl">
+            <input type="color" class="eui-color-input" id="eui-card-color" value="#141828" oninput="euiApplyCardColor(this.value)"/>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- FUENTES -->
-    <div class="eui-section">
-      <div class="eui-sec-title">Tipografía</div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Tamaño de texto base</div><div class="eui-row-sub">Cuerpo general de la app</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="11" max="17" value="13" id="eui-font-size" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-font-size-val">13px</span>
+    <!-- NAV -->
+    <div class="eui-subpanel" id="eui-sub-nav">
+      <div class="eui-section">
+        <div class="eui-sec-title">Navegación inferior</div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Blur de la nav</div><div class="eui-row-sub">Efecto vidrio</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="80" value="32" id="eui-nav-blur" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-nav-blur-val">32px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Padding inferior</div><div class="eui-row-sub">Espacio safe area</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="30" value="4" id="eui-nav-pad" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-nav-pad-val">4px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Tamaño de íconos</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="16" max="32" value="22" id="eui-nav-ico-size" oninput="euiApply()"/>
+            <span class="eui-val" id="eui-nav-ico-size-val">22px</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- NAVEGACIÓN -->
-    <div class="eui-section">
-      <div class="eui-sec-title">Navegación inferior</div>
-      <div class="eui-row">
-        <div><div class="eui-row-lbl">Blur de la nav</div><div class="eui-row-sub">Intensidad del efecto vidrio</div></div>
-        <div class="eui-ctrl">
-          <input type="range" class="eui-slider" min="0" max="60" value="32" id="eui-nav-blur" oninput="euiApply()"/>
-          <span class="eui-val" id="eui-nav-blur-val">32px</span>
+    <!-- ELEMENTO (selector interactivo) -->
+    <div class="eui-subpanel" id="eui-sub-element">
+      <div class="eui-section">
+        <div class="eui-sec-title">Seleccionar elemento</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="eui-pick-btn" onclick="euiStartPick()" style="flex:1;padding:10px;border-radius:12px;background:rgba(var(--amb-color),.12);border:1.5px solid rgba(var(--amb-color),.3);color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">
+            🎯 Tocar elemento
+          </button>
+          <button onclick="euiClearSelected()" style="padding:10px 14px;border-radius:12px;background:var(--surf2);border:1px solid var(--bdr2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer">
+            ✕ Limpiar
+          </button>
+        </div>
+        <div id="eui-sel-info" style="font-size:11px;color:var(--t3);padding:8px 12px;background:var(--surf2);border-radius:10px;border:1px solid var(--bdr);margin-bottom:10px;min-height:32px;display:flex;align-items:center">
+          Sin elemento seleccionado — tocá un elemento en la página
+        </div>
+      </div>
+      <div class="eui-section" id="eui-el-controls" style="display:none">
+        <div class="eui-sec-title">Ajustar elemento seleccionado</div>
+        <div class="eui-transform-grid">
+          <div class="eui-transform-cell">
+            <div class="eui-transform-lbl">Escala</div>
+            <input type="range" class="eui-slider" style="width:100%" min="50" max="200" value="100" id="eui-el-scale" oninput="euiApplyEl()"/>
+            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-scale-val">100%</div>
+          </div>
+          <div class="eui-transform-cell">
+            <div class="eui-transform-lbl">Rotación</div>
+            <input type="range" class="eui-slider" style="width:100%" min="-180" max="180" value="0" id="eui-el-rotate" oninput="euiApplyEl()"/>
+            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-rotate-val">0°</div>
+          </div>
+          <div class="eui-transform-cell">
+            <div class="eui-transform-lbl">Mover X</div>
+            <input type="range" class="eui-slider" style="width:100%" min="-200" max="200" value="0" id="eui-el-x" oninput="euiApplyEl()"/>
+            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-x-val">0px</div>
+          </div>
+          <div class="eui-transform-cell">
+            <div class="eui-transform-lbl">Mover Y</div>
+            <input type="range" class="eui-slider" style="width:100%" min="-200" max="200" value="0" id="eui-el-y" oninput="euiApplyEl()"/>
+            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-y-val">0px</div>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Opacidad</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="100" value="100" id="eui-el-opacity" oninput="euiApplyEl()"/>
+            <span class="eui-val" id="eui-el-opacity-val">100%</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Radio de esquinas</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="0" max="60" value="0" id="eui-el-radius" oninput="euiApplyEl()"/>
+            <span class="eui-val" id="eui-el-radius-val">0px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Tamaño de texto</div></div>
+          <div class="eui-ctrl">
+            <input type="range" class="eui-slider" min="8" max="48" value="13" id="eui-el-fontsize" oninput="euiApplyEl()"/>
+            <span class="eui-val" id="eui-el-fontsize-val">13px</span>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Color de texto</div></div>
+          <div class="eui-ctrl">
+            <input type="color" class="eui-color-input" id="eui-el-color" value="#eef0ff" oninput="euiApplyEl()"/>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Color de fondo</div></div>
+          <div class="eui-ctrl">
+            <input type="color" class="eui-color-input" id="eui-el-bg" value="#141828" oninput="euiApplyEl()"/>
+          </div>
+        </div>
+        <div class="eui-row">
+          <div><div class="eui-row-lbl">Ocultar elemento</div></div>
+          <div class="eui-ctrl">
+            <div class="tgl" id="eui-el-hide-tgl" onclick="euiToggleHide()"><div class="tglk"></div></div>
+          </div>
         </div>
       </div>
     </div>
 
     <div style="padding:16px 18px 8px;display:flex;gap:8px">
-      <button class="abtn sec" onclick="euiReset()" style="flex:1;padding:12px;font-size:12px">Resetear</button>
+      <button class="abtn sec" onclick="euiReset()" style="flex:1;padding:12px;font-size:12px">Resetear todo</button>
       <button class="abtn" onclick="euiSave()" style="flex:2;padding:12px;font-size:12px">Guardar cambios</button>
     </div>
   </div>
@@ -2870,37 +3280,80 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
         </div>
       </div>
 
-      <!-- TEMAS DE COLOR (Gradientes oscuros — HyperOS style) -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Tema de color</div>
+      <!-- TEMAS DE COLOR (Gradientes oscuros — HyperOS style + nuevos) -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 6px">Tema de color</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:10px">El texto cambia automáticamente: blanco en oscuro, negro en claro.</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">OSCUROS</div>
       <div class="theme-grid">
         <div class="theme-item active" id="theme-default" onclick="applyColorTheme('default',this)" style="background:linear-gradient(135deg,#0d1117 0%,#1a1f35 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Default</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-purple" onclick="applyColorTheme('purple',this)" style="background:linear-gradient(135deg,#1a0533 0%,#2d1052 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Morado</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-teal" onclick="applyColorTheme('teal',this)" style="background:linear-gradient(135deg,#001a1a 0%,#023535 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Teal</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-blue" onclick="applyColorTheme('blue',this)" style="background:linear-gradient(135deg,#021433 0%,#052a6e 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Azul</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-darkblue" onclick="applyColorTheme('darkblue',this)" style="background:linear-gradient(135deg,#0a0e1a 0%,#1e2b4a 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Navy</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-charcoal" onclick="applyColorTheme('charcoal',this)" style="background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Carbón</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-green" onclick="applyColorTheme('green',this)" style="background:linear-gradient(135deg,#001a0a 0%,#01330f 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Verde</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-brown" onclick="applyColorTheme('brown',this)" style="background:linear-gradient(135deg,#1a0a00 0%,#3d1a00 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Cobre</div>
           <div class="theme-item-check">✓</div>
         </div>
         <div class="theme-item" id="theme-lilac" onclick="applyColorTheme('lilac',this)" style="background:linear-gradient(135deg,#1a1033 0%,#2a2052 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Lila</div>
           <div class="theme-item-check">✓</div>
         </div>
       </div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">CLAROS</div>
+      <div class="theme-grid">
+        <div class="theme-item" id="theme-light" onclick="applyColorTheme('light',this)" style="background:linear-gradient(135deg,#e8ebf5 0%,#f5f7ff 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,0,60,.5)">Blanco</div>
+          <div class="theme-item-check" style="background:rgba(0,0,0,.8);color:#fff">✓</div>
+        </div>
+        <div class="theme-item" id="theme-lightblue" onclick="applyColorTheme('lightblue',this)" style="background:linear-gradient(135deg,#dde3ff 0%,#eef2ff 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,0,60,.5)">Azul claro</div>
+          <div class="theme-item-check" style="background:rgba(0,0,0,.8);color:#fff">✓</div>
+        </div>
+        <div class="theme-item" id="theme-lightgreen" onclick="applyColorTheme('lightgreen',this)" style="background:linear-gradient(135deg,#d1fae5 0%,#f0fdf4 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,60,0,.5)">Verde claro</div>
+          <div class="theme-item-check" style="background:rgba(0,0,0,.8);color:#fff">✓</div>
+        </div>
+      </div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">✨ EFECTOS DE MOVIMIENTO</div>
+      <div class="theme-grid">
+        <div class="theme-item" id="theme-ps4aurora" onclick="applyColorTheme('ps4aurora',this)" style="background:linear-gradient(135deg,#050d15 0%,#0a2030 100%);overflow:hidden">
+          <div style="position:absolute;inset:0;background:linear-gradient(120deg,rgba(0,229,255,.15),rgba(0,150,255,.08),transparent);animation:auroraShift 3s ease infinite alternate"></div>
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,229,255,.9)">Aurora 🌌</div>
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-ps4ember" onclick="applyColorTheme('ps4ember',this)" style="background:linear-gradient(135deg,#12050a 0%,#2a0a10 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,107,53,.9)">Brasas 🔥</div>
+          <div class="theme-item-check">✓</div>
+        </div>
+        <div class="theme-item" id="theme-ps4cosmos" onclick="applyColorTheme('ps4cosmos',this)" style="background:linear-gradient(135deg,#06061a 0%,#0e0e36 100%)">
+          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(192,132,252,.9)">Cosmos ⭐</div>
+          <div class="theme-item-check">✓</div>
+        </div>
+      </div>
+      <style>@keyframes auroraShift{0%{opacity:.3;transform:scaleX(1)}100%{opacity:.7;transform:scaleX(1.3)}}</style>
 
       <!-- NOTIFICACIONES -->
       <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Notificaciones</div>
@@ -3019,18 +3472,28 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
 </div>
 
-<!-- MATCH DETAIL MODAL — pantalla completa -->
-<div id="md-ov" style="position:fixed;inset:0;z-index:600;pointer-events:none;opacity:0;transition:opacity .22s ease">
-  <div id="md-sheet" style="position:absolute;inset:0;background:var(--bg);background-image:var(--grad);
-    overflow-y:auto;transform:translateY(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);pointer-events:all">
+<!-- MATCH DETAIL MODAL — pantalla completa con animación mejorada -->
+<div id="md-ov" style="position:fixed;inset:0;z-index:600;pointer-events:none;opacity:0;
+  transition:opacity .28s cubic-bezier(.22,1,.36,1);
+  background:rgba(0,0,0,.4);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)">
+  <div id="md-sheet" style="
+    position:absolute;inset:0;
+    background:var(--bg);background-image:var(--grad);
+    overflow-y:auto;
+    transform:translateY(100%) scale(.96);
+    transform-origin:center bottom;
+    transition:transform .42s cubic-bezier(.22,1,.36,1), border-radius .42s cubic-bezier(.22,1,.36,1);
+    pointer-events:all;
+    border-radius:28px 28px 0 0;
+    will-change:transform;">
     <!-- Back button fijo -->
     <button id="md-back-btn" onclick="closeMD()" style="position:sticky;top:0;z-index:10;
       display:flex;align-items:center;gap:8px;
       margin:calc(env(safe-area-inset-top,0px) + 12px) 0 0 14px;
-      background:rgba(0,0,0,.35);backdrop-filter:blur(12px);
+      background:rgba(0,0,0,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
       border:1px solid rgba(255,255,255,.12);border-radius:99px;
       padding:8px 16px 8px 12px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;
-      width:fit-content">
+      width:fit-content;transition:background .18s,transform .15s var(--spring)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px">
         <path d="M19 12H5m7-7-7 7 7 7"/>
       </svg>
@@ -3521,7 +3984,14 @@ function go(p){
   if(hdr)hdr.classList.toggle('hdr-hidden',p!=='inicio');
   clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,150);
   renderPage(p);
-  if(p==='admin'){populateSels();renderAdmLists();updateAdmCfg();prefillMatchDate();}
+  if(p==='admin'){
+    populateSels();renderAdmLists();updateAdmCfg();prefillMatchDate();
+    // Mostrar hub al entrar al admin
+    const hub=document.getElementById('adm-hub');if(hub)hub.style.display='grid';
+    document.querySelectorAll('.apane').forEach(pn=>pn.classList.remove('on'));
+    const backBtn=document.getElementById('adm-back-btn');if(backBtn)backBtn.style.display='none';
+    const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent='Panel Admin';
+  }
 }
 
 /* ---- THEME ---- */
@@ -3571,12 +4041,16 @@ function applyAmbientColor(rgb, intensity=1){
   root.style.setProperty('--amb-color',`${r}, ${g}, ${b}`);
   root.style.setProperty('--amb-tint-hdr',`rgba(${r},${g},${b},${0.10*intensity})`);
   root.style.setProperty('--amb-tint-nav',`rgba(${r},${g},${b},${0.07*intensity})`);
-  root.style.setProperty('--accent',`rgb(${Math.min(r+40,255)},${Math.min(g+40,255)},${Math.min(b+40,255)})`);
-  root.style.setProperty('--accent2',`rgb(${Math.min(r+70,255)},${Math.min(g+70,255)},${Math.min(b+70,255)})`);
+  // Solo actualizar accent si NO hay un tema de color activo guardado
+  const activeTheme=D.settings?.colorTheme;
+  if(!activeTheme||activeTheme==='default'){
+    root.style.setProperty('--accent',`rgb(${Math.min(r+40,255)},${Math.min(g+40,255)},${Math.min(b+40,255)})`);
+    root.style.setProperty('--accent2',`rgb(${Math.min(r+70,255)},${Math.min(g+70,255)},${Math.min(b+70,255)})`);
+  }
   // Blobs de fondo
-  const abt=$('ab-top');
+  const abt=document.getElementById('ab-top');
   if(abt){abt.style.background=`rgb(${r},${g},${b})`;abt.style.opacity=(0.12*intensity).toString()}
-  const abb=$('ab-bot');
+  const abb=document.getElementById('ab-bot');
   if(abb){abb.style.background=`rgb(${Math.min(r+30,255)},${Math.min(g-20,200)},${Math.min(b+20,255)})`;abb.style.opacity=(0.07*intensity).toString()}
 }
 
@@ -3689,12 +4163,29 @@ function fmtDate(d){try{return new Date(d).toLocaleDateString('es-AR',{weekday:'
 function team(id){return D.teams.find(t=>t.id===id)}
 function channel(id){return D.channels.find(c=>c.id===id)}
 
-/* ---- FEATURED MATCHES ---- */
+/* ---- FEATURED MATCHES — máx 3, priorizando en vivo > próximos > finales recientes ---- */
 function renderFeatM(){
   const c=$('feat-m');if(!c)return;
-  const ms=D.matches.slice().sort((a,b)=>{const o={en_vivo:0,proximo:1,pausado:2,finalizado:3};return(o[a.status]??4)-(o[b.status]??4)}).slice(0,8);
-  if(!ms.length){c.innerHTML='<div class="empty" style="width:100%;padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
-  c.innerHTML=ms.map(m=>{
+  // Prioridad: 1° en vivo, 2° próximos (más cercanos al ahora), 3° finales recientes
+  const now=Date.now();
+  const scored=D.matches.map(m=>{
+    let score=0;
+    if(m.status==='en_vivo')score=10000;
+    else if(m.status==='pausado')score=9000;
+    else if(m.status==='proximo'){
+      // más cercano al presente = mayor score
+      const diff=new Date(m.datetime)-now;
+      if(diff>=0)score=5000-Math.floor(diff/60000); // próximos futuros, más cercano = mejor
+      else score=3000+Math.floor(diff/60000); // ya pasó la hora pero sigue "proximo"
+    }else if(m.status==='finalizado'){
+      // más reciente = mejor, pero baja prioridad
+      score=1000-Math.abs(new Date(m.datetime)-now)/3600000;
+    }
+    return{m,score};
+  }).sort((a,b)=>b.score-a.score).slice(0,3).map(x=>x.m);
+
+  if(!scored.length){c.innerHTML='<div class="empty" style="width:100%;padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
+  c.innerHTML=scored.map(m=>{
     const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
     const live=m.status==='en_vivo';
     const ch=channel(m.channel);
@@ -3702,12 +4193,12 @@ function renderFeatM(){
       <div class="mcst${live?' lv':''}">
         ${live?'<div class="ldot"></div>':''}${stLabel(m.status)}${m.stadium?` · ${m.stadium}`:''}
       </div>
-      <div class="mcts">
+      <div id="mc-imgs" class="mcts">
         <div class="mct"><div class="mccr">${crEl(h.logo,h.name.substring(0,3).toUpperCase())}</div><div class="mctn">${h.name}</div></div>
         <div class="mcmd">
           ${m.status==='proximo'?
             `<div class="mctl">${fmtTime(m.datetime)}</div><div class="mcdsh" style="font-family:'Bebas Neue';font-size:18px">VS</div>`:
-            `<div class="mcsc"><span id="fcmh-${m.id}">${m.homeScore??0}</span><span class="mcdsh">-</span><span id="fcma-${m.id}">${m.awayScore??0}</span></div>`}
+            `<div class="mcsc"><span>${m.homeScore??0}</span><span class="mcdsh">-</span><span>${m.awayScore??0}</span></div>`}
           <div class="mctl">${new Date(m.datetime).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}</div>
         </div>
         <div class="mct"><div class="mccr">${crEl(a.logo,a.name.substring(0,3).toUpperCase())}</div><div class="mctn">${a.name}</div></div>
@@ -5070,8 +5561,18 @@ function openOv(id){
   if(id==='md-ov'){
     el.style.pointerEvents='all';
     el.style.opacity='1';
-    const sh=$(id.replace('-ov','-sheet'))||el.querySelector('[id$="-sheet"]')||el.firstElementChild;
-    if(sh)sh.style.transform='translateY(0)';
+    el.style.backdropFilter='blur(8px)';
+    el.style.webkitBackdropFilter='blur(8px)';
+    const sh=$('md-sheet');
+    if(sh){
+      // pequeño delay para que el browser pinte antes de la transición
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+          sh.style.transform='translateY(0) scale(1)';
+          sh.style.borderRadius='0';
+        });
+      });
+    }
     document.body.style.overflow='hidden';
     return;
   }
@@ -5084,8 +5585,11 @@ function closeOv(id){
 }
 function closeMD(){
   const ov=$('md-ov'),sh=$('md-sheet');
-  if(sh)sh.style.transform='translateY(100%)';
-  if(ov){ov.style.opacity='0';ov.style.pointerEvents='none';}
+  if(sh){sh.style.transform='translateY(100%) scale(.96)';sh.style.borderRadius='28px 28px 0 0';}
+  if(ov){
+    ov.style.opacity='0';ov.style.pointerEvents='none';
+    ov.style.backdropFilter='blur(0px)';ov.style.webkitBackdropFilter='blur(0px)';
+  }
   document.body.style.overflow='';
   clearInterval(_cdTimer);
   resetAmbient();
@@ -6288,68 +6792,360 @@ function buildEventsHTML(events,h,a){
 }
 
 /* ════════════════════════════════════════════════
-   EUI SETTINGS
+   ADMIN HUB — Navegación con cards
    ════════════════════════════════════════════════ */
-let _euiSettings={logoSize:48,titleSize:20,hdrBlur:32,cardRadius:20,borderWidth:1,fontSize:13,navBlur:32,hdrShrink:true};
+function admGo(section){
+  // Ocultar hub
+  const hub=document.getElementById('adm-hub');
+  if(hub)hub.style.display='none';
+  // Actualizar título
+  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código'};
+  const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent=titles[section]||'Panel Admin';
+  // Mostrar botón volver si no existe
+  let backBtn=document.getElementById('adm-back-btn');
+  if(!backBtn){
+    backBtn=document.createElement('button');backBtn.id='adm-back-btn';backBtn.className='adm-back-btn';
+    backBtn.innerHTML=`<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg> Panel Admin`;
+    backBtn.onclick=admBackToHub;
+    const hub2=document.getElementById('adm-hub');if(hub2&&hub2.parentNode)hub2.parentNode.insertBefore(backBtn,hub2);
+  }
+  backBtn.style.display='flex';
+  // Usar el admTab original
+  const tab=document.getElementById('atab-'+section);
+  admTab(section,tab);
+}
+function admBackToHub(){
+  // Ocultar todos los paneles
+  document.querySelectorAll('.apane').forEach(p=>p.classList.remove('on'));
+  // Mostrar hub
+  const hub=document.getElementById('adm-hub');if(hub)hub.style.display='grid';
+  // Ocultar botón volver
+  const backBtn=document.getElementById('adm-back-btn');if(backBtn)backBtn.style.display='none';
+  // Resetear título
+  const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent='Panel Admin';
+}
+/* ════════════════════════════════════════════════
+   EUI SETTINGS — versión mejorada con editor por elemento
+   ════════════════════════════════════════════════ */
+let _euiSettings={logoSize:54,logoRadius:16,titleSize:22,hdrBlur:36,hdrPadTop:18,cardRadius:20,cardWidth:278,cardScale:100,cardRotate:0,borderWidth:1,fontSize:13,navBlur:32,navPad:4,navIcoSize:22,hdrShrink:true};
+let _euiSelectedEl=null,_euiPicking=false;
+
 function openEditUI(){$('edit-ui-panel').classList.add('open');euiLoadSettings()}
-function closeEditUI(){$('edit-ui-panel').classList.remove('open')}
+function closeEditUI(){
+  $('edit-ui-panel').classList.remove('open');
+  if(_euiPicking)euiStopPick();
+  if(_euiSelectedEl){_euiSelectedEl.classList.remove('eui-selected');_euiSelectedEl=null;}
+}
+
+function euiSwitchTab(id,el){
+  document.querySelectorAll('.eui-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.eui-subpanel').forEach(p=>p.classList.remove('on'));
+  if(el)el.classList.add('on');
+  const panel=$('eui-sub-'+id);if(panel)panel.classList.add('on');
+}
+
 function euiLoadSettings(){
   const s=D.euiSettings||_euiSettings;Object.assign(_euiSettings,s);
-  const set=(id,val)=>{const el=$(id);if(el){el.value=val;const v=$(id+'-val');if(v)v.textContent=val+'px';}};
-  set('eui-logo-size',_euiSettings.logoSize);set('eui-title-size',_euiSettings.titleSize);set('eui-hdr-blur',_euiSettings.hdrBlur);
-  set('eui-card-radius',_euiSettings.cardRadius);set('eui-border-width',_euiSettings.borderWidth);set('eui-font-size',_euiSettings.fontSize);set('eui-nav-blur',_euiSettings.navBlur);
-  const hdrTgl=$('eui-tgl-hdr-shrink');if(hdrTgl)hdrTgl.classList.toggle('on',_euiSettings.hdrShrink!==false);
+  const set=(id,val,suf)=>{const el=$(id);if(el){el.value=val;const v=$(id+'-val');if(v)v.textContent=val+(suf||'px');}};
+  set('eui-font-size',_euiSettings.fontSize);
+  set('eui-logo-size',_euiSettings.logoSize);
+  set('eui-logo-radius',_euiSettings.logoRadius||16);
+  set('eui-title-size',_euiSettings.titleSize);
+  set('eui-hdr-blur',_euiSettings.hdrBlur);
+  set('eui-hdr-pad-top',_euiSettings.hdrPadTop||18);
+  set('eui-card-radius',_euiSettings.cardRadius);
+  set('eui-card-width',_euiSettings.cardWidth||278);
+  set('eui-card-scale',_euiSettings.cardScale||100,'%');
+  set('eui-card-rotate',_euiSettings.cardRotate||0,'°');
+  set('eui-border-width',_euiSettings.borderWidth);
+  set('eui-nav-blur',_euiSettings.navBlur);
+  set('eui-nav-pad',_euiSettings.navPad||4);
+  set('eui-nav-ico-size',_euiSettings.navIcoSize||22);
 }
+
 function euiApply(){
   const r=(id)=>{const el=$(id);return el?parseFloat(el.value):null};
-  const logoSz=r('eui-logo-size'),titleSz=r('eui-title-size'),hdrBlur=r('eui-hdr-blur');
-  const cardR=r('eui-card-radius'),bw=r('eui-border-width'),fs=r('eui-font-size'),navBlur=r('eui-nav-blur');
-  const setLbl=(id,val)=>{const el=$(id+'-val');if(el)el.textContent=val+'px';};
-  setLbl('eui-logo-size',logoSz);setLbl('eui-title-size',titleSz);setLbl('eui-hdr-blur',hdrBlur);
-  setLbl('eui-card-radius',cardR);setLbl('eui-border-width',bw);setLbl('eui-font-size',fs);setLbl('eui-nav-blur',navBlur);
+  const lbl=(id,val,suf)=>{const el=$(id+'-val');if(el)el.textContent=val+(suf||'px');};
+  const logoSz=r('eui-logo-size'),logoRad=r('eui-logo-radius')||16,titleSz=r('eui-title-size'),hdrBlur=r('eui-hdr-blur'),hdrPad=r('eui-hdr-pad-top')||18;
+  const cardR=r('eui-card-radius'),cardW=r('eui-card-width')||278,cardSc=r('eui-card-scale')||100,cardRot=r('eui-card-rotate')||0;
+  const bw=r('eui-border-width'),fs=r('eui-font-size'),navBlur=r('eui-nav-blur'),navPad=r('eui-nav-pad')||4,navIco=r('eui-nav-ico-size')||22;
+  if(logoSz!==null)lbl('eui-logo-size',logoSz);if(logoRad!==null)lbl('eui-logo-radius',logoRad);
+  if(titleSz!==null)lbl('eui-title-size',titleSz);if(hdrBlur!==null)lbl('eui-hdr-blur',hdrBlur);if(hdrPad!==null)lbl('eui-hdr-pad-top',hdrPad);
+  if(cardR!==null)lbl('eui-card-radius',cardR);if(cardW!==null)lbl('eui-card-width',cardW);
+  if(cardSc!==null)lbl('eui-card-scale',cardSc,'%');if(cardRot!==null)lbl('eui-card-rotate',cardRot,'°');
+  if(bw!==null)lbl('eui-border-width',bw);if(fs!==null)lbl('eui-font-size',fs);
+  if(navBlur!==null)lbl('eui-nav-blur',navBlur);if(navPad!==null)lbl('eui-nav-pad',navPad);if(navIco!==null)lbl('eui-nav-ico-size',navIco);
   const root=document.documentElement;
-  root.style.setProperty('--hdr-logo-sz',logoSz+'px');root.style.setProperty('--hdr-title',titleSz+'px');root.style.setProperty('--hdr-blur',hdrBlur+'px');
-  const nav=$('nav');if(nav&&navBlur!==null)nav.style.backdropFilter=`blur(${navBlur}px) saturate(180%)`;
-  injectCSS(`.mc{border-radius:${cardR}px!important}.mr{border-radius:${Math.min(cardR,14)}px!important}.aform{border-radius:${cardR}px!important}.ibox{border-radius:${cardR}px!important}body{font-size:${fs}px!important}`);
+  if(logoSz!==null)root.style.setProperty('--hdr-logo-sz',logoSz+'px');
+  if(logoRad!==null)root.style.setProperty('--hdr-logo-r',logoRad+'px');
+  if(titleSz!==null)root.style.setProperty('--hdr-title',titleSz+'px');
+  if(hdrBlur!==null)root.style.setProperty('--hdr-blur',hdrBlur+'px');
+  if(hdrPad!==null)root.style.setProperty('--hdr-pad-top',`calc(${hdrPad}px + env(safe-area-inset-top,0px))`);
+  const nav=$('nav');
+  if(nav&&navBlur!==null){nav.style.backdropFilter=`blur(${navBlur}px) saturate(180%)`;nav.style.padding=`${navPad}px 6px calc(${navPad}px + env(safe-area-inset-bottom,0px))`;}
+  if(navIco!==null)injectCSS(`.niico svg{width:${navIco}px!important;height:${navIco}px!important}`,'eui-nav-ico');
+  if(cardR!==null||cardW!==null||cardSc!==null||cardRot!==null||bw!==null||fs!==null){
+    const tr=`scale(${(cardSc||100)/100}) rotate(${cardRot||0}deg)`;
+    injectCSS(`.mc{border-radius:${cardR}px!important;width:${cardW}px!important;transform:${tr}!important;border-width:${bw}px!important}.mr{border-radius:${Math.min(cardR,14)}px!important}.aform{border-radius:${cardR}px!important}.ibox{border-radius:${cardR}px!important}body{font-size:${fs}px!important}`,'eui-main');
+  }
 }
+
+function euiApplyDI(){
+  const top=parseFloat($('eui-di-top')?.value||8);
+  const rad=parseFloat($('eui-di-radius')?.value||40);
+  const lbl=(id,v,s)=>{const el=$(id+'-val');if(el)el.textContent=v+(s||'px')};
+  lbl('eui-di-top',top);lbl('eui-di-radius',rad);
+  const di=$('dyn-island');
+  if(di){di.style.top=`calc(${top}px + env(safe-area-inset-top,0px))`;di.style.borderRadius=rad+'px';}
+}
+
+function euiApplyHdrColor(hex){const h=$('hdr');if(h)h.style.background=`${hex}cc`;}
+function euiApplyCardColor(hex){injectCSS(`.mc{background:${hex}!important}`,'eui-card-color');}
+
+/* ── Element picker ── */
+function euiStartPick(){
+  _euiPicking=true;
+  document.body.classList.add('eui-picking');
+  const btn=$('eui-pick-btn');if(btn){btn.textContent='🔴 Tocando... (toca un elemento)';btn.style.background='rgba(248,113,113,.15)';}
+  document.addEventListener('click',euiPickClick,{capture:true,once:true});
+}
+function euiStopPick(){
+  _euiPicking=false;document.body.classList.remove('eui-picking');
+  const btn=$('eui-pick-btn');if(btn){btn.textContent='🎯 Tocar elemento';btn.style.background='';}
+  document.removeEventListener('click',euiPickClick,{capture:true});
+}
+function euiPickClick(e){
+  e.preventDefault();e.stopPropagation();
+  euiStopPick();
+  if(e.target.closest('#edit-ui-panel'))return;
+  if(_euiSelectedEl)_euiSelectedEl.classList.remove('eui-selected');
+  _euiSelectedEl=e.target;
+  _euiSelectedEl.classList.add('eui-selected');
+  const info=$('eui-sel-info');
+  if(info){
+    const tag=e.target.tagName.toLowerCase();
+    const cls=e.target.className.toString().split(' ').filter(c=>c&&!c.startsWith('eui')).slice(0,2).join('.');
+    info.textContent=`<${tag}${cls?'.'+cls:''}> — "${e.target.textContent.trim().slice(0,35)||'(sin texto)'}"`;
+    info.style.color='var(--accent2)';
+  }
+  const ctrl=$('eui-el-controls');if(ctrl)ctrl.style.display='block';
+  const cs=getComputedStyle(_euiSelectedEl);
+  const fs=parseFloat(cs.fontSize)||13;
+  const fsEl=$('eui-el-fontsize');if(fsEl){fsEl.value=fs;const v=$('eui-el-fontsize-val');if(v)v.textContent=fs+'px';}
+  ['eui-el-scale','eui-el-rotate','eui-el-x','eui-el-y'].forEach(id=>{const i=$(id);if(i)i.value=id.includes('scale')?100:0;});
+  const labs={scale:'100%',rotate:'0°',x:'0px',y:'0px',opacity:'100%',radius:'0px'};
+  Object.entries(labs).forEach(([k,v])=>{const el=$('eui-el-'+k+'-val');if(el)el.textContent=v;});
+}
+function euiApplyEl(){
+  if(!_euiSelectedEl)return;
+  const scale=parseFloat($('eui-el-scale')?.value||100)/100;
+  const rotate=parseFloat($('eui-el-rotate')?.value||0);
+  const tx=parseFloat($('eui-el-x')?.value||0);
+  const ty=parseFloat($('eui-el-y')?.value||0);
+  const op=parseFloat($('eui-el-opacity')?.value||100)/100;
+  const fs=parseFloat($('eui-el-fontsize')?.value||13);
+  const rad=parseFloat($('eui-el-radius')?.value||0);
+  const color=$('eui-el-color')?.value;
+  const bg=$('eui-el-bg')?.value;
+  _euiSelectedEl.style.transform=`translate(${tx}px,${ty}px) scale(${scale}) rotate(${rotate}deg)`;
+  _euiSelectedEl.style.opacity=op;
+  _euiSelectedEl.style.fontSize=fs+'px';
+  if(rad>0)_euiSelectedEl.style.borderRadius=rad+'px';
+  if(color)_euiSelectedEl.style.color=color;
+  if(bg&&bg!=='#141828')_euiSelectedEl.style.background=bg;
+  $('eui-el-scale-val')&&($('eui-el-scale-val').textContent=Math.round(scale*100)+'%');
+  $('eui-el-rotate-val')&&($('eui-el-rotate-val').textContent=rotate+'°');
+  $('eui-el-x-val')&&($('eui-el-x-val').textContent=tx+'px');
+  $('eui-el-y-val')&&($('eui-el-y-val').textContent=ty+'px');
+  $('eui-el-opacity-val')&&($('eui-el-opacity-val').textContent=Math.round(op*100)+'%');
+  $('eui-el-radius-val')&&($('eui-el-radius-val').textContent=rad+'px');
+  $('eui-el-fontsize-val')&&($('eui-el-fontsize-val').textContent=fs+'px');
+}
+function euiToggleHide(){
+  if(!_euiSelectedEl)return;
+  const tgl=$('eui-el-hide-tgl');if(!tgl)return;
+  tgl.classList.toggle('on');
+  _euiSelectedEl.style.display=tgl.classList.contains('on')?'none':'';
+}
+function euiClearSelected(){
+  if(_euiSelectedEl){_euiSelectedEl.classList.remove('eui-selected');_euiSelectedEl=null;}
+  const ctrl=$('eui-el-controls');if(ctrl)ctrl.style.display='none';
+  const info=$('eui-sel-info');if(info){info.textContent='Sin elemento seleccionado — tocá un elemento en la página';info.style.color='var(--t3)';}
+  if(_euiPicking)euiStopPick();
+}
+
+function injectCSS(css,id){
+  id=id||'eui-inject';let s=document.getElementById(id);
+  if(!s){s=document.createElement('style');s.id=id;document.head.appendChild(s);}
+  s.textContent=css;
+}
+
 function euiToggle(key,tglEl){tglEl.classList.toggle('on');_euiSettings[key]=tglEl.classList.contains('on');}
 function euiSave(){
-  _euiSettings.logoSize=parseFloat($('eui-logo-size')?.value||48);_euiSettings.titleSize=parseFloat($('eui-title-size')?.value||20);
-  _euiSettings.hdrBlur=parseFloat($('eui-hdr-blur')?.value||32);_euiSettings.cardRadius=parseFloat($('eui-card-radius')?.value||20);
-  _euiSettings.borderWidth=parseFloat($('eui-border-width')?.value||1);_euiSettings.fontSize=parseFloat($('eui-font-size')?.value||13);
-  _euiSettings.navBlur=parseFloat($('eui-nav-blur')?.value||32);
+  const r=(id,def)=>parseFloat($(id)?.value||def);
+  _euiSettings.logoSize=r('eui-logo-size',54);_euiSettings.logoRadius=r('eui-logo-radius',16);
+  _euiSettings.titleSize=r('eui-title-size',22);_euiSettings.hdrBlur=r('eui-hdr-blur',36);_euiSettings.hdrPadTop=r('eui-hdr-pad-top',18);
+  _euiSettings.cardRadius=r('eui-card-radius',20);_euiSettings.cardWidth=r('eui-card-width',278);
+  _euiSettings.cardScale=r('eui-card-scale',100);_euiSettings.cardRotate=r('eui-card-rotate',0);
+  _euiSettings.borderWidth=r('eui-border-width',1);_euiSettings.fontSize=r('eui-font-size',13);
+  _euiSettings.navBlur=r('eui-nav-blur',32);_euiSettings.navPad=r('eui-nav-pad',4);_euiSettings.navIcoSize=r('eui-nav-ico-size',22);
   D.euiSettings=Object.assign({},_euiSettings);save();euiApply();closeEditUI();toast('✅ UI guardada');
 }
-function euiReset(){_euiSettings={logoSize:48,titleSize:20,hdrBlur:32,cardRadius:20,borderWidth:1,fontSize:13,navBlur:32,hdrShrink:true};D.euiSettings=null;save();euiLoadSettings();euiApply();toast('🔄 UI reseteada');}
+function euiReset(){
+  _euiSettings={logoSize:54,logoRadius:16,titleSize:22,hdrBlur:36,hdrPadTop:18,cardRadius:20,cardWidth:278,cardScale:100,cardRotate:0,borderWidth:1,fontSize:13,navBlur:32,navPad:4,navIcoSize:22,hdrShrink:true};
+  D.euiSettings=null;save();euiLoadSettings();euiApply();
+  ['eui-main','eui-card-color','eui-nav-ico'].forEach(id=>{const s=document.getElementById(id);if(s)s.remove();});
+  const di=$('dyn-island');if(di){di.style.top='';di.style.borderRadius='';}
+  const hdr=$('hdr');if(hdr)hdr.style.background='';
+  toast('🔄 UI reseteada');
+}
 function loadEuiSettings(){if(!D.euiSettings)return;Object.assign(_euiSettings,D.euiSettings);euiApply();}
 
 /* ════════════════════════════════════════════════
    COLOR THEMES
    ════════════════════════════════════════════════ */
 const COLOR_THEMES={
-  default:{bg:'#080c14',bg2:'#0e1220',bg3:'#141828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.14) 0%,transparent 70%),#080c14',accent:'#818cf8',accentRgb:'129,140,248'},
-  purple:{bg:'#0d0118',bg2:'#180328',bg3:'#200535',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(139,92,246,.20) 0%,transparent 70%),#0d0118',accent:'#a78bfa',accentRgb:'167,139,250'},
-  teal:{bg:'#001212',bg2:'#001e1e',bg3:'#002828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(20,184,166,.18) 0%,transparent 70%),#001212',accent:'#2dd4bf',accentRgb:'45,212,191'},
-  blue:{bg:'#020c20',bg2:'#061428',bg3:'#0a1c36',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(59,130,246,.20) 0%,transparent 70%),#020c20',accent:'#60a5fa',accentRgb:'96,165,250'},
-  darkblue:{bg:'#06090f',bg2:'#0d1322',bg3:'#141c30',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(30,58,138,.22) 0%,transparent 70%),#06090f',accent:'#818cf8',accentRgb:'129,140,248'},
-  charcoal:{bg:'#111111',bg2:'#1a1a1a',bg3:'#222222',grad:'linear-gradient(#111111,#1a1a1a)',accent:'#e2e8f0',accentRgb:'226,232,240'},
-  green:{bg:'#010f05',bg2:'#011a0a',bg3:'#022210',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(22,163,74,.18) 0%,transparent 70%),#010f05',accent:'#4ade80',accentRgb:'74,222,128'},
-  brown:{bg:'#120800',bg2:'#1e0f00',bg3:'#291500',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(180,83,9,.18) 0%,transparent 70%),#120800',accent:'#fb923c',accentRgb:'251,146,60'},
-  lilac:{bg:'#100a22',bg2:'#1a1230',bg3:'#22183e',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(192,132,252,.18) 0%,transparent 70%),#100a22',accent:'#e879f9',accentRgb:'232,121,249'},
+  default:{bg:'#080c14',bg2:'#0e1220',bg3:'#141828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.14) 0%,transparent 70%),#080c14',accent:'#818cf8',accentRgb:'129,140,248',dark:true},
+  purple:{bg:'#0d0118',bg2:'#180328',bg3:'#200535',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(139,92,246,.20) 0%,transparent 70%),#0d0118',accent:'#a78bfa',accentRgb:'167,139,250',dark:true},
+  teal:{bg:'#001212',bg2:'#001e1e',bg3:'#002828',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(20,184,166,.18) 0%,transparent 70%),#001212',accent:'#2dd4bf',accentRgb:'45,212,191',dark:true},
+  blue:{bg:'#020c20',bg2:'#061428',bg3:'#0a1c36',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(59,130,246,.20) 0%,transparent 70%),#020c20',accent:'#60a5fa',accentRgb:'96,165,250',dark:true},
+  darkblue:{bg:'#06090f',bg2:'#0d1322',bg3:'#141c30',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(30,58,138,.22) 0%,transparent 70%),#06090f',accent:'#818cf8',accentRgb:'129,140,248',dark:true},
+  charcoal:{bg:'#111111',bg2:'#1a1a1a',bg3:'#222222',grad:'linear-gradient(#111111,#1a1a1a)',accent:'#e2e8f0',accentRgb:'226,232,240',dark:true},
+  green:{bg:'#010f05',bg2:'#011a0a',bg3:'#022210',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(22,163,74,.18) 0%,transparent 70%),#010f05',accent:'#4ade80',accentRgb:'74,222,128',dark:true},
+  brown:{bg:'#120800',bg2:'#1e0f00',bg3:'#291500',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(180,83,9,.18) 0%,transparent 70%),#120800',accent:'#fb923c',accentRgb:'251,146,60',dark:true},
+  lilac:{bg:'#100a22',bg2:'#1a1230',bg3:'#22183e',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(192,132,252,.18) 0%,transparent 70%),#100a22',accent:'#e879f9',accentRgb:'232,121,249',dark:true},
+  // Modo claro
+  light:{bg:'#f0f2f8',bg2:'#e4e8f4',bg3:'#d8ddf0',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.08) 0%,transparent 70%),#f0f2f8',accent:'#4f46e5',accentRgb:'79,70,229',dark:false},
+  lightblue:{bg:'#eef2ff',bg2:'#e0e7ff',bg3:'#c7d2fe',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.10) 0%,transparent 70%),#eef2ff',accent:'#4338ca',accentRgb:'67,56,202',dark:false},
+  lightgreen:{bg:'#f0fdf4',bg2:'#dcfce7',bg3:'#bbf7d0',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(22,163,74,.08) 0%,transparent 70%),#f0fdf4',accent:'#16a34a',accentRgb:'22,163,74',dark:false},
+  // Temas con efecto de partículas (PS4 style)
+  ps4aurora:{bg:'#050d15',bg2:'#0a1520',bg3:'#0f1e2b',grad:'linear-gradient(#050d15,#0a1520)',accent:'#00e5ff',accentRgb:'0,229,255',dark:true,particles:'aurora'},
+  ps4ember:{bg:'#12050a',bg2:'#1e0810',bg3:'#280a14',grad:'linear-gradient(#12050a,#1e0810)',accent:'#ff6b35',accentRgb:'255,107,53',dark:true,particles:'ember'},
+  ps4cosmos:{bg:'#06061a',bg2:'#0a0a28',bg3:'#0e0e36',grad:'linear-gradient(#06061a,#0a0a28)',accent:'#c084fc',accentRgb:'192,132,252',dark:true,particles:'stars'},
 };
+
+/* ── Particle canvas para temas animados ── */
+let _particleCanvas=null,_particleCtx=null,_particleAnim=null,_particleType=null;
+const _particles=[];
+
+function startParticles(type){
+  stopParticles();
+  _particleType=type;
+  let wrap=document.getElementById('theme-particles');
+  if(!wrap){wrap=document.createElement('div');wrap.id='theme-particles';wrap.className='theme-particles';document.body.appendChild(wrap);}
+  _particleCanvas=document.createElement('canvas');
+  _particleCanvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  wrap.innerHTML='';wrap.appendChild(_particleCanvas);
+  _particleCtx=_particleCanvas.getContext('2d');
+  function resize(){_particleCanvas.width=window.innerWidth;_particleCanvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  _particles.length=0;
+  if(type==='aurora'){
+    for(let i=0;i<6;i++){_particles.push({x:Math.random(),y:.1+Math.random()*.4,w:.3+Math.random()*.4,h:.05+Math.random()*.08,speed:.0003+Math.random()*.0004,color:`hsla(${160+Math.random()*80},100%,65%,`,t:Math.random()*Math.PI*2});}
+  }else if(type==='ember'){
+    for(let i=0;i<60;i++){_particles.push({x:Math.random(),y:1+Math.random()*.2,vx:(Math.random()-.5)*.0015,vy:-.002-Math.random()*.003,r:1+Math.random()*2.5,o:0,life:Math.random(),maxLife:.6+Math.random()*.4});}
+  }else if(type==='stars'){
+    for(let i=0;i<80;i++){_particles.push({x:Math.random(),y:Math.random(),r:.5+Math.random()*1.5,o:Math.random(),pulse:Math.random()*Math.PI*2,speed:.01+Math.random()*.02});}
+  }
+  function tick(){
+    _particleAnim=requestAnimationFrame(tick);
+    const W=_particleCanvas.width,H=_particleCanvas.height;
+    _particleCtx.clearRect(0,0,W,H);
+    if(type==='aurora'){
+      _particles.forEach(p=>{
+        p.t+=p.speed;
+        const x=p.x*W,y=(p.y+Math.sin(p.t)*0.05)*H,w=p.w*W,h=p.h*H;
+        const g=_particleCtx.createLinearGradient(x,y,x,y+h);
+        g.addColorStop(0,p.color+'0)');g.addColorStop(.4,p.color+'.18)');g.addColorStop(1,p.color+'0)');
+        _particleCtx.fillStyle=g;
+        _particleCtx.beginPath();_particleCtx.ellipse(x+w/2,y+h/2,w/2,h/2,Math.sin(p.t*.3)*.2,0,Math.PI*2);
+        _particleCtx.fill();
+      });
+    }else if(type==='ember'){
+      _particles.forEach(p=>{
+        p.life+=.008;if(p.life>p.maxLife){p.life=0;p.x=Math.random();p.y=1;p.vx=(Math.random()-.5)*.002;p.vy=-.002-Math.random()*.003;}
+        p.x+=p.vx;p.y+=p.vy;const fade=Math.sin(p.life/p.maxLife*Math.PI);
+        _particleCtx.beginPath();_particleCtx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+        _particleCtx.fillStyle=`rgba(255,${100+Math.floor(p.life*155)},50,${fade*.7})`;_particleCtx.fill();
+      });
+    }else if(type==='stars'){
+      _particles.forEach(p=>{
+        p.pulse+=p.speed;const o=(Math.sin(p.pulse)+1)/2*.5+.1;
+        _particleCtx.beginPath();_particleCtx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+        _particleCtx.fillStyle=`rgba(255,255,255,${o})`;_particleCtx.fill();
+      });
+    }
+  }
+  tick();
+}
+
+function stopParticles(){
+  if(_particleAnim){cancelAnimationFrame(_particleAnim);_particleAnim=null;}
+  const wrap=document.getElementById('theme-particles');if(wrap)wrap.innerHTML='';
+  _particleType=null;
+}
 function applyColorTheme(name,el){
   const t=COLOR_THEMES[name];if(!t)return;
   const root=document.documentElement;
-  root.style.setProperty('--bg',t.bg);root.style.setProperty('--bg2',t.bg2);root.style.setProperty('--bg3',t.bg3);
-  root.style.setProperty('--surf',t.bg2);root.style.setProperty('--surf2',t.bg3);
-  root.style.setProperty('--accent',t.accent);root.style.setProperty('--accent2',t.accent);root.style.setProperty('--amb-color',t.accentRgb);
-  root.style.setProperty('--amb-tint-hdr',`rgba(${t.accentRgb},.08)`);root.style.setProperty('--amb-tint-nav',`rgba(${t.accentRgb},.05)`);
-  document.body.style.background=t.bg;document.body.style.backgroundImage=t.grad;
-  document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');
-  if(!D.settings)D.settings={};D.settings.colorTheme=name;D.settings.accentHex=t.accent;D.settings.accentRgb=t.accentRgb;
+  const isDark=t.dark!==false;
+  root.setAttribute('data-theme',isDark?'dark':'light');
+  // BG vars
+  root.style.setProperty('--bg',t.bg);
+  root.style.setProperty('--bg2',t.bg2);
+  root.style.setProperty('--bg3',t.bg3);
+  // Surface y border — siempre explícito para evitar herencia residual
+  if(isDark){
+    root.style.setProperty('--surf',`rgba(${parseInt(t.bg2.slice(1,3),16)},${parseInt(t.bg2.slice(3,5),16)},${parseInt(t.bg2.slice(5,7),16)},.92)`);
+    root.style.setProperty('--surf2',t.bg2);
+    root.style.setProperty('--surf3',t.bg3);
+    root.style.setProperty('--text','#eef0ff');
+    root.style.setProperty('--t2','#7880a0');
+    root.style.setProperty('--t3','#3a4060');
+    root.style.setProperty('--bdr','rgba(255,255,255,.07)');
+    root.style.setProperty('--bdr2',`rgba(${t.accentRgb},.20)`);
+    root.style.setProperty('--over','rgba(4,6,14,.92)');
+  }else{
+    root.style.setProperty('--surf','rgba(255,255,255,.92)');
+    root.style.setProperty('--surf2','#ffffff');
+    root.style.setProperty('--surf3','#eef0fa');
+    root.style.setProperty('--text','#12163a');
+    root.style.setProperty('--t2','#4a5080');
+    root.style.setProperty('--t3','#8890b8');
+    root.style.setProperty('--bdr','rgba(0,0,30,.08)');
+    root.style.setProperty('--bdr2',`rgba(${t.accentRgb},.22)`);
+    root.style.setProperty('--over','rgba(220,225,245,.85)');
+  }
+  // Accent + ambient
+  root.style.setProperty('--accent',t.accent);
+  root.style.setProperty('--accent2',t.accent);
+  root.style.setProperty('--amb-color',t.accentRgb);
+  root.style.setProperty('--amb-tint-hdr',`rgba(${t.accentRgb},.10)`);
+  root.style.setProperty('--amb-tint-nav',`rgba(${t.accentRgb},.06)`);
+  // Body background
+  document.body.style.background=t.bg;
+  document.body.style.backgroundImage=t.grad;
+  // theme-color meta
+  const tm=document.getElementById('theme-color-meta');
+  if(tm)tm.content=isDark?t.bg:'#f0f2f8';
+  // Active marker
+  document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active'));
+  if(el)el.classList.add('active');
+  // Partículas PS4
+  if(t.particles)startParticles(t.particles);else stopParticles();
+  // Guardar
+  if(!D.settings)D.settings={};
+  D.settings.colorTheme=name;
+  D.settings.accentHex=t.accent;
+  D.settings.accentRgb=t.accentRgb;
+  D.settings.themeDark=isDark;
+  D._activeThemeName=name;
   save();toast('🎨 Tema aplicado');
 }
-function loadColorTheme(){const name=D.settings?.colorTheme;if(!name||name==='default')return;applyColorTheme(name,document.getElementById('theme-'+name));}
+function loadColorTheme(){
+  const name=D.settings?.colorTheme;
+  if(!name||name==='default')return;
+  applyColorTheme(name,document.getElementById('theme-'+name));
+}
 
 /* ════════════════════════════════════════════════
    CODE SEARCH
