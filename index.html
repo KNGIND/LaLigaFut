@@ -2063,38 +2063,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
     <div class="di-wave"></div><div class="di-wave"></div>
     <div class="di-wave"></div><div class="di-wave"></div>
   </div>
-  <div id="di-mini-title">BABY HELLO</div>
-  <!-- ─ Portada grande (solo expandido) ─ -->
-  <div id="di-art"><img id="di-art-img" src="https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg" alt=""/></div>
-  <!-- ─ Info + controles + progreso ─ -->
-  <div id="di-exp">
-    <div id="di-song">BABY HELLO</div>
-    <div id="di-artist">Rauw Alejandro y Bizarrap</div>
-    <div id="di-controls">
-      <button class="di-btn" onclick="diPrev(event)">
-        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
-      </button>
-      <button class="di-btn play" id="di-playbtn" onclick="diPlayPause(event)">
-        <svg id="di-play-ico" fill="currentColor" viewBox="0 0 24 24">
-          <path id="di-play-path" d="M8 5v14l11-7z"/>
-        </svg>
-      </button>
-      <button class="di-btn" onclick="diNext(event)">
-        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-      </button>
-    </div>
-    <div id="di-progress-wrap">
-      <span class="di-time" id="di-time-cur">0:00</span>
-      <div id="di-prog-bar" onclick="diSeek(event)"><div id="di-prog-fill" style="width:0%"></div></div>
-      <span class="di-time" id="di-time-dur">3:42</span>
-    </div>
-    <div id="di-vol-row">
-      <svg class="di-vol-ico" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
-      <div id="di-vol-bar" onclick="diSetVol(event)"><div id="di-vol-fill"></div></div>
-      <svg class="di-vol-ico" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-    </div>
-  </div>
-</div>
 
 <div id="scroll">
 
@@ -6791,8 +6759,6 @@ function euiApply(){
     const tr=`scale(${(cardSc||100)/100}) rotate(${cardRot||0}deg)`;
     injectCSS(`.mc{border-radius:${cardR}px!important;width:${cardW}px!important;transform:${tr}!important;border-width:${bw}px!important}.mr{border-radius:${Math.min(cardR,14)}px!important}.aform{border-radius:${cardR}px!important}.ibox{border-radius:${cardR}px!important}body{font-size:${fs}px!important}`,'eui-main');
   }
-}
-
 }
 
 function euiApplyHdrColor(hex){const h=$('hdr');if(h)h.style.background=`${hex}cc`;}
