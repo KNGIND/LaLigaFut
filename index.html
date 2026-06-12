@@ -2063,7 +2063,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
     <div class="di-wave"></div><div class="di-wave"></div>
     <div class="di-wave"></div><div class="di-wave"></div>
   </div>
-
+  
 <div id="scroll">
 
 <!-- INICIO -->
@@ -6860,7 +6860,7 @@ function euiReset(){
   const hdr=$('hdr');if(hdr)hdr.style.background='';
   toast('🔄 UI reseteada');
 }
-function loadEuiSettings(){if(!D.euiSettings)return;Object.assign(_euiSettings,D.euiSettings);euiApply();}
+function loadEuiSettings(){if(!D.euiSettings)return;Object.assign(_euiSettings,D.euiSettings);euiLoadSettings();euiApply();}
 
 /* ════════════════════════════════════════════════
    LAYOUT EDITOR — Mover, redimensionar, eliminar
