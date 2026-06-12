@@ -726,6 +726,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .adm-hub-season{background:linear-gradient(135deg,#3b0764,#6b21a8);border-color:rgba(192,132,252,.3)}
 .adm-hub-stats{background:linear-gradient(135deg,#1a0533,#7c3aed);border-color:rgba(167,139,250,.3)}
 .adm-hub-config{background:linear-gradient(135deg,#171717,#404040);border-color:rgba(226,232,240,.2)}
+.adm-hub-appupdate{background:linear-gradient(135deg,#7c2d12,#c2410c);border-color:rgba(251,146,60,.35)}
 .adm-hub-db{background:linear-gradient(135deg,#052e16,#15803d);border-color:rgba(74,222,128,.3)}
 .adm-hub-code{background:linear-gradient(135deg,#0c1445,#1d4ed8);border-color:rgba(96,165,250,.3)}
 
@@ -2063,7 +2064,39 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
     <div class="di-wave"></div><div class="di-wave"></div>
     <div class="di-wave"></div><div class="di-wave"></div>
   </div>
-  
+  <div id="di-mini-title">BABY HELLO</div>
+  <!-- ─ Portada grande (solo expandido) ─ -->
+  <div id="di-art"><img id="di-art-img" src="https://i.ytimg.com/vi/lFQdcPTTzSg/hqdefault.jpg" alt=""/></div>
+  <!-- ─ Info + controles + progreso ─ -->
+  <div id="di-exp">
+    <div id="di-song">BABY HELLO</div>
+    <div id="di-artist">Rauw Alejandro y Bizarrap</div>
+    <div id="di-controls">
+      <button class="di-btn" onclick="diPrev(event)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button class="di-btn play" id="di-playbtn" onclick="diPlayPause(event)">
+        <svg id="di-play-ico" fill="currentColor" viewBox="0 0 24 24">
+          <path id="di-play-path" d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+      <button class="di-btn" onclick="diNext(event)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+    </div>
+    <div id="di-progress-wrap">
+      <span class="di-time" id="di-time-cur">0:00</span>
+      <div id="di-prog-bar" onclick="diSeek(event)"><div id="di-prog-fill" style="width:0%"></div></div>
+      <span class="di-time" id="di-time-dur">3:42</span>
+    </div>
+    <div id="di-vol-row">
+      <svg class="di-vol-ico" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+      <div id="di-vol-bar" onclick="diSetVol(event)"><div id="di-vol-fill"></div></div>
+      <svg class="di-vol-ico" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+    </div>
+  </div>
+</div>
+
 <div id="scroll">
 
 <!-- INICIO -->
@@ -2231,6 +2264,12 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <div class="adm-hub-ico">☁️</div>
       <div class="adm-hub-lbl">Base de Datos</div>
       <div class="adm-hub-sub">Conectar Supabase</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
+    <div class="adm-hub-card adm-hub-appupdate" onclick="admGo('appupdate')">
+      <div class="adm-hub-ico">🚀</div>
+      <div class="adm-hub-lbl">Actualización</div>
+      <div class="adm-hub-sub">Nombre, logo, versión y avisos</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-code" onclick="admGo('codeeditor')" style="grid-column:span 2">
@@ -2549,7 +2588,8 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 
       <textarea id="custom-css-editor" class="fi code-editor" rows="12"
         placeholder="/* Tu CSS personalizado */&#10;&#10;/* Ejemplo — tarjetas redondeadas: */&#10;.mc { border-radius: 32px !important; }&#10;.mr {&#10;  border-radius: 20px !important;&#10;  background: var(--surf2) !important;&#10;  margin: 8px 14px !important;&#10;}"
-        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;margin-bottom:0"></textarea>
+        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;margin-bottom:0" oninput="autoSaveCode('css',this.value)"></textarea>
+      <div id="css-autosave-ind" style="font-size:10px;color:var(--t3);margin-top:6px;text-align:right;opacity:0;transition:opacity .3s">💾 Guardado automáticamente</div>
     </div>
 
     <!-- JS PANEL -->
@@ -2567,7 +2607,8 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <div style="font-size:11px;color:var(--t3);margin-bottom:8px;padding:8px 10px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)">Acceso a: <code style="color:var(--accent2);font-size:11px">D</code>, <code style="color:var(--accent2);font-size:11px">toast()</code>, <code style="color:var(--accent2);font-size:11px">go()</code>, <code style="color:var(--accent2);font-size:11px">save()</code></div>
       <textarea id="custom-js-editor" class="fi code-editor" rows="12"
         placeholder="// Ejemplos:&#10;toast('¡Hola!');&#10;go('partidos');&#10;document.querySelector('.sect').style.color='red';"
-        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;margin-bottom:0"></textarea>
+        style="font-family:'DM Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;margin-bottom:0" oninput="autoSaveCode('js',this.value)"></textarea>
+      <div id="js-autosave-ind" style="font-size:10px;color:var(--t3);margin-top:6px;text-align:right;opacity:0;transition:opacity .3s">💾 Guardado automáticamente</div>
     </div>
 
     <!-- CSS VARIABLES PANEL -->
@@ -2646,7 +2687,8 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
         </div>
         <textarea id="full-html-editor" class="fi code-editor" rows="16"
           placeholder="Cargá el código HTML completo aquí..."
-          style="font-family:'DM Mono',monospace;font-size:11px;resize:vertical;line-height:1.5;margin-bottom:8px;max-height:400px;overflow:auto"></textarea>
+          style="font-family:'DM Mono',monospace;font-size:11px;resize:vertical;line-height:1.5;margin-bottom:8px;max-height:400px;overflow:auto" oninput="autoSaveCode('html',this.value)"></textarea>
+        <div id="html-autosave-ind" style="font-size:10px;color:var(--t3);margin-top:-4px;margin-bottom:8px;text-align:right;opacity:0;transition:opacity .3s">💾 Guardado automáticamente</div>
         <div style="font-size:10px;color:var(--t3);margin-top:8px;line-height:1.4">
           💡 El HTML se guarda en <b>localStorage</b>. Los cambios se aplican cuando recargues la página.
         </div>
@@ -5838,10 +5880,45 @@ function startNotifPolling(){
 
 
 /* ============================================================
+   AUTO-GUARDADO — CSS / JS / HTML completo
+   Guarda automáticamente mientras se escribe (debounce 600ms)
+   para que nada se pierda al salir de la app.
+   ============================================================ */
+let _autoSaveTimers={};
+function autoSaveCode(type,value){
+  clearTimeout(_autoSaveTimers[type]);
+  _autoSaveTimers[type]=setTimeout(()=>{
+    if(type==='css'){
+      localStorage.setItem('lsl_custom_css',value);
+      injectCSS(value,'lsl-custom-css');
+      updateCSSStatusBar(value);
+    }else if(type==='js'){
+      localStorage.setItem('lsl_custom_js',value);
+    }else if(type==='html'){
+      localStorage.setItem('_lsl_custom_full_html',value);
+    }
+    flashAutoSaveIndicator(type);
+  },600);
+}
+function flashAutoSaveIndicator(type){
+  const ind=$(type+'-autosave-ind');
+  if(!ind)return;
+  ind.style.opacity='1';
+  clearTimeout(ind._hideT);
+  ind._hideT=setTimeout(()=>{ind.style.opacity='0'},1800);
+}
+// Guardar inmediatamente al salir/ocultar la app (por si el debounce no llegó a disparar)
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    const cssEd=$('custom-css-editor');if(cssEd)localStorage.setItem('lsl_custom_css',cssEd.value);
+    const jsEd=$('custom-js-editor');if(jsEd)localStorage.setItem('lsl_custom_js',jsEd.value);
+    const htmlEd=$('full-html-editor');if(htmlEd)localStorage.setItem('_lsl_custom_full_html',htmlEd.value);
+  }
+});
+
+/* ============================================================
    CODE EDITOR — EDITOR DE CÓDIGO EN VIVO
    ============================================================ */
-let _customStyleEl=null;
-
 function loadCustomCode(){
   const css=localStorage.getItem('lsl_custom_css')||'';
   const js=localStorage.getItem('lsl_custom_js')||'';
@@ -5849,9 +5926,23 @@ function loadCustomCode(){
   const jsEd=$('custom-js-editor');
   if(cssEd)cssEd.value=css;
   if(jsEd)jsEd.value=js;
-  // Auto-apply saved CSS on load
-  if(css)injectCSS(css);
+  // Auto-apply saved CSS on load (id dedicado para no chocar con otros injectCSS)
+  injectCSS(css,'lsl-custom-css');
   updateCSSStatusBar(css);
+  // Auto-ejecutar JS guardado (persistencia de efectos al recargar)
+  if(js&&js.trim()){
+    try{
+      const fn=new Function(js);
+      fn();
+      logConsole('✅ JS guardado ejecutado automáticamente');
+    }catch(e){
+      logConsole('❌ Error al ejecutar JS guardado: '+e.message);
+    }
+  }
+  // Cargar HTML completo guardado en el editor (si existe)
+  const fullHtml=localStorage.getItem('_lsl_custom_full_html')||'';
+  const fullEd=$('full-html-editor');
+  if(fullEd&&fullHtml)fullEd.value=fullHtml;
 }
 
 function updateCSSStatusBar(css){
@@ -5870,19 +5961,10 @@ function updateCSSStatusBar(css){
   }
 }
 
-function injectCSS(css){
-  if(!_customStyleEl){
-    _customStyleEl=document.createElement('style');
-    _customStyleEl.id='lsl-custom-style';
-    document.head.appendChild(_customStyleEl);
-  }
-  _customStyleEl.textContent=css;
-}
-
 function applyCustomCode(){
   const css=$('custom-css-editor')?.value||'';
   try{
-    injectCSS(css);
+    injectCSS(css,'lsl-custom-css');
     logConsole('✅ CSS aplicado correctamente');
     toast('🎨 CSS aplicado');
   }catch(e){
@@ -5949,7 +6031,7 @@ function clearCustomCSS(){
 function removeAppliedCSS(){
   // Remueve el CSS aplicado Y lo borra de localStorage
   const el=$('custom-css-editor');if(el)el.value='';
-  injectCSS('');
+  injectCSS('','lsl-custom-css');
   localStorage.removeItem('lsl_custom_css');
   logConsole('🗑️ CSS removido completamente');
   toast('🗑️ CSS removido');
@@ -6183,7 +6265,7 @@ function applyVarsEditor(){
   }).filter(Boolean).join('\n');
   const cssEd=$('custom-css-editor');
   if(cssEd)cssEd.value=(cssEd.value+'\n\n:root {\n'+css+'\n}').trim();
-  injectCSS(`:root{${vars.map(v=>{const el=document.getElementById('var-'+v.slice(2));return el?`${v}:${el.value}`:'';}).filter(Boolean).join(';')}}`);
+  injectCSS(`:root{${vars.map(v=>{const el=document.getElementById('var-'+v.slice(2));return el?`${v}:${el.value}`:'';}).filter(Boolean).join(';')}}`,'lsl-vars-css');
   logConsole('✅ Variables aplicadas');
   toast('🎛️ Variables aplicadas');
 }
@@ -6670,7 +6752,7 @@ function admGo(section){
   const hub=document.getElementById('adm-hub');
   if(hub)hub.style.display='none';
   // Actualizar título
-  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código'};
+  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código',appupdate:'🚀 Actualización'};
   const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent=titles[section]||'Panel Admin';
   // Mostrar botón volver si no existe
   let backBtn=document.getElementById('adm-back-btn');
