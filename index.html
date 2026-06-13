@@ -7349,6 +7349,14 @@ function initUpdatesTab(){
   setTimeout(()=>{try{renderFollowing();}catch(e){}},400);
   const diTgl=$('tgl-di');if(diTgl)diTgl.classList.toggle('on',typeof _diVisible!=='undefined'?_diVisible:true);
 })();
+  
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registrado con éxito', reg))
+        .catch(err => console.error('Error al registrar el Service Worker', err));
+    });
+  }
 </script>
 </body>
 </html>
