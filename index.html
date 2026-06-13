@@ -11,6 +11,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <title id="app-title">La Súper Liga</title>
 <link rel="manifest" id="manifest-link"/>
+<link rel="icon" type="image/png" href="/logo.png"/>
+<link rel="apple-touch-icon" href="/logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -95,8 +97,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 /* Al hacer scroll: blur translúcido — sin reducirse */
 #hdr.hdr-scrolled{
   background:rgba(8,12,22,.76);
-  backdrop-filter:blur(40px) saturate(180%);
-  -webkit-backdrop-filter:blur(40px) saturate(180%);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
   border-bottom-color:rgba(255,255,255,.06);
 }
 /* Oculto en otras secciones */
@@ -210,8 +212,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:520px;z-index:200;
   background: var(--amb-tint-nav), rgba(6,10,20,.92);
-  backdrop-filter:blur(32px) saturate(180%);
-  -webkit-backdrop-filter:blur(32px) saturate(180%);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
   border-top:1px solid rgba(var(--amb-color),.12);
   padding:4px 6px calc(4px + env(safe-area-inset-bottom,0px));
   display:flex;gap:2px;
@@ -635,7 +637,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 }
 .evit:hover{background:rgba(var(--amb-color),.06);transform:translateX(3px)}
 .evmin{font-family:"DM Mono",monospace;font-size:12px;font-weight:700;color:var(--t2);width:32px;text-align:center;flex-shrink:0}
-.evico{font-size:18px;flex-shrink:0;min-width:20px;text-align:center}
+.evico{flex-shrink:0;min-width:20px;display:flex;align-items:center;justify-content:center}
+.evico svg{width:18px;height:18px}
 .evnm{font-size:12px;font-weight:700;color:var(--text)}
 .evtm{font-size:11px;color:var(--t3)}
 
@@ -695,9 +698,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   width:44px;height:44px;border-radius:14px;
   background:rgba(255,255,255,.15);
   display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;position:relative;z-index:1;
+  flex-shrink:0;position:relative;z-index:1;
   box-shadow:0 2px 10px rgba(0,0,0,.15);
 }
+.adm-hub-ico svg{width:22px;height:22px;color:#fff}
 .adm-hub-lbl{
   font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.4px;
   color:#fff;line-height:1.1;position:relative;z-index:1;
@@ -911,7 +915,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ========================================================= */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:36px 20px;text-align:center;gap:7px}
-.etic{font-size:34px;opacity:.35}
+.etic{font-size:34px;opacity:.35;display:inline-flex;align-items:center;justify-content:center}
+.etic svg{color:var(--t3)}
 .etit{font-size:14px;font-weight:700;color:var(--t2)}
 .esub{font-size:12px;color:var(--t3)}
 #toast{position:fixed;bottom:96px;left:50%;
@@ -919,8 +924,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   background:rgba(14,18,32,.96);border:1px solid rgba(var(--amb-color),.2);color:var(--text);
   border-radius:12px;padding:12px 20px;font-size:13px;font-weight:500;
   z-index:9999;opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:9px;
   transition:opacity .2s ease,transform .2s ease;
-  white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.6);max-width:calc(100vw - 40px)}
+  box-shadow:0 8px 32px rgba(0,0,0,.6);max-width:calc(100vw - 40px)}
+.toast-ico{width:17px;height:17px;flex-shrink:0;color:var(--accent2)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .hidden{display:none!important}
 
@@ -1199,7 +1206,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 }
 .md-meta-item:first-child{padding-left:0}
 .md-meta-item:last-child{border-right:none}
-.md-meta-ico{font-size:14px;flex-shrink:0}
+.md-meta-ico{flex-shrink:0;display:flex;align-items:center}
+.md-meta-ico svg{width:16px;height:16px}
 .md-meta-txt{display:flex;flex-direction:column}
 .md-meta-lbl{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3)}
 .md-meta-val{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap}
@@ -1436,7 +1444,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.5px;
   position:relative;overflow:hidden}
 .adm-section-header::before{content:"";position:absolute;inset:0;opacity:.12;background:currentColor}
-.adm-section-header .adm-sec-ico{font-size:22px;flex-shrink:0}
+.adm-section-header .adm-sec-ico{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:22px;height:22px}
+.adm-section-header .adm-sec-ico svg{width:20px;height:20px;color:#fff}
 .adm-section-header .adm-sec-lbl{flex:1;color:#fff}
 .adm-section-header .adm-sec-count{font-size:11px;font-family:"DM Sans",sans-serif;
   font-weight:600;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:99px;color:#fff}
@@ -1487,94 +1496,60 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ========================================================= */
 #welcome-modal{
   position:fixed;inset:0;z-index:9800;
-  display:flex;align-items:flex-end;justify-content:center;
-  background:rgba(0,0,0,.82);backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;
-  transition:opacity .28s ease;
-  max-width:520px;left:50%;transform:translateX(-50%);
+  transition:opacity .3s ease;
+  padding:20px;
 }
 #welcome-modal.open{opacity:1;pointer-events:all}
 #welcome-box{
-  width:100%;background:rgba(10,14,26,.98);
-  border-radius:28px 28px 0 0;border:1px solid rgba(255,255,255,.10);border-bottom:none;
-  padding:0 0 calc(24px + env(safe-area-inset-bottom,0px));
-  transform:translateY(80px);transition:transform .34s cubic-bezier(.22,1,.36,1);
-  max-height:85dvh;overflow-y:auto;
+  width:100%;max-width:380px;background:var(--surf2);
+  border-radius:28px;border:1px solid var(--bdr2);
+  padding:28px 24px calc(20px + env(safe-area-inset-bottom,0px));
+  transform:scale(.92) translateY(12px);opacity:0;
+  transition:transform .36s cubic-bezier(.22,1,.36,1),opacity .3s ease;
+  max-height:88dvh;overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
 }
-#welcome-modal.open #welcome-box{transform:translateY(0)}
+#welcome-modal.open #welcome-box{transform:scale(1) translateY(0);opacity:1}
 #welcome-box::-webkit-scrollbar{display:none}
-.welcome-drag{width:36px;height:4px;border-radius:99px;background:rgba(255,255,255,.15);margin:14px auto 0}
 .welcome-art{
-  width:80px;height:80px;border-radius:22px;margin:20px auto 14px;
-  background:rgba(var(--amb-color),.15);border:2px solid rgba(var(--amb-color),.25);
-  display:flex;align-items:center;justify-content:center;font-size:38px;overflow:hidden;
+  width:64px;height:64px;border-radius:18px;margin:0 auto 16px;
+  background:rgba(var(--amb-color),.12);border:1px solid rgba(var(--amb-color),.22);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  color:var(--accent2);
 }
+.welcome-art svg{width:30px;height:30px}
 .welcome-art img{width:100%;height:100%;object-fit:cover}
-.welcome-title{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.6px;color:var(--text);text-align:center;padding:0 20px}
-.welcome-sub{font-size:13px;color:var(--t2);text-align:center;padding:6px 24px 16px;line-height:1.55}
-.welcome-rules{padding:0 18px 18px}
+.welcome-title{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:.4px;color:var(--text);text-align:center;line-height:1.2}
+.welcome-sub{font-size:13px;color:var(--t2);text-align:center;padding:8px 4px 4px;line-height:1.55}
+.welcome-rules{padding:14px 0 4px}
 .welcome-rule{
-  display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+  display:flex;align-items:flex-start;gap:12px;padding:11px 0;
   border-bottom:1px solid var(--bdr);
 }
 .welcome-rule:last-child{border-bottom:none}
 .welcome-rule-n{
-  font-family:"Bebas Neue",sans-serif;font-size:18px;color:var(--accent);
-  min-width:22px;flex-shrink:0;line-height:1.4;
+  font-family:"DM Sans",sans-serif;font-size:12px;font-weight:800;color:var(--accent2);
+  min-width:22px;height:22px;flex-shrink:0;line-height:22px;text-align:center;
+  background:rgba(var(--amb-color),.12);border-radius:8px;
 }
-.welcome-rule-t{font-size:13px;color:var(--t2);line-height:1.6}
+.welcome-rule-t{font-size:13px;color:var(--t2);line-height:1.55;padding-top:1px}
 .welcome-btn{
-  margin:8px 18px;width:calc(100% - 36px);padding:15px;border-radius:16px;
+  margin-top:18px;width:100%;padding:15px;border-radius:16px;
   background:var(--accent);color:#fff;font-size:15px;font-weight:800;
-  letter-spacing:.2px;cursor:pointer;display:block;
+  letter-spacing:.2px;cursor:pointer;display:block;border:none;
   box-shadow:0 4px 20px rgba(var(--amb-color),.35);
   transition:transform .15s var(--spring),box-shadow .2s;
 }
 .welcome-btn:active{transform:scale(.97)}
 .welcome-no-show{
   display:block;text-align:center;font-size:12px;color:var(--t3);
-  padding:12px;cursor:pointer;transition:color .18s;
+  padding:14px 0 0;cursor:pointer;transition:color .18s;
 }
 .welcome-no-show:hover{color:var(--t2)}
-
-/* =========================================================
-   SECCIÓN SOCIAL — Buscar y Seguir
-   ========================================================= */
-#pg-social{position:relative}
-.social-search-bar{
-  display:flex;align-items:center;gap:10px;
-  margin:14px 14px 10px;padding:11px 14px;
-  background:var(--surf2);border:1px solid var(--bdr2);border-radius:14px;
-  transition:border-color .18s,box-shadow .18s;
-}
-.social-search-bar:focus-within{border-color:rgba(var(--amb-color),.4);box-shadow:0 0 0 3px rgba(var(--amb-color),.08)}
-.social-search-bar svg{width:16px;height:16px;color:var(--t3);flex-shrink:0}
-.social-search-bar input{flex:1;border:none;background:transparent;color:var(--text);font-size:14px}
-.social-search-bar input::placeholder{color:var(--t3)}
-.user-card{
-  display:flex;align-items:center;gap:12px;padding:12px 14px;
-  border-bottom:1px solid var(--bdr);cursor:pointer;
-  transition:background .15s;
-}
-.user-card:hover{background:rgba(var(--amb-color),.06)}
-.user-card:active{background:rgba(var(--amb-color),.10)}
-.user-av{
-  width:46px;height:46px;border-radius:14px;background:var(--surf2);
-  border:1.5px solid var(--bdr2);display:flex;align-items:center;justify-content:center;
-  font-family:"Bebas Neue",sans-serif;font-size:16px;color:var(--text);overflow:hidden;flex-shrink:0;
-}
-.user-av img{width:100%;height:100%;object-fit:cover}
-.user-name{font-size:14px;font-weight:700;color:var(--text)}
-.user-sub{font-size:11px;color:var(--t3);margin-top:2px}
-.follow-btn{
-  margin-left:auto;padding:7px 16px;border-radius:10px;
-  background:rgba(var(--amb-color),.12);border:1.5px solid rgba(var(--amb-color),.25);
-  color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;
-  transition:all .18s;
-}
-.follow-btn.following{background:var(--surf2);border-color:var(--bdr2);color:var(--t2)}
-.follow-btn:active{transform:scale(.92)}
 
 /* =========================================================
    ASISTENCIA DE PARTIDOS — Chat de asistencia
@@ -1681,7 +1656,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #sm{
   position:absolute;top:0;left:0;bottom:0;width:300px;
   background:rgba(8,12,22,.98);
-  backdrop-filter:blur(40px) saturate(200%);-webkit-backdrop-filter:blur(40px) saturate(200%);
+  backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
   transform:translateX(-110%);
   transition:transform .32s cubic-bezier(.22,1,.36,1);
   display:flex;flex-direction:column;
@@ -1776,7 +1751,10 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   color:var(--t2);white-space:nowrap;
 }
 .ev-vert-line{width:1px;flex:1;background:rgba(255,255,255,.07);min-height:8px}
-.evico{font-size:20px;flex-shrink:0}
+.evico{flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.evico svg{width:20px;height:20px}
+.ev-ico-svg{flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ev-ico-svg svg{width:20px;height:20px}
 .evnm{font-size:12px;font-weight:700;color:var(--text);line-height:1.2}
 .evtm{font-size:10px;color:var(--t3)}
 /* Goal: resaltar */
@@ -1823,6 +1801,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 }
 [data-theme="light"] body{background:var(--bg);background-image:var(--grad)}
 [data-theme="light"] #hdr{background:rgba(240,242,248,.88)}
+[data-theme="light"] #hdr.hdr-scrolled{background:rgba(240,242,248,.86)}
 [data-theme="light"] #nav{background:rgba(235,238,250,.94)}
 [data-theme="light"] .ovs{background:rgba(240,242,250,.98)}
 [data-theme="light"] #sm{background:rgba(240,242,250,.98)}
@@ -1830,72 +1809,50 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 [data-theme="light"] .mr{color:var(--text)}
 [data-theme="light"] #login-screen{background:#f0f2f8}
 [data-theme="light"] .adm-hdr{background:rgba(240,242,248,.94)}
-
-/* =========================================================
-   TEMAS CON EFECTOS DE MOVIMIENTO (PS4 style)
-   ========================================================= */
-.theme-particles{
-  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
-}
-.theme-particles canvas{position:absolute;inset:0;width:100%;height:100%}
+[data-theme="light"] .page-hdr{background:var(--amb-tint-hdr), rgba(240,242,248,.88)}
+[data-theme="light"] #admin-gate-box,
+[data-theme="light"] #welcome-box,
+[data-theme="light"] #asist-box,
+[data-theme="light"] #edit-ui-box{background:rgba(240,242,250,.98);border-color:rgba(0,0,30,.08)}
+[data-theme="light"] #toast{background:rgba(255,255,255,.96);color:var(--text)}
 
 /* =========================================================
    EDIT UI PANEL — Bottom sheet ancho como notificaciones
    ========================================================= */
 #edit-ui-panel{
   position:fixed;inset:0;z-index:700;
-  background:rgba(0,0,0,.82);backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  background:rgba(0,0,0,.72);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   display:flex;align-items:flex-end;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .25s ease;
   max-width:520px;left:50%;transform:translateX(-50%);
 }
 #edit-ui-panel.open{opacity:1;pointer-events:all}
 #edit-ui-box{
-  width:100%;background:var(--bg2);
+  width:100%;background:var(--surf2);
   border-radius:28px 28px 0 0;
-  border:1px solid rgba(255,255,255,.09);border-bottom:none;
+  border:1px solid var(--bdr2);border-bottom:none;
   padding:0 0 calc(28px + env(safe-area-inset-bottom,0px));
   transform:translateY(80px);transition:transform .34s cubic-bezier(.22,1,.36,1);
   max-height:92dvh;overflow-y:auto;
+  box-shadow:0 -8px 40px rgba(0,0,0,.35);
 }
 #edit-ui-panel.open #edit-ui-box{transform:translateY(0)}
 #edit-ui-box::-webkit-scrollbar{display:none}
 .eui-drag{width:40px;height:4px;border-radius:99px;background:rgba(255,255,255,.14);margin:14px auto 0}
-.eui-title{
-  font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.5px;
-  color:var(--text);padding:16px 20px 14px;
-  border-bottom:1px solid var(--bdr);
-  display:flex;align-items:center;gap:8px;
+.eui-hdr{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px 14px;border-bottom:1px solid var(--bdr);
 }
-.eui-section{padding:14px 20px 0}
-.eui-sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;
-  text-transform:uppercase;color:var(--t3);margin-bottom:10px}
-.eui-row{display:flex;align-items:center;justify-content:space-between;
-  padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:14px}
-.eui-row:last-child{border-bottom:none}
-.eui-row-lbl{font-size:13px;font-weight:600;color:var(--text)}
-.eui-row-sub{font-size:10px;color:var(--t3);margin-top:1px}
-.eui-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.eui-slider{width:110px;-webkit-appearance:none;appearance:none;
-  height:4px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
-.eui-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
-  width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;
-  box-shadow:0 0 8px rgba(var(--amb-color),.5)}
+.eui-hdr-ico{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  background:rgba(var(--amb-color),.12);border:1px solid rgba(var(--amb-color),.22);
+  display:flex;align-items:center;justify-content:center;color:var(--accent2);
+}
+.eui-hdr-ico svg{width:19px;height:19px}
+.eui-hdr-title{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.4px;color:var(--text);line-height:1.2}
+.eui-hdr-sub{font-size:11px;color:var(--t3);margin-top:2px}
 .eui-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--t2);min-width:32px;text-align:right}
-.eui-color-input{width:36px;height:28px;border-radius:8px;border:1px solid var(--bdr2);
-  background:transparent;cursor:pointer;padding:2px}
-.eui-tabs{display:flex;gap:6px;overflow-x:auto;padding:12px 20px 8px;scrollbar-width:none}
-.eui-tabs::-webkit-scrollbar{display:none}
-.eui-tab{flex-shrink:0;padding:7px 14px;border-radius:10px;
-  background:var(--surf);border:1px solid var(--bdr2);
-  font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;
-  transition:all .18s;white-space:nowrap}
-.eui-tab:active{transform:scale(.93)}
-.eui-tab.on{background:rgba(var(--amb-color),.14);border-color:rgba(var(--amb-color),.35);color:var(--accent2)}
-.eui-subpanel{display:none}
-.eui-subpanel.on{display:block}
-.eui-section{padding:14px 18px 0}
 .eui-sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;
   text-transform:uppercase;color:var(--t3);margin-bottom:10px}
 .eui-row{display:flex;align-items:center;justify-content:space-between;
@@ -1918,11 +1875,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .eui-color-input::-webkit-color-swatch-wrapper{padding:0}
 .eui-color-input::-webkit-color-swatch{border:none;border-radius:8px}
 /* Element selector tabs */
-.eui-tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 18px 0;scrollbar-width:none}
+.eui-tabs{display:flex;gap:6px;overflow-x:auto;padding:14px 20px 4px;scrollbar-width:none}
 .eui-tabs::-webkit-scrollbar{display:none}
-.eui-tab{flex-shrink:0;padding:7px 14px;border-radius:10px;font-size:11px;font-weight:700;
+.eui-tab{flex-shrink:0;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;
   border:1.5px solid rgba(var(--amb-color),.18);background:transparent;color:var(--t2);
-  cursor:pointer;transition:all .16s;letter-spacing:.1px}
+  cursor:pointer;transition:all .16s;letter-spacing:.1px;
+  display:flex;align-items:center;gap:6px;white-space:nowrap}
+.eui-tab svg{width:14px;height:14px;flex-shrink:0}
 .eui-tab.on{background:rgba(var(--amb-color),.15);color:var(--accent2);border-color:rgba(var(--amb-color),.4)}
 .eui-tab:active{transform:scale(.93)}
 .eui-subpanel{display:none;padding-top:4px}
@@ -1945,7 +1904,14 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   outline:2px dashed var(--accent2)!important;
   outline-offset:2px!important;
 }
-.eui-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--t2);min-width:28px;text-align:right}
+/* Elemento siendo arrastrado en el editor de layout */
+.le-dragging{
+  cursor:grabbing!important;
+  opacity:.85;
+  z-index:9001!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.4)!important;
+  transition:none!important;
+}
 .eui-close{
   position:absolute;top:14px;right:14px;
   width:30px;height:30px;border-radius:50%;background:var(--surf2);
@@ -1971,6 +1937,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    COLOR THEME GRID — Gradientes oscuros como HyperOS
    ========================================================= */
 .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.mode-toggle{display:flex;gap:8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:4px}
+.mode-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 0;border-radius:11px;font-size:13px;font-weight:700;color:var(--t2);
+  cursor:pointer;transition:all .18s;}
+.mode-btn svg{width:16px;height:16px}
+.mode-btn.active{background:rgba(var(--amb-color),.14);color:var(--accent2);box-shadow:0 0 0 1px rgba(var(--amb-color),.25) inset}
+.mode-btn:active{transform:scale(.97)}
 .theme-item{
   height:60px;border-radius:14px;cursor:pointer;position:relative;overflow:hidden;
   border:2px solid transparent;transition:transform .18s var(--spring),border-color .18s;
@@ -2163,85 +2136,85 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   <!-- HUB: Grid de secciones -->
   <div id="adm-hub">
     <div class="adm-hub-card adm-hub-matches" onclick="admGo('matches')">
-      <div class="adm-hub-ico">⚽</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 3v4M12 17v4M3.5 9.5l3.5 1M17 10.5l3.5-1M6 18l1.5-3.5M18 18l-1.5-3.5"/></svg></div>
       <div class="adm-hub-lbl">Partidos</div>
       <div class="adm-hub-sub">Crear y editar encuentros</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-teams" onclick="admGo('teams')">
-      <div class="adm-hub-ico">🏆</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 01-8 0z"/><path d="M8 5H5a1 1 0 00-1 1v1a3 3 0 003 3M16 5h3a1 1 0 011 1v1a3 3 0 01-3 3"/><path d="M12 13v3M8 21h8M9 21v-2.5a2 2 0 013-1.73 2 2 0 013 1.73V21"/></svg></div>
       <div class="adm-hub-lbl">Equipos</div>
       <div class="adm-hub-sub">Gestionar los equipos</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-players" onclick="admGo('players')">
-      <div class="adm-hub-ico">👤</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-3.87 3.58-7 8-7s8 3.13 8 7"/></svg></div>
       <div class="adm-hub-lbl">Jugadores</div>
       <div class="adm-hub-sub">Alta y baja de jugadores</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-referees" onclick="admGo('referees')">
-      <div class="adm-hub-ico">👨‍⚖️</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 7L4 13a3 3 0 006 0zM17 7l-3 6a3 3 0 006 0z"/><path d="M5 21h14M9 7h6"/></svg></div>
       <div class="adm-hub-lbl">Árbitros</div>
       <div class="adm-hub-sub">Lista de árbitros</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-news" onclick="admGo('news')">
-      <div class="adm-hub-ico">📰</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 012 2v13a1 1 0 01-1 1H6a2 2 0 01-2-2z"/><path d="M19 4v15a1 1 0 001 1h0a1 1 0 001-1V8"/><path d="M8 8h6M8 12h6M8 16h4"/></svg></div>
       <div class="adm-hub-lbl">Noticias</div>
       <div class="adm-hub-sub">Publicar novedades</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-channels" onclick="admGo('channels')">
-      <div class="adm-hub-ico">📺</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M9 2l3 4 3-4"/></svg></div>
       <div class="adm-hub-lbl">Canales</div>
       <div class="adm-hub-sub">Dónde ver los partidos</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-sanctions" onclick="admGo('sanctions')">
-      <div class="adm-hub-ico">🟨</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/></svg></div>
       <div class="adm-hub-lbl">Sanciones</div>
       <div class="adm-hub-sub">Tarjetas y suspensiones</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-sponsors" onclick="admGo('sponsors')">
-      <div class="adm-hub-ico">💼</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/><path d="M2 13h20"/></svg></div>
       <div class="adm-hub-lbl">Sponsors</div>
       <div class="adm-hub-sub">Patrocinadores</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-season" onclick="admGo('season')">
-      <div class="adm-hub-ico">🏅</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M9 9.5L7 3h2l3 6.5L15 3h2l-2 6.5"/></svg></div>
       <div class="adm-hub-lbl">Temporada</div>
       <div class="adm-hub-sub">Configurar temporada</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-stats" onclick="admGo('stats')">
-      <div class="adm-hub-ico">📊</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div>
       <div class="adm-hub-lbl">Stats</div>
       <div class="adm-hub-sub">Estadísticas globales</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-config" onclick="admGo('config')">
-      <div class="adm-hub-ico">⚙️</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
       <div class="adm-hub-lbl">Config</div>
       <div class="adm-hub-sub">Ajustes de la liga</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-db" onclick="admGo('supabase')">
-      <div class="adm-hub-ico">☁️</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg></div>
       <div class="adm-hub-lbl">Base de Datos</div>
       <div class="adm-hub-sub">Conectar Supabase</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-appupdate" onclick="admGo('appupdate')">
-      <div class="adm-hub-ico">🚀</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.3-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div>
       <div class="adm-hub-lbl">Actualización</div>
       <div class="adm-hub-sub">Nombre, logo, versión y avisos</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-code" onclick="admGo('codeeditor')" style="grid-column:span 2">
-      <div class="adm-hub-ico">💻</div>
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 9 5 12 8 15"/><polyline points="16 9 19 12 16 15"/><line x1="13" y1="6" x2="11" y2="18"/></svg></div>
       <div class="adm-hub-lbl">Editor de Código</div>
       <div class="adm-hub-sub">Editar el HTML directamente en la app</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
@@ -2267,12 +2240,16 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
   <!-- MATCHES PANE -->
   <div class="apane on" id="adm-matches">
-    <div class="adm-section-header adm-sec-matches"><div class="adm-sec-ico">⚽</div><div class="adm-sec-lbl">PARTIDOS</div><div class="adm-sec-count" id="adm-match-count">0</div></div>
+    <div class="adm-section-header adm-sec-matches"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 3v4M12 17v4M3.5 9.5l3.5 1M17 10.5l3.5-1M6 18l1.5-3.5M18 18l-1.5-3.5"/></svg></div><div class="adm-sec-lbl">PARTIDOS</div><div class="adm-sec-count" id="adm-match-count">0</div></div>
     <div class="atit">Nuevo partido</div>
     <div class="aform">
       <div class="fl">Local</div><select class="fsel" id="mh-team"></select>
       <div class="fl">Visitante</div><select class="fsel" id="ma-team"></select>
       <div class="fl">Fecha y hora</div><input type="datetime-local" class="fi" id="m-dt"/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Competencia</div><select class="fsel" id="m-comp" onchange="updateJornadaPlaceholder()"><option value="liga">Liga</option><option value="copa">Copa</option><option value="amistoso">Amistoso</option></select></div>
+        <div class="fgrp"><div class="fl">Jornada / Fecha</div><input type="text" class="fi" id="m-jornada" placeholder="Ej: Fecha 5"/></div>
+      </div>
       <div class="frow">
         <div class="fgrp"><div class="fl">Estadio</div><input type="text" class="fi" id="m-stad" placeholder="Estadio..."/></div>
         <div class="fgrp"><div class="fl">Canal</div><select class="fsel" id="m-ch"><option value="">Sin canal</option></select></div>
@@ -2290,7 +2267,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
   <!-- TEAMS -->
   <div class="apane" id="adm-teams">
-    <div class="adm-section-header adm-sec-teams"><div class="adm-sec-ico">🛡️</div><div class="adm-sec-lbl">EQUIPOS</div><div class="adm-sec-count" id="adm-team-count">0</div></div>
+    <div class="adm-section-header adm-sec-teams"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><div class="adm-sec-lbl">EQUIPOS</div><div class="adm-sec-count" id="adm-team-count">0</div></div>
     <div class="atit">Nuevo equipo</div>
     <div class="aform">
       <div class="fl">Nombre</div><input type="text" class="fi" id="t-name" placeholder="Nombre del equipo..."/>
@@ -2304,7 +2281,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
   <!-- PLAYERS -->
   <div class="apane" id="adm-players">
-    <div class="adm-section-header adm-sec-players"><div class="adm-sec-ico">👕</div><div class="adm-sec-lbl">JUGADORES</div><div class="adm-sec-count" id="adm-player-count">0</div></div>
+    <div class="adm-section-header adm-sec-players"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l4 2 4-2 4 4-3 3v9H7v-9L4 8z"/></svg></div><div class="adm-sec-lbl">JUGADORES</div><div class="adm-sec-count" id="adm-player-count">0</div></div>
     <div class="atit">Agregar jugador</div>
     <div class="aform">
       <div class="fl">Nombre</div><input type="text" class="fi" id="pl-name" placeholder="Nombre..."/>
@@ -2322,7 +2299,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
   <!-- NEWS -->
   <div class="apane" id="adm-news">
-    <div class="adm-section-header adm-sec-news"><div class="adm-sec-ico">📰</div><div class="adm-sec-lbl">NOTICIAS</div><div class="adm-sec-count" id="adm-news-count">0</div></div>
+    <div class="adm-section-header adm-sec-news"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 012 2v13a1 1 0 01-1 1H6a2 2 0 01-2-2z"/><path d="M19 4v15a1 1 0 001 1h0a1 1 0 001-1V8"/><path d="M8 8h6M8 12h6M8 16h4"/></svg></div><div class="adm-sec-lbl">NOTICIAS</div><div class="adm-sec-count" id="adm-news-count">0</div></div>
     <div class="atit">Nueva noticia</div>
     <div class="aform">
       <div class="fl">Título</div><input type="text" class="fi" id="n-title" placeholder="Título..."/>
@@ -2379,7 +2356,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
   <!-- STATS -->
   <div class="apane" id="adm-stats">
-    <div class="adm-section-header adm-sec-stats"><div class="adm-sec-ico">📈</div><div class="adm-sec-lbl">ESTADÍSTICAS</div></div>
+    <div class="adm-section-header adm-sec-stats"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v4h-4"/></svg></div><div class="adm-sec-lbl">ESTADÍSTICAS</div></div>
     <div class="atit">Exportar estadísticas</div>
     <div class="aform">
       <button class="abtn sec" onclick="exportStatsCSV()">📊 EXPORTAR TABLA A CSV</button>
@@ -2468,7 +2445,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
   </div>
   <!-- SUPABASE / BASE DE DATOS -->
   <div class="apane" id="adm-supabase">
-    <div class="adm-section-header adm-sec-db"><div class="adm-sec-ico">☁️</div><div class="adm-sec-lbl">BASE DE DATOS</div></div>
+    <div class="adm-section-header adm-sec-db"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg></div><div class="adm-sec-lbl">BASE DE DATOS</div></div>
     <div class="atit">Supabase</div>
     <div class="aform">
       <div style="background:var(--surf2);border:1px solid var(--bdr2);border-radius:14px;padding:13px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.6">
@@ -2799,24 +2776,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
     <div class="nilbl">Perfil</div>
   </div>
 
-  <!-- SOCIAL — Dos personas con conexión -->
-  <div class="ni" id="ni-social" onclick="go('social')">
-    <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Persona izquierda (detrás) -->
-        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.5" cx="8.5" cy="7" r="3"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          d="M1 20.5c0-3.3 3.4-6 7.5-6"/>
-        <!-- Persona derecha (adelante) -->
-        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.7" cx="15.5" cy="8" r="3.3"/>
-        <circle class="ico-fill" fill="currentColor" opacity=".14" cx="15.5" cy="8" r="3.3"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-          d="M8 20.5c0-3.6 3.4-6.5 7.5-6.5s7.5 2.9 7.5 6.5"/>
-      </svg>
-    </div>
-    <div class="nilbl">Social</div>
-  </div>
-
   <!-- ADMIN — Escudo con checkmark más moderno -->
   <div class="ni hidden" id="ni-admin" onclick="go('admin')">
     <div class="niico">
@@ -2838,17 +2797,23 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 <div id="edit-ui-panel" onclick="if(event.target===this)closeEditUI()">
   <div id="edit-ui-box">
     <div class="eui-drag"></div>
-    <div class="eui-title">✏️ Editar UI
-      <span style="font-size:10px;font-weight:500;color:var(--t2);font-family:'DM Sans',sans-serif;letter-spacing:0">— ajustá cualquier elemento</span>
+    <div class="eui-hdr">
+      <div class="eui-hdr-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg>
+      </div>
+      <div>
+        <div class="eui-hdr-title">Editar UI</div>
+        <div class="eui-hdr-sub">Ajustá cualquier elemento de la app</div>
+      </div>
     </div>
 
     <!-- TABS DE CATEGORÍA -->
     <div class="eui-tabs">
-      <div class="eui-tab on" onclick="euiSwitchTab('global',this)">🌐 Global</div>
-      <div class="eui-tab" onclick="euiSwitchTab('header',this)">📌 Header</div>
-      <div class="eui-tab" onclick="euiSwitchTab('cards',this)">🃏 Cards</div>
-      <div class="eui-tab" onclick="euiSwitchTab('nav',this)">🧭 Nav</div>
-      <div class="eui-tab" onclick="euiSwitchTab('element',this)">🎯 Elemento</div>
+      <div class="eui-tab on" onclick="euiSwitchTab('global',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>Global</div>
+      <div class="eui-tab" onclick="euiSwitchTab('header',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M3 13h18M3 17h12"/></svg>Header</div>
+      <div class="eui-tab" onclick="euiSwitchTab('cards',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="9" height="14" rx="2"/><rect x="13" y="7" width="8" height="14" rx="2"/></svg>Cards</div>
+      <div class="eui-tab" onclick="euiSwitchTab('nav',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16h18"/><circle cx="8" cy="19" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg>Nav</div>
+      <div class="eui-tab" onclick="euiSwitchTab('element',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Elemento</div>
     </div>
 
     <!-- GLOBAL -->
@@ -3124,7 +3089,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" style="width:14px;height:14px"><path d="M3 7h11a4 4 0 010 8H3"/><path d="M7 3L3 7l4 4"/></svg>
     </button>
     <button onclick="euiLayoutSave()" style="padding:7px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">Guardar</button>
-    <button onclick="euiExitLayoutMode()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:16px">✕</button>
+    <button onclick="euiExitLayoutMode()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" style="width:14px;height:14px"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
   </div>
   <!-- Propiedades del elemento seleccionado -->
   <div id="le-el-props" style="
@@ -3161,16 +3126,17 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
         <span style="font-size:10px;color:var(--t3)">px</span>
       </div>
       <div style="display:flex;gap:6px;margin-top:4px">
-        <button onclick="leDeleteEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer">🗑 Eliminar</button>
-        <button onclick="leDuplicateEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22);color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">⧉ Duplicar</button>
+        <button onclick="leDeleteEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m3 0l-1 14a1 1 0 01-1 1H6a1 1 0 01-1-1L4 6"/></svg>Eliminar</button>
+        <button onclick="leDuplicateEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22);color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Duplicar</button>
       </div>
     </div>
   </div>
 </div>
 <div id="welcome-modal">
   <div id="welcome-box">
-    <div class="welcome-drag"></div>
-    <div class="welcome-art" id="welcome-art">⚽</div>
+    <div class="welcome-art" id="welcome-art">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 3v4M12 17v4M3.5 9.5l3.5 1M17 10.5l3.5-1M6 18l1.5-3.5M18 18l-1.5-3.5"/></svg>
+    </div>
     <div class="welcome-title" id="welcome-title">Bienvenido a La Súper Liga</div>
     <div class="welcome-sub" id="welcome-sub">Antes de comenzar, leé las reglas y la información de la liga.</div>
     <div class="welcome-rules" id="welcome-rules-content">
@@ -3178,25 +3144,9 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <div class="welcome-rule"><span class="welcome-rule-n">2</span><span class="welcome-rule-t">La victoria otorga 3 puntos, el empate 1 y la derrota 0.</span></div>
       <div class="welcome-rule"><span class="welcome-rule-n">3</span><span class="welcome-rule-t">Tolerancia de 3 minutos para ingresar al partido.</span></div>
     </div>
-    <button class="welcome-btn" onclick="closeWelcome()">¡Entendido, jugar! 🚀</button>
+    <button class="welcome-btn" onclick="closeWelcome()">Entendido, ¡a jugar!</button>
     <span class="welcome-no-show" onclick="closeWelcomeForever()">No volver a mostrar</span>
   </div>
-</div>
-
-<!-- SOCIAL PAGE -->
-<div class="page" id="pg-social">
-  <div class="page-hdr">
-    <div class="page-hdr-title">Social</div>
-    <div class="page-hdr-sub">Buscá y seguí personas</div>
-  </div>
-  <div class="social-search-bar">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="social-search-inp" placeholder="Buscar usuarios..." oninput="socialSearch(this.value)"/>
-  </div>
-  <div class="sechd" style="padding:8px 14px 6px"><div class="sect">Personas</div></div>
-  <div id="social-list"><div class="empty" style="padding:28px 0"><div class="etic">👥</div><div class="etit">Buscá alguien</div><div class="esub">Escribí un nombre para encontrar usuarios</div></div></div>
-  <div class="sechd" style="padding:16px 14px 6px"><div class="sect">Siguiendo</div></div>
-  <div id="social-following"><div class="empty" style="padding:20px 0"><div class="etit" style="font-size:12px">No seguís a nadie aún</div></div></div>
 </div>
 
 <!-- ASISTENCIA MODAL -->
@@ -3268,10 +3218,22 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
         </div>
       </div>
 
+      <!-- MODO OSCURO / CLARO — Toggle maestro -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Modo</div>
+      <div class="mode-toggle">
+        <div class="mode-btn active" id="mode-dark-btn" onclick="setThemeMode('dark')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          Oscuro
+        </div>
+        <div class="mode-btn" id="mode-light-btn" onclick="setThemeMode('light')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          Claro
+        </div>
+      </div>
+
       <!-- TEMAS DE COLOR (Gradientes oscuros — HyperOS style + nuevos) -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 6px">Tema de color</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:10px">El texto cambia automáticamente: blanco en oscuro, negro en claro.</div>
-      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">OSCUROS</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 6px">Color de acento</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:10px">Se combina con el Modo de arriba: cualquier color funciona en oscuro o en claro.</div>
       <div class="theme-grid">
         <div class="theme-item active" id="theme-default" onclick="applyColorTheme('default',this)" style="background:linear-gradient(135deg,#0d1117 0%,#1a1f35 100%)">
           <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Default</div>
@@ -3310,7 +3272,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
           <div class="theme-item-check">✓</div>
         </div>
       </div>
-      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">CLAROS</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">MÁS COLORES</div>
       <div class="theme-grid">
         <div class="theme-item" id="theme-light" onclick="applyColorTheme('light',this)" style="background:linear-gradient(135deg,#e8ebf5 0%,#f5f7ff 100%)">
           <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,0,60,.5)">Blanco</div>
@@ -3325,24 +3287,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
           <div class="theme-item-check" style="background:rgba(0,0,0,.8);color:#fff">✓</div>
         </div>
       </div>
-      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">✨ EFECTOS DE MOVIMIENTO</div>
-      <div class="theme-grid">
-        <div class="theme-item" id="theme-ps4aurora" onclick="applyColorTheme('ps4aurora',this)" style="background:linear-gradient(135deg,#050d15 0%,#0a2030 100%);overflow:hidden">
-          <div style="position:absolute;inset:0;background:linear-gradient(120deg,rgba(0,229,255,.15),rgba(0,150,255,.08),transparent);animation:auroraShift 3s ease infinite alternate"></div>
-          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,229,255,.9)">Aurora 🌌</div>
-          <div class="theme-item-check">✓</div>
-        </div>
-        <div class="theme-item" id="theme-ps4ember" onclick="applyColorTheme('ps4ember',this)" style="background:linear-gradient(135deg,#12050a 0%,#2a0a10 100%)">
-          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,107,53,.9)">Brasas 🔥</div>
-          <div class="theme-item-check">✓</div>
-        </div>
-        <div class="theme-item" id="theme-ps4cosmos" onclick="applyColorTheme('ps4cosmos',this)" style="background:linear-gradient(135deg,#06061a 0%,#0e0e36 100%)">
-          <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(192,132,252,.9)">Cosmos ⭐</div>
-          <div class="theme-item-check">✓</div>
-        </div>
-      </div>
-      <style>@keyframes auroraShift{0%{opacity:.3;transform:scaleX(1)}100%{opacity:.7;transform:scaleX(1.3)}}</style>
-
       <!-- NOTIFICACIONES -->
       <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Notificaciones</div>
       <div class="cfg-section">
@@ -3414,10 +3358,6 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <div class="smit" onclick="go('perfil');closeMenu()">
         <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
         <div><div class="smlab">Mi Perfil</div><div class="smsub">Editar información</div></div>
-      </div>
-      <div class="smit" onclick="go('social');closeMenu()">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-        <div><div class="smlab">Social</div><div class="smsub">Buscar y seguir personas</div></div>
       </div>
       <div class="smit" onclick="openBetHistory();closeMenu()">
         <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
@@ -4161,7 +4101,6 @@ function renderPage(p){
   if(p==='partidos'){renderMList()}
   if(p==='info'){renderAllN();renderStandings();renderSanc();renderRulesAndInfo()}
   if(p==='admin'){renderAdmLists()}
-  if(p==='social'){renderFollowing()}
 }
 
 /* ---- HELPERS ---- */
@@ -4171,6 +4110,15 @@ function fmtND(d){try{return new Date(d).toLocaleDateString('es-AR',{day:'numeri
 function fmtDT(d){try{const dt=new Date(d);return dt.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'})+' '+dt.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}catch(e){return d}}
 function fmtTime(d){try{return new Date(d).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
 function fmtDate(d){try{return new Date(d).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})}catch(e){return d}}
+const EV_ICONS={
+  goal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg>',
+  yellow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/></svg>',
+  red:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/></svg>',
+  assist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  sub:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></svg>',
+  default:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>'
+};
+function evIcon(type){return EV_ICONS[type]||EV_ICONS.default}
 function team(id){return D.teams.find(t=>t.id===id)}
 function channel(id){return D.channels.find(c=>c.id===id)}
 
@@ -4326,6 +4274,10 @@ function openMatch(id){
         <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t2)">
           ${D.cfg.name||'La Súper Liga'}${ch?` &nbsp;·&nbsp; ${ch.name}`:''}
         </div>
+        ${m.jornada||m.competition?`<div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22)">
+          <span style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent2)">${({liga:'Liga',copa:'Copa',amistoso:'Amistoso'})[m.competition]||'Liga'}</span>
+          ${m.jornada?`<span style="font-size:9px;color:var(--t3)">·</span><span style="font-size:9px;font-weight:700;color:var(--t2)">${m.jornada}</span>`:''}
+        </div>`:''}
       </div>
 
       <!-- Countdown grande (solo próximos) -->
@@ -4381,28 +4333,28 @@ function openMatch(id){
     <!-- META ROW: estadio / canal / fecha -->
     <div class="md-meta-row">
       ${m.datetime?`<div class="md-meta-item">
-        <span class="md-meta-ico">📅</span>
+        <span class="md-meta-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
         <div class="md-meta-txt">
           <span class="md-meta-lbl">Fecha</span>
           <span class="md-meta-val">${fmtDate(m.datetime)}</span>
         </div>
       </div>`:''}
       ${m.datetime?`<div class="md-meta-item">
-        <span class="md-meta-ico">🕐</span>
+        <span class="md-meta-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
         <div class="md-meta-txt">
           <span class="md-meta-lbl">Horario</span>
           <span class="md-meta-val">${fmtTime(m.datetime)}</span>
         </div>
       </div>`:''}
       ${m.stadium?`<div class="md-meta-item">
-        <span class="md-meta-ico">🏟️</span>
+        <span class="md-meta-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="4" ry="6"/></svg></span>
         <div class="md-meta-txt">
           <span class="md-meta-lbl">Estadio</span>
           <span class="md-meta-val">${m.stadium}</span>
         </div>
       </div>`:''}
       ${ch?`<div class="md-meta-item">
-        <span class="md-meta-ico">${ch.logo?`<img src="${ch.logo}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;border-radius:4px"/>`:' 📺'}</span>
+        <span class="md-meta-ico">${ch.logo?`<img src="${ch.logo}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;border-radius:4px"/>`:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M9 2l3 4 3-4"/></svg>'}</span>
         <div class="md-meta-txt">
           <span class="md-meta-lbl">Canal</span>
           <span class="md-meta-val">${ch.logo?`<img src="${ch.logo}" style="height:16px;max-width:56px;object-fit:contain;vertical-align:middle;border-radius:3px"/>`:ch.name}</span>
@@ -4514,19 +4466,19 @@ function openMatch(id){
 
       </div>
 
-      ${D.user.isAdmin&&(done||live)?`<button class="abtn sec" style="font-size:12px;padding:10px" onclick="closeOv('md-ov');openLiveEdit('${id}')">⚙️ Editar partido</button>`:''}
+      ${D.user.isAdmin&&(done||live)?`<button class="abtn sec" style="font-size:12px;padding:10px" onclick="closeOv('md-ov');openLiveEdit('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Editar partido</button>`:''}
     </div>
 
     <!-- ══ PANEL EVENTOS ══ -->
     <div class="md-panel${(done||live)?' on':''}" id="mdt-ev-${id}">
       ${events.length?events.map(ev=>{
-        const eico={'goal':'⚽','yellow':'🟨','red':'🟥','assist':'🅰️','sub':'🔄'}[ev.type]||'📍';
+        const eico=evIcon(ev.type);const ecolormap={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
         const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
         const isHome=ev.team==='home';
         return `<div class="evit" style="border-left:3px solid ${ecolor};justify-content:${isHome?'flex-start':'flex-end'}">
           ${isHome?`
             <div class="evmin" style="color:${ecolor}">${ev.minute}'</div>
-            <div style="font-size:20px">${eico}</div>
+            <div class="ev-ico-svg" style="color:${ecolor}">${eico}</div>
             <div>
               <div class="evnm">${ev.player}</div>
               <div class="evtm">${h.name}</div>
@@ -4536,12 +4488,12 @@ function openMatch(id){
               <div class="evnm">${ev.player}</div>
               <div class="evtm">${a.name}</div>
             </div>
-            <div style="font-size:20px">${eico}</div>
+            <div class="ev-ico-svg" style="color:${ecolor}">${eico}</div>
             <div class="evmin" style="color:${ecolor}">${ev.minute}'</div>
           `}
         </div>`;
-      }).join(''):`<div class="empty" style="padding:28px 0"><div class="etic">📋</div><div class="etit">Sin eventos registrados</div><div class="esub">Los eventos aparecerán en vivo</div></div>`}
-      ${D.user.isAdmin?`<div style="margin-top:12px"><button class="abtn sec" style="font-size:12px;padding:10px" onclick="closeOv('md-ov');openLiveEdit('${id}')">⚙️ Editar partido</button></div>`:''}
+      }).join(''):`<div class="empty" style="padding:28px 0"><div class="etic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg></div><div class="etit">Sin eventos registrados</div><div class="esub">Los eventos aparecerán en vivo</div></div>`}
+      ${D.user.isAdmin?`<div style="margin-top:12px"><button class="abtn sec" style="font-size:12px;padding:10px" onclick="closeOv('md-ov');openLiveEdit('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Editar partido</button></div>`:''}
     </div>
 
     <!-- ══ PANEL ESTADÍSTICAS ══ -->
@@ -5158,21 +5110,29 @@ function saveMatch(){
   const stad=$('m-stad')?.value.trim()||'';
   const ch=$('m-ch')?.value||'';
   const roomCode=$('m-room')?.value?.trim()||'';
+  const competition=$('m-comp')?.value||'liga';
+  const jornada=$('m-jornada')?.value?.trim()||'';
   if(!h&&!a&&!dt){toast('⚠️ Completá: local, visitante y fecha');return}
   if(!h){toast('⚠️ Seleccioná el equipo Local');$('mh-team')?.focus();return}
   if(!a){toast('⚠️ Seleccioná el equipo Visitante');$('ma-team')?.focus();return}
   if(!dt){toast('⚠️ Ingresá la fecha y hora del partido');$('m-dt')?.focus();return}
   if(h===a){toast('⚠️ El local y visitante deben ser equipos distintos');return}
   let isoDate;try{isoDate=new Date(dt).toISOString()}catch(e){toast('⚠️ Fecha inválida');return}
-  const newMatch={id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,datetime:isoDate,status:st,stadium:stad,channel:ch,roomCode:roomCode,events:[],stats:{}};
+  const newMatch={id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,datetime:isoDate,status:st,stadium:stad,channel:ch,roomCode:roomCode,competition:competition,jornada:jornada,events:[],stats:{}};
   D.matches.push(newMatch);save();renderAll();
   const hSel=$('mh-team'),aSel=$('ma-team');if(hSel)hSel.value='';if(aSel)aSel.value='';
   const stadEl=$('m-stad');if(stadEl)stadEl.value='';
   const roomEl=$('m-room');if(roomEl)roomEl.value='';
+  const jornadaEl=$('m-jornada');if(jornadaEl)jornadaEl.value='';
   prefillMatchDate();
   addNotif('Nuevo partido',`${teamName(h)} vs ${teamName(a)}`);
   try{sendPushToAll('⚽ Nuevo partido',`${teamName(h)} vs ${teamName(a)}`)}catch(e){}
   toast('✅ Partido guardado correctamente');broadcastUpdate();adminSync();
+}
+function updateJornadaPlaceholder(){
+  const comp=$('m-comp')?.value;const inp=$('m-jornada');if(!inp)return;
+  const placeholders={liga:'Ej: Fecha 5',copa:'Ej: Octavos de Final',amistoso:'Ej: Amistoso de pretemporada'};
+  inp.placeholder=placeholders[comp]||'Ej: Fecha 5';
 }
 function teamName(id){return D.teams.find(t=>t.id===id)?.name||id}
 function delMatch(id){if(!confirm('¿Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();broadcastUpdate();adminSync();toast('🗑️ Eliminado')}
@@ -5255,6 +5215,10 @@ function openLiveEdit(id){
   const h=team(m.homeTeam),a=team(m.awayTeam);
   $('le-content').innerHTML=`
     <div class="sect" style="margin-bottom:14px">${h?.name||'L'} vs ${a?.name||'V'}</div>
+    <div class="frow">
+      <div class="fgrp"><div class="fl">Competencia</div><select class="fsel" id="le-comp"><option value="liga" ${(m.competition||'liga')==='liga'?'selected':''}>Liga</option><option value="copa" ${m.competition==='copa'?'selected':''}>Copa</option><option value="amistoso" ${m.competition==='amistoso'?'selected':''}>Amistoso</option></select></div>
+      <div class="fgrp"><div class="fl">Jornada / Fecha</div><input type="text" class="fi" id="le-jornada" value="${m.jornada||''}" placeholder="Ej: Fecha 5"/></div>
+    </div>
     <div class="fl">Estado</div>
     <select class="fsel" id="le-st" onchange="setStatus('${id}',this.value)">
       <option value="proximo" ${m.status==='proximo'?'selected':''}>Próximo</option>
@@ -5304,6 +5268,7 @@ function delEv(id,i){const m=D.matches.find(x=>x.id===id);if(m?.events){m.events
 function saveLiveEdit(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
   m.homeScore=parseInt($('le-hs').value)||0;m.awayScore=parseInt($('le-as').value)||0;
+  m.competition=$('le-comp')?.value||'liga';m.jornada=$('le-jornada')?.value?.trim()||'';
   m.stats={possession:+$('le-poss').value||50,shots:+$('le-sh').value||0,shotsAway:+$('le-sha').value||0,fouls:+$('le-fo').value||0,foulsAway:+$('le-foa').value||0};
   save();renderAll();broadcastUpdate();adminSync();toast('✅ Partido actualizado');
 }
@@ -5614,7 +5579,54 @@ function closeSMOv(e){if(e.target.id==='smov')closeMenu()}
 
 /* ---- TOAST ---- */
 let toastT=null;
-function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800)}
+const TOAST_ICONS={
+  '✅':'<path d="M20 6L9 17l-5-5"/>',
+  '✓':'<path d="M20 6L9 17l-5-5"/>',
+  '❌':'<circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>',
+  '⚠':'<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
+  '🗑':'<path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m3 0l-1 14a1 1 0 01-1 1H6a1 1 0 01-1-1L4 6"/>',
+  '🔔':'<path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+  '🔕':'<path d="M13.73 21a2 2 0 01-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0118 8"/><path d="M6.26 6.26A5.86 5.86 0 006 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 00-9.33-5"/><path d="M1 1l22 22"/>',
+  '🎨':'<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 100 20 1.5 1.5 0 001-2.6 1.5 1.5 0 011-2.6h1.5a5 5 0 005-5A10 10 0 0012 2z"/>',
+  '📤':'<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+  '📥':'<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  '🔄':'<path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>',
+  '💾':'<path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  '📋':'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>',
+  '⚡':'<path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>',
+  '📝':'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>',
+  '👋':'<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+  '💡':'<path d="M9 18h6M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5.76.76 1.21 1.5 1.4 2.5"/>',
+  '☁':'<path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>',
+  '👥':'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
+  '⚙':'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  '📊':'<path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/>',
+  '🥇':'<circle cx="12" cy="15" r="6"/><path d="M12 9v12M8 4l4 5 4-5"/>',
+  '⬇':'<path d="M12 5v14M19 12l-7 7-7-7"/>',
+  '✏':'<path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/>',
+  '📢':'<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6"/>',
+  '🌈':'<path d="M22 17a10 10 0 00-20 0M6 17a6 6 0 0112 0"/>',
+  '✨':'<path d="M12 3l1.9 4.9L19 9l-5.1 1.9L12 16l-1.9-5.1L5 9l5.1-1.1z"/><path d="M19 16l.7 1.8L21.5 18l-1.8.7L19 20.5l-.7-1.8L16.5 18l1.8-.7z"/>',
+  '🔲':'<rect x="3" y="3" width="18" height="18" rx="2"/>',
+  '🔗':'<path d="M10 13a5 5 0 007.5.5l2-2a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-2 2a5 5 0 007 7l1.5-1.5"/>',
+  '🎛':'<circle cx="6" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="16" r="2"/><path d="M6 4v6M6 14v6M12 2v2M12 8v14M18 2v12M18 20v2"/>',
+  '🎬':'<rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M7 6l3 4M13 6l3 4"/>',
+  '🎯':'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  '↩':'<path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 010 8h-1"/>',
+  '📣':'<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6"/>',
+  '🚀':'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.3-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+};
+function toast(msg){
+  const el=$('toast');
+  const m=String(msg).match(/^([\u2190-\u2BFF\u{1F000}-\u{1FFFF}\uFE0F]+)\s*(.*)$/u);
+  if(m&&TOAST_ICONS[m[1].replace('\uFE0F','')]){
+    const path=TOAST_ICONS[m[1].replace('\uFE0F','')];
+    el.innerHTML=`<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg><span>${m[2]}</span>`;
+  }else{
+    el.innerHTML=`<span>${msg}</span>`;
+  }
+  el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800);
+}
 
 /* ---- AMBIENT SCROLL LISTENER ---- */
 document.addEventListener('DOMContentLoaded',()=>{
@@ -6126,7 +6138,7 @@ function toggleCfg(key){
   }
   if(key==='glass'){
     const hdr=$('hdr'),nav=$('nav');
-    const bf=D.settings.glass===false?'none':'blur(28px) saturate(180%)';
+    const bf=D.settings.glass===false?'none':'blur(20px) saturate(180%)';
     if(hdr)hdr.style.backdropFilter=bf;
     if(nav)nav.style.backdropFilter=bf;
     toast(D.settings.glass!==false?'🔲 Vidrio ON':'Vidrio OFF');
@@ -6348,7 +6360,7 @@ function showChangeNotification(title,message){
   const notif=document.createElement('div');
   notif.id='change-notif';
   notif.innerHTML=`
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(34,211,238,.12);border:1.5px solid rgba(34,211,238,.25);box-shadow:0 8px 32px rgba(34,211,238,.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);max-width:320px;animation:slideIn .32s cubic-bezier(.2,.55,.45,1) forwards">
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(34,211,238,.12);border:1.5px solid rgba(34,211,238,.25);box-shadow:0 8px 32px rgba(34,211,238,.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);max-width:320px;animation:slideIn .32s cubic-bezier(.2,.55,.45,1) forwards">
       <div style="font-size:18px;flex-shrink:0;margin-top:2px">${title.split(' ')[0]}</div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:600;color:var(--text);font-size:13px;margin-bottom:2px">${title.split(' ').slice(1).join(' ')}</div>
@@ -6442,7 +6454,7 @@ function checkWelcome(){
   const title=$('welcome-title');if(title)title.textContent='Bienvenido a '+(D.cfg.name||'La Liga');
   const sub=$('welcome-sub');if(sub)sub.textContent='Antes de comenzar, leé las reglas de la liga.';
   const art=$('welcome-art');
-  if(art&&D.cfg.logo){art.innerHTML=`<img src="${D.cfg.logo}" style="width:100%;height:100%;object-fit:contain"/>"`}
+  if(art&&D.cfg.logo){art.innerHTML=`<img src="${D.cfg.logo}" style="width:100%;height:100%;object-fit:cover"/>`}
   // Render rules from cfg
   renderWelcomeRules();
   setTimeout(()=>{modal.classList.add('open')},600);
@@ -6465,70 +6477,6 @@ function closeWelcomeForever(){
   localStorage.setItem('lsl_no_welcome','1');
   closeWelcome();
   toast('✅ No se volverá a mostrar');
-}
-
-/* ════════════════════════════════════════════════
-   SOCIAL — Buscar y Seguir usuarios
-   ════════════════════════════════════════════════ */
-let _following=JSON.parse(localStorage.getItem('lsl_following')||'[]');
-
-function socialSearch(q){
-  const el=$('social-list');if(!el)return;
-  if(!q||q.length<2){
-    el.innerHTML='<div class="empty" style="padding:20px 0"><div class="etic">👥</div><div class="etit">Buscá alguien</div></div>';
-    return;
-  }
-  const ql=q.toLowerCase();
-  // Buscar en jugadores + usuarios conocidos
-  const players=(D.players||[]).filter(p=>p.name.toLowerCase().includes(ql));
-  if(!players.length){
-    el.innerHTML='<div class="empty" style="padding:20px 0"><div class="etic">🔍</div><div class="etit">Sin resultados</div></div>';
-    return;
-  }
-  el.innerHTML=players.map(p=>{
-    const isF=_following.includes(p.id);
-    const t=team(p.teamId);
-    return`<div class="user-card">
-      <div class="user-av">${p.photo?`<img src="${p.photo}"/>`:`<span>${p.name[0]||'?'}</span>`}</div>
-      <div><div class="user-name">${p.name}</div><div class="user-sub">${p.position||'Jugador'}${t?' · '+t.name:''}</div></div>
-      <button class="follow-btn${isF?' following':''}" onclick="toggleFollow('${p.id}',this)">${isF?'Siguiendo':'Seguir'}</button>
-    </div>`;
-  }).join('');
-}
-
-function toggleFollow(id,btn){
-  const idx=_following.indexOf(id);
-  if(idx>-1){
-    _following.splice(idx,1);
-    if(btn){btn.textContent='Seguir';btn.classList.remove('following');}
-    toast('➖ Dejaste de seguir');
-  }else{
-    _following.push(id);
-    if(btn){btn.textContent='Siguiendo';btn.classList.add('following');}
-    toast('✅ ¡Ahora seguís a este jugador!');
-    // Simular notificación push
-    addNotif('Nuevo seguidor','Alguien comenzó a seguirte en la Liga');
-  }
-  localStorage.setItem('lsl_following',JSON.stringify(_following));
-  renderFollowing();
-}
-
-function renderFollowing(){
-  const el=$('social-following');if(!el)return;
-  if(!_following.length){
-    el.innerHTML='<div class="empty" style="padding:16px 0"><div class="etit" style="font-size:12px">No seguís a nadie aún</div></div>';
-    return;
-  }
-  el.innerHTML=_following.map(id=>{
-    const p=(D.players||[]).find(x=>x.id===id);
-    if(!p)return'';
-    const t=team(p.teamId);
-    return`<div class="user-card">
-      <div class="user-av">${p.photo?`<img src="${p.photo}"/>`:`<span>${p.name[0]||'?'}</span>`}</div>
-      <div><div class="user-name">${p.name}</div><div class="user-sub">${p.position||''}${t?' · '+t.name:''}</div></div>
-      <button class="follow-btn following" onclick="toggleFollow('${p.id}',this)">Siguiendo</button>
-    </div>`;
-  }).filter(Boolean).join('');
 }
 
 /* ════════════════════════════════════════════════
@@ -6698,16 +6646,16 @@ function renderRules(){renderRulesAndInfo()}
    M11: EVENTOS — renderizado mejorado (timeline)
    ════════════════════════════════════════════════ */
 function buildEventsHTML(events,h,a){
-  if(!events||!events.length)return`<div class="empty" style="padding:28px 0"><div class="etic">📋</div><div class="etit">Sin eventos registrados</div><div class="esub">Los eventos aparecerán en vivo</div></div>`;
+  if(!events||!events.length)return`<div class="empty" style="padding:28px 0"><div class="etic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg></div><div class="etit">Sin eventos registrados</div><div class="esub">Los eventos aparecerán en vivo</div></div>`;
   return events.map(ev=>{
-    const eico={'goal':'⚽','yellow':'🟨','red':'🟥','assist':'🅰️','sub':'🔄'}[ev.type]||'📍';
+    const eico=evIcon(ev.type);const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
     const isHome=ev.team==='home';
     const isGoal=ev.type==='goal';
     const tn=isHome?h.name:a.name;
     if(isHome){
-      return`<div class="evit${isGoal?' ev-goal':''}"><div class="evit-left"><div class="evico">${eico}</div><div><div class="evnm">${ev.player}</div><div class="evtm">${tn}</div></div></div><div class="evit-center"><div class="ev-min-pill">${ev.minute}'</div><div class="ev-vert-line"></div></div><div class="evit-right" style="flex:1"></div></div>`;
+      return`<div class="evit${isGoal?' ev-goal':''}"><div class="evit-left"><div class="evico" style="color:${ecolor}">${eico}</div><div><div class="evnm">${ev.player}</div><div class="evtm">${tn}</div></div></div><div class="evit-center"><div class="ev-min-pill">${ev.minute}'</div><div class="ev-vert-line"></div></div><div class="evit-right" style="flex:1"></div></div>`;
     }else{
-      return`<div class="evit${isGoal?' ev-goal':''}"><div class="evit-left" style="flex:1"></div><div class="evit-center"><div class="ev-vert-line"></div><div class="ev-min-pill">${ev.minute}'</div></div><div class="evit-right"><div style="text-align:right"><div class="evnm">${ev.player}</div><div class="evtm">${tn}</div></div><div class="evico">${eico}</div></div></div>`;
+      return`<div class="evit${isGoal?' ev-goal':''}"><div class="evit-left" style="flex:1"></div><div class="evit-center"><div class="ev-vert-line"></div><div class="ev-min-pill">${ev.minute}'</div></div><div class="evit-right"><div style="text-align:right"><div class="evnm">${ev.player}</div><div class="evtm">${tn}</div></div><div class="evico" style="color:${ecolor}">${eico}</div></div></div>`;
     }
   }).join('');
 }
@@ -6964,9 +6912,12 @@ function leSelectElement(el){
   _leSelected=el;
   // Resaltar selección
   const oldOutline=el.style.outline;
+  const oldCursor=el.style.cursor;
   el.style.outline='2px solid rgba(99,102,241,.9)';
   el.style.outlineOffset='2px';
+  el.style.cursor='grab';
   el._leOldOutline=oldOutline;
+  el._leOldCursor=oldCursor;
   // Mostrar nombre del elemento
   const nameEl=$('le-el-name');
   if(nameEl)nameEl.textContent=(el.id?'#'+el.id:el.className?'.'+el.className.trim().split(' ')[0]:el.tagName.toLowerCase());
@@ -6986,6 +6937,8 @@ function leDeselectAll(){
   if(_leSelected){
     _leSelected.style.outline=_leSelected._leOldOutline||'';
     _leSelected.style.outlineOffset='';
+    _leSelected.style.cursor=_leSelected._leOldCursor||'';
+    _leSelected.classList.remove('le-dragging');
     _leSelected=null;
   }
   const propsEl=$('le-el-props');if(propsEl)propsEl.style.display='none';
@@ -6998,16 +6951,24 @@ function leMakeDraggable(el){
 
 function leDragStart(e){
   if(!_leActive||!_leSelected)return;
-  e.preventDefault();
+  // Evitar arrastrar si el toque empezó sobre un input/botón de las propiedades
+  if(e.target.closest('#le-el-props')||e.target.closest('#le-floating-bar'))return;
+  e.preventDefault();e.stopPropagation();
   const touch=e.touches?e.touches[0]:e;
   const rect=_leSelected.getBoundingClientRect();
+  // Pasar a position:fixed con coordenadas absolutas de viewport (consistente con leApplyProps)
+  if(_leSelected.style.position!=='fixed'){
+    _leSelected.style.position='fixed';
+    _leSelected.style.left=rect.left+'px';
+    _leSelected.style.top=rect.top+'px';
+    _leSelected.style.margin='0';
+  }
   _leDragStart={
     mouseX:touch.clientX,mouseY:touch.clientY,
-    origLeft:rect.left,origTop:rect.top,
-    origPos:_leSelected.style.position||'',
-    origLeft_:_leSelected.style.left||'',
-    origTop_:_leSelected.style.top||'',
+    origLeft:parseFloat(_leSelected.style.left)||rect.left,
+    origTop:parseFloat(_leSelected.style.top)||rect.top,
   };
+  _leSelected.classList.add('le-dragging');
   document.addEventListener('mousemove',leDragMove,{passive:false});
   document.addEventListener('touchmove',leDragMove,{passive:false});
   document.addEventListener('mouseup',leDragEnd);
@@ -7020,14 +6981,18 @@ function leDragMove(e){
   const touch=e.touches?e.touches[0]:e;
   const dx=touch.clientX-_leDragStart.mouseX;
   const dy=touch.clientY-_leDragStart.mouseY;
-  if(_leSelected.style.position!=='fixed'&&_leSelected.style.position!=='absolute'){
-    _leSelected.style.position='relative';
-  }
-  _leSelected.style.left=(_leDragStart.origLeft_?parseFloat(_leDragStart.origLeft_):0)+dx+'px';
-  _leSelected.style.top=(_leDragStart.origTop_?parseFloat(_leDragStart.origTop_):0)+dy+'px';
+  const newLeft=_leDragStart.origLeft+dx;
+  const newTop=_leDragStart.origTop+dy;
+  _leSelected.style.left=newLeft+'px';
+  _leSelected.style.top=newTop+'px';
+  // Sincronizar inputs de propiedades en vivo
+  const px=$('le-prop-x'),py=$('le-prop-y');
+  if(px)px.value=Math.round(newLeft);
+  if(py)py.value=Math.round(newTop);
 }
 
 function leDragEnd(){
+  if(_leSelected)_leSelected.classList.remove('le-dragging');
   _leDragStart=null;
   document.removeEventListener('mousemove',leDragMove);
   document.removeEventListener('touchmove',leDragMove);
@@ -7041,7 +7006,7 @@ function leApplyProps(){
   const y=parseFloat($('le-prop-y')?.value)||0;
   const w=parseFloat($('le-prop-w')?.value)||0;
   const h=parseFloat($('le-prop-h')?.value)||0;
-  if(_leSelected.style.position!=='fixed')_leSelected.style.position='fixed';
+  if(_leSelected.style.position!=='fixed'){_leSelected.style.position='fixed';_leSelected.style.margin='0'}
   _leSelected.style.left=x+'px';
   _leSelected.style.top=y+'px';
   if(w>0)_leSelected.style.width=w+'px';
@@ -7097,86 +7062,35 @@ const COLOR_THEMES={
   light:{bg:'#f0f2f8',bg2:'#e4e8f4',bg3:'#d8ddf0',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.08) 0%,transparent 70%),#f0f2f8',accent:'#4f46e5',accentRgb:'79,70,229',dark:false},
   lightblue:{bg:'#eef2ff',bg2:'#e0e7ff',bg3:'#c7d2fe',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.10) 0%,transparent 70%),#eef2ff',accent:'#4338ca',accentRgb:'67,56,202',dark:false},
   lightgreen:{bg:'#f0fdf4',bg2:'#dcfce7',bg3:'#bbf7d0',grad:'radial-gradient(ellipse 80% 40% at 50% -10%,rgba(22,163,74,.08) 0%,transparent 70%),#f0fdf4',accent:'#16a34a',accentRgb:'22,163,74',dark:false},
-  // Temas con efecto de partículas (PS4 style)
-  ps4aurora:{bg:'#050d15',bg2:'#0a1520',bg3:'#0f1e2b',grad:'linear-gradient(#050d15,#0a1520)',accent:'#00e5ff',accentRgb:'0,229,255',dark:true,particles:'aurora'},
-  ps4ember:{bg:'#12050a',bg2:'#1e0810',bg3:'#280a14',grad:'linear-gradient(#12050a,#1e0810)',accent:'#ff6b35',accentRgb:'255,107,53',dark:true,particles:'ember'},
-  ps4cosmos:{bg:'#06061a',bg2:'#0a0a28',bg3:'#0e0e36',grad:'linear-gradient(#06061a,#0a0a28)',accent:'#c084fc',accentRgb:'192,132,252',dark:true,particles:'stars'},
 };
 
-/* ── Particle canvas para temas animados ── */
-let _particleCanvas=null,_particleCtx=null,_particleAnim=null,_particleType=null;
-const _particles=[];
-
-function startParticles(type){
-  stopParticles();
-  _particleType=type;
-  let wrap=document.getElementById('theme-particles');
-  if(!wrap){wrap=document.createElement('div');wrap.id='theme-particles';wrap.className='theme-particles';document.body.appendChild(wrap);}
-  _particleCanvas=document.createElement('canvas');
-  _particleCanvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
-  wrap.innerHTML='';wrap.appendChild(_particleCanvas);
-  _particleCtx=_particleCanvas.getContext('2d');
-  function resize(){_particleCanvas.width=window.innerWidth;_particleCanvas.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  _particles.length=0;
-  if(type==='aurora'){
-    for(let i=0;i<6;i++){_particles.push({x:Math.random(),y:.1+Math.random()*.4,w:.3+Math.random()*.4,h:.05+Math.random()*.08,speed:.0003+Math.random()*.0004,color:`hsla(${160+Math.random()*80},100%,65%,`,t:Math.random()*Math.PI*2});}
-  }else if(type==='ember'){
-    for(let i=0;i<60;i++){_particles.push({x:Math.random(),y:1+Math.random()*.2,vx:(Math.random()-.5)*.0015,vy:-.002-Math.random()*.003,r:1+Math.random()*2.5,o:0,life:Math.random(),maxLife:.6+Math.random()*.4});}
-  }else if(type==='stars'){
-    for(let i=0;i<80;i++){_particles.push({x:Math.random(),y:Math.random(),r:.5+Math.random()*1.5,o:Math.random(),pulse:Math.random()*Math.PI*2,speed:.01+Math.random()*.02});}
-  }
-  function tick(){
-    _particleAnim=requestAnimationFrame(tick);
-    const W=_particleCanvas.width,H=_particleCanvas.height;
-    _particleCtx.clearRect(0,0,W,H);
-    if(type==='aurora'){
-      _particles.forEach(p=>{
-        p.t+=p.speed;
-        const x=p.x*W,y=(p.y+Math.sin(p.t)*0.05)*H,w=p.w*W,h=p.h*H;
-        const g=_particleCtx.createLinearGradient(x,y,x,y+h);
-        g.addColorStop(0,p.color+'0)');g.addColorStop(.4,p.color+'.18)');g.addColorStop(1,p.color+'0)');
-        _particleCtx.fillStyle=g;
-        _particleCtx.beginPath();_particleCtx.ellipse(x+w/2,y+h/2,w/2,h/2,Math.sin(p.t*.3)*.2,0,Math.PI*2);
-        _particleCtx.fill();
-      });
-    }else if(type==='ember'){
-      _particles.forEach(p=>{
-        p.life+=.008;if(p.life>p.maxLife){p.life=0;p.x=Math.random();p.y=1;p.vx=(Math.random()-.5)*.002;p.vy=-.002-Math.random()*.003;}
-        p.x+=p.vx;p.y+=p.vy;const fade=Math.sin(p.life/p.maxLife*Math.PI);
-        _particleCtx.beginPath();_particleCtx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
-        _particleCtx.fillStyle=`rgba(255,${100+Math.floor(p.life*155)},50,${fade*.7})`;_particleCtx.fill();
-      });
-    }else if(type==='stars'){
-      _particles.forEach(p=>{
-        p.pulse+=p.speed;const o=(Math.sin(p.pulse)+1)/2*.5+.1;
-        _particleCtx.beginPath();_particleCtx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
-        _particleCtx.fillStyle=`rgba(255,255,255,${o})`;_particleCtx.fill();
-      });
-    }
-  }
-  tick();
+/* ── Bases genéricas para combinar Modo (oscuro/claro) con cualquier color de acento ── */
+function darkBaseFor(accentRgb){
+  return{bg:'#080c14',bg2:'#0e1220',bg3:'#141828',grad:`radial-gradient(ellipse 80% 40% at 50% -10%,rgba(${accentRgb},.14) 0%,transparent 70%),#080c14`};
 }
-
-function stopParticles(){
-  if(_particleAnim){cancelAnimationFrame(_particleAnim);_particleAnim=null;}
-  const wrap=document.getElementById('theme-particles');if(wrap)wrap.innerHTML='';
-  _particleType=null;
+function lightBaseFor(accentRgb){
+  return{bg:'#f0f2f8',bg2:'#e4e8f4',bg3:'#d8ddf0',grad:`radial-gradient(ellipse 80% 40% at 50% -10%,rgba(${accentRgb},.08) 0%,transparent 70%),#f0f2f8`};
 }
 function applyColorTheme(name,el){
   const t=COLOR_THEMES[name];if(!t)return;
   const root=document.documentElement;
-  const isDark=t.dark!==false;
+  if(!D.settings)D.settings={};
+  // Modo (oscuro/claro): preferencia guardada, o el modo nativo del tema si nunca se eligió
+  const mode=D.settings.themeMode||(t.dark!==false?'dark':'light');
+  const isDark=mode==='dark';
   root.setAttribute('data-theme',isDark?'dark':'light');
+  // Si el tema elegido es nativo de este modo, usar su paleta de fondo. Si no, generar una.
+  const native=(t.dark!==false)===isDark;
+  const base=native?{bg:t.bg,bg2:t.bg2,bg3:t.bg3,grad:t.grad}:(isDark?darkBaseFor(t.accentRgb):lightBaseFor(t.accentRgb));
   // BG vars
-  root.style.setProperty('--bg',t.bg);
-  root.style.setProperty('--bg2',t.bg2);
-  root.style.setProperty('--bg3',t.bg3);
+  root.style.setProperty('--bg',base.bg);
+  root.style.setProperty('--bg2',base.bg2);
+  root.style.setProperty('--bg3',base.bg3);
   // Surface y border — siempre explícito para evitar herencia residual
   if(isDark){
-    root.style.setProperty('--surf',`rgba(${parseInt(t.bg2.slice(1,3),16)},${parseInt(t.bg2.slice(3,5),16)},${parseInt(t.bg2.slice(5,7),16)},.92)`);
-    root.style.setProperty('--surf2',t.bg2);
-    root.style.setProperty('--surf3',t.bg3);
+    root.style.setProperty('--surf',`rgba(${parseInt(base.bg2.slice(1,3),16)},${parseInt(base.bg2.slice(3,5),16)},${parseInt(base.bg2.slice(5,7),16)},.92)`);
+    root.style.setProperty('--surf2',base.bg2);
+    root.style.setProperty('--surf3',base.bg3);
     root.style.setProperty('--text','#eef0ff');
     root.style.setProperty('--t2','#7880a0');
     root.style.setProperty('--t3','#3a4060');
@@ -7201,29 +7115,42 @@ function applyColorTheme(name,el){
   root.style.setProperty('--amb-tint-hdr',`rgba(${t.accentRgb},.10)`);
   root.style.setProperty('--amb-tint-nav',`rgba(${t.accentRgb},.06)`);
   // Body background
-  document.body.style.background=t.bg;
-  document.body.style.backgroundImage=t.grad;
+  document.body.style.background=base.bg;
+  document.body.style.backgroundImage=base.grad;
   // theme-color meta
   const tm=document.getElementById('theme-color-meta');
-  if(tm)tm.content=isDark?t.bg:'#f0f2f8';
+  if(tm)tm.content=isDark?base.bg:'#f0f2f8';
   // Active marker
   document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active'));
   if(el)el.classList.add('active');
-  // Partículas PS4
-  if(t.particles)startParticles(t.particles);else stopParticles();
   // Guardar
-  if(!D.settings)D.settings={};
   D.settings.colorTheme=name;
   D.settings.accentHex=t.accent;
   D.settings.accentRgb=t.accentRgb;
   D.settings.themeDark=isDark;
+  D.settings.themeMode=mode;
   D._activeThemeName=name;
   save();toast('🎨 Tema aplicado');
 }
-function loadColorTheme(){
-  const name=D.settings?.colorTheme;
-  if(!name||name==='default')return;
+/* ── Modo Oscuro/Claro — toggle maestro, independiente del color de acento ── */
+function setThemeMode(mode){
+  if(!D.settings)D.settings={};
+  if(D.settings.themeMode===mode)return;
+  D.settings.themeMode=mode;
+  const name=D._activeThemeName||D.settings.colorTheme||'default';
   applyColorTheme(name,document.getElementById('theme-'+name));
+  updateThemeModeUI();
+}
+function updateThemeModeUI(){
+  const mode=D.settings?.themeMode||(COLOR_THEMES[D.settings?.colorTheme||'default']?.dark!==false?'dark':'light');
+  const dB=$('mode-dark-btn'),lB=$('mode-light-btn');
+  if(dB)dB.classList.toggle('active',mode==='dark');
+  if(lB)lB.classList.toggle('active',mode==='light');
+}
+function loadColorTheme(){
+  const name=D.settings?.colorTheme||'default';
+  applyColorTheme(name,document.getElementById('theme-'+name));
+  updateThemeModeUI();
 }
 
 /* ════════════════════════════════════════════════
@@ -7346,7 +7273,6 @@ function initUpdatesTab(){
   setTimeout(()=>{try{applyPerformanceMode();}catch(e){}},500);
   setTimeout(()=>{try{renderRulesAndInfo();}catch(e){}},800);
   setTimeout(()=>{try{checkWelcome();}catch(e){}},900);
-  setTimeout(()=>{try{renderFollowing();}catch(e){}},400);
   const diTgl=$('tgl-di');if(diTgl)diTgl.classList.toggle('on',typeof _diVisible!=='undefined'?_diVisible:true);
 })();
 </script>
