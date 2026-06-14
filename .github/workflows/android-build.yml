@@ -19,14 +19,23 @@ jobs:
     - name: Install Dependencies
       run: |
         npm install @capacitor/core @capacitor/cli @capacitor/android
+        npm install -g cordova-res --unsafe-perm
         npx cap init "La Super Liga" "com.lasuperliga.app" --web-dir=www
         mkdir www && echo "index" > www/index.html
         npx cap add android
 
+    - name: Generate Icons and Splash Screens
+      run: |
+        mkdir -p resources
+        cp icon.png resources/icon.png
+        cordova-res android --skip-splash
+        npx cap sync android
+
     - name: Build Android Project
       run: |
-        npx cap sync
-        cd android && ./gradlew assembleDebug
+        cd android
+        sed -i 's/versionName "1.0"/versionName "2.0"/g' app/build.gradle
+        ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
