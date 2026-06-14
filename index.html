@@ -34,7 +34,7 @@
   --over:rgba(4,6,14,.92);
   --hbg:rgba(8,12,22,.80);--nbg:rgba(6,10,20,.96);
   --accent:#818cf8;--accent2:#a5b4fc;
-  --live:#22c55e;--live2:#4ade80;
+  --live:#ef4444;--live2:#f87171;
   --warn:#f59e0b;--danger:#f87171;
   --grad:
     radial-gradient(ellipse 80% 40% at 50% -10%,rgba(99,102,241,.14) 0%,transparent 70%),
@@ -319,11 +319,11 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .mc:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.30)}
 .mc:active{opacity:.72;transform:translateY(0) scale(.98)}
 .mc.live{
-  border-color:rgba(34,197,94,.5);
-  box-shadow:0 0 0 1px rgba(34,197,94,.2),0 4px 24px rgba(34,197,94,.12)
+  border-color:rgba(239,68,68,.5);
+  box-shadow:0 0 0 1px rgba(239,68,68,.2),0 4px 24px rgba(239,68,68,.12)
 }
 .mc.live::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,#22c55e,transparent);border-radius:20px 20px 0 0}
+  background:linear-gradient(90deg,transparent,#ef4444,transparent);border-radius:20px 20px 0 0}
 .mcst{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
   letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
 .mcst.lv{color:var(--live);font-weight:700}
@@ -379,6 +379,8 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .mrtm{font-size:12px;font-weight:600;color:var(--t2);letter-spacing:.2px}
 .mrbdg{font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
   color:var(--t2);padding:3px 10px;border-radius:99px;border:1px solid var(--bdr2)}
+.mrbdg-live{color:var(--live);border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.10)}
+.mr.live{box-shadow:0 0 0 1.5px rgba(239,68,68,.35);background:rgba(239,68,68,.04)}
 
 /* =========================================================
    NOTICIAS (NEWS CARDS)
@@ -1176,14 +1178,14 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   padding:4px 12px;border-radius:99px;
   font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
 }
-.md-status-pill.live{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
+.md-status-pill.live{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
 .md-status-pill.prox{background:rgba(var(--amb-color),.10);color:var(--accent2);border:1px solid rgba(var(--amb-color),.2)}
 .md-status-pill.done{background:var(--surf2);color:var(--t2);border:1px solid var(--bdr)}
 
 /* Live pulse */
 .md-live-dot{
   width:6px;height:6px;border-radius:50%;
-  background:#22c55e;box-shadow:0 0 8px #22c55e;
+  background:#ef4444;box-shadow:0 0 8px #ef4444;
   animation:sbl 1s ease infinite;flex-shrink:0;
 }
 
@@ -1356,18 +1358,23 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 
 /* Historial de partidos H2H */
 .h2h-match-row{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 0;border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-bottom:1px solid var(--bdr);
 }
 .h2h-match-row:last-child{border-bottom:none}
-.h2h-match-date{font-size:10px;color:var(--t3);min-width:44px;flex-shrink:0}
-.h2h-match-teams{flex:1;display:flex;flex-direction:column;gap:2px}
-.h2h-match-team{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:5px}
-.h2h-match-team.winner{color:var(--text)}
-.h2h-match-team.loser{color:var(--t3)}
+.h2h-match-date{font-size:10px;color:var(--t3);min-width:40px;flex-shrink:0;font-family:'DM Mono',monospace}
+.h2h-match-teams{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.h2h-match-team{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h2h-match-team.winner{color:var(--text);font-weight:700}
+.h2h-match-team.loser{color:var(--t3);font-weight:500}
+.h2h-match-crest{
+  width:18px;height:18px;border-radius:5px;flex-shrink:0;
+  background:var(--surf3);border:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--t2);
+}
 .h2h-match-score{
-  font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;
-  color:var(--text);min-width:36px;text-align:center;flex-shrink:0;
+  font-family:'DM Mono',monospace;font-size:15px;font-weight:700;letter-spacing:.5px;
+  color:var(--text);min-width:48px;text-align:center;flex-shrink:0;
 }
 
 /* Predicciones v2 */
@@ -1420,6 +1427,30 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .stat-v2-bar-fill{height:100%;border-radius:99px;transition:width .8s ease}
 .stat-v2-bar-fill.home{background:var(--text)}
 .stat-v2-bar-fill.away{background:var(--t2)}
+
+/* Jugador del partido (MVP) */
+.mvp-card{
+  background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;
+  padding:12px 14px;margin-bottom:8px;
+}
+.mvp-card.mvp-main{
+  background:rgba(var(--amb-color),.07);border-color:rgba(var(--amb-color),.20);
+}
+.mvp-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mvp-card-info{flex:1;min-width:0}
+.mvp-card-tag{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent2);margin-bottom:3px}
+.mvp-card-name{font-size:14px;font-weight:800;color:var(--text);font-family:"DM Sans",sans-serif;line-height:1.25}
+.mvp-card-stats{font-size:11px;color:var(--t3);margin-top:3px;line-height:1.4}
+.mvp-card-rating{
+  font-family:"DM Mono",monospace;font-size:15px;font-weight:800;
+  min-width:42px;text-align:center;padding:6px 0;border-radius:10px;border:1px solid;
+  flex-shrink:0;
+}
+.mvp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.mvp-grid .mvp-card{margin-bottom:0}
+.mvp-grid .mvp-card-rating{font-size:13px;min-width:36px}
+.mvp-grid .mvp-card-name{font-size:12px}
+.mvp-grid .mvp-card-stats{font-size:10px}
 
 /* =========================================================
    TABS DEL EDITOR DE CÓDIGO
@@ -1635,7 +1666,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .pav.border-none{border-color:transparent}
 .pav.border-white{border-color:#fff;border-width:3px}
 .pav.border-gold{border-color:#f59e0b;border-width:3px;box-shadow:0 0 12px rgba(245,158,11,.4)}
-.pav.border-live{border-color:var(--live);border-width:3px;box-shadow:0 0 12px rgba(34,197,94,.4)}
+.pav.border-live{border-color:var(--live);border-width:3px;box-shadow:0 0 12px rgba(239,68,68,.4)}
 .pav.border-accent{border-color:var(--accent);border-width:3px;box-shadow:0 0 12px rgba(var(--amb-color),.4)}
 .pav.border-gradient{
   border:3px solid transparent;
@@ -1979,6 +2010,91 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 .code-search-nav button svg{width:12px;height:12px}
 .code-search-count{font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;min-width:36px;text-align:center}
 mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-radius:2px}
+
+/* =========================================================
+   ISLA DINÁMICA — Reproductor + Notificaciones (iOS 26 style)
+   ========================================================= */
+#dynamic-island{
+  position:fixed;
+  top:var(--di-top,8px);
+  left:50%;transform:translateX(-50%);
+  background:#000;color:#fff;
+  border-radius:var(--di-radius,40px);
+  width:130px;height:36px;
+  transition:width .55s cubic-bezier(.32,.72,0,1),
+             height .55s cubic-bezier(.32,.72,0,1),
+             border-radius .55s cubic-bezier(.32,.72,0,1),
+             transform .2s ease,opacity .25s ease,top .3s ease;
+  cursor:pointer;
+  box-shadow:0 15px 35px -5px rgba(0,0,0,.6);
+  border:1px solid rgba(255,255,255,.04);
+  z-index:9500;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;user-select:none;
+}
+#dynamic-island.di-hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(-40px) scale(.85)}
+#dynamic-island:active:not(.expanded):not(.notify){transform:translateX(-50%) scale(.97)}
+
+/* Estado 1: cerrado (música) */
+#island-collapsed{position:absolute;width:100%;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 7px;box-sizing:border-box;transition:opacity .25s ease}
+#mini-cover{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#222;box-shadow:0 0 10px rgba(0,0,0,.5);flex-shrink:0}
+#mini-cover.empty{display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4)}
+#mini-cover.empty svg{width:13px;height:13px}
+.island-waveform{display:flex;gap:3.5px;align-items:center;height:18px;padding-right:4px}
+.island-waveform .bar{width:3px;height:4px;background:rgba(255,255,255,.25);border-radius:2px;transition:height .1s ease}
+#dynamic-island.playing .island-waveform .bar{background:linear-gradient(180deg,#ff3b30 0%,#ff2d55 100%);animation:iosWave .8s infinite alternate cubic-bezier(.4,0,.2,1)}
+#dynamic-island.playing .island-waveform .bar:nth-child(1){animation-delay:0s}
+#dynamic-island.playing .island-waveform .bar:nth-child(2){animation-delay:.25s}
+#dynamic-island.playing .island-waveform .bar:nth-child(3){animation-delay:.15s}
+#dynamic-island.playing .island-waveform .bar:nth-child(4){animation-delay:.35s}
+@keyframes iosWave{0%{height:4px}100%{height:16px}}
+
+/* Estado 2: notificación */
+#dynamic-island.notify{width:340px;height:68px;border-radius:34px;background:#000;border:1px solid rgba(255,255,255,.08);cursor:default}
+#island-notify{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;padding:0 16px;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity .3s ease}
+#dynamic-island.notify #island-notify{opacity:1;pointer-events:auto;transition-delay:.25s}
+#dynamic-island.notify #island-collapsed{opacity:0;pointer-events:none}
+.notify-icon-wrapper{background:linear-gradient(135deg,var(--accent),rgba(var(--amb-color),.7));padding:9px;border-radius:50%;margin-right:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(var(--amb-color),.4);flex-shrink:0}
+.notify-icon-wrapper svg{width:18px;height:18px}
+.notify-text-wrapper{flex:1;overflow:hidden}
+.notify-text-wrapper h4{margin:0 0 2px 0;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.notify-text-wrapper p{margin:0;font-size:13px;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Estado 3: expandido (reproductor) */
+#dynamic-island.expanded{width:360px;max-width:96vw;height:225px;border-radius:44px;cursor:default}
+#island-expanded{position:absolute;top:0;left:0;width:100%;height:100%;padding:24px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;opacity:0;pointer-events:none;transition:opacity .3s ease}
+#dynamic-island.expanded #island-expanded{opacity:1;pointer-events:auto;transition-delay:.25s}
+#dynamic-island.expanded #island-collapsed{opacity:0;pointer-events:none}
+#dynamic-island.notify #island-expanded{opacity:0!important;pointer-events:none!important}
+
+.island-header{display:flex;align-items:center;justify-content:space-between}
+.island-song-info{display:flex;align-items:center;gap:14px;overflow:hidden}
+#island-cover{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#1a1a1a;transition:transform .4s cubic-bezier(.32,.72,0,1),box-shadow .4s ease;flex-shrink:0}
+#island-cover.empty{display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.35)}
+#island-cover.empty svg{width:24px;height:24px}
+#dynamic-island.playing #island-cover{box-shadow:0 8px 20px rgba(0,0,0,.5);transform:scale(1.05)}
+.island-song-text{display:flex;flex-direction:column;min-width:0}
+.island-song-text h3{margin:0;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;letter-spacing:-.3px}
+.island-song-text p{margin:2px 0 0 0;font-size:13px;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.island-controls{display:flex;align-items:center;justify-content:center;gap:36px;margin-top:6px}
+.island-btn{background:none;border:none;color:#fff;padding:0;cursor:pointer;transition:transform .2s cubic-bezier(.32,.72,0,1),opacity .2s;display:flex;align-items:center;justify-content:center}
+.island-btn:active{transform:scale(.8);opacity:.6}
+.island-btn svg{pointer-events:none}
+
+.island-progress-row{display:flex;align-items:center;gap:12px;font-size:11px;color:rgba(255,255,255,.5);font-weight:500;margin-top:8px;font-variant-numeric:tabular-nums}
+.island-progress-bar{flex:1;height:5px;background:rgba(255,255,255,.15);border-radius:3px;position:relative;cursor:pointer;overflow:visible}
+.island-progress-fill{height:100%;background:#fff;border-radius:3px;width:0%;position:relative;pointer-events:none}
+.island-progress-thumb{position:absolute;right:-6px;top:-3.5px;width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 8px rgba(0,0,0,.6);opacity:0;transition:opacity .3s}
+#dynamic-island.expanded .island-progress-thumb{opacity:1;transition-delay:.4s}
+
+/* Control de volumen (iOS 26 style) */
+.island-volume-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.island-volume-row svg{flex-shrink:0;color:rgba(255,255,255,.6);width:16px;height:16px}
+.island-volume-bar{flex:1;height:5px;background:rgba(255,255,255,.15);border-radius:3px;position:relative;cursor:pointer}
+.island-volume-fill{height:100%;background:linear-gradient(90deg,#fff,rgba(255,255,255,.85));border-radius:3px;width:70%;position:relative;pointer-events:none;transition:width .12s ease}
+.island-volume-thumb{position:absolute;right:-6px;top:-3.5px;width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 8px rgba(0,0,0,.6);opacity:0;transition:opacity .3s}
+#dynamic-island.expanded .island-volume-thumb{opacity:1;transition-delay:.45s}
+.island-btn.muted svg{color:rgba(255,255,255,.35)}
 </style>
 </head>
 <body>
@@ -1997,6 +2113,54 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
 </div>
 
 <div id="app">
+<!-- ISLA DINÁMICA -->
+<audio id="native-audio" preload="metadata"></audio>
+<div id="dynamic-island">
+  <!-- VISTA 1: CERRADO -->
+  <div id="island-collapsed">
+    <div id="mini-cover" class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg></div>
+    <div class="island-waveform"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+  </div>
+  <!-- VISTA 2: NOTIFICACIÓN -->
+  <div id="island-notify">
+    <div class="notify-icon-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    </div>
+    <div class="notify-text-wrapper">
+      <h4 id="island-notif-title">Notificación</h4>
+      <p id="island-notif-body">Mensaje aquí...</p>
+    </div>
+  </div>
+  <!-- VISTA 3: REPRODUCTOR EXPANDIDO -->
+  <div id="island-expanded">
+    <div class="island-header">
+      <div class="island-song-info">
+        <div id="island-cover" class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg></div>
+        <div class="island-song-text">
+          <h3 id="island-song-title">Sin reproducción</h3>
+          <p id="island-song-artist">La Súper Liga</p>
+        </div>
+      </div>
+    </div>
+    <div class="island-controls">
+      <button class="island-btn" id="island-btn-prev"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
+      <button class="island-btn" id="island-btn-play-pause">
+        <svg id="island-icon-play" width="38" height="38" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="island-icon-pause" width="38" height="38" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="island-btn" id="island-btn-next"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
+    </div>
+    <div class="island-progress-row">
+      <span id="island-time-current">0:00</span>
+      <div id="island-progress-container" class="island-progress-bar"><div id="island-progress-fill" class="island-progress-fill"><div class="island-progress-thumb"></div></div></div>
+      <span id="island-time-total">0:00</span>
+    </div>
+    <div class="island-volume-row">
+      <button class="island-btn" id="island-btn-mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg></button>
+      <div id="island-volume-container" class="island-volume-bar"><div id="island-volume-fill" class="island-volume-fill"><div class="island-volume-thumb"></div></div></div>
+    </div>
+  </div>
+</div>
 <div class="amb" id="ab-top"></div>
 <div class="amb" id="ab-bot"></div>
 <div class="amb" id="ab-mid"></div>
@@ -3291,15 +3455,24 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
       <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Notificaciones</div>
       <div class="cfg-section">
         <div class="cfg-row" onclick="requestNotifPerm()">
-          <div class="cfg-row-ico">🔔</div>
+          <div class="cfg-row-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Notificaciones push</div><div class="cfg-row-s" id="cfg-notif-state">Toca para activar</div></div>
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--t3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
         </div>
       </div>
+
+      <!-- ISLA DINÁMICA -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Isla dinámica</div>
+      <div class="cfg-section">
         <div class="cfg-row" style="cursor:default">
-          <div class="cfg-row-ico">🌐</div>
+          <div class="cfg-row-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="6" rx="3"/></svg></div>
+          <div class="cfg-row-txt"><div class="cfg-row-t">Mostrar isla dinámica</div><div class="cfg-row-s">Reproductor flotante de música y notificaciones</div></div>
+          <div class="tgl on" id="tgl-di" onclick="toggleDIVisible(this)"><div class="tglk"></div></div>
+        </div>
+        <div class="cfg-row" style="cursor:default">
+          <div class="cfg-row-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Visible en todas las secciones</div><div class="cfg-row-s">Si está desactivado, solo en inicio</div></div>
-          <div class="tgl on" id="tgl-di-all" onclick="this.classList.toggle('on');if(D.settings)D.settings.diAllSections=this.classList.contains('on');save()"><div class="tglk"></div></div>
+          <div class="tgl on" id="tgl-di-all" onclick="this.classList.toggle('on');if(D.settings)D.settings.diAllSections=this.classList.contains('on');save();updateDIVisibility()"><div class="tglk"></div></div>
         </div>
       </div>
 
@@ -3617,6 +3790,7 @@ function init(){
   setTimeout(()=>syncOnLoad(), 1500);
   // Polling cada 45s — todos los usuarios ven cambios del admin
   setInterval(()=>{if(_sbReady&&!D.user.isAdmin)syncOnLoad()},45000);
+  setInterval(()=>{if(checkAutoLive())renderAll()},30000);
   setInterval(updateGreet,60000);
   setTimeout(maybeShowPWABanner,5000);
   setTimeout(prefillMatchDate,400);
@@ -3669,56 +3843,20 @@ function setupPWA(){
     localStorage.setItem('lsl_pwa_ok','1');
   });
   if('serviceWorker' in navigator){
-    const sw=`
-const CACHE='lsl-v7';
-const PAGE=self.location.href.replace(/\\/sw\\.js.*/,'');
-self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>{
-    return c.addAll([PAGE||'/']);
-  }).then(()=>self.skipWaiting()));
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(
-    caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
-    .then(()=>self.clients.claim())
-  );
-});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  e.respondWith(
-    fetch(e.request).then(r=>{
-      if(r&&r.status===200){
-        const rc=r.clone();
-        caches.open(CACHE).then(c=>c.put(e.request,rc));
+    navigator.serviceWorker.register('/sw.js').then(reg=>{
+      console.log('✅ SW OK, scope:',reg.scope);
+      window._swReg=reg;
+      if('PushManager' in window && Notification.permission==='granted'){
+        subscribeToPush(reg);
       }
-      return r;
-    }).catch(()=>caches.match(e.request).then(r=>r||caches.match(PAGE||'/')))
-  );
-});
-self.addEventListener('push',e=>{
-  const d=e.data?e.data.json():{title:'LSL',body:'Nueva notificación'};
-  e.waitUntil(self.registration.showNotification(d.title,{
-    body:d.body,icon:d.icon||'',badge:d.badge||'',
-    vibrate:[200,100,200],data:d.data||{}
-  }));
-});
-self.addEventListener('notificationclick',e=>{
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data.url||self.location.origin));
-});
-`;
-    try{
-      const blob=new Blob([sw],{type:'application/javascript'});
-      const url=URL.createObjectURL(blob);
-      // scope vacío = scope del blob → usamos la URL real de la página como scope
-      navigator.serviceWorker.register(url,{scope:location.pathname||'/'}).then(reg=>{
-        console.log('✅ SW OK, scope:',reg.scope);
-        window._swReg=reg;
-      }).catch(err=>{
-        // Fallback: scope raíz
-        navigator.serviceWorker.register(url).then(r=>{window._swReg=r;}).catch(()=>{});
-      });
-    }catch(e){console.warn('SW not supported',e)}
+    }).catch(err=>{
+      console.warn('SW registration failed:',err);
+    });
+    navigator.serviceWorker.addEventListener('message',e=>{
+      if(e.data?.type==='lsl-push'&&typeof triggerIslandNotify==='function'){
+        triggerIslandNotify(e.data.title||'La Súper Liga',e.data.body||'');
+      }
+    });
   }
 }
 function setupManifest(){
@@ -4010,9 +4148,9 @@ function resetAmbient(){
 }
 
 function updateAmbient(){
-  // 1. Si hay partido en vivo → verde
+  // 1. Si hay partido en vivo → rojo
   if(D.matches.some(m=>m.status==='en_vivo')){
-    applyAmbientColor([34,197,94], 1.2);
+    applyAmbientColor([239,68,68], 1.2);
     return;
   }
   // 2. Intentar extraer color del featured match (logos de equipos)
@@ -4084,7 +4222,23 @@ function updateUser(){
 }
 
 /* ---- RENDER INTELIGENTE — solo renderiza la página visible ---- */
+function checkAutoLive(){
+  if(!D.matches)return false;
+  const now=Date.now();
+  let changed=false;
+  D.matches.forEach(m=>{
+    if(m.status==='proximo'&&m.datetime&&new Date(m.datetime).getTime()<=now){
+      m.status='en_vivo';
+      changed=true;
+      addNotif('¡Comenzó el partido!',`${teamName(m.homeTeam)} vs ${teamName(m.awayTeam)} ya está en vivo`);
+      try{sendPushToAll('🔴 ¡Partido en vivo!',`${teamName(m.homeTeam)} vs ${teamName(m.awayTeam)} acaba de empezar`)}catch(e){}
+    }
+  });
+  if(changed){save();broadcastUpdate()}
+  return changed;
+}
 function renderAll(){
+  checkAutoLive();
   // Siempre renderizar las partes del header y datos globales
   renderFeatM();
   renderMiniTbl();
@@ -4101,6 +4255,7 @@ function renderPage(p){
   if(p==='partidos'){renderMList()}
   if(p==='info'){renderAllN();renderStandings();renderSanc();renderRulesAndInfo()}
   if(p==='admin'){renderAdmLists()}
+  updateDIVisibility();
 }
 
 /* ---- HELPERS ---- */
@@ -4183,7 +4338,7 @@ function renderMList(){
     ${gms.map(m=>{
       const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
       const live=m.status==='en_vivo';
-      return`<div class="mr" onclick="openMatch('${m.id}')">
+      return`<div class="mr${live?' live':''}" onclick="openMatch('${m.id}')">
         <div class="mrts">
           <div class="mrt"><div class="mrcr">${crEl(h.logo,h.name.substring(0,3))}</div><div class="mrtn">${h.name}</div></div>
           <div class="mrt"><div class="mrcr">${crEl(a.logo,a.name.substring(0,3))}</div><div class="mrtn">${a.name}</div></div>
@@ -4191,7 +4346,7 @@ function renderMList(){
         <div class="mrr">
           ${m.status==='proximo'?
             `<div class="mrtm">${fmtTime(m.datetime)}</div><div class="mrbdg">PRÓ</div>`:
-            `<div class="mrsc"><span id="rmh-${m.id}">${m.homeScore??0}</span><span class="mrsp">-</span><span id="rma-${m.id}">${m.awayScore??0}</span></div><div class="mrbdg">${live?'LIVE':'FIN'}</div>`}
+            `<div class="mrsc"><span id="rmh-${m.id}">${m.homeScore??0}</span><span class="mrsp">-</span><span id="rma-${m.id}">${m.awayScore??0}</span></div><div class="mrbdg${live?' mrbdg-live':''}">${live?'LIVE':'FIN'}</div>`}
         </div>
       </div>`;
     }).join('')}
@@ -4232,7 +4387,9 @@ function openMatch(id){
   const hs=m.homeScore??0,as_=m.awayScore??0;
   const poss=m.stats?.possession??50,shots=m.stats?.shots??0,shotsA=m.stats?.shotsAway??0,
         fouls=m.stats?.fouls??0,foulsA=m.stats?.foulsAway??0,
-        corners=m.stats?.corners??0,cornersA=m.stats?.cornersAway??0;
+        corners=m.stats?.corners??0,cornersA=m.stats?.cornersAway??0,
+        passes=m.stats?.passes??0,passesA=m.stats?.passesAway??0,
+        offsides=m.stats?.offsides??0,offsidesA=m.stats?.offsidesAway??0;
   const events=(m.events||[]).slice().sort((x,y)=>x.minute-y.minute);
   const hPlayers=D.players.filter(p=>p.teamId===h.id);
   const aPlayers=D.players.filter(p=>p.teamId===a.id);
@@ -4472,7 +4629,7 @@ function openMatch(id){
     <!-- ══ PANEL EVENTOS ══ -->
     <div class="md-panel${(done||live)?' on':''}" id="mdt-ev-${id}">
       ${events.length?events.map(ev=>{
-        const eico=evIcon(ev.type);const ecolormap={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
+        const eico=evIcon(ev.type);
         const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
         const isHome=ev.team==='home';
         return `<div class="evit" style="border-left:3px solid ${ecolor};justify-content:${isHome?'flex-start':'flex-end'}">
@@ -4512,9 +4669,12 @@ function openMatch(id){
       </div>
       ${buildStatV2('Posesión',`${poss}%`,`${100-poss}%`,poss,100-poss)}
       ${buildStatV2('Remates',shots,shotsA,shots,shotsA)}
+      ${buildStatV2('Pases',passes,passesA,passes,passesA)}
       ${buildStatV2('Faltas',fouls,foulsA,fouls,foulsA)}
+      ${buildStatV2('Fuera de juego',offsides,offsidesA,offsides,offsidesA)}
       ${buildStatV2('Goles',hs,as_,hs,as_)}
       ${corners||cornersA?buildStatV2('Córners',corners,cornersA,corners,cornersA):''}
+      ${(m.mvp||m.mvpHome||m.mvpAway)?buildMvpCards(m,h,a):''}
     </div>
 
     <!-- ══ PANEL PREDICCIONES ══ -->
@@ -4603,6 +4763,48 @@ function toggleReminderV2(id){
   else{toast('🔕 Recordatorio desactivado')}
 }
 
+/* ─── Jugador del partido (MVP) ─── */
+function mvpRatingColor(r){
+  if(r>=9)return'#22c55e';
+  if(r>=7.5)return'#818cf8';
+  if(r>=6)return'#facc15';
+  return'#f87171';
+}
+function buildMvpCard(mvp,teamName,teamLogo,highlight){
+  if(!mvp||!mvp.name)return'';
+  const rc=mvpRatingColor(mvp.rating);
+  const stats=[
+    mvp.goals?`${mvp.goals} ${mvp.goals===1?'gol':'goles'}`:null,
+    mvp.assists?`${mvp.assists} asist.`:null,
+    mvp.passes?`${mvp.passes} pases`:null,
+    mvp.fouls?`${mvp.fouls} faltas`:null,
+  ].filter(Boolean).join(' · ')||'Sin acciones registradas';
+  return`
+    <div class="mvp-card${highlight?' mvp-main':''}">
+      <div class="mvp-card-top">
+        <div class="mvp-card-info">
+          <div class="mvp-card-tag">${highlight?'Jugador del partido':teamName||''}</div>
+          <div class="mvp-card-name">${mvp.name}</div>
+          <div class="mvp-card-stats">${stats}</div>
+        </div>
+        <div class="mvp-card-rating" style="background:${rc}1a;color:${rc};border-color:${rc}40">${mvp.rating?.toFixed(1)??'-'}</div>
+      </div>
+    </div>
+  `;
+}
+function buildMvpCards(m,h,a){
+  const main=buildMvpCard(m.mvp,null,null,true);
+  const homeC=buildMvpCard(m.mvpHome,h.name,h.logo,false);
+  const awayC=buildMvpCard(m.mvpAway,a.name,a.logo,false);
+  if(!main&&!homeC&&!awayC)return'';
+  return`
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--bdr)">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Jugadores destacados</div>
+      ${main}
+      ${(homeC||awayC)?`<div class="mvp-grid">${homeC}${awayC}</div>`:''}
+    </div>
+  `;
+}
 /* ─── Estadísticas v2 ─── */
 function buildStatV2(label,valL,valR,numL,numR){
   const total=(+numL+ +numR)||1;
@@ -4749,7 +4951,7 @@ function buildH2HV2(m,h,a){
           <div class="h2h-lbl">Victorias</div>
         </div>
       </div>
-    </div>`:`<div class="empty" style="padding:16px 0"><div class="etic">📊</div><div class="etit">Sin enfrentamientos previos</div></div>`}
+    </div>`:`<div class="empty" style="padding:16px 0"><div class="etic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div><div class="etit">Sin enfrentamientos previos</div></div>`}
 
     <!-- Forma reciente -->
     ${hForm.length||aForm.length?`
@@ -4778,15 +4980,17 @@ function buildH2HV2(m,h,a){
       ${history.slice().reverse().map(x=>{
         const xh=team(x.homeTeam),xa=team(x.awayTeam);
         if(!xh||!xa)return'';
-        const sc=`${x.homeScore??0}–${x.awayScore??0}`;
+        const sc=`${x.homeScore??0} – ${x.awayScore??0}`;
         const hWon=(x.homeScore??0)>(x.awayScore??0);
         const aWon=(x.awayScore??0)>(x.homeScore??0);
         const dt=x.datetime?new Date(x.datetime).toLocaleDateString('es-AR',{day:'numeric',month:'short'}):'';
+        const crH=xh.logo?`<img src="${xh.logo}" style="width:100%;height:100%;object-fit:contain;padding:1px"/>`:`<span style="font-family:'Bebas Neue';font-size:8px">${xh.name.substring(0,2)}</span>`;
+        const crA=xa.logo?`<img src="${xa.logo}" style="width:100%;height:100%;object-fit:contain;padding:1px"/>`:`<span style="font-family:'Bebas Neue';font-size:8px">${xa.name.substring(0,2)}</span>`;
         return`<div class="h2h-match-row">
           <div class="h2h-match-date">${dt}</div>
           <div class="h2h-match-teams">
-            <div class="h2h-match-team ${hWon?'winner':aWon?'loser':''}">${xh.name}</div>
-            <div class="h2h-match-team ${aWon?'winner':hWon?'loser':''}">${xa.name}</div>
+            <div class="h2h-match-team ${hWon?'winner':aWon?'loser':''}"><span class="h2h-match-crest">${crH}</span>${xh.name}</div>
+            <div class="h2h-match-team ${aWon?'winner':hWon?'loser':''}"><span class="h2h-match-crest">${crA}</span>${xa.name}</div>
           </div>
           <div class="h2h-match-score">${sc}</div>
         </div>`;
@@ -4908,7 +5112,7 @@ function buildH2HPanel(m,h,a){
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:18px">
         <span>${h.name}</span><span>Empates</span><span>${a.name}</span>
-      </div>`:'<div class="empty" style="padding:20px 0"><div class="etic">📊</div><div class="etit">Sin enfrentamientos</div></div>'}
+      </div>`:'<div class="empty" style="padding:20px 0"><div class="etic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div><div class="etit">Sin enfrentamientos</div></div>'}
     </div>
 
     ${hForm.length||aForm.length?`
@@ -5232,7 +5436,7 @@ function openLiveEdit(id){
     </div>
     <div class="fl" style="margin-top:10px">Agregar evento</div>
     <div class="aform" style="padding:12px">
-      <div class="fl">Tipo</div><select class="fsel" id="le-et"><option value="goal">⚽ Gol</option><option value="yellow">🟨 Amarilla</option><option value="red">🟥 Roja</option></select>
+      <div class="fl">Tipo</div><select class="fsel" id="le-et"><option value="goal">Gol</option><option value="yellow">Amarilla</option><option value="red">Roja</option><option value="assist">Asistencia</option><option value="sub">Cambio</option></select>
       <div style="display:flex;gap:8px">
         <div style="flex:1"><div class="fl">Jugador</div><input type="text" class="fi" id="le-ep" placeholder="Nombre..." style="margin-bottom:0"/></div>
         <div style="flex:1"><div class="fl">Minuto</div><input type="number" class="fi" id="le-em" placeholder="45" min="1" max="120" style="margin-bottom:0"/></div>
@@ -5251,11 +5455,56 @@ function openLiveEdit(id){
       <div style="flex:1"><div class="fl">Faltas L</div><input type="number" class="fi" id="le-fo" value="${m.stats?.fouls??0}" style="margin-bottom:0"/></div>
       <div style="flex:1"><div class="fl">Faltas V</div><input type="number" class="fi" id="le-foa" value="${m.stats?.foulsAway??0}" style="margin-bottom:0"/></div>
     </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1"><div class="fl">Pases L</div><input type="number" class="fi" id="le-pa" value="${m.stats?.passes??0}" style="margin-bottom:0"/></div>
+      <div style="flex:1"><div class="fl">Pases V</div><input type="number" class="fi" id="le-paa" value="${m.stats?.passesAway??0}" style="margin-bottom:0"/></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1"><div class="fl">Fuera de juego L</div><input type="number" class="fi" id="le-off" value="${m.stats?.offsides??0}" style="margin-bottom:0"/></div>
+      <div style="flex:1"><div class="fl">Fuera de juego V</div><input type="number" class="fi" id="le-offa" value="${m.stats?.offsidesAway??0}" style="margin-bottom:0"/></div>
+    </div>
+    <div class="fl" style="margin-top:14px">Jugador del partido</div>
+    ${buildMvpFields('mvp',m.mvp,'General')}
+    ${buildMvpFields('mvpH',m.mvpHome,h?.name||'Local')}
+    ${buildMvpFields('mvpA',m.mvpAway,a?.name||'Visitante')}
     <button class="abtn" onclick="saveLiveEdit('${id}')">GUARDAR CAMBIOS</button>
     <div class="fl" style="margin-top:14px">Eventos</div>
-    <div>${(m.events||[]).length?(m.events||[]).map((ev,i)=>`<div class="ali"><div style="font-size:18px">${ev.type==='goal'?'⚽':ev.type==='yellow'?'🟨':'🟥'}</div><div class="alinf"><div class="aln">${ev.player} (${ev.minute}')</div><div class="als">${ev.team==='home'?(h?.name||'L'):(a?.name||'V')}</div></div><div class="alacts"><button class="albtn" onclick="delEv('${id}',${i})"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`).join(''):'<div class="empty" style="padding:10px 0"><div class="etit" style="font-size:12px">Sin eventos</div></div>'}</div>
+    <div>${(m.events||[]).length?(m.events||[]).map((ev,i)=>{
+      const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
+      return`<div class="ali"><div class="evico" style="width:22px;color:${ecolor}">${evIcon(ev.type)}</div><div class="alinf"><div class="aln">${ev.player} (${ev.minute}')</div><div class="als">${ev.team==='home'?(h?.name||'L'):(a?.name||'V')}</div></div><div class="alacts"><button class="albtn" onclick="delEv('${id}',${i})"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`;
+    }).join(''):'<div class="empty" style="padding:10px 0"><div class="etit" style="font-size:12px">Sin eventos</div></div>'}</div>
   `;
   openOv('le-ov');
+}
+function buildMvpFields(prefix,mvp,teamLabel){
+  mvp=mvp||{};
+  return`
+    <div class="aform" style="padding:12px;margin-bottom:8px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">${teamLabel}</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:2"><div class="fl">Jugador</div><input type="text" class="fi" id="le-${prefix}-name" value="${mvp.name||''}" placeholder="Nombre..." style="margin-bottom:0"/></div>
+        <div style="flex:1"><div class="fl">Puntaje</div><input type="number" class="fi" id="le-${prefix}-rating" value="${mvp.rating??''}" placeholder="9.1" min="0" max="10" step="0.1" style="margin-bottom:0"/></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <div style="flex:1"><div class="fl">Pases</div><input type="number" class="fi" id="le-${prefix}-passes" value="${mvp.passes??0}" min="0" style="margin-bottom:0"/></div>
+        <div style="flex:1"><div class="fl">Goles</div><input type="number" class="fi" id="le-${prefix}-goals" value="${mvp.goals??0}" min="0" style="margin-bottom:0"/></div>
+        <div style="flex:1"><div class="fl">Asist.</div><input type="number" class="fi" id="le-${prefix}-assists" value="${mvp.assists??0}" min="0" style="margin-bottom:0"/></div>
+        <div style="flex:1"><div class="fl">Faltas</div><input type="number" class="fi" id="le-${prefix}-fouls" value="${mvp.fouls??0}" min="0" style="margin-bottom:0"/></div>
+      </div>
+    </div>
+  `;
+}
+function readMvpFields(prefix){
+  const name=$(`le-${prefix}-name`)?.value?.trim()||'';
+  if(!name)return null;
+  return{
+    name,
+    rating:parseFloat($(`le-${prefix}-rating`)?.value)||0,
+    passes:+$(`le-${prefix}-passes`)?.value||0,
+    goals:+$(`le-${prefix}-goals`)?.value||0,
+    assists:+$(`le-${prefix}-assists`)?.value||0,
+    fouls:+$(`le-${prefix}-fouls`)?.value||0,
+  };
 }
 function addEvent(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;if(!m.events)m.events=[];
@@ -5269,7 +5518,16 @@ function saveLiveEdit(id){
   const m=D.matches.find(x=>x.id===id);if(!m)return;
   m.homeScore=parseInt($('le-hs').value)||0;m.awayScore=parseInt($('le-as').value)||0;
   m.competition=$('le-comp')?.value||'liga';m.jornada=$('le-jornada')?.value?.trim()||'';
-  m.stats={possession:+$('le-poss').value||50,shots:+$('le-sh').value||0,shotsAway:+$('le-sha').value||0,fouls:+$('le-fo').value||0,foulsAway:+$('le-foa').value||0};
+  m.stats={
+    possession:+$('le-poss').value||50,
+    shots:+$('le-sh').value||0,shotsAway:+$('le-sha').value||0,
+    fouls:+$('le-fo').value||0,foulsAway:+$('le-foa').value||0,
+    passes:+$('le-pa').value||0,passesAway:+$('le-paa').value||0,
+    offsides:+$('le-off').value||0,offsidesAway:+$('le-offa').value||0,
+  };
+  m.mvp=readMvpFields('mvp');
+  m.mvpHome=readMvpFields('mvpH');
+  m.mvpAway=readMvpFields('mvpA');
   save();renderAll();broadcastUpdate();adminSync();toast('✅ Partido actualizado');
 }
 
@@ -5405,6 +5663,7 @@ function addNotif(title,sub){
   if(D.notifications.length>50)D.notifications=D.notifications.slice(0,50);
   save();updateUser();
   if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body:sub,icon:D.cfg.logo||'/icon.png'});
+  if(typeof triggerIslandNotify==='function')triggerIslandNotify(title,sub);
 }
 function openNotifs(){
   const c=$('notif-list');
@@ -5839,7 +6098,30 @@ ALTER TABLE lsl_data ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "sel" ON lsl_data FOR SELECT USING (true);
 CREATE POLICY "ins" ON lsl_data FOR INSERT WITH CHECK (true);
 CREATE POLICY "upd" ON lsl_data FOR UPDATE USING (true);
--- 3. Bucket Storage: Storage > New Bucket > nombre: lsl-images > Public: SI`;
+-- 3. Bucket Storage: Storage > New Bucket > nombre: lsl-images > Public: SI
+
+-- 4. Notificaciones (polling con app abierta)
+CREATE TABLE IF NOT EXISTS lsl_notifications (
+  id TEXT PRIMARY KEY,
+  title TEXT, body TEXT, icon TEXT, url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE lsl_notifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "sel_notif" ON lsl_notifications FOR SELECT USING (true);
+CREATE POLICY "ins_notif" ON lsl_notifications FOR INSERT WITH CHECK (true);
+
+-- 5. Suscripciones push (notificaciones con la app cerrada)
+-- Esta tabla la usan SOLO las Vercel Functions /api/save-subscription
+-- y /api/send-push con la SERVICE ROLE KEY, por eso NO necesita
+-- políticas públicas de lectura/escritura.
+CREATE TABLE IF NOT EXISTS lsl_push_subscriptions (
+  id BIGSERIAL PRIMARY KEY,
+  endpoint TEXT UNIQUE NOT NULL,
+  subscription JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE lsl_push_subscriptions ENABLE ROW LEVEL SECURITY;`;
   navigator.clipboard?.writeText(sql).then(()=>toast('📋 SQL copiado')).catch(()=>{});
 }
 let _notifPollTimer=null;
@@ -6054,7 +6336,7 @@ const SNIPPETS={
 /* Cambiá .greet por: .sec, .chips, etc. */`,
   bigTitle:`.hn { font-size: 42px !important; letter-spacing: 1px; }
 .gnm { font-size: 38px !important; }`,
-  liveEffect:`.mr.live { box-shadow: 0 0 0 1.5px #22c55e, 0 4px 20px rgba(34,197,94,.2); }
+  liveEffect:`.mr.live { box-shadow: 0 0 0 1.5px #ef4444, 0 4px 20px rgba(239,68,68,.2); }
 .ldot { animation: pulse 0.8s infinite !important; }`
 };
 
@@ -6064,7 +6346,7 @@ const JS_SNIPPETS={
 document.querySelector('.greet').style.display='none';`,
   bigTitle:`document.querySelectorAll('.sect').forEach(el=>{el.style.fontSize='22px';});`,
   liveEffect:`document.querySelectorAll('.mr').forEach(el=>{
-  if(el.classList.contains('live'))el.style.boxShadow='0 0 0 2px #22c55e';
+  if(el.classList.contains('live'))el.style.boxShadow='0 0 0 2px #ef4444';
 });`
 };
 
@@ -6164,7 +6446,11 @@ function requestNotifPerm(){
   if(!('Notification' in window)){toast('❌ Este browser no soporta notificaciones');return}
   Notification.requestPermission().then(p=>{
     const ns=$('cfg-notif-state');
-    if(p==='granted'){if(ns)ns.textContent='✅ Activas';toast('🔔 Notificaciones activadas');}
+    if(p==='granted'){
+      if(ns)ns.textContent='✅ Activas';toast('🔔 Notificaciones activadas');
+      if(window._swReg)subscribeToPush(window._swReg);
+      else if('serviceWorker' in navigator)navigator.serviceWorker.ready.then(reg=>{window._swReg=reg;subscribeToPush(reg)});
+    }
     else{if(ns)ns.textContent='🚫 Bloqueadas';toast('❌ Notificaciones bloqueadas');}
   });
 }
@@ -6547,10 +6833,40 @@ function sendAsistMsg(){
 /* ════════════════════════════════════════════════
    PUSH NOTIFICATIONS — Envío a todos
    ════════════════════════════════════════════════ */
+const VAPID_PUBLIC_KEY='BNa9vWWRXLfy64OlSyp7lO1kW1D_Mzqle2fG80iCOl26r_TaR3MfYeagCa15pCjA7nraFx5g6tn3j7E1dQVnJiA';
+function urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const rawData=atob(base64);
+  const outputArray=new Uint8Array(rawData.length);
+  for(let i=0;i<rawData.length;++i)outputArray[i]=rawData.charCodeAt(i);
+  return outputArray;
+}
+async function subscribeToPush(reg){
+  try{
+    if(!reg)reg=window._swReg||await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      sub=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    await fetch('/api/save-subscription',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({subscription:sub})
+    }).catch(()=>{});
+    return sub;
+  }catch(e){console.warn('Push subscribe error:',e);return null}
+}
 async function requestPushPermission(){
   if(!('Notification' in window))return false;
-  if(Notification.permission==='granted')return true;
+  if(Notification.permission==='granted'){
+    if(window._swReg)subscribeToPush(window._swReg);
+    return true;
+  }
   const perm=await Notification.requestPermission();
+  if(perm==='granted'&&window._swReg)subscribeToPush(window._swReg);
   return perm==='granted';
 }
 
@@ -6568,7 +6884,7 @@ async function sendPushToAll(title,body,url){
       }
     }catch(e){console.log('Notif local:',e)}
   }
-  // Guardar en Supabase para que otros usuarios la reciban via polling
+  // Guardar en Supabase para que otros usuarios la reciban via polling (fallback con app abierta)
   if(_sbReady){
     try{
       await SB.upsert('lsl_notifications',{
@@ -6579,6 +6895,13 @@ async function sendPushToAll(title,body,url){
       });
     }catch(e){console.log('Push store:',e)}
   }
+  // Push real a todos los dispositivos suscriptos, aunque la app esté cerrada
+  try{
+    await fetch('/api/send-push',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title,body,icon:D.cfg.logo||'/logo.png',url:url||location.href})
+    });
+  }catch(e){console.log('Push backend:',e)}
 }
 
 /* ════════════════════════════════════════════════
@@ -7267,13 +7590,207 @@ function initUpdatesTab(){
     const bb=$('upd-body');if(bb)bb.value=D.cfg.updateNotice.body||'';
   }
 }
+/* ════════════════════════════════════════════════
+   ISLA DINÁMICA — Reproductor + Notificaciones (iOS 26 style)
+   ════════════════════════════════════════════════ */
+let _diVisible=true,_diExpanded=false,_diNotifying=false,_diNotifyTimeout=null,_diHasTrack=false;
+function initDynamicIsland(){
+  const audioEl=$('native-audio');
+  const islandEl=$('dynamic-island');
+  if(!islandEl||!audioEl)return;
+  const miniCover=$('mini-cover');
+  const coverImg=$('island-cover');
+  const songTitle=$('island-song-title');
+  const songArtist=$('island-song-artist');
+  const btnPlayPause=$('island-btn-play-pause');
+  const iconPlay=$('island-icon-play');
+  const iconPause=$('island-icon-pause');
+  const btnNext=$('island-btn-next');
+  const btnPrev=$('island-btn-prev');
+  const progressContainer=$('island-progress-container');
+  const progressFill=$('island-progress-fill');
+  const timeCurrentEl=$('island-time-current');
+  const timeTotalEl=$('island-time-total');
+  const volumeContainer=$('island-volume-container');
+  const volumeFill=$('island-volume-fill');
+  const btnMute=$('island-btn-mute');
+
+  function formatTime(seconds){
+    if(!seconds||isNaN(seconds))return"0:00";
+    const mins=Math.floor(seconds/60);const secs=Math.floor(seconds%60);
+    return`${mins}:${secs<10?'0':''}${secs}`;
+  }
+  function togglePlay(e){
+    if(e)e.stopPropagation();
+    if(!_diHasTrack)return;
+    if(audioEl.paused)audioEl.play().catch(()=>{});else audioEl.pause();
+  }
+  window.diNextTrack=function(e){
+    if(e)e.stopPropagation();
+    if(!_diPlaylist.length)return;
+    _diIndex=(_diIndex+1)%_diPlaylist.length;
+    diLoadTrack(_diIndex,!audioEl.paused);
+  };
+  window.diPrevTrack=function(e){
+    if(e)e.stopPropagation();
+    if(!_diPlaylist.length)return;
+    _diIndex=(_diIndex-1+_diPlaylist.length)%_diPlaylist.length;
+    diLoadTrack(_diIndex,!audioEl.paused);
+  };
+
+  audioEl.addEventListener('play',()=>{islandEl.classList.add('playing');iconPlay.style.display='none';iconPause.style.display='block'});
+  audioEl.addEventListener('pause',()=>{islandEl.classList.remove('playing');iconPause.style.display='none';iconPlay.style.display='block'});
+  audioEl.addEventListener('timeupdate',()=>{
+    if(audioEl.duration){
+      progressFill.style.width=`${(audioEl.currentTime/audioEl.duration)*100}%`;
+      timeCurrentEl.textContent=formatTime(audioEl.currentTime);
+      timeTotalEl.textContent=formatTime(audioEl.duration);
+    }
+  });
+  audioEl.addEventListener('ended',()=>window.diNextTrack(null));
+
+  progressContainer.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(!audioEl.duration)return;
+    const rect=progressContainer.getBoundingClientRect();
+    audioEl.currentTime=((e.clientX-rect.left)/rect.width)*audioEl.duration;
+  });
+
+  // ── Control de volumen ──
+  let lastVolume=audioEl.volume||0.7;
+  audioEl.volume=lastVolume;
+  function updateVolumeUI(){
+    const pct=Math.round(audioEl.volume*100);
+    volumeFill.style.width=pct+'%';
+    btnMute.classList.toggle('muted',audioEl.muted||audioEl.volume===0);
+    btnMute.innerHTML=(audioEl.muted||audioEl.volume===0)
+      ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
+      :(pct<50
+        ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>'
+        :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>');
+  }
+  function setVolumeFromEvent(e){
+    const rect=volumeContainer.getBoundingClientRect();
+    let pct=(e.clientX-rect.left)/rect.width;
+    pct=Math.max(0,Math.min(1,pct));
+    audioEl.volume=pct;audioEl.muted=false;
+    if(pct>0)lastVolume=pct;
+    updateVolumeUI();
+  }
+  volumeContainer.addEventListener('click',e=>{e.stopPropagation();setVolumeFromEvent(e)});
+  let _diDraggingVol=false;
+  volumeContainer.addEventListener('mousedown',e=>{e.stopPropagation();_diDraggingVol=true;setVolumeFromEvent(e)});
+  volumeContainer.addEventListener('touchstart',e=>{e.stopPropagation();_diDraggingVol=true;setVolumeFromEvent(e.touches[0])},{passive:true});
+  document.addEventListener('mousemove',e=>{if(_diDraggingVol)setVolumeFromEvent(e)});
+  document.addEventListener('touchmove',e=>{if(_diDraggingVol)setVolumeFromEvent(e.touches[0])},{passive:true});
+  document.addEventListener('mouseup',()=>_diDraggingVol=false);
+  document.addEventListener('touchend',()=>_diDraggingVol=false);
+  btnMute.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(audioEl.muted||audioEl.volume===0){audioEl.muted=false;audioEl.volume=lastVolume||0.7}
+    else{lastVolume=audioEl.volume;audioEl.muted=true}
+    updateVolumeUI();
+  });
+  updateVolumeUI();
+
+  // ── Interacciones isla ──
+  islandEl.addEventListener('click',()=>{
+    if(!_diExpanded&&!_diNotifying){islandEl.classList.add('expanded');_diExpanded=true}
+  });
+  document.addEventListener('click',e=>{
+    if(_diExpanded&&!islandEl.contains(e.target)){islandEl.classList.remove('expanded');_diExpanded=false}
+  });
+  btnPlayPause.addEventListener('click',togglePlay);
+  btnNext.addEventListener('click',window.diNextTrack);
+  btnPrev.addEventListener('click',window.diPrevTrack);
+
+  // ── Notificaciones en la isla ──
+  window.triggerIslandNotify=function(title,body){
+    if(!_diVisible)return;
+    if(_diExpanded){islandEl.classList.remove('expanded');_diExpanded=false}
+    $('island-notif-title').textContent=title;
+    $('island-notif-body').textContent=body;
+    islandEl.classList.add('notify');
+    _diNotifying=true;
+    clearTimeout(_diNotifyTimeout);
+    _diNotifyTimeout=setTimeout(()=>{islandEl.classList.remove('notify');_diNotifying=false},4500);
+  };
+
+  updateDIVisibility();
+}
+
+/* ── Playlist y carga de pistas ── */
+let _diPlaylist=[],_diIndex=0;
+function diLoadTrack(index,autoplay){
+  const audioEl=$('native-audio');
+  const track=_diPlaylist[index];
+  if(!track){_diHasTrack=false;return}
+  _diHasTrack=true;
+  $('island-song-title').textContent=track.title||'Sin título';
+  $('island-song-artist').textContent=track.artist||'';
+  const cover=$('island-cover'),mini=$('mini-cover');
+  if(track.cover){
+    cover.classList.remove('empty');cover.innerHTML=`<img src="${track.cover}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"/>`;
+    mini.classList.remove('empty');mini.innerHTML=`<img src="${track.cover}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"/>`;
+  }
+  audioEl.src=track.audioSrc;
+  $('island-progress-fill').style.width='0%';
+  $('island-time-current').textContent='0:00';
+  $('island-time-total').textContent='0:00';
+  if(autoplay)audioEl.play().catch(()=>{});
+}
+function diSetPlaylist(tracks){
+  _diPlaylist=tracks||[];_diIndex=0;
+  if(_diPlaylist.length)diLoadTrack(0,false);
+}
+
+/* ── Visibilidad / configuración ── */
+function toggleDIVisible(el){
+  _diVisible=!_diVisible;
+  el.classList.toggle('on',_diVisible);
+  if(!D.settings)D.settings={};
+  D.settings.diVisible=_diVisible;save();
+  updateDIVisibility();
+}
+function updateDIVisibility(){
+  const islandEl=$('dynamic-island');if(!islandEl)return;
+  const allSections=D.settings?.diAllSections!==false;
+  const onHome=curPage==='inicio';
+  const shouldShow=_diVisible&&(allSections||onHome);
+  islandEl.classList.toggle('di-hidden',!shouldShow);
+}
+function euiApplyDI(){
+  const top=$('eui-di-top')?.value,radius=$('eui-di-radius')?.value;
+  const root=document.documentElement;
+  if(top!==undefined){root.style.setProperty('--di-top',top+'px');const v=$('eui-di-top-val');if(v)v.textContent=top+'px'}
+  if(radius!==undefined){root.style.setProperty('--di-radius',radius+'px');const v=$('eui-di-radius-val');if(v)v.textContent=radius+'px'}
+  if(!D.euiSettings)D.euiSettings={};
+  D.euiSettings.diTop=top!==undefined?+top:D.euiSettings.diTop;
+  D.euiSettings.diRadius=radius!==undefined?+radius:D.euiSettings.diRadius;
+  save();
+}
+
 (function initAll(){
   setTimeout(()=>{try{loadEuiSettings();}catch(e){}},300);
   setTimeout(()=>{try{loadColorTheme();}catch(e){}},200);
   setTimeout(()=>{try{applyPerformanceMode();}catch(e){}},500);
   setTimeout(()=>{try{renderRulesAndInfo();}catch(e){}},800);
   setTimeout(()=>{try{checkWelcome();}catch(e){}},900);
-  const diTgl=$('tgl-di');if(diTgl)diTgl.classList.toggle('on',typeof _diVisible!=='undefined'?_diVisible:true);
+  // Isla dinámica
+  try{
+    _diVisible=D.settings?.diVisible!==false;
+    const root=document.documentElement;
+    root.style.setProperty('--di-top',(D.euiSettings?.diTop??8)+'px');
+    root.style.setProperty('--di-radius',(D.euiSettings?.diRadius??40)+'px');
+    const diTgl=$('tgl-di');if(diTgl)diTgl.classList.toggle('on',_diVisible);
+    const diAllTgl=$('tgl-di-all');if(diAllTgl)diAllTgl.classList.toggle('on',D.settings?.diAllSections!==false);
+    const diTopS=$('eui-di-top');if(diTopS)diTopS.value=D.euiSettings?.diTop??8;
+    const diTopV=$('eui-di-top-val');if(diTopV)diTopV.textContent=(D.euiSettings?.diTop??8)+'px';
+    const diRadS=$('eui-di-radius');if(diRadS)diRadS.value=D.euiSettings?.diRadius??40;
+    const diRadV=$('eui-di-radius-val');if(diRadV)diRadV.textContent=(D.euiSettings?.diRadius??40)+'px';
+    initDynamicIsland();
+    updateDIVisibility();
+  }catch(e){console.warn('Dynamic Island init error:',e)}
 })();
 </script>
 </body>
