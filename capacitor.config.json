@@ -1,0 +1,9 @@
+{
+  "appId": "com.lasuperliga.app",
+  "appName": "La Super Liga",
+  "webDir": "www",
+  "server": {
+    "url": "https://vercel.app",
+    "cleartext": true
+  }
+}
