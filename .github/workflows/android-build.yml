@@ -19,16 +19,38 @@ jobs:
     - name: Install Dependencies
       run: |
         npm install @capacitor/core @capacitor/cli @capacitor/android
-        npm install -g cordova-res --unsafe-perm
+        npm install @capacitor/push-notifications
         npx cap init "La Super Liga" "com.lasuperliga.app" --web-dir=www
         mkdir www && echo "index" > www/index.html
         npx cap add android
 
-    - name: Generate Icons and Splash Screens
+    - name: Configure Firebase Services
       run: |
-        mkdir -p resources
-        cp icon.png resources/icon.png
-        cordova-res android --skip-splash
+        if [ -f google-services.json ]; then
+          cp google-services.json android/app/google-services.json
+        else
+          echo "google-services.json no encontrado, se omitirá temporalmente"
+        fi
+
+    - name: Inject Custom App Icon
+      run: |
+        if [ -f icon.png ]; then
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+          cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+          cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+          cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+          cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+        fi
         npx cap sync android
 
     - name: Build Android Project
@@ -42,3 +64,4 @@ jobs:
       with:
         name: app-debug
         path: android/app/build/outputs/apk/debug/app-debug.apk
+        
