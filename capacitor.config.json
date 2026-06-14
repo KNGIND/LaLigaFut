@@ -1,9 +1,9 @@
 {
   "appId": "com.lasuperliga.app",
-  "appName": "La Super Liga",
+  "appName": "La Liga Fut",
   "webDir": "www",
   "server": {
-    "url": "https://vercel.app",
+    "url": "https://la-super-liga-2026.vercel.app/",
     "cleartext": true
   }
 }
