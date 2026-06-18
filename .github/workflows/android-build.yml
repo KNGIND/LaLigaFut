@@ -20,8 +20,11 @@ jobs:
       run: |
         npm install @capacitor/core @capacitor/cli @capacitor/android
         npm install @capacitor/push-notifications
-        npx cap init "La Super Liga" "com.lasuperliga.app" --web-dir=www
-        mkdir www && echo "index" > www/index.html
+        mkdir -p www && echo "index" > www/index.html
+
+    - name: Configure Capacitor App Name and Credentials
+      run: |
+        npx cap init "LLF 2026" "com.lasuperliga.app" --web-dir=www
         npx cap add android
 
     - name: Configure Firebase Services
@@ -32,7 +35,7 @@ jobs:
           echo "google-services.json no encontrado, se omitirá temporalmente"
         fi
 
-    - name: Inject Custom App Icon
+    - name: Inject Custom App Icon (LLF 2026)
       run: |
         if [ -f icon.png ]; then
           mkdir -p android/app/src/main/res/mipmap-mdpi
@@ -51,7 +54,10 @@ jobs:
           cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
           cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
         fi
-        npx cap sync android
+
+    - name: Override Capacitor Server Config
+      run: |
+        cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
 
     - name: Build Android Project
       run: |
