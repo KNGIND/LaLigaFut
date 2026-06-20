@@ -3,7 +3,7 @@
   "appName": "LLF 2026",
   "webDir": "www",
   "server": {
-    "url": "https://vercel.app",
+    "url": "https://la-super-liga-2026.vercel.app/",
     "cleartext": true,
     "allowNavigation": [
       "la-super-liga-2026.vercel.app"
