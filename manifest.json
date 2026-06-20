@@ -1,13 +1,30 @@
 {
-  "name": "La Liga Fut 2026",
-  "short_name": "LLF 2026",
-  "start_url": "/",
+  "name": "La Súper Liga",
+  "short_name": "LSL",
+  "description": "Liga de fútbol amateur — resultados, estadísticas y noticias en vivo.",
+  "start_url": "/index.html",
   "scope": "/",
+  "id": "/index.html",
   "display": "standalone",
-  "background_color": "#080c14",
-  "theme_color": "#818cf8",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
+  "background_color": "#080c14",
+  "theme_color": "#080c14",
+  "lang": "es-AR",
+  "categories": ["sports"],
   "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/logo.png",
       "sizes": "512x512",
@@ -19,15 +36,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    }
-  ],
-  "categories": ["sports"],
-  "screenshots": [
-    {
-      "src": "/home.jpg",
-      "sizes": "540x720",
-      "type": "image/jpeg",
-      "form_factor": "narrow"
     }
   ]
 }

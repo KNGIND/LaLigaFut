@@ -40,7 +40,9 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    AMBIENT GLOW — Color dinámico inspirado en Epic Games / YouTube Ambient
    Controlado por JS: extractImageColor → applyAmbientColor
    ========================================================= */
-.amb{position:fixed;pointer-events:none;border-radius:50%;filter:blur(90px);opacity:0;transition:background 1.5s ease,opacity 1.5s ease;z-index:1;mix-blend-mode:screen}
+.amb{position:fixed;pointer-events:none;border-radius:50%;
+  background-image:radial-gradient(circle at center, currentColor 0%, transparent 70%) !important;
+  opacity:0;transition:color 1.5s ease,opacity 1.5s ease;z-index:1;mix-blend-mode:screen}
 #ab-top{width:500px;height:360px;top:-150px;left:50%;transform:translateX(-50%)}
 #ab-bot{width:480px;height:320px;bottom:-140px;left:50%;transform:translateX(-50%)}
 #ab-mid{width:340px;height:240px;top:40%;left:50%;transform:translateX(-50%)}
@@ -68,17 +70,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   position:sticky;top:0;z-index:100;flex-shrink:0;
   padding:var(--hdr-pad-top) 20px var(--hdr-pad-bot);
   background:linear-gradient(180deg, rgba(8,12,22,.34) 0%, rgba(8,12,22,0) 100%);
-  backdrop-filter:blur(2px);
-  -webkit-backdrop-filter:blur(2px);
   border-bottom:1px solid transparent;
-  transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease,-webkit-backdrop-filter .3s ease;
+  transition:background .3s ease,border-color .3s ease;
   transform:translateZ(0);will-change:background;
 }
-/* Al hacer scroll: blur translúcido — sin reducirse */
+/* Al hacer scroll: fondo sólido — sin blur (más liviano para el scroll) */
 #hdr.hdr-scrolled{
-  background:rgba(8,12,22,.78);
-  backdrop-filter:blur(22px) saturate(180%);
-  -webkit-backdrop-filter:blur(22px) saturate(180%);
+  background:rgba(8,12,22,.97);
   border-bottom-color:rgba(255,255,255,.07);
 }
 /* Oculto en otras secciones */
@@ -193,14 +191,12 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #nav{
   position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);
   width:calc(100% - 28px);max-width:492px;z-index:200;
-  background: var(--amb-tint-nav), rgba(8,12,22,.86);
-  backdrop-filter:blur(26px) saturate(190%);
-  -webkit-backdrop-filter:blur(26px) saturate(190%);
+  background: var(--amb-tint-nav), rgba(8,12,22,.97);
   border:1px solid rgba(255,255,255,.08);
   border-radius:30px;
   padding:6px 7px;
   display:flex;gap:2px;
-  box-shadow:0 1px 0 rgba(255,255,255,.07) inset, 0 16px 44px rgba(0,0,0,.5), 0 4px 16px rgba(0,0,0,.32);
+  box-shadow:0 1px 0 rgba(255,255,255,.07) inset, 0 10px 24px rgba(0,0,0,.4);
   transition:background 1.4s ease, border-color 1.4s ease, transform .25s var(--spring)
 }
 
@@ -526,17 +522,16 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ========================================================= */
 .ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;justify-content:flex-end;
   opacity:0;pointer-events:none;transition:opacity .2s cubic-bezier(.2,.55,.45,1);
-  background:var(--over);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  background:var(--over);
   will-change:opacity;}
 .ov.open{opacity:1;pointer-events:all}
 #md-ov .ovs{max-height:88dvh;border-radius:30px 30px 0 0}
 #nw-ov .ovs,#pe-ov .ovs,#notif-ov .ovs,#tp-ov .ovs,#le-ov .ovs{border-radius:28px 28px 0 0}
-.ovs{background:rgba(10,14,26,.97);
-  backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);
+.ovs{background:rgba(10,14,26,.98);
   border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;
   transform:translateY(100%);transition:transform .42s var(--spring);
   padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));position:relative;
-  border:1px solid var(--bdr);border-bottom:none;box-shadow:0 -8px 60px rgba(0,0,0,.7);
+  border:1px solid var(--bdr);border-bottom:none;box-shadow:0 -6px 20px rgba(0,0,0,.45);
   will-change:transform;}
 .ov.open .ovs{transform:translateY(0)}
 .ovs::-webkit-scrollbar{display:none}
@@ -835,7 +830,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ADMIN GATE — Acceso restringido al panel admin
    ========================================================= */
 #admin-gate{position:fixed;inset:0;z-index:9000;
-  background:rgba(0,0,0,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  background:rgba(4,6,12,.96);
   display:flex;align-items:flex-end;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .22s ease;
   max-width:520px;left:50%;transform:translateX(-50%)}
@@ -1530,7 +1525,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   transform:scale(.92) translateY(12px);opacity:0;
   transition:transform .36s cubic-bezier(.22,1,.36,1),opacity .3s ease;
   max-height:88dvh;overflow-y:auto;
-  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  box-shadow:0 16px 32px rgba(0,0,0,.4);
 }
 #welcome-modal.open #welcome-box{transform:scale(1) translateY(0);opacity:1}
 #welcome-box::-webkit-scrollbar{display:none}
@@ -1701,7 +1696,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   padding:calc(16px + env(safe-area-inset-top,0px)) 0 calc(28px + env(safe-area-inset-bottom,0px));
   overflow-y:auto;
   border-right:1px solid rgba(255,255,255,.07);
-  box-shadow:20px 0 60px rgba(0,0,0,.8);
+  box-shadow:12px 0 28px rgba(0,0,0,.5);
 }
 #sm::-webkit-scrollbar{display:none}
 #smov.open #sm{transform:translateX(0)}
@@ -1873,7 +1868,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   padding:0 0 calc(28px + env(safe-area-inset-bottom,0px));
   transform:translateY(80px);transition:transform .34s cubic-bezier(.22,1,.36,1);
   max-height:92dvh;overflow-y:auto;
-  box-shadow:0 -8px 40px rgba(0,0,0,.35);
+  box-shadow:0 -6px 20px rgba(0,0,0,.4);
 }
 #edit-ui-panel.open #edit-ui-box{transform:translateY(0)}
 #edit-ui-box::-webkit-scrollbar{display:none}
@@ -2033,7 +2028,7 @@ mark.code-highlight{background:rgba(250,204,21,.35);color:var(--text);border-rad
              border-radius .55s cubic-bezier(.32,.72,0,1),
              transform .2s ease,opacity .25s ease,top .3s ease;
   cursor:pointer;
-  box-shadow:0 15px 35px -5px rgba(0,0,0,.6);
+  box-shadow:0 8px 18px -4px rgba(0,0,0,.55);
   border:1px solid rgba(255,255,255,.04);
   z-index:9500;overflow:hidden;
   -webkit-tap-highlight-color:transparent;user-select:none;

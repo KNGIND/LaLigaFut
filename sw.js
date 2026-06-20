@@ -1,195 +1,124 @@
-const CACHE_NAME = 'superliga-cache-v1';
-const RUNTIME_CACHE = 'superliga-runtime-v1';
-const ASSETS = [
+/* =========================================================
+   LA SÚPER LIGA — Service Worker
+   Cachea el "app shell" (HTML/CSS/JS/manifest) y permite
+   actualizaciones automáticas controladas desde la app.
+   ========================================================= */
+
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `super-liga-${CACHE_VERSION}`;
+
+const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/sw.js',
+  '/style.css?v=2',
+  '/script.js?v=2',
   '/manifest.json'
 ];
 
-// Instalar Service Worker
-self.addEventListener('install', event => {
+/* ---- INSTALL: precachea el app shell ----
+   OJO: a propósito NO llamamos a self.skipWaiting() acá.
+   Si lo hiciéramos, un Service Worker nuevo tomaría el control
+   de golpe mientras el usuario sigue usando la versión vieja de
+   la página, lo que puede romper cosas a mitad de sesión.
+   En cambio, dejamos que el SW nuevo quede "esperando" hasta que
+   la propia app confirme la actualización (ver mensaje SKIP_WAITING
+   más abajo, disparado desde mostrarCartelActualizacion() en script.js). */
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    Promise.all([
-      caches.open(CACHE_NAME).then(cache => {
-        return cache.addAll(ASSETS).catch(() => {
-          // Si falla, al menos cachea los archivos estáticos disponibles
-          return Promise.resolve();
-        });
-      })
-    ]).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(ASSETS_TO_CACHE))
+      .catch((err) => console.warn('[SW] No se pudo precachear todo:', err))
   );
 });
 
-// Limpiar caches antiguas
-self.addEventListener('activate', event => {
+/* ---- ACTIVATE: borra cachés de versiones anteriores ---- */
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames
-          .filter(name => name !== CACHE_NAME && name !== RUNTIME_CACHE)
-          .map(name => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
-  );
-});
-
-// Estrategia: Cache first, network fallback
-self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Ignorar peticiones no-GET
-  if (request.method !== 'GET') {
-    return;
-  }
-
-  // APIs y recursos externos: Network first
-  if (url.origin !== self.location.origin || url.pathname.includes('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          if (!response || response.status !== 200 || response.type === 'error') {
-            return caches.match(request);
-          }
-          const responseClone = response.clone();
-          caches.open(RUNTIME_CACHE).then(cache => {
-            cache.put(request, responseClone);
-          });
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // Archivos locales: Cache first
-  event.respondWith(
-    caches.match(request)
-      .then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(request)
-          .then(response => {
-            if (!response || response.status !== 200) {
-              return response;
-            }
-            const responseClone = response.clone();
-            caches.open(RUNTIME_CACHE).then(cache => {
-              cache.put(request, responseClone);
-            });
-            return response;
-          })
-          .catch(() => {
-            // Fallback offline
-            return new Response('Offline', {
-              status: 503,
-              statusText: 'Service Unavailable',
-              headers: new Headers({
-                'Content-Type': 'text/plain'
-              })
-            });
-          });
-      })
-  );
-});
-
-// Background sync (opcional para futuras funcionalidades)
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-data') {
-    event.waitUntil(syncData());
-  }
-});
-
-async function syncData() {
-  try {
-    const response = await fetch('/api/data');
-    return response.json();
-  } catch (error) {
-    console.error('Sync failed:', error);
-  }
-}
-/* ============================================================
-   LA SÚPER LIGA — Service Worker
-   Archivo estático en /sw.js (no Blob) para que las
-   notificaciones push funcionen aunque la app esté cerrada.
-   ============================================================ */
-const CACHE = 'lsl-v1';
-const PAGE = self.registration.scope;
-
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll([PAGE]))
-      .then(() => self.skipWaiting())
-      .catch(() => self.skipWaiting())
-  );
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
     caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then((cacheNames) => Promise.all(
+        cacheNames
+          .filter((name) => name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      ))
       .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    fetch(e.request)
-      .then(r => {
-        if (r && r.status === 200) {
-          const rc = r.clone();
-          caches.open(CACHE).then(c => c.put(e.request, rc));
+/* ---- MESSAGE: la app pide activar el SW en espera ---- */
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+/* ---- FETCH: network-first para nuestros propios archivos ----
+   Siempre intenta traer la versión más nueva desde la red.
+   Si no hay internet, usa lo último que haya en caché (modo offline).
+   IMPORTANTE: solo intercepta pedidos del MISMO ORIGEN. Las llamadas
+   a Supabase (u otras APIs externas) pasan de largo sin tocarlas,
+   para no afectar nunca los datos en vivo de la liga. */
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  event.respondWith(
+    fetch(request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.ok) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
-        return r;
+        return networkResponse;
       })
-      .catch(() => caches.match(e.request).then(r => r || caches.match(PAGE)))
+      .catch(() => caches.match(request))
   );
 });
 
-/* ── Notificaciones push (funcionan con la app cerrada) ── */
-self.addEventListener('push', e => {
-  let d = { title: 'La Súper Liga', body: 'Nueva notificación' };
-  try { if (e.data) d = e.data.json(); } catch (err) {}
+/* =========================================================
+   PUSH NOTIFICATIONS (Web Push / VAPID)
+   ⚠️ RECONSTRUIDO — no tenía tu sw.js original, así que armé esto
+   en base a lo que tu script.js ya espera recibir (mensaje tipo
+   'lsl-push' para la Isla Dinámica). Si tu sw.js actual en Vercel
+   maneja el push de otra forma, pasámelo y lo fusiono para no
+   perder nada de tu lógica actual.
+   ========================================================= */
+self.addEventListener('push', (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; }
+  catch (e) { data = { title: 'La Súper Liga', body: event.data ? event.data.text() : '' }; }
 
+  const title = data.title || 'La Súper Liga';
   const options = {
-    body: d.body || '',
-    icon: d.icon || '/logo.png',
-    badge: d.badge || '/logo.png',
-    vibrate: [200, 100, 200],
-    data: d.data || {},
-    tag: d.tag || undefined,
-    renotify: !!d.tag,
+    body: data.body || '',
+    icon: data.icon || '/logo.png',
+    badge: '/logo.png',
+    data: { url: data.url || '/' }
   };
 
-  e.waitUntil(self.registration.showNotification(d.title || 'La Súper Liga', options));
-});
-
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || PAGE;
-  e.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientsArr => {
-      for (const client of clientsArr) {
-        if (client.url === url && 'focus' in client) return client.focus();
-      }
-      if (clients.openWindow) return clients.openWindow(url);
-    })
+  event.waitUntil(
+    Promise.all([
+      self.registration.showNotification(title, options),
+      self.clients.matchAll({ type: 'window' }).then((clientList) => {
+        clientList.forEach((client) => {
+          client.postMessage({ type: 'lsl-push', title, body: options.body });
+        });
+      })
+    ])
   );
 });
 
-/* Si el navegador renueva la suscripción sola, la re-mandamos al backend */
-self.addEventListener('pushsubscriptionchange', e => {
-  e.waitUntil(
-    self.registration.pushManager.subscribe(e.oldSubscription ? e.oldSubscription.options : { userVisibleOnly: true })
-      .then(sub => fetch('/api/save-subscription', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subscription: sub })
-      }))
-      .catch(() => {})
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window' }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(url);
+    })
   );
 });

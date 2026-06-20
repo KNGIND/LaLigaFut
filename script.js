@@ -171,6 +171,21 @@ function setupPWA(){
       if('PushManager' in window && 'Notification' in window && Notification.permission==='granted'){
         subscribeToPush(reg);
       }
+      /* ---- Sistema de actualización automática ----
+         Cuando hay un sw.js nuevo en el servidor, el navegador lo descarga
+         e instala en segundo plano (sin afectar la sesión actual). Acá
+         detectamos ese momento y avisamos al usuario. */
+      reg.addEventListener('updatefound',()=>{
+        const newWorker=reg.installing;
+        if(!newWorker)return;
+        newWorker.addEventListener('statechange',()=>{
+          if(newWorker.state==='installed'&&navigator.serviceWorker.controller){
+            // 'installed' + ya había un SW controlando la página = es una
+            // actualización real (no la primera instalación)
+            mostrarCartelActualizacion(newWorker);
+          }
+        });
+      });
     }).catch(err=>{
       console.warn('SW registration failed:',err);
     });
@@ -181,40 +196,28 @@ function setupPWA(){
     });
   }
 }
+
+/* ---- Cartel de "nueva versión disponible" ----
+   Usa el toast existente para avisar y un confirm() nativo para la acción,
+   porque el toast se auto-oculta a los 2.8s y no alcanza para decidir. */
+function mostrarCartelActualizacion(newWorker){
+  toast('🚀 Nueva versión disponible');
+  const actualizar=confirm('🚀 Nueva versión disponible. ¿Actualizar?');
+  if(!actualizar)return;
+  const waiting=(newWorker&&newWorker.state==='installed')?newWorker:(window._swReg&&window._swReg.waiting);
+  if(waiting)waiting.postMessage({type:'SKIP_WAITING'});
+  window.location.reload(true);
+}
 function setupManifest(){
-  const iconSrc=D.cfg.logo||`data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect fill="#080c14" width="512" height="512" rx="96"/><text x="256" y="340" font-family="Arial Black,Arial" font-size="220" font-weight="900" text-anchor="middle" fill="#818cf8">${D.cfg.short||'LSL'}</text></svg>`)}`;
-  // CLAVE: start_url debe ser la URL EXACTA de la página
-  const pageURL=location.href.replace(/#.*$/,'').replace(/\?.*$/,'');
-  const scope=pageURL.substring(0,pageURL.lastIndexOf('/')+1);
-  const manifest={
-    name:D.cfg.name||'La Súper Liga',
-    short_name:D.cfg.short||'LSL',
-    description:'Liga de fútbol - Resultados y estadísticas',
-    start_url:pageURL,
-    scope:scope,
-    id:pageURL,
-    display:'standalone',
-    display_override:['standalone','minimal-ui'],
-    background_color:'#080c14',
-    theme_color:'#080c14',
-    orientation:'portrait-primary',
-    lang:'es-AR',
-    categories:['sports'],
-    icons:[
-      {src:iconSrc,sizes:'192x192',type:'image/png',purpose:'any'},
-      {src:iconSrc,sizes:'192x192',type:'image/png',purpose:'maskable'},
-      {src:iconSrc,sizes:'512x512',type:'image/png',purpose:'any'},
-      {src:iconSrc,sizes:'512x512',type:'image/png',purpose:'maskable'},
-    ],
-  };
-  try{
-    const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-    const url=URL.createObjectURL(blob);
-    let link=$('manifest-link');
-    if(!link){link=document.createElement('link');link.rel='manifest';link.id='manifest-link';document.head.appendChild(link)}
-    if(link.href&&link.href.startsWith('blob:'))URL.revokeObjectURL(link.href);
-    link.href=url;
-  }catch(e){console.warn('Manifest:',e)}
+  // ANTES: acá se generaba un manifest dinámico vía Blob URL y se inyectaba
+  // en <link rel="manifest">. Eso es la causa real de que la PWA no abra en
+  // standalone: Chrome/Android necesita el manifest disponible como un
+  // archivo ESTÁTICO (manifest.json) desde el primer momento para decidir
+  // si la app abre en pantalla completa — un blob: URL generado por JS
+  // después de cargar la página no siempre llega a tiempo (o se pierde al
+  // reabrir desde el ícono), así que termina abriendo con la barra de Chrome.
+  // Ahora el manifest vive en /manifest.json (estático, confiable) y acá
+  // solo actualizamos lo que SÍ es seguro cambiar en caliente: título y color.
   const t=$('app-title');if(t)t.textContent=D.cfg.name||'La Súper Liga';
   const tm=$('theme-color-meta');if(tm)tm.content='#080c14';
 }
@@ -458,11 +461,12 @@ function applyAmbientColor(rgb, intensity=1){
     root.style.setProperty('--accent',`rgb(${Math.min(r+40,255)},${Math.min(g+40,255)},${Math.min(b+40,255)})`);
     root.style.setProperty('--accent2',`rgb(${Math.min(r+70,255)},${Math.min(g+70,255)},${Math.min(b+70,255)})`);
   }
-  // Blobs de fondo
+  // Blobs de fondo — seteamos "color" (no "background") porque el CSS ahora
+  // pinta el degradé con currentColor para evitar filter:blur (costoso en GPU/scroll)
   const abt=document.getElementById('ab-top');
-  if(abt){abt.style.background=`rgb(${r},${g},${b})`;abt.style.opacity=(0.12*intensity).toString()}
+  if(abt){abt.style.color=`rgb(${r},${g},${b})`;abt.style.opacity=(0.12*intensity).toString()}
   const abb=document.getElementById('ab-bot');
-  if(abb){abb.style.background=`rgb(${Math.min(r+30,255)},${Math.min(g-20,200)},${Math.min(b+20,255)})`;abb.style.opacity=(0.07*intensity).toString()}
+  if(abb){abb.style.color=`rgb(${Math.min(r+30,255)},${Math.min(g-20,200)},${Math.min(b+20,255)})`;abb.style.opacity=(0.07*intensity).toString()}
 }
 
 function resetAmbient(){
@@ -3397,7 +3401,9 @@ function euiApply(){
   if(hdrBlur!==null)root.style.setProperty('--hdr-blur',hdrBlur+'px');
   if(hdrPad!==null)root.style.setProperty('--hdr-pad-top',`calc(${hdrPad}px + env(safe-area-inset-top,0px))`);
   const nav=$('nav');
-  if(nav&&navBlur!==null){nav.style.backdropFilter=`blur(${navBlur}px) saturate(180%)`;nav.style.padding=`${navPad}px 6px calc(${navPad}px + env(safe-area-inset-bottom,0px))`;}
+  // El blur del nav ahora se resuelve con fondo sólido en el CSS (optimización de rendimiento),
+  // así que el slider ya no aplica backdrop-filter por JS — solo controla el padding.
+  if(nav&&navPad!==null){nav.style.padding=`${navPad}px 7px calc(${navPad}px + env(safe-area-inset-bottom,0px))`;}
   if(navIco!==null)injectCSS(`.niico svg{width:${navIco}px!important;height:${navIco}px!important}`,'eui-nav-ico');
   if(cardR!==null||cardW!==null||cardSc!==null||cardRot!==null||bw!==null||fs!==null){
     const tr=`scale(${(cardSc||100)/100}) rotate(${cardRot||0}deg)`;
