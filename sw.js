@@ -4,14 +4,14 @@
    actualizaciones automáticas controladas desde la app.
    ========================================================= */
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `super-liga-${CACHE_VERSION}`;
 
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/style.css?v=3',
-  '/script.js?v=3',
+  '/style.css?v=4',
+  '/script.js?v=4',
   '/manifest.json'
 ];
 

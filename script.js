@@ -11,6 +11,7 @@ let D={
   cfg:{name:'La Súper Liga',short:'LSL',season:'T9 "Reinicio"',status:'en_curso',seasonDesc:'',logo:'',rules:'',adminPass:ADMIN_DEFAULT},
   user:{name:'joelito',bio:'',avatar:'',banner:'',favTeam:'',isAdmin:false},
   teams:[],matches:[],news:[],players:[],channels:[],sanctions:[],seasons:[],notifications:[],
+  musicPlaylist:[],
   settings:{theme:'dark'},
   editTransforms:{}
 };
@@ -110,6 +111,10 @@ function init(){
     if(s.accentRgb)document.documentElement.style.setProperty('--amb-color',s.accentRgb);
   }
   setTimeout(()=>syncOnLoad(), 1500);
+  // Cargar playlist guardada en la Isla Dinámica
+  if(typeof diSetPlaylist==='function' && D.musicPlaylist && D.musicPlaylist.length){
+    diSetPlaylist(D.musicPlaylist);
+  }
   // Polling cada 45s — todos los usuarios ven cambios del admin
   setInterval(()=>{if(_sbReady&&!D.user.isAdmin)syncOnLoad()},45000);
   setInterval(()=>{if(checkAutoLive())renderAll()},30000);
@@ -1704,6 +1709,83 @@ function saveChannel(){
   pending.pendingChLogo=null;save();$('ch-name').value='';$('ch-url').value='';resetFup('ch-logo-btn','ch-logo-txt','Logo del canal');populateSels();renderAdmLists();toast('✅ Canal guardado');adminSync();
 }
 function delChannel(id){D.channels=D.channels.filter(c=>c.id!==id);save();populateSels();renderAdmLists();toast('🗑️ Eliminado');adminSync();}
+
+/* ════════════════════════════════════════════════
+   MÚSICA — Playlist de la Isla Dinámica
+   ════════════════════════════════════════════════ */
+const VALID_AUDIO_TYPES=['audio/mpeg','audio/mp4','audio/ogg','audio/wav','audio/webm','audio/aac','audio/x-m4a'];
+async function handleAudioFile(e){
+  const f=e.target.files?.[0];if(!f)return;
+  if(!VALID_AUDIO_TYPES.includes(f.type)){toast('❌ Formato no soportado — usá MP3, M4A, OGG o WAV');return}
+  if(f.size>15*1024*1024){toast('❌ Máximo 15MB por archivo');return}
+  const btn=$('mu-audio-btn'),txt=$('mu-audio-txt');
+  if(btn)btn.classList.add('uploading');
+  if(txt)txt.textContent='⏳ Subiendo...';
+  try{
+    let url=null;
+    if(_sbReady)url=await uploadToStorage(f,'music');
+    if(!url){
+      if(btn)btn.classList.remove('uploading');
+      if(txt)txt.textContent='— o subir un archivo de audio —';
+      toast('❌ No se pudo subir — pegá una URL directa arriba');
+      return;
+    }
+    const urlInput=$('mu-audio-url');if(urlInput)urlInput.value=url;
+    if(btn){btn.classList.remove('uploading');btn.classList.add('has')}
+    if(txt)txt.textContent='✅ '+f.name;
+    toast('☁️ Audio subido');
+  }catch(err){
+    if(btn)btn.classList.remove('uploading');
+    if(txt)txt.textContent='— o subir un archivo de audio —';
+    toast('❌ Error al subir audio');
+  }
+}
+function saveMusicTrack(){
+  const title=$('mu-title').value.trim();
+  const artist=$('mu-artist').value.trim();
+  const audioSrc=$('mu-audio-url').value.trim();
+  if(!title||!audioSrc){toast('Título y audio (URL o archivo) son obligatorios');return}
+  if(!D.musicPlaylist)D.musicPlaylist=[];
+  D.musicPlaylist.push({id:Date.now().toString(),title,artist,cover:pending.pendingMusicCover||'',audioSrc});
+  pending.pendingMusicCover=null;
+  save();
+  $('mu-title').value='';$('mu-artist').value='';$('mu-audio-url').value='';
+  resetFup('mu-cover-btn','mu-cover-txt','Portada de la canción');
+  resetFup('mu-audio-btn','mu-audio-txt','— o subir un archivo de audio —');
+  if(typeof diSetPlaylist==='function')diSetPlaylist(D.musicPlaylist);
+  renderMusicList();
+  toast('✅ Canción agregada');
+  adminSync();
+}
+function delMusicTrack(id){
+  D.musicPlaylist=(D.musicPlaylist||[]).filter(t=>t.id!==id);
+  save();
+  if(typeof diSetPlaylist==='function')diSetPlaylist(D.musicPlaylist);
+  renderMusicList();
+  toast('🗑️ Canción eliminada');
+  adminSync();
+}
+function moveMusicTrack(id,dir){
+  const list=D.musicPlaylist||[];
+  const idx=list.findIndex(t=>t.id===id);
+  if(idx<0)return;
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=list.length)return;
+  [list[idx],list[newIdx]]=[list[newIdx],list[idx]];
+  save();
+  if(typeof diSetPlaylist==='function')diSetPlaylist(D.musicPlaylist);
+  renderMusicList();
+  adminSync();
+}
+function renderMusicList(){
+  const l=$('adm-music-list');if(!l)return;
+  const list=D.musicPlaylist||[];
+  l.innerHTML=list.length?list.map((t,i)=>`<div class="ali"><div class="alcr">${crEl(t.cover,'🎵')}</div><div class="alinf"><div class="aln">${t.title}</div><div class="als">${t.artist||'Sin artista'}</div></div><div class="alacts">
+    <button class="albtn"${i===0?' style="opacity:.3;pointer-events:none"':''} onclick="moveMusicTrack('${t.id}',-1)" title="Subir"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+    <button class="albtn"${i===list.length-1?' style="opacity:.3;pointer-events:none"':''} onclick="moveMusicTrack('${t.id}',1)" title="Bajar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button>
+    <button class="albtn" onclick="delMusicTrack('${t.id}')" title="Eliminar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+  </div></div>`).join(''):'<div class="empty" style="padding:14px 0"><div class="etic">🎵</div><div class="etit">Sin canciones</div></div>';
+}
 function saveSanction(){
   const player=$('sa-player').value.trim(),tid=$('sa-team').value;if(!player||!tid){toast('Jugador y equipo requeridos');return}
   D.sanctions.push({id:Date.now().toString(),player,teamId:tid,type:$('sa-type').value,duration:$('sa-dur').value.trim(),notes:$('sa-notes').value.trim()});
@@ -2324,6 +2406,14 @@ async function syncOnLoad(){
       }
       changed=true;
     }
+    // ── Playlist de la Isla Dinámica
+    if(data.music_playlist){
+      const parsedPl=tryParse(data.music_playlist,null);
+      if(parsedPl&&JSON.stringify(parsedPl)!==JSON.stringify(D.musicPlaylist||[])){
+        D.musicPlaylist=parsedPl;changed=true;
+        if(typeof diSetPlaylist==='function')diSetPlaylist(D.musicPlaylist);
+      }
+    }
     if(changed){
       localStorage.setItem(STORE,JSON.stringify(D));
       renderAll();updateHdr();updateUser();populateSels();
@@ -2355,6 +2445,7 @@ async function pushToSupabase(){
       eui_settings:JSON.stringify(D.euiSettings||{}),
       custom_css:localStorage.getItem('lsl_custom_css')||'',
       custom_js:localStorage.getItem('lsl_custom_js')||'',
+      music_playlist:JSON.stringify(D.musicPlaylist||[]),
       updated_at:new Date().toISOString()
     });
     if(indicator){indicator.textContent='✓';setTimeout(()=>{indicator.style.opacity='0'},2000)}
@@ -2447,6 +2538,7 @@ CREATE TABLE IF NOT EXISTS lsl_data (
   id TEXT PRIMARY KEY,
   teams TEXT, matches TEXT, news TEXT, players TEXT,
   channels TEXT, sanctions TEXT, cfg TEXT,
+  eui_settings TEXT, custom_css TEXT, custom_js TEXT, music_playlist TEXT,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 -- 2. Políticas RLS
@@ -3084,6 +3176,7 @@ function admTab(name,el){
   $('adm-'+name).classList.add('on');
   if(name==='supabase')updateAdmSupabase();
   if(name==='codeeditor'){loadCustomCode();switchCodeTab('css');}
+  if(name==='music')renderMusicList();
   if(name==='stats')updateStatsPanel();
   if(name==='appupdate')initUpdatesTab();
   updateAdminCounts();
@@ -3353,7 +3446,7 @@ function admGo(section){
   const hub=document.getElementById('adm-hub');
   if(hub)hub.style.display='none';
   // Actualizar título
-  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código',appupdate:'🚀 Actualización'};
+  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código',appupdate:'🚀 Actualización',music:'🎵 Música'};
   const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent=titles[section]||'Panel Admin';
   // Mostrar botón volver si no existe
   let backBtn=document.getElementById('adm-back-btn');
@@ -4156,45 +4249,3 @@ function euiApplyDI(){
     updateDIVisibility();
   }catch(e){console.warn('Dynamic Island init error:',e)}
 })();
-// Función para activar y escuchar las notificaciones en el celu
-async function activarNotificacionesPush() {
-  // Verificamos si estamos adentro de la App (Capacitor) y si existe el plugin
-  if (typeof Capacitor !== 'undefined' && Capacitor.isPluginAvailable('PushNotifications')) {
-    const { PushNotifications } = Capacitor.Plugins;
-
-    // 1. Pedir permiso nativo en la pantalla del celular
-    let permisos = await PushNotifications.checkPermissions();
-    if (permisos.receive !== 'granted') {
-      permisos = await PushNotifications.requestPermissions();
-    }
-
-    // 2. Si el usuario aceptó, registramos el dispositivo en Google
-    if (permisos.receive === 'granted') {
-      await PushNotifications.register();
-
-      // 3. Obtener el Token único del celular por si querés ver que se registró bien
-      PushNotifications.addListener('registration', (token) => {
-        console.log('Celu registrado con éxito. Token:', token.value);
-      });
-
-      // 4. Qué hace la app si le llega una notificación mientras el usuario la tiene ABIERTA
-      PushNotifications.addListener('pushNotificationReceived', (notification) => {
-        // Podés mostrar una alerta nativa o usar tu propio sistema de cartelitos flotantes
-        alert(`🔔 ${notification.title}\n${notification.body}`);
-      });
-      
-      // 5. Qué hace si el usuario toca la notificación con la app CERRADA
-      PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-        console.log('El usuario tocó la notificación:', notification.actionId);
-      });
-    }
-  } else {
-    console.log('Las notificaciones push nativas solo funcionan adentro del APK.');
-  }
-}
-
-// Ejecutar la función apenas cargue la página
-document.addEventListener('DOMContentLoaded', () => {
-  // Le damos 2 segundos de tiempo para que cargue bien Capacitor antes de pedir el permiso
-  setTimeout(activarNotificacionesPush, 2000);
-});

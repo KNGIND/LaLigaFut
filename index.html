@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <!-- Supabase REST API directo — sin SDK pesado -->
-<link rel="stylesheet" href="style.css?v=3"/>
+<link rel="stylesheet" href="style.css?v=4"/>
 </head>
 <body>
 <!-- LOGIN SCREEN -->
@@ -303,6 +303,12 @@
       <div class="adm-hub-sub">Nombre, logo, versión y avisos</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
+    <div class="adm-hub-card adm-hub-music" onclick="admGo('music')">
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+      <div class="adm-hub-lbl">Música</div>
+      <div class="adm-hub-sub">Canciones de la Isla Dinámica</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
     <div class="adm-hub-card adm-hub-code" onclick="admGo('codeeditor')" style="grid-column:span 2">
       <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 9 5 12 8 15"/><polyline points="16 9 19 12 16 15"/><line x1="13" y1="6" x2="11" y2="18"/></svg></div>
       <div class="adm-hub-lbl">Editor de Código</div>
@@ -325,6 +331,7 @@
     <div class="atab" id="atab-stats" onclick="admTab('stats',this)"><span class="atab-ico">📊</span>Stats</div>
     <div class="atab" id="atab-config" onclick="admTab('config',this)"><span class="atab-ico">⚙️</span>Config</div>
     <div class="atab" id="atab-supabase" onclick="admTab('supabase',this)"><span class="atab-ico">☁️</span>Base de Datos</div>
+    <div class="atab" id="atab-music" onclick="admTab('music',this)"><span class="atab-ico">🎵</span>Música</div>
     <div class="atab" id="atab-codeeditor" onclick="admTab('codeeditor',this)"><span class="atab-ico">💻</span>Código</div>
     <div class="atab" id="atab-appupdate" onclick="admTab('appupdate',this)"><span class="atab-ico">🚀</span>Actualizaciones</div>
   </div>
@@ -570,6 +577,22 @@
       Ejecutá este SQL en el editor de Supabase para crear las tablas necesarias:
       <button onclick="copySupabaseSQL()" style="margin-top:8px;width:100%;padding:9px;border-radius:10px;background:var(--surf3);border:1px solid var(--bdr2);font-size:11px;font-weight:700;color:var(--text);cursor:pointer">📋 COPIAR SQL DE SETUP</button>
     </div>
+  </div>
+  <!-- MÚSICA — Isla Dinámica -->
+  <div class="apane" id="adm-music">
+    <div class="atit">Agregar canción</div>
+    <div class="aform">
+      <div class="fl">Título</div><input type="text" class="fi" id="mu-title" placeholder="Nombre de la canción..."/>
+      <div class="fl">Artista</div><input type="text" class="fi" id="mu-artist" placeholder="Nombre del artista (opcional)..."/>
+      <button class="fupbtn" id="mu-cover-btn" onclick="document.getElementById('mu-cover-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M17 2l-5 5-5-5"/></svg><span id="mu-cover-txt">Portada de la canción</span></button>
+      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="mu-cover-fi" onchange="handleFile(event,'pendingMusicCover','mu-cover-btn','mu-cover-txt')"/>
+      <div class="fl">URL del audio (MP3, M4A...)</div><input type="text" class="fi" id="mu-audio-url" placeholder="https://..."/>
+      <button class="fupbtn" id="mu-audio-btn" onclick="document.getElementById('mu-audio-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span id="mu-audio-txt">— o subir un archivo de audio —</span></button>
+      <input type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/webm,audio/aac,audio/x-m4a" class="hfi" id="mu-audio-fi" onchange="handleAudioFile(event)"/>
+      <button class="abtn" onclick="saveMusicTrack()">AGREGAR CANCIÓN</button>
+    </div>
+    <div class="atit" style="margin-top:4px">Playlist (orden de reproducción)</div>
+    <div id="adm-music-list"><div class="empty" style="padding:14px 0"><div class="etic">🎵</div><div class="etit">Sin canciones</div></div></div>
   </div>
   <!-- CODE EDITOR — mejorado -->
   <div class="apane" id="adm-codeeditor">
@@ -1601,6 +1624,6 @@
   background:#1e1e1e;border:1px solid rgba(255,255,255,.12);
   border-radius:8px;padding:5px 10px;color:#fff"></div>
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

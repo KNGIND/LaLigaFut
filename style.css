@@ -833,13 +833,13 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   background:rgba(4,6,12,.96);
   display:flex;align-items:flex-end;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .22s ease;
-  max-width:520px;left:50%;transform:translateX(-50%)}
+  width:100%;max-width:520px;left:50%;transform:translateX(-50%)}
 #admin-gate.open{opacity:1;pointer-events:all}
 #admin-gate-box{background:rgba(10,14,26,.98);border-radius:24px 24px 0 0;
   width:100%;
   padding:8px 20px calc(30px + env(safe-area-inset-bottom,0px));
   border:1px solid rgba(255,255,255,.10);border-bottom:none;
-  transform:translateY(60px);transition:transform .26s cubic-bezier(.22,1,.36,1)}
+  transform:translateY(100%);transition:transform .42s var(--spring)}
 #admin-gate.open #admin-gate-box{transform:translateY(0)}
 .gate-drag{width:36px;height:4px;border-radius:99px;background:rgba(255,255,255,.15);margin:12px auto 20px}
 .gate-ico{width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
@@ -853,7 +853,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    ========================================================= */
 #srch-ov{position:fixed;inset:0;z-index:500;background:var(--over);
   opacity:0;pointer-events:none;transition:opacity .22s;
-  max-width:520px;left:50%;transform:translateX(-50%);
+  width:100%;max-width:520px;left:50%;transform:translateX(-50%);
   padding:calc(16px + env(safe-area-inset-top,0px)) 14px 0;
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 #srch-ov.open{opacity:1;pointer-events:all}
@@ -949,7 +949,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #login-screen{position:fixed;inset:0;z-index:900;
   background:#080c14;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(99,102,241,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 90% 110%,rgba(34,211,238,.09) 0%,transparent 60%);
   display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
-  max-width:520px;left:50%;transform:translateX(-50%)}
+  width:100%;max-width:520px;left:50%;transform:translateX(-50%)}
 #login-screen.hidden{display:none}
 .login-logo{width:90px;height:90px;border-radius:26px;background:var(--surf2);border:2px solid var(--bdr2);
   display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;
@@ -1590,7 +1590,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
 #asist-ov{position:fixed;inset:0;z-index:600;opacity:0;pointer-events:none;
   transition:opacity .22s ease;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
-  max-width:520px;left:50%;transform:translateX(-50%);
+  width:100%;max-width:520px;left:50%;transform:translateX(-50%);
   display:flex;flex-direction:column;
 }
 #asist-ov.open{opacity:1;pointer-events:all}
@@ -1682,7 +1682,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
    M7 MENU LATERAL — Rediseño completo, lado IZQUIERDO
    ========================================================= */
 #smov{position:fixed;inset:0;z-index:400;opacity:0;pointer-events:none;transition:opacity .22s ease;
-  max-width:520px;right:0%;left:50%;transform:translateX(-50%)}
+  width:100%;max-width:520px;left:50%;transform:translateX(-50%)}
 #smov.open{opacity:1;pointer-events:all}
 #smov::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55);
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
@@ -1858,7 +1858,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   -webkit-backdrop-filter:blur(10px);
   display:flex;align-items:flex-end;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .25s ease;
-  max-width:520px;left:50%;transform:translateX(-50%);
+  width:100%;max-width:520px;left:50%;transform:translateX(-50%);
 }
 #edit-ui-panel.open{opacity:1;pointer-events:all}
 #edit-ui-box{
@@ -1866,7 +1866,7 @@ input,textarea,select{font-family:inherit;color:var(--text);background:transpare
   border-radius:28px 28px 0 0;
   border:1px solid var(--bdr2);border-bottom:none;
   padding:0 0 calc(28px + env(safe-area-inset-bottom,0px));
-  transform:translateY(80px);transition:transform .34s cubic-bezier(.22,1,.36,1);
+  transform:translateY(100%);transition:transform .42s var(--spring);
   max-height:92dvh;overflow-y:auto;
   box-shadow:0 -6px 20px rgba(0,0,0,.4);
 }
