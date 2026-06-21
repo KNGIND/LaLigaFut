@@ -4156,3 +4156,45 @@ function euiApplyDI(){
     updateDIVisibility();
   }catch(e){console.warn('Dynamic Island init error:',e)}
 })();
+// Función para activar y escuchar las notificaciones en el celu
+async function activarNotificacionesPush() {
+  // Verificamos si estamos adentro de la App (Capacitor) y si existe el plugin
+  if (typeof Capacitor !== 'undefined' && Capacitor.isPluginAvailable('PushNotifications')) {
+    const { PushNotifications } = Capacitor.Plugins;
+
+    // 1. Pedir permiso nativo en la pantalla del celular
+    let permisos = await PushNotifications.checkPermissions();
+    if (permisos.receive !== 'granted') {
+      permisos = await PushNotifications.requestPermissions();
+    }
+
+    // 2. Si el usuario aceptó, registramos el dispositivo en Google
+    if (permisos.receive === 'granted') {
+      await PushNotifications.register();
+
+      // 3. Obtener el Token único del celular por si querés ver que se registró bien
+      PushNotifications.addListener('registration', (token) => {
+        console.log('Celu registrado con éxito. Token:', token.value);
+      });
+
+      // 4. Qué hace la app si le llega una notificación mientras el usuario la tiene ABIERTA
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        // Podés mostrar una alerta nativa o usar tu propio sistema de cartelitos flotantes
+        alert(`🔔 ${notification.title}\n${notification.body}`);
+      });
+      
+      // 5. Qué hace si el usuario toca la notificación con la app CERRADA
+      PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+        console.log('El usuario tocó la notificación:', notification.actionId);
+      });
+    }
+  } else {
+    console.log('Las notificaciones push nativas solo funcionan adentro del APK.');
+  }
+}
+
+// Ejecutar la función apenas cargue la página
+document.addEventListener('DOMContentLoaded', () => {
+  // Le damos 2 segundos de tiempo para que cargue bien Capacitor antes de pedir el permiso
+  setTimeout(activarNotificacionesPush, 2000);
+});
