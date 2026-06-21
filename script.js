@@ -2299,6 +2299,31 @@ async function syncOnLoad(){
     if(data.channels){D.channels=tryParse(data.channels,D.channels);changed=true}
     if(data.sanctions){D.sanctions=tryParse(data.sanctions,D.sanctions);changed=true}
     if(data.cfg){D.cfg={...D.cfg,...tryParse(data.cfg,{})};changed=true}
+    // ── Editar UI (redondeo, tamaños, etc.) — antes solo se guardaba local
+    if(data.eui_settings){
+      const parsedEui=tryParse(data.eui_settings,null);
+      if(parsedEui&&JSON.stringify(parsedEui)!==JSON.stringify(D.euiSettings||{})){
+        D.euiSettings=parsedEui;changed=true;
+        try{Object.assign(_euiSettings,D.euiSettings);euiLoadSettings();euiApply();}
+        catch(e){console.warn('No se pudo aplicar Editar UI sincronizado:',e.message)}
+      }
+    }
+    // ── CSS personalizado — antes solo se guardaba local
+    if(data.custom_css!==undefined && data.custom_css!==(localStorage.getItem('lsl_custom_css')||'')){
+      localStorage.setItem('lsl_custom_css',data.custom_css||'');
+      injectCSS(data.custom_css||'','lsl-custom-css');
+      updateCSSStatusBar(data.custom_css||'');
+      changed=true;
+    }
+    // ── JS personalizado — antes solo se guardaba local
+    if(data.custom_js!==undefined && data.custom_js!==(localStorage.getItem('lsl_custom_js')||'')){
+      localStorage.setItem('lsl_custom_js',data.custom_js||'');
+      if(data.custom_js&&data.custom_js.trim()){
+        try{const fn=new Function(data.custom_js);fn();}
+        catch(e){console.warn('Error al ejecutar JS sincronizado:',e.message)}
+      }
+      changed=true;
+    }
     if(changed){
       localStorage.setItem(STORE,JSON.stringify(D));
       renderAll();updateHdr();updateUser();populateSels();
@@ -2325,6 +2350,11 @@ async function pushToSupabase(){
       channels:JSON.stringify(D.channels),
       sanctions:JSON.stringify(D.sanctions),
       cfg:JSON.stringify(D.cfg),
+      // ── Antes faltaban estos 3 campos: por eso los cambios de "Editar UI"
+      // y el editor de código solo se veían en el dispositivo que los guardaba.
+      eui_settings:JSON.stringify(D.euiSettings||{}),
+      custom_css:localStorage.getItem('lsl_custom_css')||'',
+      custom_js:localStorage.getItem('lsl_custom_js')||'',
       updated_at:new Date().toISOString()
     });
     if(indicator){indicator.textContent='✓';setTimeout(()=>{indicator.style.opacity='0'},2000)}
@@ -2480,8 +2510,10 @@ function autoSaveCode(type,value){
       localStorage.setItem('lsl_custom_css',value);
       injectCSS(value,'lsl-custom-css');
       updateCSSStatusBar(value);
+      adminSync(); // antes solo guardaba local — nunca llegaba a otros dispositivos
     }else if(type==='js'){
       localStorage.setItem('lsl_custom_js',value);
+      adminSync();
     }else if(type==='html'){
       localStorage.setItem('_lsl_custom_full_html',value);
     }
@@ -2597,8 +2629,9 @@ function saveCustomCode(){
   localStorage.setItem('lsl_custom_js',js);
   applyCustomCode();
   updateCSSStatusBar(css);
+  adminSync(); // antes solo guardaba local — nunca llegaba a otros dispositivos
   toast('💾 Código guardado');
-  logConsole('💾 Código guardado en localStorage');
+  logConsole('💾 Código guardado y sincronizado a la nube');
 }
 
 function clearCustomCSS(){
@@ -2621,6 +2654,7 @@ function removeAppliedCSS(){
   const el=$('custom-css-editor');if(el)el.value='';
   injectCSS('','lsl-custom-css');
   localStorage.removeItem('lsl_custom_css');
+  adminSync();
   logConsole('🗑️ CSS removido completamente');
   toast('🗑️ CSS removido');
 }
@@ -2628,6 +2662,7 @@ function removeAppliedCSS(){
 function clearCustomJS(){
   const el=$('custom-js-editor');if(el)el.value='';
   localStorage.removeItem('lsl_custom_js');
+  adminSync();
   toast('🗑️ JS limpiado');
 }
 
