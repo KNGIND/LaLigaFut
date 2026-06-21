@@ -32,51 +32,47 @@ jobs:
         if [ -f google-services.json ]; then
           cp google-services.json android/app/google-services.json
         else
-          echo "google-services.json no encontrado, se omitirá temporalmente"
+          echo "google-services.json no encontrado, omitiendo Firebase"
         fi
 
     - name: Inject Custom App Icon (LLF 2026)
       run: |
-        # Buscamos icon.png o logo.png en tu raíz
-        ICON_FILE=""
-        if [ -f icon.png ]; then ICON_FILE="icon.png";
-        elif [ -f logo.png ]; then ICON_FILE="logo.png"; fi
-
-        if [ ! -z "$ICON_FILE" ]; then
-          echo "¡Logo encontrado!: $ICON_FILE"
-          mkdir -p android/app/src/main/res/mipmap-mdpi
-          mkdir -p android/app/src/main/res/mipmap-hdpi
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+        # Usamos tu archivo logo.png de la raíz del repositorio
+        if [ -f logo.png ]; then
+          echo "¡Logo encontrado! Reemplazando íconos viejos de Capacitor..."
           
-          cp $ICON_FILE android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          # Eliminamos los iconos adaptativos por defecto que bloquean el cambio
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
           
-          cp $ICON_FILE android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
-          cp $ICON_FILE android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+          # Creamos y pisamos todas las carpetas con tu logo real
+          for size in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            mkdir -p android/app/src/main/res/mipmap-$size
+            cp logo.png android/app/src/main/res/mipmap-$size/ic_launcher.png
+            cp logo.png android/app/src/main/res/mipmap-$size/ic_launcher_round.png
+            cp logo.png android/app/src/main/res/mipmap-$size/ic_launcher_foreground.png
+          done
         else
-          echo "⚠️ ADVERTENCIA: No se encontró icon.png ni logo.png en la raíz del proyecto."
+          echo "⚠️ ADVERTENCIA: No se encontró logo.png en la raíz."
         fi
 
-    - name: Fix Permissions (Gallery & mixed content)
+    - name: Fix Permissions and Web Notifications
       run: |
-        # Inyecta configuraciones de seguridad directo en el Manifest para permitir subir fotos
         MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
-        sed -i '/<\/application>/i \    <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" /></provider>' $MANIFEST_PATH
         
-        # 🔥 ACÁ CORREGIMOS EL XML LIMPIO SIN LAS BARRAS REBELDES:
+        # Permitir abrir la galería de fotos
+        sed -i '/<\/application>/i \    <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" /></provider>' $MANIFEST_PATH
         mkdir -p android/app/src/main/res/xml
-        echo '<?xml version="1.0" encoding="utf-8"?>' > android/app/src/main/res/xml/file_paths.xml
-        echo '<paths>' >> android/app/src/main/res/xml/file_paths.xml
-        echo '    <external-path name="external_files" path="." />' >> android/app/src/main/res/xml/file_paths.xml
-        echo '</paths>' >> android/app/src/main/res/xml/file_paths.xml
+        echo -e '<?xml version="1.0" encoding="utf-8"?>\n<paths>\n    <external-path name="external_files" path="." />\n</paths>' > android/app/src/main/res/xml/file_paths.xml
+
+        # Dar permisos nativos de Internet y Notificaciones Push directos en Android
+        sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET" />' $MANIFEST_PATH
+        sed -i '/<manifest/a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' $MANIFEST_PATH
+
+        # Configurar la vista para que acepte alertas JavaScript y simule un navegador compatible
+        MAIN_ACTIVITY="android/app/src/main/java/com/lasuperliga/app/MainActivity.java"
+        if [ -f "$MAIN_ACTIVITY" ]; then
+          sed -i '/super.onCreate(savedInstanceState);/a \        android.webkit.WebView webView = (android.webkit.WebView) findViewById(android.text.Html.fromHtml("<p></p>").length());\n        if(webView != null) {\n            webView.getSettings().setJavaScriptEnabled(true);\n            webView.getSettings().setDomStorageEnabled(true);\n            webView.getSettings().setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);\n        }' $MAIN_ACTIVITY
+        fi
 
     - name: Override Capacitor Server Config
       run: |
@@ -85,7 +81,6 @@ jobs:
     - name: Build Android Project & Set Version
       run: |
         cd android
-        # 🔥 Forzamos el cambio directo sobre build.gradle tradicional de Capacitor
         sed -i 's/versionName "1.0"/versionName "26.06.21"/g' app/build.gradle
         sed -i 's/versionCode 1/versionCode 2/g' app/build.gradle
         ./gradlew assembleDebug
@@ -95,3 +90,4 @@ jobs:
       with:
         name: app-debug
         path: android/app/build/outputs/apk/debug/app-debug.apk
+        
