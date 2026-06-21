@@ -37,7 +37,7 @@ jobs:
 
     - name: Inject Custom App Icon (LLF 2026)
       run: |
-        # 🔥 Buscamos icon.png o logo.png en tu raíz
+        # Buscamos icon.png o logo.png en tu raíz
         ICON_FILE=""
         if [ -f icon.png ]; then ICON_FILE="icon.png";
         elif [ -f logo.png ]; then ICON_FILE="logo.png"; fi
@@ -69,9 +69,14 @@ jobs:
       run: |
         # Inyecta configuraciones de seguridad directo en el Manifest para permitir subir fotos
         MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
-        sed -i '/<\/application>/i \    <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" \/><\/provider>' $MANIFEST_PATH
+        sed -i '/<\/application>/i \    <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" /></provider>' $MANIFEST_PATH
+        
+        # 🔥 ACÁ CORREGIMOS EL XML LIMPIO SIN LAS BARRAS REBELDES:
         mkdir -p android/app/src/main/res/xml
-        echo -e '<?xml version="1.0" encoding="utf-8"?>\n<paths>\n    <external-path name="external_files" path="."\/>\n<\/paths>' > android/app/src/main/res/xml/file_paths.xml
+        echo '<?xml version="1.0" encoding="utf-8"?>' > android/app/src/main/res/xml/file_paths.xml
+        echo '<paths>' >> android/app/src/main/res/xml/file_paths.xml
+        echo '    <external-path name="external_files" path="." />' >> android/app/src/main/res/xml/file_paths.xml
+        echo '</paths>' >> android/app/src/main/res/xml/file_paths.xml
 
     - name: Override Capacitor Server Config
       run: |
@@ -80,10 +85,9 @@ jobs:
     - name: Build Android Project & Set Version
       run: |
         cd android
-        # 🔥 Cambiamos la versión usando el formato moderno de Gradle
-        sed -i 's/versionName = "1.0"/versionName = "26.06.21"/g' app/build.gradle.kts || sed -i 's/versionName "1.0"/versionName "26.06.21"/g' app/build.gradle
-        # Aumentamos el código de versión a 2 para que Android note el cambio
-        sed -i 's/versionCode = 1/versionCode = 2/g' app/build.gradle.kts || sed -i 's/versionCode 1/versionCode 2/g' app/build.gradle
+        # 🔥 Forzamos el cambio directo sobre build.gradle tradicional de Capacitor
+        sed -i 's/versionName "1.0"/versionName "26.06.21"/g' app/build.gradle
+        sed -i 's/versionCode 1/versionCode 2/g' app/build.gradle
         ./gradlew assembleDebug
 
     - name: Upload APK
