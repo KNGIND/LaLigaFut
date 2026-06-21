@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "302483684556",
+    "project_id": "la-liga-fut",
+    "storage_bucket": "la-liga-fut.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302483684556:android:deb34f2a7b22ba73ca5669",
+        "android_client_info": {
+          "package_name": "com.lasuperliga.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAAwwPtnI5hTnBInyI-ny44QnIn4KxhqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
