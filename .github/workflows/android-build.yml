@@ -62,7 +62,7 @@ jobs:
     - name: Build Android Project
       run: |
         cd android
-        sed -i 's/versionName "2.0"/versionName "26.06.20"/g' app/build.gradle
+        sed -i 's/versionName "1.0"/versionName "26.06.21"/g' app/build.gradle
         ./gradlew assembleDebug
 
     - name: Upload APK
