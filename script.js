@@ -1723,7 +1723,7 @@ async function handleAudioFile(e){
   if(txt)txt.textContent='⏳ Subiendo...';
   try{
     let url=null;
-    if(_sbReady)url=await uploadToStorage(f,'music');
+    if(_sbReady)url=await uploadToStorage(f,'music','lsl-audio');
     if(!url){
       if(btn)btn.classList.remove('uploading');
       if(txt)txt.textContent='— o subir un archivo de audio —';
@@ -2471,17 +2471,18 @@ function adminSync(){
 }
 
 // Upload Blob to Supabase Storage → returns public URL
-async function uploadToStorage(blob,folder){
+async function uploadToStorage(blob,folder,preferredBucket=null){
   if(!_sbReady||!blob)return null;
   try{
     const ext=(blob.type||'image/jpeg').split('/')[1]||'jpg';
     const path=`${folder}/${Date.now()}.${ext}`;
-    // Intentar con los buckets posibles
-    const buckets=['lsl-images','images','media','uploads','storage'];
-    let url=null;
+    // Si se especifica un bucket (ej: lsl-audio para audio), intentarlo primero
+    const buckets=preferredBucket
+      ?[preferredBucket,'lsl-images','images','media','uploads','storage']
+      :['lsl-images','images','media','uploads','storage'];
     for(const bucket of buckets){
       try{
-        url=await SB.uploadFile(bucket,path,blob);
+        const url=await SB.uploadFile(bucket,path,blob);
         console.log(`✅ Upload exitoso en bucket: ${bucket}`);
         return url;
       }catch(e){
@@ -2489,8 +2490,7 @@ async function uploadToStorage(blob,folder){
         continue;
       }
     }
-    // Si ningún bucket funcionó, retornar null para usar fallback base64
-    if(!url)console.warn('Ningún bucket disponible, usando base64 local');
+    console.warn('Ningún bucket disponible');
     return null;
   }catch(e){
     console.warn('Storage upload:',e.message);
