@@ -2439,31 +2439,48 @@ async function pushToSupabase(){
   if(!_sbReady)return;
   const indicator=document.getElementById('sync-indicator');
   if(indicator){indicator.style.opacity='1';indicator.textContent='☁️'}
-  try{
-    await SB.upsert('lsl_data',{
-      id:'main',
-      teams:JSON.stringify(D.teams),
-      matches:JSON.stringify(D.matches),
-      news:JSON.stringify(D.news),
-      players:JSON.stringify(D.players),
-      channels:JSON.stringify(D.channels),
-      sanctions:JSON.stringify(D.sanctions),
-      cfg:JSON.stringify(D.cfg),
-      // ── Antes faltaban estos 3 campos: por eso los cambios de "Editar UI"
-      // y el editor de código solo se veían en el dispositivo que los guardaba.
-      eui_settings:JSON.stringify(D.euiSettings||{}),
-      custom_css:localStorage.getItem('lsl_custom_css')||'',
-      custom_js:localStorage.getItem('lsl_custom_js')||'',
-      music_playlist:JSON.stringify(D.musicPlaylist||[]),
-      announcements:JSON.stringify(D.announcements||[]),
-      updated_at:new Date().toISOString()
-    });
-    if(indicator){indicator.textContent='✓';setTimeout(()=>{indicator.style.opacity='0'},2000)}
-    console.log('☁️ Supabase sync OK',new Date().toLocaleTimeString());
-  }catch(e){
-    console.warn('Supabase push error:',e.message);
-    if(indicator){indicator.textContent='!';indicator.style.color='#f87171';setTimeout(()=>{indicator.style.opacity='0';indicator.style.color=''},3000)}
-    toast('⚠️ Sin conexión — guardado local ✓');
+  const payload={
+    id:'main',
+    teams:JSON.stringify(D.teams),
+    matches:JSON.stringify(D.matches),
+    news:JSON.stringify(D.news),
+    players:JSON.stringify(D.players),
+    channels:JSON.stringify(D.channels),
+    sanctions:JSON.stringify(D.sanctions),
+    cfg:JSON.stringify(D.cfg),
+    // ── Antes faltaban estos 3 campos: por eso los cambios de "Editar UI"
+    // y el editor de código solo se veían en el dispositivo que los guardaba.
+    eui_settings:JSON.stringify(D.euiSettings||{}),
+    custom_css:localStorage.getItem('lsl_custom_css')||'',
+    custom_js:localStorage.getItem('lsl_custom_js')||'',
+    music_playlist:JSON.stringify(D.musicPlaylist||[]),
+    announcements:JSON.stringify(D.announcements||[]),
+    updated_at:new Date().toISOString()
+  };
+  // Si a la tabla le falta alguna columna (ej: recién agregamos una función nueva
+  // y todavía no se corrió el ALTER TABLE en Supabase), no queremos que ESE campo
+  // tire abajo el guardado de TODO lo demás. Reintentamos sacando el campo problemático.
+  let attempts=0;
+  while(attempts<8){
+    try{
+      await SB.upsert('lsl_data',payload);
+      if(indicator){indicator.textContent='✓';setTimeout(()=>{indicator.style.opacity='0'},2000)}
+      console.log('☁️ Supabase sync OK',new Date().toLocaleTimeString());
+      return;
+    }catch(e){
+      const msg=e.message||'';
+      const missingCol=(msg.match(/'([a-zA-Z0-9_]+)'\s+column/)||msg.match(/column\s+"?([a-zA-Z0-9_]+)"?\s+of relation/)||[])[1];
+      if(missingCol && Object.prototype.hasOwnProperty.call(payload,missingCol)){
+        console.warn(`⚠️ A la tabla "lsl_data" le falta la columna "${missingCol}". Ese campo no se sincroniza hasta que la agregues en Supabase (SQL: ALTER TABLE lsl_data ADD COLUMN ${missingCol} text;). El resto de los datos sí se guardó.`);
+        delete payload[missingCol];
+        attempts++;
+        continue;
+      }
+      console.warn('Supabase push error:',msg);
+      if(indicator){indicator.textContent='!';indicator.style.color='#f87171';setTimeout(()=>{indicator.style.opacity='0';indicator.style.color=''},3000)}
+      toast('⚠️ Sin conexión — guardado local ✓');
+      return;
+    }
   }
 }
 
