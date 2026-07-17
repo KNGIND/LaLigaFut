@@ -11,7 +11,7 @@ let D={
   cfg:{name:'La Súper Liga',short:'LSL',season:'T9 "Reinicio"',status:'en_curso',seasonDesc:'',logo:'',rules:'',adminPass:ADMIN_DEFAULT},
   user:{name:'joelito',bio:'',avatar:'',banner:'',favTeam:'',isAdmin:false},
   teams:[],matches:[],news:[],players:[],channels:[],sanctions:[],seasons:[],notifications:[],
-  musicPlaylist:[],
+  musicPlaylist:[],announcements:[],
   settings:{theme:'dark'},
   editTransforms:{}
 };
@@ -109,6 +109,7 @@ function init(){
     if(s.glass===false){const h=$('hdr'),n=$('nav');if(h)h.style.backdropFilter='none';if(n)n.style.backdropFilter='none';}
     if(s.accentHex)document.documentElement.style.setProperty('--accent',s.accentHex);
     if(s.accentRgb)document.documentElement.style.setProperty('--amb-color',s.accentRgb);
+    if(s.fontFamily)applyFontFamily(s.fontFamily);
   }
   setTimeout(()=>syncOnLoad(), 1500);
   // Cargar playlist guardada en la Isla Dinámica
@@ -395,6 +396,7 @@ function go(p){
   }
   // Guardar posición actual para restaurar al volver
   try{sessionStorage.setItem('lsl_cur_page',p);}catch(e){}
+  if(p!=='admin')setTimeout(()=>checkAnnouncements(p),250);
 }
 // Restaurar página al cargar (solo si no es inicio)
 function restoreLastPage(){
@@ -2381,6 +2383,12 @@ async function syncOnLoad(){
     if(data.channels){D.channels=tryParse(data.channels,D.channels);changed=true}
     if(data.sanctions){D.sanctions=tryParse(data.sanctions,D.sanctions);changed=true}
     if(data.cfg){D.cfg={...D.cfg,...tryParse(data.cfg,{})};changed=true}
+    if(data.announcements){
+      const parsedAnn=tryParse(data.announcements,null);
+      if(parsedAnn&&JSON.stringify(parsedAnn)!==JSON.stringify(D.announcements||[])){
+        D.announcements=parsedAnn;changed=true;
+      }
+    }
     // ── Editar UI (redondeo, tamaños, etc.) — antes solo se guardaba local
     if(data.eui_settings){
       const parsedEui=tryParse(data.eui_settings,null);
@@ -2417,6 +2425,7 @@ async function syncOnLoad(){
     if(changed){
       localStorage.setItem(STORE,JSON.stringify(D));
       renderAll();updateHdr();updateUser();populateSels();
+      if(!D.user.isAdmin)setTimeout(()=>checkAnnouncements(curPage),300);
       console.log('✅ Sync OK —',new Date().toLocaleTimeString());
     }
   }catch(e){
@@ -2446,6 +2455,7 @@ async function pushToSupabase(){
       custom_css:localStorage.getItem('lsl_custom_css')||'',
       custom_js:localStorage.getItem('lsl_custom_js')||'',
       music_playlist:JSON.stringify(D.musicPlaylist||[]),
+      announcements:JSON.stringify(D.announcements||[]),
       updated_at:new Date().toISOString()
     });
     if(indicator){indicator.textContent='✓';setTimeout(()=>{indicator.style.opacity='0'},2000)}
@@ -3179,6 +3189,7 @@ function admTab(name,el){
   if(name==='music')renderMusicList();
   if(name==='stats')updateStatsPanel();
   if(name==='appupdate')initUpdatesTab();
+  if(name==='announce')renderAdmAnnounceList();
   updateAdminCounts();
   if(name==='matches'){populateSels();prefillMatchDate();}
 }
@@ -3446,7 +3457,7 @@ function admGo(section){
   const hub=document.getElementById('adm-hub');
   if(hub)hub.style.display='none';
   // Actualizar título
-  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código',appupdate:'🚀 Actualización',music:'🎵 Música'};
+  const titles={matches:'⚽ Partidos',teams:'🏆 Equipos',players:'👤 Jugadores',referees:'👨‍⚖️ Árbitros',news:'📰 Noticias',channels:'📺 Canales',sanctions:'🟨 Sanciones',sponsors:'💼 Sponsors',season:'🏅 Temporada',stats:'📊 Stats',config:'⚙️ Config',supabase:'☁️ Base de Datos',codeeditor:'💻 Código',appupdate:'🚀 Actualización',music:'🎵 Música',announce:'📢 Anuncios'};
   const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent=titles[section]||'Panel Admin';
   // Mostrar botón volver si no existe
   let backBtn=document.getElementById('adm-back-btn');
@@ -4233,6 +4244,7 @@ function euiApplyDI(){
   setTimeout(()=>{try{applyPerformanceMode();}catch(e){}},500);
   setTimeout(()=>{try{renderRulesAndInfo();}catch(e){}},800);
   setTimeout(()=>{try{checkWelcome();}catch(e){}},900);
+  setTimeout(()=>{try{checkAnnouncements(curPage);}catch(e){}},1600);
   // Isla dinámica
   try{
     _diVisible=D.settings?.diVisible!==false;
@@ -4291,3 +4303,277 @@ document.addEventListener('DOMContentLoaded', () => {
   // Le damos 2 segundos de tiempo para que cargue bien Capacitor antes de pedir el permiso
   setTimeout(activarNotificacionesPush, 2000);
 });
+
+/* ════════════════════════════════════════════════════════
+   MEJORAS — ACENTO PERSONALIZADO / FONDO CUSTOM / FUENTE
+   ════════════════════════════════════════════════════════ */
+function hexToRgbStr(hex){
+  hex=(hex||'#818cf8').replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const r=parseInt(hex.substring(0,2),16)||0,g=parseInt(hex.substring(2,4),16)||0,b=parseInt(hex.substring(4,6),16)||0;
+  return `${r},${g},${b}`;
+}
+function shadeColor(hex,percent){
+  hex=(hex||'#0d1117').replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  let r=parseInt(hex.substring(0,2),16),g=parseInt(hex.substring(2,4),16),b=parseInt(hex.substring(4,6),16);
+  r=Math.min(255,Math.round(r+(255-r)*percent/100));
+  g=Math.min(255,Math.round(g+(255-g)*percent/100));
+  b=Math.min(255,Math.round(b+(255-b)*percent/100));
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function hexIsDark(hex){
+  hex=(hex||'#0d1117').replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const r=parseInt(hex.substring(0,2),16)/255,g=parseInt(hex.substring(2,4),16)/255,b=parseInt(hex.substring(4,6),16)/255;
+  return (.299*r+.587*g+.114*b)<0.6;
+}
+function escHtml(s){
+  return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---- Color de acento personalizado ---- */
+function setCustomAccent(hex){
+  const rgb=hexToRgbStr(hex);
+  const root=document.documentElement;
+  root.style.setProperty('--accent',hex);
+  root.style.setProperty('--accent2',hex);
+  root.style.setProperty('--amb-color',rgb);
+  root.style.setProperty('--amb-tint-hdr',`rgba(${rgb},.10)`);
+  root.style.setProperty('--amb-tint-nav',`rgba(${rgb},.06)`);
+  document.querySelectorAll('.accent-dot').forEach(d=>d.classList.remove('active'));
+  const trigger=document.querySelector('.custom-accent-trigger');if(trigger)trigger.classList.add('active');
+  if(!D.settings)D.settings={};
+  D.settings.accentHex=hex;D.settings.accentRgb=rgb;
+  save();adminSync();toast('🎨 Color personalizado aplicado');
+}
+
+/* ---- Tema de fondo personalizado ---- */
+function openCustomBgPicker(){
+  const panel=$('custom-bg-panel');if(!panel)return;
+  panel.classList.toggle('open');
+  document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active'));
+  $('theme-custom')?.classList.add('active');
+}
+function previewCustomBg(){
+  const c1=$('custom-bg-1')?.value||'#0d1117',c2=$('custom-bg-2')?.value||'#1a1f35';
+  const prev=$('custom-bg-preview');if(prev)prev.style.background=`linear-gradient(135deg,${c1} 0%,${c2} 100%)`;
+}
+function applyCustomBgTheme(){
+  const c1=$('custom-bg-1')?.value||'#0d1117',c2=$('custom-bg-2')?.value||'#1a1f35';
+  const dark=hexIsDark(c1);
+  const accentHex=D.settings?.accentHex||'#818cf8';
+  const accentRgb=D.settings?.accentRgb||'129,140,248';
+  COLOR_THEMES.custom={
+    bg:c1,bg2:shadeColor(c1,dark?8:-4),bg3:shadeColor(c1,dark?16:-8),
+    grad:`linear-gradient(135deg,${c1} 0%,${c2} 100%)`,
+    accent:accentHex,accentRgb:accentRgb,dark:dark
+  };
+  if(!D.settings)D.settings={};
+  D.settings.customBg1=c1;D.settings.customBg2=c2;
+  applyColorTheme('custom',$('theme-custom'));
+}
+
+/* ---- Fuente de texto ---- */
+const FONT_STACKS={
+  dmsans:'"DM Sans",-apple-system,sans-serif',
+  inter:'"Inter",-apple-system,sans-serif',
+  poppins:'"Poppins",-apple-system,sans-serif',
+  sora:'"Sora",-apple-system,sans-serif',
+  manrope:'"Manrope",-apple-system,sans-serif',
+  nunito:'"Nunito",-apple-system,sans-serif'
+};
+function applyFontFamily(key){
+  const stack=FONT_STACKS[key]||FONT_STACKS.dmsans;
+  document.documentElement.style.setProperty('--font-main',stack);
+  document.querySelectorAll('.font-opt').forEach(o=>o.classList.toggle('active',o.dataset.font===key));
+}
+function setFontFamily(key,el){
+  applyFontFamily(key);
+  if(!D.settings)D.settings={};
+  D.settings.fontFamily=key;
+  save();adminSync();toast('🔤 Fuente aplicada');
+}
+
+/* ════════════════════════════════════════════════════════
+   ANUNCIOS / CARTELES — Admin CRUD
+   ════════════════════════════════════════════════════════ */
+let _anSelectedAnim='celebrate';
+let _anCloseTimer=null;
+const AN_SEEN_KEY='lsl_seen_announcements';
+const AN_ANIM_LBL={celebrate:'🎉 Celebración',bounce:'🎈 Rebote',slide:'➡️ Deslizar',pulse:'💓 Pulso',shake:'📳 Sacudida',none:'▫️ Ninguna'};
+const AN_PAGE_LBL={all:'Todas',inicio:'Inicio',partidos:'Partidos',info:'Liga',perfil:'Perfil'};
+
+function selectAnAnim(key,el){
+  document.querySelectorAll('#an-anim-grid .anim-opt').forEach(o=>o.classList.remove('on'));
+  if(el)el.classList.add('on');
+  _anSelectedAnim=key;
+}
+function resetAnForm(){
+  $('an-title').value='';$('an-body').value='';
+  $('an-text-color').value='#ffffff';$('an-bg-1').value='#4f46e5';$('an-bg-2').value='#818cf8';
+  $('an-duration').value='6';$('an-position').value='center';$('an-page').value='all';
+  $('an-start').value='';$('an-end').value='';
+  $('an-once-tgl').classList.remove('on');
+  $('an-edit-id').value='';
+  selectAnAnim('celebrate',document.querySelector('#an-anim-grid .anim-opt[data-anim="celebrate"]'));
+}
+function gatherAnFormData(){
+  return{
+    title:$('an-title').value.trim(),
+    body:$('an-body').value.trim(),
+    textColor:$('an-text-color').value,
+    bg1:$('an-bg-1').value,
+    bg2:$('an-bg-2').value,
+    anim:_anSelectedAnim,
+    duration:parseInt($('an-duration').value)||0,
+    position:$('an-position').value,
+    page:$('an-page').value,
+    startAt:$('an-start').value||'',
+    endAt:$('an-end').value||'',
+    once:$('an-once-tgl').classList.contains('on')
+  };
+}
+function previewAnnouncement(){
+  const data=gatherAnFormData();
+  if(!data.title&&!data.body){toast('⚠️ Escribí un título o mensaje');return}
+  showAnnouncementCard(data,true);
+}
+function saveAnnouncement(){
+  const data=gatherAnFormData();
+  if(!data.title&&!data.body){toast('⚠️ Escribí un título o mensaje');return}
+  const editId=$('an-edit-id').value;
+  if(!D.announcements)D.announcements=[];
+  if(editId){
+    const idx=D.announcements.findIndex(a=>a.id===editId);
+    if(idx>-1)D.announcements[idx]={...D.announcements[idx],...data};
+  }else{
+    D.announcements.unshift({id:Date.now().toString(),...data,active:true,createdAt:new Date().toISOString()});
+  }
+  save();adminSync();renderAdmAnnounceList();resetAnForm();
+  toast(editId?'✅ Anuncio actualizado':'📤 Anuncio publicado');
+}
+function editAnnouncement(id){
+  const a=(D.announcements||[]).find(x=>x.id===id);if(!a)return;
+  $('an-title').value=a.title||'';$('an-body').value=a.body||'';
+  $('an-text-color').value=a.textColor||'#ffffff';
+  $('an-bg-1').value=a.bg1||'#4f46e5';$('an-bg-2').value=a.bg2||'#818cf8';
+  $('an-duration').value=a.duration??6;$('an-position').value=a.position||'center';
+  $('an-page').value=a.page||'all';
+  $('an-start').value=a.startAt||'';$('an-end').value=a.endAt||'';
+  $('an-once-tgl').classList.toggle('on',!!a.once);
+  $('an-edit-id').value=a.id;
+  selectAnAnim(a.anim||'celebrate',document.querySelector(`#an-anim-grid .anim-opt[data-anim="${a.anim||'celebrate'}"]`));
+  $('an-title').scrollIntoView({behavior:'smooth',block:'center'});
+  toast('✏️ Editando anuncio');
+}
+function deleteAnnouncement(id){
+  if(!confirm('¿Borrar este anuncio?'))return;
+  D.announcements=(D.announcements||[]).filter(a=>a.id!==id);
+  save();adminSync();renderAdmAnnounceList();toast('🗑️ Anuncio borrado');
+}
+function toggleAnnounceActive(id){
+  const a=(D.announcements||[]).find(x=>x.id===id);if(!a)return;
+  a.active=a.active===false?true:false;
+  save();adminSync();renderAdmAnnounceList();
+}
+function renderAdmAnnounceList(){
+  const el=$('adm-announce-list');if(!el)return;
+  const list=[...(D.announcements||[])].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!list.length){el.innerHTML='<div class="empty" style="padding:14px 0"><div class="etic">📢</div><div class="etit">Sin anuncios todavía</div></div>';return}
+  el.innerHTML=list.map(a=>`
+    <div class="adm-announce-item">
+      <div class="adm-announce-top">
+        <div class="adm-announce-swatch" style="background:linear-gradient(135deg,${a.bg1||'#4f46e5'},${a.bg2||'#818cf8'})"></div>
+        <div class="adm-announce-title">${escHtml(a.title)||'(sin título)'}</div>
+        <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:7px;white-space:nowrap;${a.active!==false?'background:rgba(74,222,128,.15);color:#4ade80':'background:rgba(255,255,255,.08);color:var(--t3)'}">${a.active!==false?'ACTIVO':'PAUSADO'}</span>
+      </div>
+      <div class="adm-announce-meta">${AN_PAGE_LBL[a.page]||'Todas'} · ${AN_ANIM_LBL[a.anim]||''} · ${a.duration>0?a.duration+'s':'Manual'}${a.once?' · Una vez':''}</div>
+      <div class="adm-announce-acts">
+        <button class="adm-announce-btn" onclick="editAnnouncement('${a.id}')">✏️ Editar</button>
+        <button class="adm-announce-btn" onclick="toggleAnnounceActive('${a.id}')">${a.active!==false?'⏸️ Pausar':'▶️ Activar'}</button>
+        <button class="adm-announce-btn dng" onclick="deleteAnnouncement('${a.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ════════════════════════════════════════════════════════
+   ANUNCIOS / CARTELES — Motor de exhibición
+   ════════════════════════════════════════════════════════ */
+function anGetSeen(){
+  try{return JSON.parse(localStorage.getItem(AN_SEEN_KEY)||'[]')}catch(e){return[]}
+}
+function anMarkSeen(id){
+  const seen=anGetSeen();
+  if(!seen.includes(id)){seen.push(id);try{localStorage.setItem(AN_SEEN_KEY,JSON.stringify(seen.slice(-300)))}catch(e){}}
+}
+function anWithinWindow(a){
+  const now=Date.now();
+  if(a.startAt){const s=new Date(a.startAt).getTime();if(!isNaN(s)&&now<s)return false}
+  if(a.endAt){const e=new Date(a.endAt).getTime();if(!isNaN(e)&&now>e)return false}
+  return true;
+}
+function checkAnnouncements(page){
+  if(!D.announcements||!D.announcements.length)return;
+  const ov=$('announce-ov');if(ov&&ov.classList.contains('open'))return; // ya hay uno abierto
+  const seen=anGetSeen();
+  const match=D.announcements.find(a=>
+    a.active!==false &&
+    (a.page==='all'||!a.page||a.page===page) &&
+    anWithinWindow(a) &&
+    (!a.once||!seen.includes(a.id))
+  );
+  if(match)showAnnouncementCard(match,false);
+}
+function showAnnouncementCard(a,isPreview){
+  const ov=$('announce-ov');if(!ov)return;
+  clearTimeout(_anCloseTimer);
+  const card=$('announce-card');
+  card.style.background=`linear-gradient(135deg,${a.bg1||'#4f46e5'} 0%,${a.bg2||'#818cf8'} 100%)`;
+  card.style.color=a.textColor||'#ffffff';
+  card.classList.remove('announce-pulse-loop');
+  $('announce-card-title').textContent=a.title||'';
+  $('announce-card-body').textContent=a.body||'';
+  ov.classList.toggle('pos-top',a.position==='top');
+  const wrap=$('announce-confetti-wrap');if(wrap)wrap.innerHTML='';
+  const ANIM_STYLES={
+    celebrate:'announceCelebrate .6s cubic-bezier(.22,1.4,.36,1) both',
+    bounce:'announceBounce .7s cubic-bezier(.22,1,.36,1) both',
+    slide:'announceSlide .5s cubic-bezier(.22,1,.36,1) both',
+    pulse:'announcePulseIn .4s ease both',
+    shake:'announceShake .55s ease both',
+    none:'none'
+  };
+  card.style.animation=ANIM_STYLES[a.anim]||ANIM_STYLES.celebrate;
+  if(a.anim==='celebrate')launchConfetti();
+  if(a.anim==='pulse')setTimeout(()=>card.classList.add('announce-pulse-loop'),400);
+  ov.classList.add('open');
+  if(!isPreview&&a.once)anMarkSeen(a.id);
+  const dur=parseInt(a.duration)||0;
+  if(dur>0){_anCloseTimer=setTimeout(()=>closeAnnouncement(),dur*1000);}
+}
+function closeAnnouncement(){
+  const ov=$('announce-ov');if(!ov)return;
+  ov.classList.remove('open');
+  clearTimeout(_anCloseTimer);
+  const card=$('announce-card');if(card)card.classList.remove('announce-pulse-loop');
+  setTimeout(()=>{const wrap=$('announce-confetti-wrap');if(wrap)wrap.innerHTML=''},350);
+}
+function launchConfetti(){
+  const wrap=$('announce-confetti-wrap');if(!wrap)return;
+  wrap.innerHTML='';
+  const colors=['#f87171','#facc15','#4ade80','#22d3ee','#818cf8','#e879f9','#fb923c','#ffffff'];
+  const count=28;
+  for(let i=0;i<count;i++){
+    const piece=document.createElement('div');
+    piece.className='announce-confetti-piece';
+    piece.style.left=(Math.random()*100)+'%';
+    piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration=(1.1+Math.random()*1.1)+'s';
+    piece.style.animationDelay=(Math.random()*.5)+'s';
+    piece.style.transform=`rotate(${Math.random()*360}deg)`;
+    wrap.appendChild(piece);
+  }
+  setTimeout(()=>{if(wrap)wrap.innerHTML=''},2600);
+}

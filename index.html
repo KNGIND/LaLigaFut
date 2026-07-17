@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="/logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&family=Sora:wght@400;600;700&family=Manrope:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
 <!-- Supabase REST API directo — sin SDK pesado -->
 <link rel="stylesheet" href="style.css?v=4"/>
 </head>
@@ -285,6 +285,12 @@
       <div class="adm-hub-sub">Estadísticas globales</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
+    <div class="adm-hub-card adm-hub-announce" onclick="admGo('announce')">
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3a1 1 0 001 1h2l4 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M14 8a4 4 0 010 7M17.5 5a8.5 8.5 0 010 13"/></svg></div>
+      <div class="adm-hub-lbl">Anuncios</div>
+      <div class="adm-hub-sub">Carteles y avisos en la app</div>
+      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+    </div>
     <div class="adm-hub-card adm-hub-config" onclick="admGo('config')">
       <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
       <div class="adm-hub-lbl">Config</div>
@@ -329,6 +335,7 @@
     <div class="atab" id="atab-sponsors" onclick="admTab('sponsors',this)"><span class="atab-ico">💼</span>Sponsors</div>
     <div class="atab" id="atab-season" onclick="admTab('season',this)"><span class="atab-ico">🏅</span>Temporada</div>
     <div class="atab" id="atab-stats" onclick="admTab('stats',this)"><span class="atab-ico">📊</span>Stats</div>
+    <div class="atab" id="atab-announce" onclick="admTab('announce',this)"><span class="atab-ico">📢</span>Anuncios</div>
     <div class="atab" id="atab-config" onclick="admTab('config',this)"><span class="atab-ico">⚙️</span>Config</div>
     <div class="atab" id="atab-supabase" onclick="admTab('supabase',this)"><span class="atab-ico">☁️</span>Base de Datos</div>
     <div class="atab" id="atab-music" onclick="admTab('music',this)"><span class="atab-ico">🎵</span>Música</div>
@@ -508,6 +515,86 @@
     </div>
   </div>
   <!-- CONFIG -->
+  <!-- ANUNCIOS / CARTELES -->
+  <div class="apane" id="adm-announce">
+    <div class="atit">📢 Nuevo cartel/aviso</div>
+    <div class="aform">
+      <div class="fl">Título</div>
+      <input type="text" class="fi" id="an-title" placeholder="Ej: ¡Arrancó la Temporada 9!"/>
+      <div class="fl">Mensaje</div>
+      <textarea class="fi" id="an-body" rows="3" placeholder="Escribí el mensaje del aviso..." style="resize:vertical"></textarea>
+
+      <div class="fl">Color de texto</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <input type="color" class="cbg-color-input" id="an-text-color" value="#ffffff"/>
+        <span style="font-size:11px;color:var(--t2)">Color de la letra del cartel</span>
+      </div>
+
+      <div class="fl" style="margin-top:10px">Fondo del cartel</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">
+        <input type="color" class="cbg-color-input" id="an-bg-1" value="#4f46e5"/>
+        <input type="color" class="cbg-color-input" id="an-bg-2" value="#818cf8"/>
+        <span style="font-size:11px;color:var(--t2)">Degradado (2 colores)</span>
+      </div>
+
+      <div class="fl">Animación</div>
+      <div class="anim-opt-grid" id="an-anim-grid">
+        <div class="anim-opt on" data-anim="celebrate" onclick="selectAnAnim('celebrate',this)"><span class="anim-opt-ico">🎉</span>Celebración</div>
+        <div class="anim-opt" data-anim="bounce" onclick="selectAnAnim('bounce',this)"><span class="anim-opt-ico">🎈</span>Rebote</div>
+        <div class="anim-opt" data-anim="slide" onclick="selectAnAnim('slide',this)"><span class="anim-opt-ico">➡️</span>Deslizar</div>
+        <div class="anim-opt" data-anim="pulse" onclick="selectAnAnim('pulse',this)"><span class="anim-opt-ico">💓</span>Pulso</div>
+        <div class="anim-opt" data-anim="shake" onclick="selectAnAnim('shake',this)"><span class="anim-opt-ico">📳</span>Sacudida</div>
+        <div class="anim-opt" data-anim="none" onclick="selectAnAnim('none',this)"><span class="anim-opt-ico">▫️</span>Ninguna</div>
+      </div>
+
+      <div class="frow" style="margin-top:8px">
+        <div style="flex:1">
+          <div class="fl">Duración (seg)</div>
+          <input type="number" class="fi" id="an-duration" value="6" min="0" placeholder="0 = manual"/>
+        </div>
+        <div style="flex:1">
+          <div class="fl">Posición</div>
+          <select class="fsel" id="an-position">
+            <option value="center">Centro</option>
+            <option value="top">Arriba</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fl">¿Dónde aparece?</div>
+      <select class="fsel" id="an-page">
+        <option value="all">Todas las páginas</option>
+        <option value="inicio">Solo Inicio</option>
+        <option value="partidos">Solo Partidos</option>
+        <option value="info">Solo Liga</option>
+        <option value="perfil">Solo Perfil</option>
+      </select>
+
+      <div class="frow" style="margin-top:8px">
+        <div style="flex:1">
+          <div class="fl">Desde (opcional)</div>
+          <input type="datetime-local" class="fi" id="an-start"/>
+        </div>
+        <div style="flex:1">
+          <div class="fl">Hasta (opcional)</div>
+          <input type="datetime-local" class="fi" id="an-end"/>
+        </div>
+      </div>
+
+      <div class="cfg-row" style="padding:12px 0">
+        <div class="cfg-row-txt"><div class="cfg-row-t">Mostrar solo una vez</div><div class="cfg-row-s">Cada usuario lo ve una única vez</div></div>
+        <div class="tgl" id="an-once-tgl" onclick="this.classList.toggle('on')"><div class="tglk"></div></div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="abtn sec" style="flex:1" onclick="previewAnnouncement()">👁️ VISTA PREVIA</button>
+        <button class="abtn" style="flex:1" onclick="saveAnnouncement()">📤 PUBLICAR</button>
+      </div>
+      <input type="hidden" id="an-edit-id" value=""/>
+    </div>
+    <div class="atit" style="margin-top:4px">Carteles activos</div>
+    <div id="adm-announce-list"><div class="empty" style="padding:14px 0"><div class="etic">📢</div><div class="etit">Sin anuncios todavía</div></div></div>
+  </div>
   <div class="apane" id="adm-config">
     <div class="atit">Configuración</div>
     <div class="aform">
@@ -1328,6 +1415,39 @@
           <div class="accent-dot" style="background:#facc15" onclick="setAccent('#facc15','250,204,21')" title="Amarillo"></div>
           <div class="accent-dot" style="background:#e879f9" onclick="setAccent('#e879f9','232,121,249')" title="Violeta"></div>
           <div class="accent-dot" style="background:#f87171" onclick="setAccent('#f87171','248,113,113')" title="Rojo"></div>
+          <div class="accent-dot custom-accent-trigger" onclick="document.getElementById('accent-custom-input').click()" title="Personalizado" style="background:conic-gradient(from 0deg,#f87171,#facc15,#4ade80,#22d3ee,#818cf8,#e879f9,#f87171)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="display:flex;margin:10px"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <input type="color" id="accent-custom-input" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none" oninput="setCustomAccent(this.value)" value="#818cf8"/>
+        </div>
+      </div>
+
+      <!-- FUENTE DE TEXTO -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Fuente de texto</div>
+      <div class="font-select-grid" id="font-select-grid">
+        <div class="font-opt active" data-font="dmsans" onclick="setFontFamily('dmsans',this)" style="font-family:'DM Sans',sans-serif">
+          <span class="font-opt-name">DM Sans <span style="opacity:.5">(Default)</span></span>
+          <svg class="font-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="font-opt" data-font="inter" onclick="setFontFamily('inter',this)" style="font-family:'Inter',sans-serif">
+          <span class="font-opt-name">Inter</span>
+          <svg class="font-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="font-opt" data-font="poppins" onclick="setFontFamily('poppins',this)" style="font-family:'Poppins',sans-serif">
+          <span class="font-opt-name">Poppins</span>
+          <svg class="font-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="font-opt" data-font="sora" onclick="setFontFamily('sora',this)" style="font-family:'Sora',sans-serif">
+          <span class="font-opt-name">Sora</span>
+          <svg class="font-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="font-opt" data-font="manrope" onclick="setFontFamily('manrope',this)" style="font-family:'Manrope',sans-serif">
+          <span class="font-opt-name">Manrope</span>
+          <svg class="font-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="font-opt" data-font="nunito" onclick="setFontFamily('nunito',this)" style="font-family:'Nunito',sans-serif">
+          <span class="font-opt-name">Nunito</span>
+          <svg class="font-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
         </div>
       </div>
 
@@ -1384,6 +1504,20 @@
           <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Lila</div>
           <div class="theme-item-check">✓</div>
         </div>
+        <div class="theme-item custom-theme-item" id="theme-custom" onclick="openCustomBgPicker()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <div class="theme-item-check">✓</div>
+        </div>
+      </div>
+      <div id="custom-bg-panel">
+        <div id="custom-bg-preview" class="cbg-preview" style="background:linear-gradient(135deg,#0d1117 0%,#1a1f35 100%)"></div>
+        <div class="cbg-row">
+          <span class="cbg-swatch-lbl">Color 1</span>
+          <input type="color" class="cbg-color-input" id="custom-bg-1" value="#0d1117" oninput="previewCustomBg()"/>
+          <span class="cbg-swatch-lbl" style="flex:none">Color 2</span>
+          <input type="color" class="cbg-color-input" id="custom-bg-2" value="#1a1f35" oninput="previewCustomBg()"/>
+        </div>
+        <button class="abtn" style="padding:11px" onclick="applyCustomBgTheme()">APLICAR FONDO PERSONALIZADO</button>
       </div>
       <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">MÁS COLORES</div>
       <div class="theme-grid">
@@ -1612,6 +1746,17 @@
     <div class="pwab-info"><div class="pwab-t" id="pwab-title">La Súper Liga</div><div class="pwab-s">Agrega la app a tu pantalla de inicio</div></div>
   </div>
   <div class="pwab-acts"><button class="pwab-btn sec" onclick="dismissPWA()">Ahora no</button><button class="pwab-btn pri" onclick="installPWA()">Instalar</button></div>
+</div>
+<!-- ANUNCIO / CARTEL -->
+<div id="announce-ov" onclick="if(event.target===this)closeAnnouncement()">
+  <div id="announce-card">
+    <div class="announce-confetti-wrap" id="announce-confetti-wrap"></div>
+    <div id="announce-card-close" onclick="closeAnnouncement()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </div>
+    <div id="announce-card-title"></div>
+    <div id="announce-card-body"></div>
+  </div>
 </div>
 <!-- HIDDEN INPUTS -->
 <input type="file" accept="image/*" class="hfi" id="avatar-fi" onchange="handleAvatarUpload(event)"/>
