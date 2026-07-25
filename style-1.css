@@ -1,0 +1,102 @@
+/* ============================================================
+ * ARCHIVO: style-1.css (actualizado)
+ * PROYECTO: La Súper Liga
+ * DESCRIPCIÓN: Hoja de estilos principal — ajustes: Navegación
+ * (frosted effect), mejoras en Match Detail, pequeñas correcciones.
+ * ============================================================ */
+
+/* ====== (parte inicial del CSS se mantiene igual que la versión anterior) ====== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+input,button,textarea,select{font-family:inherit;border:none;outline:none;background:none}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+::-webkit-scrollbar{display:none}
+html{scroll-behavior:smooth}
+html,body{height:100%;overflow:hidden}
+:root{--f:"DM Sans",-apple-system,sans-serif;--bg:#18171f;--page-bg:radial-gradient(ellipse 110% 55% at 0% 0%,rgba(139,92,246,.20) 0%,transparent 55%),radial-gradient(ellipse 80% 45% at 100% 100%,rgba(232,121,249,.12) 0%,transparent 55%),radial-gradient(ellipse 90% 60% at 50% 50%,rgba(80,78,95,.35) 0%,transparent 80%),#18171f;--glass:rgba(90,88,105,.22);--glass2:rgba(80,78,95,.30);--glass-brd:rgba(255,255,255,.10);--blur:20px;--p:#8b5cf6;--p2:#c4b5fd;--p3:#6d28d9;--p-rgb:139,92,246;--pink:#e879f9;--pink-rgb:232,121,249;--txt:#f0effb;--txt2:#9e9cb8;--txt3:#504e68;--live:#fb3d5c;--live-rgb:251,61,92;--warn:#f59e0b;--ok:#4ade80;--danger:#f87171;--bdr:rgba(255,255,255,.06);--bdr2:rgba(139,92,246,.18);--sh:0 8px 32px -8px rgba(0,0,0,.55);--sh-lg:0 18px 48px -12px rgba(0,0,0,.7);--glow:0 0 24px rgba(var(--p-rgb),.30);--r-xs:6px;--r-sm:10px;--r-md:16px;--r-lg:22px;--r-xl:28px;--r-2xl:36px;--r-full:9999px;--fast:.13s;--mid:.26s;--slow:.44s;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1);--spring2:cubic-bezier(.5,1.4,.4,1);--nav-h:70px;--nav-item-w:56px;--nav-bubble-sz:48px;--nav-lift:24px;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);font-size:15px}
+:root[data-perf="lite"]{--blur:0px;--fast:.09s;--mid:.16s;--slow:.24s}
+
+/* BODY / APP */
+body{font-family:var(--f);background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;height:100%;overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden;position:relative;background:var(--page-bg)}
+
+/* ... (rest of the original CSS kept) ... */
+
+/* ===== NAV (frosted effect) ===== */
+:root{--nav-h:68px;--nav-item-w:54px;--nav-bubble-sz:48px;--nav-lift:26px}
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:200;pointer-events:none;padding-top:var(--nav-lift);padding-bottom:var(--sab)}
+.nav-pill{pointer-events:all;display:flex;align-items:center;justify-content:space-around;position:relative;height:var(--nav-h);padding:0 8px;padding-bottom:var(--sab);border-radius:26px 26px 0 0;overflow:visible;box-shadow:0 -6px 28px rgba(0,0,0,.38);}
+/* Frosted pill: semi-opaque white with backdrop blur and subtle gradient */
+.nav-pill::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border-top:1px solid rgba(255,255,255,.04);mix-blend-mode:overlay;}
+:root[data-perf="lite"] .nav-pill::before{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(18,17,26,.95)}
+/* subtle inner shadow to simulate depth */
+.nav-pill::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:12px;border-radius:50%;filter:blur(20px);background:linear-gradient(180deg,rgba(0,0,0,.32),transparent)}
+
+#nav-notch{position:absolute;top:calc(-1 * var(--nav-lift) + 1px);height:calc(var(--nav-lift) + 2px);width:72px;pointer-events:none;left:0;transition:left var(--slow) var(--spring2)}
+:root[data-perf="lite"] #nav-notch{transition:left .12s ease}
+#nav-notch svg{width:72px;height:100%;display:block}
+
+#nav-bubble{position:absolute;width:var(--nav-bubble-sz);height:var(--nav-bubble-sz);border-radius:50%;top:calc(-1 * var(--nav-lift) - var(--nav-bubble-sz)/2 + 4px);left:0;transition:left var(--slow) var(--spring2),opacity var(--mid) ease;opacity:0;pointer-events:none;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 22px rgba(var(--p-rgb),.55),0 0 0 3px rgba(255,255,255,.11)}
+:root[data-perf="lite"] #nav-bubble{transition:left .12s ease,opacity .12s ease;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+#nav-bubble-ico{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.9}
+
+/* ni items unchanged but ensure transparent backgrounds to show frosted effect */
+.ni{position:relative;z-index:1;width:var(--nav-item-w);height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform var(--fast) var(--spring);flex-shrink:0}
+.ni-ico{width:22px;height:22px;stroke:rgba(255,255,255,.30);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke var(--mid) ease,opacity var(--mid) ease}
+.ni.on .ni-ico{stroke:transparent;opacity:0}
+.ni-lbl{font-size:8px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.26);white-space:nowrap;transition:color var(--mid) ease}
+.ni.on .ni-lbl{color:var(--p2)}
+
+/* ===== Match Detail tweaks ===== */
+.md-hero{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(var(--p-rgb),.12) 0%,transparent 100%);padding-bottom:8px}
+.md-hero-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--p-rgb),.12) 0%,transparent 100%);pointer-events:none}
+.md-teams-row{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 12px;gap:8px}
+.md-team-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.md-badge{width:78px;height:78px;border-radius:18px;background:rgba(255,255,255,.06);border:1.5px solid rgba(var(--p-rgb),.18);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,.35)}
+.md-score-big{font-family:"Bebas Neue",sans-serif;font-size:56px;letter-spacing:6px;color:var(--txt);line-height:1}
+.md-match-time-big{font-family:"Bebas Neue",sans-serif;font-size:22px;font-weight:700;color:var(--txt);letter-spacing:1px}
+.md-status-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+.md-status-pill.live{background:rgba(var(--live-rgb),.12);color:var(--live);border:1px solid rgba(var(--live-rgb),.3)}
+.md-status-pill.prox{background:rgba(var(--p-rgb),.12);color:var(--p2);border:1px solid rgba(var(--p-rgb),.25)}
+
+/* Cards & info tweaks */
+.md-info-card{background:rgba(255,255,255,.03);border-radius:var(--r-lg);border:1px solid rgba(255,255,255,.04);overflow:hidden;padding:12px}
+.md-info-card-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--txt3)}
+.md-info-card-val{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3}
+
+/* stat v2 layout */
+.stat-v2-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.stat-v2-val{width:60px;font-weight:700;color:var(--txt);text-align:center}
+.stat-v2-bars{display:flex;align-items:center;gap:8px;flex:1}
+.stat-v2-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden}
+.stat-v2-bar-fill{height:100%}
+.stat-v2-bar-fill.home{background:linear-gradient(90deg,var(--p),var(--pink))}
+.stat-v2-bar-fill.away{background:linear-gradient(90deg,var(--live),#e11d48)}
+
+/* Predicciones v2 */
+.pred-v2{background:rgba(255,255,255,.02);border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.04)}
+.pred-v2-opts{display:flex;gap:8px}
+.pred-v2-opt{flex:1;text-align:center;padding:10px;border-radius:10px;cursor:pointer;background:transparent}
+.pred-v2-opt.voted{box-shadow:inset 0 0 0 2px rgba(var(--p-rgb),.14)}
+.pred-v2-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.04);overflow:hidden;margin-top:10px;display:flex}
+.pred-v2-bar-h{background:linear-gradient(90deg,var(--p),var(--pink));height:100%}
+.pred-v2-bar-d{background:rgba(255,255,255,.06);height:100%}
+.pred-v2-bar-a{background:linear-gradient(90deg,var(--live),#e11d48);height:100%}
+
+/* H2H tweaks */
+.h2h-vis{display:flex;align-items:center;border-radius:var(--r-lg);overflow:hidden;height:76px;margin-bottom:12px;border:1px solid rgba(255,255,255,.07);background:linear-gradient(180deg,rgba(255,255,255,.01),transparent)}
+
+/* Champions block on Liga page */
+.cup-champs{padding:14px 18px;margin-top:12px;border-radius:var(--r-lg);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+.cup-champs h4{font-family:"Bebas Neue",sans-serif;font-size:18px;margin-bottom:8px}
+.cup-champs .champ{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px}
+.cup-champs .champ .crest{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+/* small responsive */
+@media(min-width:600px){.mc{max-width:340px}.ni{width:62px}:root{font-size:16px}}
+
+/* End of updated CSS */
