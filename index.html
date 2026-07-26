@@ -1,63 +1,219 @@
 <!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  ARCHIVO: index.html                                         ║
+  ║  PROYECTO: La Súper Liga                                     ║
+  ║  DESCRIPCIÓN: Estructura HTML completa de la app.            ║
+  ║                                                              ║
+  ║  CÓMO NAVEGAR ESTE ARCHIVO:                                  ║
+  ║  Buscá los comentarios con ══ para saltar entre secciones.   ║
+  ║                                                              ║
+  ║  SECCIONES:                                                  ║
+  ║  1. <head>        — Meta tags, fuentes, CSS                  ║
+  ║  2. LOCK SCREEN   — Pantalla de huella al abrir              ║
+  ║  3. LOGIN         — Registro de nombre (primera vez)         ║
+  ║  4. DYNAMIC ISLAND— Isla dinámica (música/notifs)            ║
+  ║  5. HEADER        — Barra superior fija                      ║
+  ║  6. PAGES         — Contenedor de páginas:                   ║
+  ║     6a. INICIO    — Home con carrusel y noticias             ║
+  ║     6b. PARTIDOS  — Lista de encuentros                      ║
+  ║     6c. LIGA      — Tabla, sanciones, reglamento             ║
+  ║     6d. PERFIL    — Perfil del usuario                       ║
+  ║     6e. ADMIN     — Panel de administración                  ║
+  ║  7. NAV           — Navegación inferior magic notch          ║
+  ║  8. EDIT UI BAR   — Barra del editor de UI (doble toque)     ║
+  ║  9. MODALES       — Overlays, sheets, match detail           ║
+  ║  10. SCRIPTS      — <script src="script.js">                 ║
+  ║                                                              ║
+  ║  ESTILOS: style.css                                          ║
+  ║  LÓGICA:  script.js                                          ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="theme-color" content="#080c14" id="theme-color-meta"/>
-<meta name="color-scheme" content="dark"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-<title id="app-title">La Súper Liga</title>
-<link rel="manifest" href="manifest.json"/>
-<link rel="icon" type="image/png" href="/logo.png"/>
-<link rel="apple-touch-icon" href="/logo.png"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&family=Sora:wght@400;600;700&family=Manrope:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
-<!-- Supabase REST API directo — sin SDK pesado -->
-<link rel="stylesheet" href="style.css?v=4"/>
+  <!--
+    ── <head> ──────────────────────────────────────────────────
+    Meta tags esenciales para PWA y pantalla completa.
+    - viewport-fit=cover + apple-mobile-web-app-capable
+      hacen que la app ocupe toda la pantalla sin status bar.
+    - theme-color controla el color de la barra del sistema.
+    - manifest.json define el ícono y nombre en pantalla de inicio.
+    ────────────────────────────────────────────────────────── -->
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+  <meta name="theme-color" content="#08070f"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="La Súper Liga"/>
+  <title>La Súper Liga</title>
+  <link rel="manifest" id="manifest-link" href="manifest.json"/>
+  <!--
+    Fuentes de Google: Bebas Neue (títulos), DM Sans (cuerpo),
+    + alternativas seleccionables desde el panel de Config.
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&family=Sora:wght@400;600;700&family=Manrope:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <!--
+    CSS personalizado inyectado desde el Editor de UI del Admin.
+    Se carga dinámicamente en script.js → loadCustomCode()
+  -->
+  <style id="custom-css-tag"></style>
 </head>
 <body>
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="login-logo" id="login-logo">
-    <img id="login-logo-img" src="" alt="" style="display:none"/>
-    <span id="login-logo-fb">LSL</span>
+
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 2: LOCK SCREEN
+  ══════════════════════════════════════════════════════════════
+  Pantalla de bloqueo que se muestra CADA VEZ que se abre la app.
+  El usuario la desbloquea tocando el ícono de huella digital.
+
+  IDs importantes:
+    #lock-screen     — contenedor principal
+    #lk-bg           — fondo de color/gradiente
+    #lk-bg-img       — imagen de fondo opcional (Admin)
+    #lk-logo         — logo animado con glow
+    #lk-logo-img     — imagen del logo (Admin → Config → Logo)
+    #lk-logo-fb      — texto fallback "LSL" si no hay logo
+    #lk-app-name     — nombre de la app (Admin → Config → Nombre)
+    #lk-fp           — botón de huella digital táctil
+    #lk-fp-lbl       — texto bajo la huella ("Tocá para entrar")
+
+  Personalizable desde Admin:
+    - Logo de la app
+    - Nombre de la app
+    - Imagen/video de fondo del lock screen
+    - Color de glow de la huella
+
+  JS (script.js):
+    initLockScreen()   — configura reloj y precarga logo
+    attemptUnlock()    — animación de escaneo + toque
+    unlockComplete()   — anima la salida y llama a init()
+
+  CSS (style.css): buscar [LOCKSCREEN]
+  ══════════════════════════════════════════════════════════════
+-->
+<div id="lock-screen">
+  <!-- Fondo visual del lock screen -->
+  <div id="lk-bg"></div>
+  <img id="lk-bg-img" src="" alt="" loading="lazy"/>
+  <div id="lk-bg-overlay"></div>
+
+  <!-- Reloj superior -->
+  <div class="lk-time" id="lk-clock">21:04</div>
+
+  <!-- Área central: logo + nombre -->
+  <div class="lk-body">
+    <div class="lk-logo" id="lk-logo">
+      <img id="lk-logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+      <video id="lk-logo-video" autoplay muted loop playsinline style="display:none;width:100%;height:100%;object-fit:cover"></video>
+      <span id="lk-logo-fb">LSL</span>
+    </div>
+    <div class="lk-name" id="lk-app-name">La Súper Liga</div>
+    <div class="lk-hint" id="lk-hint-text">Tocá para entrar</div>
   </div>
-  <div class="login-title" id="login-app-name">La Súper Liga</div>
-  <div class="login-sub">Ingresá tu nombre para personalizar tu experiencia</div>
-  <div class="login-form">
-    <input type="text" class="fi" id="login-name-input" placeholder="Tu nombre..." maxlength="20"/>
-    <button class="login-btn" onclick="submitLogin()">CONTINUAR</button>
+
+  <!-- Huella digital interactiva -->
+  <div class="lk-bottom">
+    <button class="lk-fp" id="lk-fp" onclick="attemptUnlock()" aria-label="Desbloquear">
+      <!-- Anillos de pulso (3 capas para efecto profundo) -->
+      <span class="lk-fp-ring r1"></span>
+      <span class="lk-fp-ring r2"></span>
+      <span class="lk-fp-ring r3"></span>
+      <!-- Línea de scan horizontal -->
+      <span class="lk-fp-scan"></span>
+      <!-- SVG de huella digital real (no simplificado) -->
+      <svg class="lk-fp-ico" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 10 C30 10 14 26 14 46 C14 58 18 69 24 78"/>
+        <path d="M76 22 C86 30 92 42 92 56 C92 66 88 75 82 82"/>
+        <path d="M50 26 C36 26 25 37 25 51 C25 62 31 70 38 76"/>
+        <path d="M75 28 C80 34 83 43 83 53 C83 62 79 70 73 76"/>
+        <path d="M50 42 C44 42 38 48 38 55 C38 61 41 67 45 72 C47 75 48 79 48 83"/>
+        <path d="M62 44 C66 48 68 54 68 61 C68 68 65 74 61 79"/>
+        <path d="M50 58 C50 64 51 70 53 76"/>
+      </svg>
+    </button>
+    <div class="lk-fp-lbl" id="lk-fp-lbl">TOCÁ PARA ENTRAR</div>
   </div>
 </div>
 
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 3: LOGIN
+  ══════════════════════════════════════════════════════════════
+  Aparece solo la PRIMERA VEZ que el usuario abre la app.
+  Pide que ingrese su nombre de usuario.
+
+  JS (script.js): checkLogin(), submitLogin()
+  ══════════════════════════════════════════════════════════════
+-->
+<div id="login-screen" class="hidden">
+  <div class="login-card">
+    <div class="login-logo">
+      <img id="login-logo-img" src="" alt="" style="display:none"/>
+      <span id="login-logo-fb">LSL</span>
+    </div>
+    <div class="login-title" id="login-app-name">La Súper Liga</div>
+    <div class="login-sub">Ingresá tu nombre para comenzar</div>
+    <input type="text" class="login-input" id="login-name-input"
+      placeholder="Tu nombre..." maxlength="24"
+      onkeydown="if(event.key==='Enter')submitLogin()"/>
+    <button class="login-btn" onclick="submitLogin()">ENTRAR</button>
+  </div>
+</div>
+
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 4–10: APP (todo lo demás vive aquí)
+  ══════════════════════════════════════════════════════════════
+-->
 <div id="app">
-<!-- ISLA DINÁMICA -->
+
+<!--
+  ── SECCIÓN 4: DYNAMIC ISLAND ─────────────────────────────
+  Barra negra superior que muestra música en reproducción
+  y notificaciones en tiempo real.
+
+  Estados:
+    - Colapsada: ícono de canción + barras de sonido
+    - Notify:    banner ancho con ícono + texto
+    - Expanded:  reproductor completo con controles
+
+  JS (script.js):
+    initDynamicIsland()      — configura eventos táctiles
+    triggerIslandNotify()    — muestra notificación
+    expandIsland()/collapseIsland() — expande/colapsa
+    islandPlayPause()        — play/pause desde la isla
+
+  CSS (style.css): buscar [ISLAND]
+  ─────────────────────────────────────────────────────────→ -->
 <audio id="native-audio" preload="metadata"></audio>
 <div id="dynamic-island">
-  <!-- VISTA 1: CERRADO -->
   <div id="island-collapsed">
-    <div id="mini-cover" class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg></div>
-    <div class="island-waveform"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+    <div id="mini-cover" class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg>
+    </div>
+    <div class="island-waveform">
+      <div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div>
+    </div>
   </div>
-  <!-- VISTA 2: NOTIFICACIÓN -->
   <div id="island-notify">
     <div class="notify-icon-wrapper">
       <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
     </div>
     <div class="notify-text-wrapper">
       <h4 id="island-notif-title">Notificación</h4>
-      <p id="island-notif-body">Mensaje aquí...</p>
+      <p id="island-notif-body">Mensaje...</p>
     </div>
   </div>
-  <!-- VISTA 3: REPRODUCTOR EXPANDIDO -->
   <div id="island-expanded">
     <div class="island-header">
       <div class="island-song-info">
-        <div id="island-cover" class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg></div>
+        <div id="island-cover" class="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg>
+        </div>
         <div class="island-song-text">
           <h3 id="island-song-title">Sin reproducción</h3>
           <p id="island-song-artist">La Súper Liga</p>
@@ -74,152 +230,409 @@
     </div>
     <div class="island-progress-row">
       <span id="island-time-current">0:00</span>
-      <div id="island-progress-container" class="island-progress-bar"><div id="island-progress-fill" class="island-progress-fill"><div class="island-progress-thumb"></div></div></div>
+      <div id="island-progress-container" class="island-progress-bar">
+        <div id="island-progress-fill" class="island-progress-fill">
+          <div class="island-progress-thumb"></div>
+        </div>
+      </div>
       <span id="island-time-total">0:00</span>
     </div>
     <div class="island-volume-row">
-      <button class="island-btn" id="island-btn-mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg></button>
-      <div id="island-volume-container" class="island-volume-bar"><div id="island-volume-fill" class="island-volume-fill"><div class="island-volume-thumb"></div></div></div>
-    </div>
-  </div>
-</div>
-<div class="amb" id="ab-top"></div>
-<div class="amb" id="ab-bot"></div>
-<div class="amb" id="ab-mid"></div>
-
-<!-- HEADER -->
-<header id="hdr">
-  <div class="hrow">
-    <div class="hl">
-      <div id="hlogo" onclick="onLogoTap()">
-        <div id="hlogo-ring"></div>
-        <img id="logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover"/>
-        <span id="logo-fb" style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.5px;color:var(--text)">LSL</span>
-      </div>
-      <div class="hi">
-        <div class="hn" id="hname">La Súper Liga</div>
-        <div class="hsub">
-          <span class="hse" id="hseason">T9 "Reinicio"</span>
-          <span class="spill"><span class="sdot" id="hdot"></span><span id="hstatus">En curso</span></span>
+      <button class="island-btn" id="island-btn-mute" style="width:22px;height:22px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      </button>
+      <div id="island-volume-container" class="island-volume-bar">
+        <div id="island-volume-fill" class="island-volume-fill">
+          <div class="island-volume-thumb"></div>
         </div>
       </div>
     </div>
-    <div class="hacts">
-      <button class="hbtn" onclick="openNotifs()" style="position:relative"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="nbadge hidden" id="nbadge">0</span></button>
-      <button class="hbtn rnd" onclick="go('perfil')"><img id="hav-img" src="" alt="" style="display:none"/><span class="avi" id="hav-init">J</span></button>
-      <button class="mbtn" onclick="openMenu()"><span></span><span></span><span></span></button>
+  </div>
+</div>
+
+<!--
+  ── SECCIÓN 5: HEADER ──────────────────────────────────────
+  Barra superior fija con:
+    - Fila de estado: reloj + widget "batería" (próximo partido)
+    - Logo de la liga
+    - Nombre y temporada
+    - Botones: notificaciones, avatar/perfil
+
+  IDs:
+    #hdr-clock        — reloj actualizado cada 30s
+    #next-match-pill  — pill tocable de cuenta regresiva
+    #hdr-batt-fill    — relleno de la "batería" (% = tiempo restante)
+    #next-match-time  — texto "2h 15m"
+    #hlogo            — logo (toque largo = acceso admin)
+    #logo-img         — imagen del logo
+    #logo-fb          — texto fallback "LSL"
+    #hname            — nombre de la liga
+    #hseason          — temporada
+    #hdot             — punto de estado (vivo = rojo parpadeante)
+    #hstatus          — texto de estado ("En curso")
+    #nbadge           — badge de notificaciones sin leer
+    #hav-img          — foto de perfil del usuario
+    #hav-init         — inicial del nombre
+
+  JS (script.js):
+    updateHdr()                 — actualiza nombre, logo, temporada
+    updateNextMatchCountdown()  — actualiza batería cada 30s
+    onLogoTap()                 — detecta toque múltiple para admin
+
+  CSS (style.css): buscar [HEADER]
+  ─────────────────────────────────────────────────────────→ -->
+<header id="hdr">
+  <!-- Fila de estado: reloj + próximo partido -->
+  <div class="hdr-status">
+    <div class="hdr-clock" id="hdr-clock">21:04</div>
+    <div class="hdr-next" id="next-match-pill" onclick="go('partidos')" title="Próximo partido">
+      <div class="hdr-batt">
+        <div class="hdr-batt-body">
+          <div class="hdr-batt-fill" id="hdr-batt-fill" style="width:70%"></div>
+        </div>
+        <div class="hdr-batt-tip"></div>
+      </div>
+      <span class="hdr-next-time" id="next-match-time">--:--</span>
+    </div>
+  </div>
+  <!-- Fila principal -->
+  <div class="hdr-main">
+    <div class="hdr-logo" id="hlogo" onclick="onLogoTap()">
+      <div id="hlogo-ring"></div>
+      <img id="logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+      <span id="logo-fb">LSL</span>
+    </div>
+    <div class="hdr-info">
+      <div class="hdr-name" id="hname">La Súper Liga</div>
+      <div class="hdr-sub">
+        <span class="hdr-season" id="hseason">T9</span>
+        <span class="hdr-badge">
+          <span class="hdr-dot" id="hdot"></span>
+          <span id="hstatus">En curso</span>
+        </span>
+      </div>
+    </div>
+    <div class="hdr-acts">
+      <button class="hdr-btn" onclick="openSettings()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+      <button class="hdr-btn" onclick="openNotifs()" style="position:relative">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="nbadge hidden" id="nbadge">0</span>
+      </button>
+      <button class="hdr-btn rnd" onclick="go('perfil')">
+        <img id="hav-img" src="" alt="" style="display:none"/>
+        <span class="hdr-btn-init" id="hav-init">J</span>
+      </button>
     </div>
   </div>
 </header>
 
-<!-- EDIT MODE BAR (hidden by default) -->
-<div class="edit-mode-bar hidden" id="edit-bar">
-  <span>MODO EDICIÓN</span>
-  <button class="edit-mode-btn sec" onclick="resetEditMode()">Resetear</button>
-  <button class="edit-mode-btn" onclick="saveEditMode()">Guardar</button>
-</div>
+<!--
+  ── SECCIÓN 6: PAGES ───────────────────────────────────────
+  Contenedor de todas las páginas de la app.
+  Solo una tiene .active al mismo tiempo.
+  La transición entre páginas la maneja go() en script.js.
+  ─────────────────────────────────────────────────────────→ -->
+<div class="pages">
 
-  <div id="di-mini-waves">
-    <div class="di-wave"></div><div class="di-wave"></div>
-    <div class="di-wave"></div><div class="di-wave"></div>
-  </div>
-  
-<div id="scroll">
+  <!--
+    ── 6a. INICIO ────────────────────────────────────────────
+    Página principal con:
+      - Saludo personalizado
+      - Carrusel de partidos destacados (auto-rotante 7s)
+      - Noticias en scroll horizontal (auto-rotante 7s)
+      - Mini tabla de posiciones
 
-<!-- INICIO -->
-<div class="page active" id="pg-inicio">
-  <div class="greet">
-    <div class="ghi" id="greet-time">Buenas tardes</div>
-    <div class="gnm"><span id="greet-user">joelito</span><span class="wv">&#x1F44B;</span></div>
-    <div class="gsea" id="greet-sea">TEMPORADA 9</div>
-  </div>
-  <div class="sec"><div class="sechd"><div class="sect">Destacados</div><div class="secm" onclick="go('partidos')">Ver todos</div></div></div>
-  <div class="hscroll" id="feat-m"><div class="empty" style="width:100%;padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div></div>
-  <div class="sec"><div class="sechd"><div class="sect">Noticias</div><div class="secm" onclick="go('info')">Ver todo</div></div><div id="feat-n"><div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div></div></div>
-  <div class="sec"><div class="sechd"><div class="sect">Tabla</div><div class="secm" onclick="go('info')">Completa</div></div><div id="mini-tbl" style="padding-bottom:16px"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div></div></div>
-</div>
+    IDs:
+      #greet-time  — "Buenas tardes"
+      #greet-user  — nombre del usuario
+      #greet-sea   — "TEMPORADA 9"
+      #feat-m      — track del carrusel de partidos
+      #feat-dots   — indicadores del carrusel
+      #feat-n      — scroll horizontal de noticias
+      #mini-tbl    — mini tabla
 
-<!-- PARTIDOS -->
-<div class="page" id="pg-partidos">
-  <div class="page-hdr">
-    <div class="page-hdr-title">Partidos</div>
-    <div class="page-hdr-sub" id="ph-partidos-sub">Todos los encuentros</div>
-  </div>
-  <div class="chips">
-    <div class="chip on" onclick="flt('todos',this)">Todos</div>
-    <div class="chip" onclick="flt('proximo',this)">Próximos</div>
-    <div class="chip" onclick="flt('en_vivo',this)">En vivo</div>
-    <div class="chip" onclick="flt('finalizado',this)">Finalizados</div>
-  </div>
-  <div id="mlist"><div class="empty"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div></div>
-</div>
+    JS (script.js):
+      renderFeatM()        — genera tarjetas de partidos
+      renderFeatN()        — genera tarjetas de noticias
+      renderMiniTbl()      — genera tabla reducida
+      startCarouselAuto()  — inicia auto-rotación 7s
+      startNewsAuto()      — inicia auto-rotación noticias 7s
 
-<!-- INFO -->
-<div class="page" id="pg-info">
-  <div class="page-hdr">
-    <div class="page-hdr-title">Liga</div>
-    <div class="page-hdr-sub" id="ph-liga-sub">Tabla, reglamento y noticias</div>
-  </div>
-  <div style="padding:16px 0 0">
-    <div class="sechd" style="padding:0 14px 12px"><div class="sect">Tabla de posiciones</div></div>
-    <div style="padding:0 14px 14px;overflow-x:auto">
-      <div class="stw" style="min-width:340px">
-        <table class="stt"><thead><tr>
-          <th>#</th><th>Equipo</th><th title="Partidos Jugados">PJ</th><th title="Ganados">PG</th><th title="Empates">PE</th><th title="Perdidos">PP</th><th title="Goles a Favor">GF</th><th title="Goles en Contra">GC</th><th title="Diferencia de Goles">DG</th><th title="Puntos">Pts</th>
-        </tr></thead><tbody id="ftbody"><tr><td colspan="10"><div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin datos</div></div></td></tr></tbody></table>
+    CSS (style.css): [CAROUSEL], [MATCHCARD], [NEWSCARD]
+    ──────────────────────────────────────────────────────── -->
+  <div class="page active" id="pg-inicio">
+    <div class="greet">
+      <div class="greet-hi" id="greet-time">Buenas tardes</div>
+      <div class="greet-name">
+        <span id="greet-user">joelito</span>
+        <span class="greet-wave">👋</span>
+      </div>
+      <div class="greet-season" id="greet-sea">TEMPORADA 9</div>
+    </div>
+
+    <!-- Carrusel de partidos destacados -->
+    <div class="sec">
+      <div class="sec-hd">
+        <div class="sec-title">Destacados</div>
+        <div class="sec-more" onclick="go('partidos')">Ver todos →</div>
       </div>
     </div>
-    <div class="sechd" style="padding:0 14px 12px"><div class="sect">Sanciones / Lesiones</div></div>
-    <div style="padding:0 14px 14px"><div class="ibox" id="sanc-box"><div class="empty"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sancionados</div></div></div></div>
-    <div class="sechd" style="padding:0 14px 12px"><div class="sect">Reglamento</div></div>
-    <div style="padding:0 14px 14px"><div class="ibox"><ol class="rules-list" id="rules-list"><li style="color:var(--t2);font-size:13px">El reglamento será publicado pronto.</li></ol></div></div>
-    <div class="sechd" style="padding:0 14px 12px"><div class="sect">Información</div></div>
-    <div style="padding:0 14px 14px"><div class="ibox"><ol class="rules-list" id="info-list"><li style="color:var(--t2);font-size:13px">La información será publicada pronto.</li></ol></div></div>
-  </div>
-</div>
+    <div class="feat-wrap">
+      <div class="feat-track" id="feat-m">
+        <div class="empty" style="width:100%;padding:14px 0">
+          <div class="etic">⚽</div>
+          <div class="etit">Sin partidos</div>
+        </div>
+      </div>
+      <div class="feat-dots" id="feat-dots"></div>
+    </div>
 
-<!-- PERFIL -->
-<div class="page" id="pg-perfil">
-  <div class="page-hdr">
-    <div class="page-hdr-title">Perfil</div>
-    <div class="page-hdr-sub">Tu cuenta y estadísticas</div>
-  </div>
-  <div class="pban" onclick="triggerBanner()" style="position:relative">
-    <video id="pban-video" autoplay muted loop playsinline style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></video>
-    <img id="pban-img" src="" alt="" style="display:none"/>
-    <div class="pbanph" id="pbanph"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Banner / Video</span></div>
-    <div class="pbanedit">Cambiar</div>
-  </div>
-  <div class="phdr">
-    <div class="pavw"><div class="pav" id="pav"><img id="pav-img" src="" style="display:none"/><span id="pav-init">J</span></div><div class="paved" onclick="triggerAvatar()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div></div>
-    <div class="pnm" id="pnm">joelito</div>
-    <div class="pbio" id="pbio">Sin bio aún.</div>
-    <div class="ptb" onclick="openTeamPicker()"><div class="ptbcr" id="ptbcr">⚽</div><span class="ptbnm" id="ptbnm">Sin equipo favorito</span></div>
-  </div>
-  <div class="pstats"><div class="pst"><div class="pstv" id="ps-pj">0</div><div class="pstl">Partidos</div></div><div class="pst"><div class="pstv" id="ps-gf">0</div><div class="pstl">Goles</div></div><div class="pst"><div class="pstv" id="ps-rk">-</div><div class="pstl">Ranking</div></div></div>
-  <!-- Asistencia button -->
-  <div style="padding:0 14px 8px">
-    <button onclick="openAsist()" class="asist-tag-btn">
-      <div class="asist-tag-ico">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z"/></svg>
+    <!-- Noticias horizontales auto-rotantes -->
+    <div class="sec">
+      <div class="sec-hd">
+        <div class="sec-title">Noticias</div>
+        <div class="sec-more" onclick="go('info')">Ver todo →</div>
       </div>
-      <div class="asist-tag-txt">
-        <div class="asist-tag-t">Asistencia de partidos</div>
-        <div class="asist-tag-s">Confirmá tu presencia y chateá</div>
+    </div>
+    <div class="hscroll" id="feat-n" style="margin-bottom:4px">
+      <div class="empty" style="padding:14px 0">
+        <div class="etic">📰</div><div class="etit">Sin noticias</div>
       </div>
-      <svg class="asist-tag-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+
+    <!-- Mini tabla -->
+    <div class="sec">
+      <div class="sec-hd">
+        <div class="sec-title">Tabla</div>
+        <div class="sec-more" onclick="go('info')">Completa →</div>
+      </div>
+      <div id="mini-tbl" style="padding-bottom:16px">
+        <div class="empty">
+          <div class="etic">🏆</div><div class="etit">Sin equipos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    ── 6b. PARTIDOS ──────────────────────────────────────────
+    Lista completa de partidos con filtros por estado.
+
+    IDs:
+      #mlist            — lista de partidos renderizada
+      .chip             — filtros (Todos/Próximos/En vivo/Finalizados)
+
+    JS (script.js):
+      renderMList()     — genera rows de partidos
+      flt(f,el)         — cambia el filtro activo
+      openMatch(id)     — abre detalle de partido
+
+    CSS (style.css): [MATCHROW], [CHIPS]
+    ──────────────────────────────────────────────────────── -->
+  <div class="page" id="pg-partidos">
+    <div class="pg-hdr">
+      <div class="pg-hdr-title">Partidos</div>
+      <div class="pg-hdr-sub">Todos los encuentros</div>
+    </div>
+    <div class="chips">
+      <div class="chip on" onclick="flt('todos',this)">Todos</div>
+      <div class="chip" onclick="flt('proximo',this)">Próximos</div>
+      <div class="chip" onclick="flt('en_vivo',this)">En vivo</div>
+      <div class="chip" onclick="flt('finalizado',this)">Finalizados</div>
+    </div>
+    <div id="mlist" style="padding:12px 0">
+      <div class="empty">
+        <div class="etic">⚽</div><div class="etit">Sin partidos</div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    ── 6c. LIGA ──────────────────────────────────────────────
+    Información de la liga: tabla, sanciones, reglamento.
+
+    IDs:
+      #ftbody       — tbody de la tabla de posiciones
+      #sanc-box     — lista de sancionados
+      #rules-list   — lista de reglas
+      #info-list    — lista de info adicional
+
+    JS (script.js):
+      renderFTbl()  — genera tabla de posiciones
+      renderSanc()  — genera lista de sanciones
+      renderInfo()  — genera info/reglamento
+
+    CSS (style.css): [TABLE]
+    ──────────────────────────────────────────────────────── -->
+  <div class="page" id="pg-info">
+    <div class="pg-hdr">
+      <div class="pg-hdr-title">Liga</div>
+      <div class="pg-hdr-sub">Tabla, sanciones y reglamento</div>
+    </div>
+    <div class="sec" style="margin-top:8px">
+      <div class="sec-hd"><div class="sec-title">Posiciones</div></div>
+      <div class="stw">
+        <table class="stt">
+          <thead><tr>
+            <th>#</th><th>Equipo</th>
+            <th title="Partidos Jugados">PJ</th>
+            <th title="Ganados">PG</th>
+            <th title="Empates">PE</th>
+            <th title="Perdidos">PP</th>
+            <th title="Goles a Favor">GF</th>
+            <th title="Goles en Contra">GC</th>
+            <th title="Diferencia">DG</th>
+            <th title="Puntos">Pts</th>
+          </tr></thead>
+          <tbody id="ftbody">
+            <tr><td colspan="10">
+              <div class="empty"><div class="etic">🏆</div><div class="etit">Sin datos</div></div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="sec" style="margin-top:16px">
+      <div class="sec-hd"><div class="sec-title">Sanciones</div></div>
+      <div class="ibox" id="sanc-box">
+        <div class="empty"><div class="etic">🟨</div><div class="etit">Sin sancionados</div></div>
+      </div>
+    </div>
+    <div class="sec" style="margin-top:8px">
+      <div class="sec-hd"><div class="sec-title">Reglamento</div></div>
+      <div class="ibox">
+        <ol class="rules-list" id="rules-list">
+          <li style="color:var(--txt3);font-size:13px">El reglamento será publicado pronto.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="sec" style="margin-top:8px">
+      <div class="sec-hd"><div class="sec-title">Información</div></div>
+      <div class="ibox" style="margin-bottom:20px">
+        <ol class="rules-list" id="info-list">
+          <li style="color:var(--txt3);font-size:13px">La información será publicada pronto.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    ── 6d. PERFIL ────────────────────────────────────────────
+    Perfil del usuario: banner, avatar, bio, stats,
+    equipo favorito y botón de edición.
+
+    IDs:
+      #pban-video, #pban-img  — banner (video o foto)
+      #pbanph                  — placeholder banner
+      #pav, #pav-img           — avatar
+      #pav-init                — inicial del nombre
+      #pnm                     — nombre del usuario
+      #pbio                    — bio del usuario
+      #ptbcr, #ptbnm           — escudo y nombre del equipo favorito
+      #ps-pj, #ps-gf, #ps-rk  — stats (partidos, goles, ranking)
+
+    JS (script.js):
+      triggerBanner()   — abre selector de imagen/video de banner
+      triggerAvatar()   — abre selector de foto de perfil
+      openProfEdit()    — abre modal de edición de perfil
+      saveProfEdit()    — guarda nombre y bio
+      openTeamPicker()  — abre selector de equipo favorito
+      openAsist()       — abre sistema de asistencia
+
+    CSS (style.css): [PROFILE]
+    ──────────────────────────────────────────────────────── -->
+  <div class="page" id="pg-perfil">
+    <!-- Banner -->
+    <div class="pban" onclick="triggerBanner()">
+      <video id="pban-video" autoplay muted loop playsinline style="display:none"></video>
+      <img id="pban-img" src="" alt="" style="display:none"/>
+      <div class="pbanph" id="pbanph">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>Banner / Video</span>
+      </div>
+      <div class="pbanedit">Cambiar</div>
+    </div>
+    <!-- Avatar + info -->
+    <div class="phdr">
+      <div class="pavw">
+        <div class="pav" id="pav">
+          <img id="pav-img" src="" style="display:none"/>
+          <span id="pav-init">J</span>
+        </div>
+        <div class="paved" onclick="triggerAvatar()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+        </div>
+      </div>
+      <div class="pnm" id="pnm">joelito</div>
+      <div class="pbio" id="pbio">Sin bio aún.</div>
+      <div class="ptb" onclick="openTeamPicker()">
+        <div class="ptbcr" id="ptbcr">⚽</div>
+        <span class="ptbnm" id="ptbnm">Sin equipo favorito</span>
+      </div>
+    </div>
+    <!-- Stats -->
+    <div class="pstats">
+      <div class="pst"><div class="pstv" id="ps-pj">0</div><div class="pstl">Partidos</div></div>
+      <div class="pst"><div class="pstv" id="ps-gf">0</div><div class="pstl">Goles</div></div>
+      <div class="pst"><div class="pstv" id="ps-rk">-</div><div class="pstl">Ranking</div></div>
+    </div>
+    <!-- Asistencia -->
+    <div style="padding:0 18px 8px">
+      <button onclick="openAsist()" class="asist-tag-btn">
+        <div class="asist-tag-ico">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z"/></svg>
+        </div>
+        <div class="asist-tag-txt">
+          <div class="asist-tag-t">Asistencia de partidos</div>
+          <div class="asist-tag-s">Confirmá tu presencia y chateá</div>
+        </div>
+        <svg class="asist-tag-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+    <button class="pedbtn" onclick="openProfEdit()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Editar perfil
     </button>
   </div>
-  <button class="pedbtn" onclick="openProfEdit()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Editar perfil</button>
-</div>
 
-<!-- ADMIN -->
-<div class="page" id="pg-admin">
+  <!--
+    ── 6e. ADMIN ─────────────────────────────────────────────
+    Panel de administración completo.
+    Acceso protegido por contraseña.
+
+    Secciones del admin (tabs):
+      - matches   : gestión de partidos
+      - teams     : equipos
+      - players   : jugadores
+      - referees  : árbitros
+      - news      : noticias
+      - channels  : canales de TV
+      - sanctions : sanciones
+      - sponsors  : sponsors
+      - season    : temporada
+      - stats     : estadísticas
+      - config    : configuración visual
+      - supabase  : sincronización BD
+      - music     : playlist isla dinámica
+      - announce  : carteles/avisos
+      - appupdate : actualización de la app
+      - editui    : editor visual de la UI
+
+    JS (script.js):
+      admGo(section)   — navega al hub del admin
+      admTab(name,el)  — activa un tab específico
+      verifyAdmin()    — verifica contraseña
+
+    CSS (style.css): [ADMIN]
+    ──────────────────────────────────────────────────────── -->
+  <div class="page" id="pg-admin">
   <div class="adm-hdr">
     <div class="adm-hdr-title" id="adm-hdr-title">Panel Admin</div>
     <div class="adm-hdr-acts">
-      <button onclick="openEditUI()" style="padding:6px 13px;border-radius:10px;background:rgba(var(--amb-color),.12);border:1px solid rgba(var(--amb-color),.25);font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent2);cursor:pointer" id="edit-mode-toggle">✏️ Editar UI</button>
-      <span style="background:rgba(var(--amb-color),.12);border:1px solid rgba(var(--amb-color),.25);border-radius:8px;padding:4px 10px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2)">ADMIN</span>
+      <button onclick="toggleEditMode()" style="padding:6px 13px;border-radius:10px;background:rgba(var(--p-rgb),.12);border:1px solid rgba(var(--p-rgb),.25);font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--p2);cursor:pointer" id="edit-mode-toggle">✏️ Editar UI</button>
+      <span style="background:rgba(var(--p-rgb),.12);border:1px solid rgba(var(--p-rgb),.25);border-radius:8px;padding:4px 10px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--p2)">ADMIN</span>
     </div>
   </div>
 
@@ -243,12 +656,6 @@
       <div class="adm-hub-sub">Alta y baja de jugadores</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
-    <div class="adm-hub-card adm-hub-referees" onclick="admGo('referees')">
-      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 7L4 13a3 3 0 006 0zM17 7l-3 6a3 3 0 006 0z"/><path d="M5 21h14M9 7h6"/></svg></div>
-      <div class="adm-hub-lbl">Árbitros</div>
-      <div class="adm-hub-sub">Lista de árbitros</div>
-      <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-    </div>
     <div class="adm-hub-card adm-hub-news" onclick="admGo('news')">
       <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 012 2v13a1 1 0 01-1 1H6a2 2 0 01-2-2z"/><path d="M19 4v15a1 1 0 001 1h0a1 1 0 001-1V8"/><path d="M8 8h6M8 12h6M8 16h4"/></svg></div>
       <div class="adm-hub-lbl">Noticias</div>
@@ -267,10 +674,10 @@
       <div class="adm-hub-sub">Tarjetas y suspensiones</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
-    <div class="adm-hub-card adm-hub-sponsors" onclick="admGo('sponsors')">
-      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/><path d="M2 13h20"/></svg></div>
-      <div class="adm-hub-lbl">Sponsors</div>
-      <div class="adm-hub-sub">Patrocinadores</div>
+    <div class="adm-hub-card adm-hub-copa" onclick="admGo('copa')">
+      <div class="adm-hub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 6H4a1 1 0 00-1 1v1a4 4 0 004 4M17 6h3a1 1 0 011 1v1a4 4 0 01-4 4"/></svg></div>
+      <div class="adm-hub-lbl">Copas</div>
+      <div class="adm-hub-sub">Campeones de copas</div>
       <div class="adm-hub-arr"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
     </div>
     <div class="adm-hub-card adm-hub-season" onclick="admGo('season')">
@@ -328,15 +735,14 @@
     <div class="atab on" id="atab-matches" onclick="admTab('matches',this)"><span class="atab-ico">⚽</span>Partidos</div>
     <div class="atab" id="atab-teams" onclick="admTab('teams',this)"><span class="atab-ico">🏆</span>Equipos</div>
     <div class="atab" id="atab-players" onclick="admTab('players',this)"><span class="atab-ico">👤</span>Jugadores</div>
-    <div class="atab" id="atab-referees" onclick="admTab('referees',this)"><span class="atab-ico">👨‍⚖️</span>Árbitros</div>
     <div class="atab" id="atab-news" onclick="admTab('news',this)"><span class="atab-ico">📰</span>Noticias</div>
     <div class="atab" id="atab-channels" onclick="admTab('channels',this)"><span class="atab-ico">📺</span>Canales</div>
     <div class="atab" id="atab-sanctions" onclick="admTab('sanctions',this)"><span class="atab-ico">🟨</span>Sanciones</div>
-    <div class="atab" id="atab-sponsors" onclick="admTab('sponsors',this)"><span class="atab-ico">💼</span>Sponsors</div>
     <div class="atab" id="atab-season" onclick="admTab('season',this)"><span class="atab-ico">🏅</span>Temporada</div>
     <div class="atab" id="atab-stats" onclick="admTab('stats',this)"><span class="atab-ico">📊</span>Stats</div>
     <div class="atab" id="atab-announce" onclick="admTab('announce',this)"><span class="atab-ico">📢</span>Anuncios</div>
     <div class="atab" id="atab-config" onclick="admTab('config',this)"><span class="atab-ico">⚙️</span>Config</div>
+    <div class="atab" id="atab-copa" onclick="admTab('copa',this);renderCopaChampionsList()"><span class="atab-ico">🏆</span>Copas</div>
     <div class="atab" id="atab-supabase" onclick="admTab('supabase',this)"><span class="atab-ico">☁️</span>Base de Datos</div>
     <div class="atab" id="atab-music" onclick="admTab('music',this)"><span class="atab-ico">🎵</span>Música</div>
     <div class="atab" id="atab-codeeditor" onclick="admTab('codeeditor',this)"><span class="atab-ico">💻</span>Código</div>
@@ -352,7 +758,23 @@
       <div class="fl">Fecha y hora</div><input type="datetime-local" class="fi" id="m-dt"/>
       <div class="frow">
         <div class="fgrp"><div class="fl">Competencia</div><select class="fsel" id="m-comp" onchange="updateJornadaPlaceholder()"><option value="liga">Liga</option><option value="copa">Copa</option><option value="amistoso">Amistoso</option></select></div>
-        <div class="fgrp"><div class="fl">Jornada / Fecha</div><input type="text" class="fi" id="m-jornada" placeholder="Ej: Fecha 5"/></div>
+        <div class="fgrp"><div class="fl">Jornada / Fase</div><input type="text" class="fi" id="m-jornada" placeholder="Ej: Fecha 5"/></div>
+        <!-- Campos extra de Copa — se muestran solo cuando competition=copa -->
+        <div id="copa-extra-fields" style="display:none">
+          <div class="fl">Nombre de la copa</div>
+          <input type="text" class="fi" id="m-copa-name" placeholder="Ej: Copa Oro, Copa Plata..."/>
+          <div class="cfg-row" style="padding:10px 0;border:none">
+            <div class="cfg-row-txt">
+              <div class="cfg-row-t">Es partido de Vuelta</div>
+              <div class="cfg-row-s">Mostrará el resultado de la Ida entre paréntesis</div>
+            </div>
+            <input type="checkbox" id="m-vuelta" onchange="toggleVueltaField()" style="width:18px;height:18px;accent-color:var(--p);cursor:pointer"/>
+          </div>
+          <div id="ida-result-row" style="display:none">
+            <div class="fl">Resultado de la Ida</div>
+            <input type="text" class="fi" id="m-ida-result" placeholder="Ej: 2-1 (local ganó la ida)"/>
+          </div>
+        </div>
       </div>
       <div class="frow">
         <div class="fgrp"><div class="fl">Estadio</div><input type="text" class="fi" id="m-stad" placeholder="Estadio..."/></div>
@@ -433,31 +855,6 @@
     <div id="adm-ch-list"></div>
   </div>
   <!-- REFEREES -->
-  <div class="apane" id="adm-referees">
-    <div class="atit">Agregar árbitro</div>
-    <div class="aform">
-      <div class="fl">Nombre completo</div><input type="text" class="fi" id="ref-name" placeholder="Nombre del árbitro..."/>
-      <div class="fl">Categoría</div>
-      <select class="fsel" id="ref-cat"><option value="principal">Principal</option><option value="asistente">Asistente</option><option value="var">VAR</option></select>
-      <button class="abtn" onclick="saveReferee()">AGREGAR ÁRBITRO</button>
-    </div>
-    <div class="atit" style="margin-top:4px">Registrados</div>
-    <div id="adm-ref-list"><div class="empty" style="padding:14px 0"><div class="etic">👨‍⚖️</div><div class="etit">Sin árbitros</div></div></div>
-  </div>
-  <!-- SPONSORS -->
-  <div class="apane" id="adm-sponsors">
-    <div class="atit">Agregar sponsor</div>
-    <div class="aform">
-      <div class="fl">Nombre</div><input type="text" class="fi" id="sp-name" placeholder="Nombre del sponsor..."/>
-      <div class="fl">Tipo</div>
-      <select class="fsel" id="sp-type"><option value="principal">Principal</option><option value="oficial">Oficial</option><option value="colaborador">Colaborador</option></select>
-      <button class="fupbtn" id="sp-logo-btn" onclick="document.getElementById('sp-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="sp-logo-txt">Logo del sponsor</span></button>
-      <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="sp-logo-fi" onchange="handleFile(event,'pendingSponsorLogo','sp-logo-btn','sp-logo-txt')"/>
-      <button class="abtn" onclick="saveSponsor()">GUARDAR SPONSOR</button>
-    </div>
-    <div class="atit" style="margin-top:4px">Sponsors registrados</div>
-    <div id="adm-sp-list"><div class="empty" style="padding:14px 0"><div class="etic">💼</div><div class="etit">Sin sponsors</div></div></div>
-  </div>
   <!-- STATS -->
   <div class="apane" id="adm-stats">
     <div class="adm-section-header adm-sec-stats"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v4h-4"/></svg></div><div class="adm-sec-lbl">ESTADÍSTICAS</div></div>
@@ -526,15 +923,17 @@
 
       <div class="fl">Color de texto</div>
       <div style="display:flex;gap:10px;align-items:center">
-        <input type="color" class="cbg-color-input" id="an-text-color" value="#ffffff"/>
-        <span style="font-size:11px;color:var(--t2)">Color de la letra del cartel</span>
+        <input type="color" class="cbg-color-input" id="an-text-color" value="#ffffff" oninput="syncColorHex('an-text-color','an-text-color-hex')"/>
+        <input type="text" class="fi" id="an-text-color-hex" placeholder="FFFFFF" style="margin-bottom:0;width:90px;font-family:'DM Mono',monospace;text-transform:uppercase" value="FFFFFF" onfocus="this.select()" oninput="this.value=this.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')applyColorFromHex('an-text-color-hex','an-text-color')"/>
+        <span style="font-size:11px;color:var(--t2)">Color de la letra</span>
       </div>
 
-      <div class="fl" style="margin-top:10px">Fondo del cartel</div>
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">
-        <input type="color" class="cbg-color-input" id="an-bg-1" value="#4f46e5"/>
-        <input type="color" class="cbg-color-input" id="an-bg-2" value="#818cf8"/>
-        <span style="font-size:11px;color:var(--t2)">Degradado (2 colores)</span>
+      <div class="fl" style="margin-top:10px">Fondo del cartel (degradado)</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+        <input type="color" class="cbg-color-input" id="an-bg-1" value="#4f46e5" oninput="syncColorHex('an-bg-1','an-bg-1-hex')"/>
+        <input type="text" class="fi" id="an-bg-1-hex" placeholder="4F46E5" style="margin-bottom:0;width:80px;font-family:'DM Mono',monospace;text-transform:uppercase" value="4F46E5" onfocus="this.select()" oninput="this.value=this.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')applyColorFromHex('an-bg-1-hex','an-bg-1')"/>
+        <input type="color" class="cbg-color-input" id="an-bg-2" value="#818cf8" oninput="syncColorHex('an-bg-2','an-bg-2-hex')"/>
+        <input type="text" class="fi" id="an-bg-2-hex" placeholder="818CF8" style="margin-bottom:0;width:80px;font-family:'DM Mono',monospace;text-transform:uppercase" value="818CF8" onfocus="this.select()" oninput="this.value=this.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')applyColorFromHex('an-bg-2-hex','an-bg-2')"/>
       </div>
 
       <div class="fl">Animación</div>
@@ -594,6 +993,23 @@
     </div>
     <div class="atit" style="margin-top:4px">Carteles activos</div>
     <div id="adm-announce-list"><div class="empty" style="padding:14px 0"><div class="etic">📢</div><div class="etit">Sin anuncios todavía</div></div></div>
+  </div>
+  <!-- COPA CHAMPIONS -->
+  <div class="apane" id="adm-copa">
+    <div class="atit">🏆 Campeones de Copas</div>
+    <div class="aform">
+      <div class="fl">Nombre de la copa</div>
+      <input type="text" class="fi" id="cc-name" placeholder="Ej: Copa Oro, Copa Plata..."/>
+      <div class="fl">Temporada</div>
+      <input type="text" class="fi" id="cc-season" placeholder="Ej: T9 2026"/>
+      <div class="fl">Equipo campeón</div>
+      <select class="fsel" id="cc-winner" style="margin-bottom:10px">
+        <option value="">Seleccionar equipo...</option>
+      </select>
+      <button class="abtn" onclick="saveCopaChampion()">🏆 REGISTRAR CAMPEÓN</button>
+    </div>
+    <div class="atit" style="margin-top:4px">Historial</div>
+    <div id="adm-copa-list"></div>
   </div>
   <div class="apane" id="adm-config">
     <div class="atit">Configuración</div>
@@ -903,477 +1319,259 @@
 </div><!-- /scroll -->
 
 <!-- NAV ISLAND -->
+
+</div><!-- /pg-admin -->
+
+</div><!-- /pages -->
+
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 7: NAVEGACIÓN INFERIOR
+  ══════════════════════════════════════════════════════════════
+  Barra de navegación: el ícono activo se resalta IN-PLACE,
+  sin subir ni salir de la barra. Una burbuja de fondo
+  (#nav-bubble) se desliza detrás del ícono activo.
+
+  Íconos:
+    ni-inicio   → Home (casa)
+    ni-partidos → Partidos (pelota de fútbol)
+    ni-info     → Liga (copa/trofeo)
+    ni-perfil   → Perfil (persona)
+    ni-config   → Configuración (engranaje)
+    ni-admin    → Admin (escudo) — solo visible si isAdmin
+
+  JS (script.js):
+    go(page)          — cambia de página y mueve la burbuja
+    moveNavBubble()   — calcula posición X y anima la burbuja
+    moveNavBubble()   se llama desde go() y en resize
+
+  CSS (style.css): buscar [NAV]
+  ══════════════════════════════════════════════════════════════
+-->
 <nav id="nav">
-  <!-- INICIO — Casa pill moderna -->
-  <div class="ni on" id="ni-inicio" onclick="go('inicio')">
-    <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Stroke: casa vacía -->
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
-          d="M2.5 10.8L12 3l9.5 7.8V21a1 1 0 01-1 1H15v-6H9v6H3.5a1 1 0 01-1-1V10.8z"/>
-        <!-- Fill: relleno interior semitransparente -->
-        <path class="ico-fill" fill="currentColor" opacity=".14"
-          d="M2.5 10.8L12 3l9.5 7.8V21a1 1 0 01-1 1H15v-6H9v6H3.5a1 1 0 01-1-1V10.8z"/>
-        <!-- Detalle: puerta -->
-        <rect class="ico-stroke" stroke="currentColor" stroke-width="1.4" x="9.5" y="15.5" width="5" height="6.5" rx=".8"/>
+  <div class="nav-pill">
+    <!--
+      Burbuja de fondo: se desliza detrás del ícono activo,
+      quedando fija dentro de la barra (sin flotar por fuera).
+    -->
+    <div id="nav-bubble"></div>
+    <!-- Ítems de nav -->
+    <div class="ni on" id="ni-inicio" onclick="go('inicio')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H15v-5h-6v5H4a1 1 0 01-1-1V9.5z"/>
       </svg>
+      <span class="ni-lbl">Inicio</span>
     </div>
-    <div class="nilbl">Inicio</div>
-  </div>
-
-  <!-- PARTIDOS — Balón de fútbol realista -->
-  <div class="ni" id="ni-partidos" onclick="go('partidos')">
-    <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.7" cx="12" cy="12" r="9.5"/>
-        <circle class="ico-fill" fill="currentColor" opacity=".1" cx="12" cy="12" r="9.5"/>
-        <!-- Hexágono central -->
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"
-          d="M12 8.2l3 2.2-.95 3.1h-4.1L9 10.4 12 8.2z"/>
-        <!-- Líneas exteriores del balón -->
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
-          d="M12 2.5v5.7M9 10.4L4 8.7M9.95 13.5L8 18.8M14.05 13.5L16 18.8M15 10.4L20 8.7"/>
+    <div class="ni" id="ni-partidos" onclick="go('partidos')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 8l2.5 2-1 3h-3l-1-3L12 8z"/>
+        <path d="M12 3v5M9.5 10.5l-4-2M14.5 10.5l4-2M10.5 16l-2 4M13.5 16l2 4"/>
       </svg>
+      <span class="ni-lbl">Partidos</span>
     </div>
-    <div class="nilbl">Partidos</div>
-  </div>
-
-  <!-- LIGA — Trofeo / copa -->
-  <div class="ni" id="ni-info" onclick="go('info')">
-    <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
-          d="M8 3h8l-1.5 9a4.5 4.5 0 01-9 0L8 3z"/>
-        <path class="ico-fill" fill="currentColor" opacity=".12"
-          d="M8 3h8l-1.5 9a4.5 4.5 0 01-9 0L8 3z"/>
-        <!-- Asas de la copa -->
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          d="M6.5 5.5C4.5 5.5 3 7 3 9s1.5 3.5 3.5 3.5"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          d="M17.5 5.5C19.5 5.5 21 7 21 9s-1.5 3.5-3.5 3.5"/>
-        <!-- Pie de la copa -->
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-          d="M12 16.5v3M9 21h6"/>
+    <div class="ni" id="ni-info" onclick="go('info')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3h8l-1.5 9a4.5 4.5 0 01-9 0L8 3z"/>
+        <path d="M6 5.5C4 5.5 2.5 7 2.5 9S4 12.5 6 12.5"/>
+        <path d="M18 5.5C20 5.5 21.5 7 21.5 9S20 12.5 18 12.5"/>
+        <path d="M12 16.5v3M9 21h6"/>
       </svg>
+      <span class="ni-lbl">Liga</span>
     </div>
-    <div class="nilbl">Liga</div>
-  </div>
-
-  <!-- PERFIL — Silueta moderna con collar -->
-  <div class="ni" id="ni-perfil" onclick="go('perfil')">
-    <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cabeza -->
-        <circle class="ico-stroke" stroke="currentColor" stroke-width="1.7" cx="12" cy="7.5" r="3.8"/>
-        <circle class="ico-fill" fill="currentColor" opacity=".14" cx="12" cy="7.5" r="3.8"/>
-        <!-- Cuerpo curvo estilo card -->
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-          d="M3.5 20.5c0-3.6 3.8-6.5 8.5-6.5s8.5 2.9 8.5 6.5"/>
-        <path class="ico-fill" fill="currentColor" opacity=".08"
-          d="M3.5 20.5c0-3.6 3.8-6.5 8.5-6.5s8.5 2.9 8.5 6.5H3.5z"/>
+    <div class="ni" id="ni-perfil" onclick="go('perfil')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5"/>
       </svg>
+      <span class="ni-lbl">Perfil</span>
     </div>
-    <div class="nilbl">Perfil</div>
-  </div>
-
-  <!-- ADMIN — Escudo con checkmark más moderno -->
-  <div class="ni hidden" id="ni-admin" onclick="go('admin')">
-    <div class="niico">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="ico-stroke" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
-          d="M12 2.5L3.5 6.5v5.8C3.5 17 7.3 21.3 12 22.5 16.7 21.3 20.5 17 20.5 12.3V6.5L12 2.5z"/>
-        <path class="ico-fill" fill="currentColor" opacity=".12"
-          d="M12 2.5L3.5 6.5v5.8C3.5 17 7.3 21.3 12 22.5 16.7 21.3 20.5 17 20.5 12.3V6.5L12 2.5z"/>
-        <path class="ico-stroke" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          d="M8.5 12.5l2.5 2.5 4.5-5"/>
+    <div class="ni" id="ni-admin" style="display:none" onclick="go('admin')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.5L3.5 6.5v5.8C3.5 17 7.3 21.3 12 22.5 16.7 21.3 20.5 17 20.5 12.3V6.5L12 2.5z"/>
+        <path d="M8.5 12.5l2.5 2.5 4.5-5"/>
       </svg>
+      <span class="ni-lbl">Admin</span>
     </div>
-    <div class="nilbl">Admin</div>
   </div>
 </nav>
+
 </div><!-- /app -->
 
-<!-- EDIT UI PANEL — Ajustes de diseño avanzados v2 -->
-<div id="edit-ui-panel" onclick="if(event.target===this)closeEditUI()">
-  <div id="edit-ui-box">
-    <div class="eui-drag"></div>
-    <div class="eui-hdr">
-      <div class="eui-hdr-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg>
-      </div>
-      <div>
-        <div class="eui-hdr-title">Editar UI</div>
-        <div class="eui-hdr-sub">Ajustá cualquier elemento de la app</div>
-      </div>
-    </div>
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 8: EDIT UI BAR
+  ══════════════════════════════════════════════════════════════
+  Barra del Editor de UI. Se activa con DOBLE TOQUE sobre
+  cualquier elemento marcado con data-editable="true".
 
-    <!-- TABS DE CATEGORÍA -->
-    <div class="eui-tabs">
-      <div class="eui-tab on" onclick="euiSwitchTab('global',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>Global</div>
-      <div class="eui-tab" onclick="euiSwitchTab('header',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M3 13h18M3 17h12"/></svg>Header</div>
-      <div class="eui-tab" onclick="euiSwitchTab('cards',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="9" height="14" rx="2"/><rect x="13" y="7" width="8" height="14" rx="2"/></svg>Cards</div>
-      <div class="eui-tab" onclick="euiSwitchTab('nav',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16h18"/><circle cx="8" cy="19" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg>Nav</div>
-      <div class="eui-tab" onclick="euiSwitchTab('element',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Elemento</div>
-    </div>
+  Mientras está activo (body.eui-active):
+    - Un contorno punteado aparece sobre los elementos editables
+    - Al hacer DOBLE TOQUE en uno, aparece #eui-toolbar
+    - El toolbar tiene controles de: texto, color, tamaño,
+      posición, animación y borrar
 
-    <!-- GLOBAL -->
-    <div class="eui-subpanel on" id="eui-sub-global">
-      <div class="eui-section">
-        <div class="eui-sec-title">Tipografía</div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Tamaño base de texto</div><div class="eui-row-sub">Cuerpo general de la app</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="11" max="17" value="13" id="eui-font-size" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-font-size-val">13px</span>
-          </div>
-        </div>
-      </div>
-      <div class="eui-section">
-        <div class="eui-sec-title">Isla dinámica</div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Posición vertical</div><div class="eui-row-sub">Distancia desde arriba</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="40" value="8" id="eui-di-top" oninput="euiApplyDI()"/>
-            <span class="eui-val" id="eui-di-top-val">8px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Radio de esquinas</div><div class="eui-row-sub">Redondez de la isla</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="10" max="60" value="40" id="eui-di-radius" oninput="euiApplyDI()"/>
-            <span class="eui-val" id="eui-di-radius-val">40px</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  Para salir del modo edición: tocar "Salir" en la barra
+  o el botón de cerrar.
 
-    <!-- HEADER -->
-    <div class="eui-subpanel" id="eui-sub-header">
-      <div class="eui-section">
-        <div class="eui-sec-title">Header</div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Tamaño del logo</div><div class="eui-row-sub">Ícono en la barra superior</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="32" max="80" value="54" id="eui-logo-size" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-logo-size-val">54px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Radio del logo</div><div class="eui-row-sub">Redondez del ícono</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="50" value="16" id="eui-logo-radius" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-logo-radius-val">16px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Tamaño del título</div><div class="eui-row-sub">Nombre de la liga</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="14" max="32" value="22" id="eui-title-size" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-title-size-val">22px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Blur del header</div><div class="eui-row-sub">Efecto vidrio</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="80" value="36" id="eui-hdr-blur" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-hdr-blur-val">36px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Padding superior</div><div class="eui-row-sub">Espacio desde arriba</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="40" value="18" id="eui-hdr-pad-top" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-hdr-pad-top-val">18px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Color de fondo</div><div class="eui-row-sub">Tinte del header</div></div>
-          <div class="eui-ctrl">
-            <input type="color" class="eui-color-input" id="eui-hdr-color" value="#080c14" oninput="euiApplyHdrColor(this.value)"/>
-          </div>
-        </div>
-      </div>
-    </div>
+  JS (script.js):
+    initEditUI()          — configura listeners de doble toque
+    toggleEditMode()      — activa/desactiva modo edición
+    onElementDblTap(el)   — selecciona elemento al doble tocar
+    showEditToolbar(el)   — muestra toolbar posicionado
+    applyEditText()       — aplica cambio de texto
+    applyEditColor()      — aplica cambio de color
+    applyEditAnim(name)   — aplica animación CSS
+    applyEditDelete()     — elimina el elemento
+    saveEditTransforms()  — guarda cambios en D.editTransforms
 
-    <!-- CARDS -->
-    <div class="eui-subpanel" id="eui-sub-cards">
-      <div class="eui-section">
-        <div class="eui-sec-title">Tarjetas de partidos</div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Ancho de card</div><div class="eui-row-sub">Cards horizontales</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="200" max="360" value="278" id="eui-card-width" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-card-width-val">278px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Redondeado de tarjetas</div><div class="eui-row-sub">Todas las cards y forms</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="4" max="40" value="20" id="eui-card-radius" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-card-radius-val">20px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Ancho de bordes</div><div class="eui-row-sub">Líneas de las cards</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="4" step=".5" value="1" id="eui-border-width" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-border-width-val">1px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Escala de cards</div><div class="eui-row-sub">Tamaño general</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="70" max="130" value="100" id="eui-card-scale" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-card-scale-val">100%</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Rotación de cards</div><div class="eui-row-sub">Ángulo de inclinación</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="-15" max="15" value="0" id="eui-card-rotate" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-card-rotate-val">0°</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Color de fondo de cards</div></div>
-          <div class="eui-ctrl">
-            <input type="color" class="eui-color-input" id="eui-card-color" value="#141828" oninput="euiApplyCardColor(this.value)"/>
-          </div>
-        </div>
-      </div>
-    </div>
+  CSS (style.css): buscar [EDITUI]
+  ══════════════════════════════════════════════════════════════
+-->
+<div id="edit-ui-bar">
+  <span class="eub-label">✏️ EDITOR UI</span>
+  <button class="eub-btn" onclick="euiSave()">💾 Guardar</button>
+  <button class="eub-btn" onclick="euiReset()">↩️ Restablecer</button>
+  <button class="eub-btn danger" onclick="toggleEditMode()">✖ Salir</button>
+  <div class="eub-close" onclick="toggleEditMode()">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </div>
+</div>
+<!-- Toolbar mini que aparece sobre el elemento seleccionado -->
+<div id="eui-toolbar">
+  <div class="eui-tb-title" id="eui-tb-name">Elemento</div>
+  <!-- Texto -->
+  <div class="eui-tb-row">
+    <span class="eui-tb-lbl">Texto</span>
+    <input class="eui-tb-input" id="eui-in-text" type="text" placeholder="Escribí aquí..."/>
+  </div>
+  <!-- Color de texto -->
+  <div class="eui-tb-row">
+    <span class="eui-tb-lbl">Color</span>
+    <input class="eui-tb-color" id="eui-in-color" type="color" value="#f0effb" oninput="euiLiveColor(this.value)"/>
+    <span style="font-size:10px;color:var(--txt3);margin-left:6px">texto</span>
+  </div>
+  <!-- Color de fondo -->
+  <div class="eui-tb-row">
+    <span class="eui-tb-lbl">Fondo</span>
+    <input class="eui-tb-color" id="eui-in-bg" type="color" value="#18171f" oninput="euiLiveBg(this.value)"/>
+    <span style="font-size:10px;color:var(--txt3);margin-left:6px">fondo</span>
+  </div>
+  <!-- Tamaño de fuente -->
+  <div class="eui-tb-row">
+    <span class="eui-tb-lbl">Fuente</span>
+    <input class="eui-tb-input" id="eui-in-size" type="number" placeholder="px" style="width:60px"/>
+    <span style="font-size:10px;color:var(--txt3);margin-left:6px">px</span>
+  </div>
+  <div class="eui-tb-sep"></div>
+  <!-- Animaciones -->
+  <div style="font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Animación</div>
+  <div class="eui-tb-grid">
+    <div class="eui-tb-btn" onclick="euiApplyAnim('pulse')">💓 Pulso</div>
+    <div class="eui-tb-btn" onclick="euiApplyAnim('shake')">📳 Sacudir</div>
+    <div class="eui-tb-btn" onclick="euiApplyAnim('bounce')">🎈 Rebote</div>
+    <div class="eui-tb-btn" onclick="euiApplyAnim('spin')">🔄 Girar</div>
+    <div class="eui-tb-btn" onclick="euiApplyAnim('glow')">✨ Glow</div>
+    <div class="eui-tb-btn" onclick="euiApplyAnim('none')">✖ Nada</div>
+  </div>
+  <div class="eui-tb-sep"></div>
+  <!-- Acciones -->
+  <div class="eui-tb-grid">
+    <div class="eui-tb-btn" onclick="euiApplyText()">✓ Texto</div>
+    <div class="eui-tb-btn" onclick="euiToggleHide()">👁 Ocultar</div>
+    <div class="eui-tb-btn danger" onclick="euiDeleteEl()" style="color:var(--danger)">🗑 Borrar</div>
+    <div class="eui-tb-btn" onclick="document.getElementById('eui-toolbar').classList.remove('open')">✖ Cerrar</div>
+  </div>
+</div>
 
-    <!-- NAV -->
-    <div class="eui-subpanel" id="eui-sub-nav">
-      <div class="eui-section">
-        <div class="eui-sec-title">Navegación inferior</div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Blur de la nav</div><div class="eui-row-sub">Efecto vidrio</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="80" value="32" id="eui-nav-blur" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-nav-blur-val">32px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Padding inferior</div><div class="eui-row-sub">Espacio safe area</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="30" value="4" id="eui-nav-pad" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-nav-pad-val">4px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Tamaño de íconos</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="16" max="32" value="22" id="eui-nav-ico-size" oninput="euiApply()"/>
-            <span class="eui-val" id="eui-nav-ico-size-val">22px</span>
-          </div>
-        </div>
-      </div>
-    </div>
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 9: MODALES Y OVERLAYS
+  ══════════════════════════════════════════════════════════════
+  Todos los modales y sheets de la app.
 
-    <!-- ELEMENTO (selector interactivo) -->
-    <div class="eui-subpanel" id="eui-sub-element">
-      <div class="eui-section">
-        <div class="eui-sec-title">Seleccionar elemento</div>
-        <div style="display:flex;gap:8px;margin-bottom:12px">
-          <button id="eui-pick-btn" onclick="euiStartPick()" style="flex:1;padding:10px;border-radius:12px;background:rgba(var(--amb-color),.12);border:1.5px solid rgba(var(--amb-color),.3);color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">
-            🎯 Tocar elemento
-          </button>
-          <button onclick="euiClearSelected()" style="padding:10px 14px;border-radius:12px;background:var(--surf2);border:1px solid var(--bdr2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer">
-            ✕ Limpiar
-          </button>
-        </div>
-        <div id="eui-sel-info" style="font-size:11px;color:var(--t3);padding:8px 12px;background:var(--surf2);border-radius:10px;border:1px solid var(--bdr);margin-bottom:10px;min-height:32px;display:flex;align-items:center">
-          Sin elemento seleccionado — tocá un elemento en la página
-        </div>
-      </div>
-      <div class="eui-section" id="eui-el-controls" style="display:none">
-        <div class="eui-sec-title">Ajustar elemento seleccionado</div>
-        <div class="eui-transform-grid">
-          <div class="eui-transform-cell">
-            <div class="eui-transform-lbl">Escala</div>
-            <input type="range" class="eui-slider" style="width:100%" min="50" max="200" value="100" id="eui-el-scale" oninput="euiApplyEl()"/>
-            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-scale-val">100%</div>
-          </div>
-          <div class="eui-transform-cell">
-            <div class="eui-transform-lbl">Rotación</div>
-            <input type="range" class="eui-slider" style="width:100%" min="-180" max="180" value="0" id="eui-el-rotate" oninput="euiApplyEl()"/>
-            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-rotate-val">0°</div>
-          </div>
-          <div class="eui-transform-cell">
-            <div class="eui-transform-lbl">Mover X</div>
-            <input type="range" class="eui-slider" style="width:100%" min="-200" max="200" value="0" id="eui-el-x" oninput="euiApplyEl()"/>
-            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-x-val">0px</div>
-          </div>
-          <div class="eui-transform-cell">
-            <div class="eui-transform-lbl">Mover Y</div>
-            <input type="range" class="eui-slider" style="width:100%" min="-200" max="200" value="0" id="eui-el-y" oninput="euiApplyEl()"/>
-            <div style="font-size:10px;color:var(--t2);margin-top:4px;text-align:center" id="eui-el-y-val">0px</div>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Opacidad</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="100" value="100" id="eui-el-opacity" oninput="euiApplyEl()"/>
-            <span class="eui-val" id="eui-el-opacity-val">100%</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Radio de esquinas</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="0" max="60" value="0" id="eui-el-radius" oninput="euiApplyEl()"/>
-            <span class="eui-val" id="eui-el-radius-val">0px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Tamaño de texto</div></div>
-          <div class="eui-ctrl">
-            <input type="range" class="eui-slider" min="8" max="48" value="13" id="eui-el-fontsize" oninput="euiApplyEl()"/>
-            <span class="eui-val" id="eui-el-fontsize-val">13px</span>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Color de texto</div></div>
-          <div class="eui-ctrl">
-            <input type="color" class="eui-color-input" id="eui-el-color" value="#eef0ff" oninput="euiApplyEl()"/>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Color de fondo</div></div>
-          <div class="eui-ctrl">
-            <input type="color" class="eui-color-input" id="eui-el-bg" value="#141828" oninput="euiApplyEl()"/>
-          </div>
-        </div>
-        <div class="eui-row">
-          <div><div class="eui-row-lbl">Ocultar elemento</div></div>
-          <div class="eui-ctrl">
-            <div class="tgl" id="eui-el-hide-tgl" onclick="euiToggleHide()"><div class="tglk"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  #admin-gate    — puerta de contraseña para admin
+  #md-ov         — detalle de partido (fullscreen)
+  #nw-ov         — detalle de noticia
+  #pe-ov         — edición de perfil
+  #notif-ov      — lista de notificaciones
+  #tp-ov         — selector de equipo favorito
+  #le-ov         — modal genérico reutilizable
+  #srch-ov       — overlay de búsqueda
+  #announce-ov   — cartel/aviso del admin
+  #pwa-banner    — banner de instalación PWA
 
-    <div style="padding:16px 18px 8px;display:flex;gap:8px;flex-direction:column">
-      <!-- EDITOR DE LAYOUT — salir del modal y editar en página -->
-      <button onclick="euiEnterLayoutMode()" style="width:100%;padding:13px;border-radius:14px;background:rgba(var(--amb-color),.10);border:1.5px solid rgba(var(--amb-color),.28);color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .18s">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" style="width:16px;height:16px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        Editor de layout — Mover y redimensionar
-      </button>
-      <div style="display:flex;gap:8px">
-        <button class="abtn sec" onclick="euiReset()" style="flex:1;padding:12px;font-size:12px">Resetear todo</button>
-        <button class="abtn" onclick="euiSave()" style="flex:2;padding:12px;font-size:12px">Guardar cambios</button>
-      </div>
+  JS (script.js):
+    openNotifs()   — abre #notif-ov
+    closeOv(id)    — cierra cualquier overlay
+    ovClick(e,id)  — cierra al tocar fuera del sheet
+    openSearch()   — abre #srch-ov
+    closeSearch()  — cierra #srch-ov
+
+  CSS (style.css): [OVERLAYS], [ANNOUNCE]
+  ══════════════════════════════════════════════════════════════
+-->
+
+<!-- ADMIN GATE — contraseña -->
+<div id="admin-gate">
+  <div id="admin-gate-box">
+    <div class="gate-drag"></div>
+    <div class="gate-ico">🔐</div>
+    <div class="gate-t">Panel Admin</div>
+    <div class="gate-s">Ingresá la contraseña para acceder</div>
+    <input type="password" class="fi" id="gate-pass"
+      placeholder="••••••••"
+      style="text-align:center;font-size:20px;letter-spacing:6px;background:rgba(255,255,255,.05)"
+      onkeydown="if(event.key==='Enter')verifyAdmin()"/>
+    <div class="gate-err" id="gate-err"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="abtn sec" style="flex:1" onclick="closeAdminGate()">Cancelar</button>
+      <button class="abtn" style="flex:2" onclick="verifyAdmin()">Entrar</button>
     </div>
   </div>
 </div>
 
-<!-- LAYOUT EDITOR OVERLAY — Modo mover/redimensionar elementos -->
-<div id="layout-editor-ov" style="display:none;position:fixed;inset:0;z-index:9000;pointer-events:none">
-  <!-- Barra flotante de controles -->
-  <div id="layout-toolbar" style="
-    position:fixed;bottom:calc(112px + env(safe-area-inset-bottom,0px));
-    left:50%;transform:translateX(-50%);
-    background:rgba(8,12,22,.97);border:1px solid rgba(255,255,255,.12);
-    border-radius:20px;padding:10px 16px;
-    display:flex;align-items:center;gap:10px;
-    box-shadow:0 8px 32px rgba(0,0,0,.6);
-    z-index:9001;pointer-events:all;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    min-width:260px;
-  ">
-    <div style="font-size:11px;font-weight:700;color:var(--t2);flex:1;min-width:0">
-      <div id="le-el-name" style="color:var(--text);font-size:12px">Tocá un elemento</div>
-      <div style="font-size:9px;color:var(--t3);margin-top:1px">para moverlo, redimensionarlo o editarlo</div>
-    </div>
-    <button onclick="euiLayoutUndo()" title="Deshacer" style="width:32px;height:32px;border-radius:10px;background:var(--surf2);border:1px solid var(--bdr2);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" style="width:14px;height:14px"><path d="M3 7h11a4 4 0 010 8H3"/><path d="M7 3L3 7l4 4"/></svg>
+<!-- MATCH DETAIL — pantalla completa -->
+<div id="md-ov">
+  <div id="md-sheet">
+    <button id="md-back-btn" onclick="closeMD()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+      Volver
     </button>
-    <button onclick="euiLayoutSave()" style="padding:7px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">Guardar</button>
-    <button onclick="euiExitLayoutMode()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" style="width:14px;height:14px"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-  </div>
-  <!-- Propiedades del elemento seleccionado -->
-  <div id="le-el-props" style="
-    display:none;position:fixed;
-    top:calc(env(safe-area-inset-top,0px) + 12px);
-    left:50%;transform:translateX(-50%);
-    background:rgba(8,12,22,.97);border:1px solid rgba(255,255,255,.10);
-    border-radius:16px;padding:12px 16px;
-    min-width:240px;max-width:320px;
-    box-shadow:0 8px 28px rgba(0,0,0,.55);
-    z-index:9002;pointer-events:all;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  ">
-    <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Propiedades</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">X</span>
-        <input type="number" id="le-prop-x" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
-        <span style="font-size:10px;color:var(--t3)">px</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">Y</span>
-        <input type="number" id="le-prop-y" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
-        <span style="font-size:10px;color:var(--t3)">px</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">Ancho</span>
-        <input type="number" id="le-prop-w" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
-        <span style="font-size:10px;color:var(--t3)">px</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:var(--t2);width:56px;flex-shrink:0">Alto</span>
-        <input type="number" id="le-prop-h" style="flex:1;padding:5px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);font-size:12px;font-family:'DM Mono',monospace" oninput="leApplyProps()"/>
-        <span style="font-size:10px;color:var(--t3)">px</span>
-      </div>
-      <div style="display:flex;gap:6px;margin-top:4px">
-        <button onclick="leDeleteEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m3 0l-1 14a1 1 0 01-1 1H6a1 1 0 01-1-1L4 6"/></svg>Eliminar</button>
-        <button onclick="leDuplicateEl()" style="flex:1;padding:7px;border-radius:9px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22);color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Duplicar</button>
-      </div>
-    </div>
-  </div>
-</div>
-<div id="welcome-modal">
-  <div id="welcome-box">
-    <div class="welcome-art" id="welcome-art">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 3v4M12 17v4M3.5 9.5l3.5 1M17 10.5l3.5-1M6 18l1.5-3.5M18 18l-1.5-3.5"/></svg>
-    </div>
-    <div class="welcome-title" id="welcome-title">Bienvenido a La Súper Liga</div>
-    <div class="welcome-sub" id="welcome-sub">Antes de comenzar, leé las reglas y la información de la liga.</div>
-    <div class="welcome-rules" id="welcome-rules-content">
-      <div class="welcome-rule"><span class="welcome-rule-n">1</span><span class="welcome-rule-t">Respetá a todos los participantes dentro y fuera del campo.</span></div>
-      <div class="welcome-rule"><span class="welcome-rule-n">2</span><span class="welcome-rule-t">La victoria otorga 3 puntos, el empate 1 y la derrota 0.</span></div>
-      <div class="welcome-rule"><span class="welcome-rule-n">3</span><span class="welcome-rule-t">Tolerancia de 3 minutos para ingresar al partido.</span></div>
-    </div>
-    <button class="welcome-btn" onclick="closeWelcome()">Entendido, ¡a jugar!</button>
-    <span class="welcome-no-show" onclick="closeWelcomeForever()">No volver a mostrar</span>
+    <div id="md-content"></div>
   </div>
 </div>
 
-<!-- ASISTENCIA MODAL -->
-<div id="asist-ov" onclick="if(event.target===this)closeAsist()">
-  <div id="asist-box">
-    <div class="asist-hdr">
-      <div class="asist-title">Asistencia de Partidos</div>
-      <button onclick="closeAsist()" style="width:30px;height:30px;border-radius:50%;background:var(--surf2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="asist-msgs" id="asist-msgs">
-      <div class="empty" style="padding:20px 0"><div class="etic">💬</div><div class="etit">Sin mensajes aún</div><div class="esub">Confirmá tu asistencia con el botón verde</div></div>
-    </div>
-    <div class="asist-footer">
-      <button class="asist-present-btn" onclick="confirmAsistencia()">✅ Me presento</button>
-    </div>
-    <div style="display:flex;gap:8px;padding:0 14px 4px">
-      <input class="asist-input" id="asist-inp" placeholder="Escribir mensaje..." onkeydown="if(event.key==='Enter')sendAsistMsg()"/>
-      <button class="asist-send" onclick="sendAsistMsg()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-      </button>
+<!-- NOTICIA DETALLE -->
+<div class="ov" id="nw-ov" onclick="ovClick(event,'nw-ov')">
+  <div class="ovs">
+    <div class="ovhd"></div>
+    <button class="ovx" onclick="closeOv('nw-ov')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="nw-content"></div>
+  </div>
+</div>
+
+<!-- EDITAR PERFIL -->
+<div class="ov" id="pe-ov" onclick="ovClick(event,'pe-ov')">
+  <div class="ovs">
+    <div class="ovhd"></div>
+    <button class="ovx" onclick="closeOv('pe-ov')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div style="padding:0 18px 24px">
+      <div class="sect" style="margin-bottom:16px">Editar perfil</div>
+      <div class="fl">Nombre</div>
+      <input type="text" class="fi" id="pe-name"/>
+      <div class="fl">Bio</div>
+      <textarea class="fi" id="pe-bio" rows="3" style="resize:none"></textarea>
+      <button class="abtn" onclick="saveProfEdit()">GUARDAR</button>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS OVERLAY -->
+<!-- CONFIGURACIÓN -->
 <div class="ov" id="cfg-ov" onclick="ovClick(event,'cfg-ov')">
   <div class="ovs" style="max-height:92dvh">
     <div class="ovhd"></div>
@@ -1381,10 +1579,10 @@
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
     <div style="padding:0 18px 32px">
-      <div class="sect" style="margin-bottom:18px;font-size:16px">⚙️ Configuración</div>
+      <div class="sect" style="margin-bottom:18px;font-size:20px">⚙️ Configuración</div>
 
       <!-- APARIENCIA -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Apariencia</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin-bottom:10px">Apariencia</div>
       <div class="cfg-section">
         <div class="cfg-row" id="cfg-ambient-row">
           <div class="cfg-row-ico">🌈</div>
@@ -1404,7 +1602,7 @@
       </div>
 
       <!-- COLOR DE ACENTO -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Color de acento</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Color de acento</div>
       <div class="cfg-section" style="padding:14px 16px">
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <div class="accent-dot" style="background:#818cf8" onclick="setAccent('#818cf8','129,140,248')" title="Indigo"></div>
@@ -1418,12 +1616,18 @@
           <div class="accent-dot custom-accent-trigger" onclick="document.getElementById('accent-custom-input').click()" title="Personalizado" style="background:conic-gradient(from 0deg,#f87171,#facc15,#4ade80,#22d3ee,#818cf8,#e879f9,#f87171)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="display:flex;margin:10px"><path d="M12 5v14M5 12h14"/></svg>
           </div>
-          <input type="color" id="accent-custom-input" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none" oninput="setCustomAccent(this.value)" value="#818cf8"/>
+          <input type="color" id="accent-custom-input" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none" oninput="setCustomAccent(this.value);syncHexInput('accent-hex-input',this.value)" value="#818cf8"/>
+        </div>
+        <!-- Input HEX manual -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+          <span style="font-size:12px;color:var(--txt2);font-weight:700">#</span>
+          <input type="text" class="fi" id="accent-hex-input" placeholder="818CF8" style="margin-bottom:0;text-transform:uppercase;font-family:'DM Mono',monospace;letter-spacing:1px" onfocus="this.select()" oninput="this.value=this.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')applyHexInput('accent-hex-input')"/>
+          <button class="abtn sec" style="flex:none;padding:9px 14px;font-size:11px;margin-top:0" onclick="applyHexInput('accent-hex-input')">APLICAR</button>
         </div>
       </div>
 
       <!-- FUENTE DE TEXTO -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Fuente de texto</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Fuente de texto</div>
       <div class="font-select-grid" id="font-select-grid">
         <div class="font-opt active" data-font="dmsans" onclick="setFontFamily('dmsans',this)" style="font-family:'DM Sans',sans-serif">
           <span class="font-opt-name">DM Sans <span style="opacity:.5">(Default)</span></span>
@@ -1451,8 +1655,8 @@
         </div>
       </div>
 
-      <!-- MODO OSCURO / CLARO — Toggle maestro -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Modo</div>
+      <!-- MODO OSCURO / CLARO -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Modo</div>
       <div class="mode-toggle">
         <div class="mode-btn active" id="mode-dark-btn" onclick="setThemeMode('dark')">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -1464,9 +1668,9 @@
         </div>
       </div>
 
-      <!-- TEMAS DE COLOR (Gradientes oscuros — HyperOS style + nuevos) -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 6px">Tema de fondo</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:10px">Se combina con el Modo de arriba: cualquier color funciona en oscuro o en claro.</div>
+      <!-- TEMAS DE COLOR -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 6px">Tema de fondo</div>
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:10px">Se combina con el Modo de arriba: cualquier color funciona en oscuro o en claro.</div>
       <div class="theme-grid">
         <div class="theme-item active" id="theme-default" onclick="applyColorTheme('default',this)" style="background:linear-gradient(135deg,#0d1117 0%,#1a1f35 100%)">
           <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(255,255,255,.7)">Default</div>
@@ -1517,9 +1721,13 @@
           <span class="cbg-swatch-lbl" style="flex:none">Color 2</span>
           <input type="color" class="cbg-color-input" id="custom-bg-2" value="#1a1f35" oninput="previewCustomBg()"/>
         </div>
-        <button class="abtn" style="padding:11px" onclick="applyCustomBgTheme()">APLICAR FONDO PERSONALIZADO</button>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="text" class="fi" id="custom-bg-1-hex" placeholder="HEX color 1" style="margin-bottom:0;font-family:'DM Mono',monospace;text-transform:uppercase" onfocus="this.select()" oninput="this.value=this.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')syncBgHex(1)"/>
+          <input type="text" class="fi" id="custom-bg-2-hex" placeholder="HEX color 2" style="margin-bottom:0;font-family:'DM Mono',monospace;text-transform:uppercase" onfocus="this.select()" oninput="this.value=this.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')syncBgHex(2)"/>
+        </div>
+        <button class="abtn" style="padding:11px;margin-top:8px" onclick="applyCustomBgTheme()">APLICAR FONDO PERSONALIZADO</button>
       </div>
-      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin:14px 0 6px">MÁS COLORES</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin:14px 0 6px">MÁS COLORES</div>
       <div class="theme-grid">
         <div class="theme-item" id="theme-light" onclick="applyColorTheme('light',this)" style="background:linear-gradient(135deg,#e8ebf5 0%,#f5f7ff 100%)">
           <div style="position:absolute;bottom:5px;left:8px;font-size:9px;font-weight:700;color:rgba(0,0,60,.5)">Blanco</div>
@@ -1534,18 +1742,19 @@
           <div class="theme-item-check" style="background:rgba(0,0,0,.8);color:#fff">✓</div>
         </div>
       </div>
+
       <!-- NOTIFICACIONES -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Notificaciones</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Notificaciones</div>
       <div class="cfg-section">
         <div class="cfg-row" onclick="requestNotifPerm()">
           <div class="cfg-row-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Notificaciones push</div><div class="cfg-row-s" id="cfg-notif-state">Toca para activar</div></div>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--t3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--txt3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
         </div>
       </div>
 
       <!-- ISLA DINÁMICA -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Isla dinámica</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Isla dinámica</div>
       <div class="cfg-section">
         <div class="cfg-row" style="cursor:default">
           <div class="cfg-row-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="6" rx="3"/></svg></div>
@@ -1555,27 +1764,37 @@
         <div class="cfg-row" style="cursor:default">
           <div class="cfg-row-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Visible en todas las secciones</div><div class="cfg-row-s">Si está desactivado, solo en inicio</div></div>
-          <div class="tgl on" id="tgl-di-all" onclick="this.classList.toggle('on');if(D.settings)D.settings.diAllSections=this.classList.contains('on');save();updateDIVisibility()"><div class="tglk"></div></div>
+          <div class="tgl on" id="tgl-di-all" onclick="this.classList.toggle('on');if(!D.settings)D.settings={};D.settings.diAllSections=this.classList.contains('on');save();updateDIVisibility()"><div class="tglk"></div></div>
         </div>
       </div>
 
       <!-- DATOS -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Datos y privacidad</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Datos y privacidad</div>
       <div class="cfg-section">
         <div class="cfg-row" onclick="exportJSON()">
           <div class="cfg-row-ico">📤</div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Exportar mis datos</div><div class="cfg-row-s">Descarga un backup en JSON</div></div>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--t3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--txt3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
         </div>
         <div class="cfg-row" onclick="if(confirm('¿Limpiar caché?')){localStorage.removeItem(STORE);location.reload()}">
           <div class="cfg-row-ico">🗑️</div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Limpiar caché local</div><div class="cfg-row-s">Borra datos locales (no afecta la nube)</div></div>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--t3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--txt3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- PANTALLA -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Pantalla</div>
+      <div class="cfg-section">
+        <div class="cfg-row" onclick="toggleFullscreen()">
+          <div class="cfg-row-ico">⛶</div>
+          <div class="cfg-row-txt"><div class="cfg-row-t">Pantalla completa</div><div class="cfg-row-s" id="cfg-fullscreen-state">Ocultar barra del navegador</div></div>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--txt3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
         </div>
       </div>
 
       <!-- INFO APP -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:18px 0 10px">Acerca de</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin:18px 0 10px">Acerca de</div>
       <div class="cfg-section">
         <div class="cfg-row" style="cursor:default">
           <div class="cfg-row-ico">⚽</div>
@@ -1584,170 +1803,71 @@
         <div class="cfg-row" onclick="shareApp()">
           <div class="cfg-row-ico">🔗</div>
           <div class="cfg-row-txt"><div class="cfg-row-t">Compartir app</div><div class="cfg-row-s">Enviar el link a amigos</div></div>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--t3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:16px;height:16px;color:var(--txt3)"><path stroke-linecap="round" d="M9 18l6-6-6-6"/></svg>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SIDE MENU -->
-<div id="smov" onclick="closeSMOv(event)">
-  <div id="sm">
-    <!-- Header del menú -->
-    <div class="smcrow">
-      <div class="smaln" id="sm-aln">La Super Liga</div>
-      <button class="smxbtn" onclick="closeMenu()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <!-- Usuario -->
-    <div class="smusr">
-      <div class="smav" id="sm-av"><img id="sm-av-img" src="" style="display:none"/><span id="sm-av-init">J</span></div>
-      <div>
-        <div class="smun" id="sm-uname">joelito</div>
-        <div class="smur" id="sm-urole">Miembro</div>
+<!-- NOTIFICACIONES -->
+<div class="ov" id="notif-ov" onclick="ovClick(event,'notif-ov')">
+  <div class="ovs">
+    <div class="ovhd"></div>
+    <button class="ovx" onclick="closeOv('notif-ov')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div style="padding:4px 0 20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px">
+        <div class="sect" style="font-size:20px">Notificaciones</div>
+        <span onclick="clearNotifs()" style="font-size:11px;color:var(--txt2);cursor:pointer">Marcar leídas</span>
       </div>
-    </div>
-    <!-- Items -->
-    <div style="padding:6px 0">
-      <div class="smit" onclick="closeMenu();go('perfil')">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
-        <div><div class="smlab">Mi Perfil</div><div class="smsub">Editar información</div></div>
-      </div>
-      <div class="smit" onclick="closeMenu();openBetHistory()">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-        <div><div class="smlab">Historial de Apuestas</div><div class="smsub">Tus predicciones</div></div>
-      </div>
-      <div class="smit" onclick="closeMenu();openSettings()">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
-        <div><div class="smlab">Configuración</div><div class="smsub">Apariencia y ajustes</div></div>
-      </div>
-    </div>
-    <div class="smdiv"></div>
-    <div style="padding:6px 0">
-      <div class="smit" onclick="closeMenu();requestNotifPerm()">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-        <div><div class="smlab">Notificaciones</div><div class="smsub" id="notif-perm-lbl">Toca para activar</div></div>
-      </div>
-      <div class="smit" id="sm-pwa-btn" style="display:none" onclick="closeMenu();installPWA()">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M12 10v6m0 0l-3-3m3 3l3-3"/><path d="M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3"/></svg></div>
-        <div><div class="smlab">Instalar app</div><div class="smsub">Guardar como app independiente</div></div>
-      </div>
-      <div class="smit" onclick="closeMenu();shareApp()">
-        <div class="smic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <div><div class="smlab">Compartir app</div></div>
-      </div>
-    </div>
-    <div class="smdiv"></div>
-    <div class="smit" id="sm-admin-item" style="display:none" onclick="closeMenu();go('admin')">
-      <div class="smic" style="background:rgba(var(--amb-color),.12);border-color:rgba(var(--amb-color),.2);color:var(--accent2)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg></div>
-      <div><div class="smlab" style="color:var(--accent2)">Panel Admin</div><div class="smsub">Gestionar liga</div></div>
+      <div id="notif-list" style="padding:0 18px"></div>
     </div>
   </div>
 </div>
 
-<!-- MATCH DETAIL MODAL — pantalla completa con animación mejorada -->
-<div id="md-ov" style="position:fixed;inset:0;z-index:600;pointer-events:none;opacity:0;
-  transition:opacity .32s cubic-bezier(.22,1,.36,1);
-  background:rgba(0,0,0,.55);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)">
-  <div id="md-sheet" style="
-    position:absolute;inset:0;
-    background:var(--bg);background-image:var(--grad);
-    overflow-y:auto;
-    transform:translateY(100%) scale(.94);
-    transform-origin:center bottom;
-    transition:transform .48s cubic-bezier(.28,1.08,.58,1), border-radius .48s cubic-bezier(.28,1.08,.58,1), opacity .3s ease;
-    pointer-events:all;
-    border-radius:30px 30px 0 0;
-    will-change:transform,border-radius;
-    opacity:0;">
-    <!-- Back button fijo -->
-    <button id="md-back-btn" onclick="closeMD()" style="position:sticky;top:0;z-index:10;
-      display:flex;align-items:center;gap:8px;
-      margin:calc(env(safe-area-inset-top,0px) + 12px) 0 0 14px;
-      background:rgba(0,0,0,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,.12);border-radius:99px;
-      padding:8px 16px 8px 12px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;
-      width:fit-content;transition:background .18s,transform .15s var(--spring)">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px">
-        <path d="M19 12H5m7-7-7 7 7 7"/>
-      </svg>
-      Volver
-    </button>
-    <div id="md-content" style="padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))"></div>
-  </div>
-</div>
-<!-- NEWS MODAL -->
-<div class="ov" id="nw-ov" onclick="ovClick(event,'nw-ov')">
-  <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('nw-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button><div id="nw-content"></div></div>
-</div>
-<!-- PROFILE EDIT -->
-<div class="ov" id="pe-ov" onclick="ovClick(event,'pe-ov')">
-  <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('pe-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div style="padding:0 18px 24px"><div class="sect" style="margin-bottom:16px">Editar perfil</div><div class="fl">Nombre</div><input type="text" class="fi" id="pe-name"/><div class="fl">Bio</div><textarea class="fi" id="pe-bio" rows="3" style="resize:none"></textarea><button class="abtn" onclick="saveProfEdit()">GUARDAR</button></div>
-  </div>
-</div>
-<!-- NOTIFICATIONS -->
-<div class="ov" id="notif-ov" onclick="ovClick(event,'notif-ov')">
-  <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('notif-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div style="padding:4px 0 20px">
-      <div class="notif-header">
-        <div class="sect" style="font-size:20px">Notificaciones</div>
-        <span class="notif-clear" onclick="clearNotifs()">Marcar todas leídas</span>
-      </div>
-      <div id="notif-list"></div>
-    </div>
-  </div>
-</div>
-<!-- TEAM PICKER -->
+<!-- EQUIPO FAVORITO -->
 <div class="ov" id="tp-ov" onclick="ovClick(event,'tp-ov')">
-  <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('tp-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div style="padding:0 18px 24px"><div class="sect" style="margin-bottom:14px">Equipo favorito</div><div id="tp-list"></div></div>
-  </div>
-</div>
-<!-- LIVE EDIT -->
-<div class="ov" id="le-ov" onclick="ovClick(event,'le-ov')">
-  <div class="ovs"><div class="ovhd"></div><button class="ovx" onclick="closeOv('le-ov')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div style="padding:0 18px 24px" id="le-content"></div>
-  </div>
-</div>
-<!-- ADMIN GATE -->
-<div id="admin-gate">
-  <div id="admin-gate-box">
-    <div class="gate-drag"></div>
-    <div class="gate-ico">🔐</div>
-    <div class="gate-t">Panel Admin</div>
-    <div class="gate-s">Ingresá la contraseña para acceder</div>
-    <input type="password" class="fi" id="gate-pass" placeholder="••••••••"
-      style="text-align:center;font-size:20px;letter-spacing:6px;background:rgba(255,255,255,.05)"
-      onkeydown="if(event.key==='Enter')verifyAdmin()"/>
-    <div class="gate-err" id="gate-err"></div>
-    <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="abtn sec" style="flex:1;background:transparent;border:1.5px solid rgba(255,255,255,.15)"
-        onclick="closeAdminGate()">Cancelar</button>
-      <button class="abtn" style="flex:2" onclick="verifyAdmin()">Entrar</button>
+  <div class="ovs">
+    <div class="ovhd"></div>
+    <button class="ovx" onclick="closeOv('tp-ov')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div style="padding:0 18px 24px">
+      <div class="sect" style="margin-bottom:14px">Equipo favorito</div>
+      <div id="tp-list"></div>
     </div>
   </div>
 </div>
-<!-- SEARCH -->
+
+<!-- MODAL GENÉRICO -->
+<div class="ov" id="le-ov" onclick="ovClick(event,'le-ov')">
+  <div class="ovs">
+    <div class="ovhd"></div>
+    <button class="ovx" onclick="closeOv('le-ov')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="le-content"></div>
+  </div>
+</div>
+
+<!-- BÚSQUEDA -->
 <div id="srch-ov" onclick="if(event.target===this)closeSearch()">
   <div class="srchbar">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--txt3);flex-shrink:0">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
     <input type="text" id="srch-inp" placeholder="Buscar equipos, jugadores, noticias..." oninput="doSearch(this.value)"/>
     <span class="srchcancel" onclick="closeSearch()">Cancelar</span>
+    <div class="srch-go" onclick="doSearch($('srch-inp').value)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </div>
   </div>
-  <div id="srch-res" style="overflow-y:auto;max-height:calc(100dvh - 100px)"></div>
+  <div id="srch-res" style="overflow-y:auto;max-height:calc(100dvh - 100px);padding:16px"></div>
 </div>
-<!-- PWA BANNER -->
-<div id="pwa-banner">
-  <div class="pwab-row">
-    <div class="pwab-ico"><img id="pwab-img" src="" alt="" style="display:none"/><span id="pwab-fb">LSL</span></div>
-    <div class="pwab-info"><div class="pwab-t" id="pwab-title">La Súper Liga</div><div class="pwab-s">Agrega la app a tu pantalla de inicio</div></div>
-  </div>
-  <div class="pwab-acts"><button class="pwab-btn sec" onclick="dismissPWA()">Ahora no</button><button class="pwab-btn pri" onclick="installPWA()">Instalar</button></div>
-</div>
-<!-- ANUNCIO / CARTEL -->
+
+<!-- ANUNCIO / CARTEL DEL ADMIN -->
 <div id="announce-ov" onclick="if(event.target===this)closeAnnouncement()">
   <div id="announce-card">
     <div class="announce-confetti-wrap" id="announce-confetti-wrap"></div>
@@ -1758,17 +1878,47 @@
     <div id="announce-card-body"></div>
   </div>
 </div>
-<!-- HIDDEN INPUTS -->
-<input type="file" accept="image/*" class="hfi" id="avatar-fi" onchange="handleAvatarUpload(event)"/>
-<input type="file" accept="image/*,video/mp4,video/webm" class="hfi" id="banner-fi" onchange="handleBannerUpload(event)"/>
-<input type="file" accept="video/mp4,video/webm,video/mov" class="hfi" id="banner-video-fi" onchange="handleBannerVideoUpload(event)"/>
-<div id="toast"></div>
-<div id="sync-indicator" style="position:fixed;bottom:calc(92px + env(safe-area-inset-bottom,0px));
-  right:14px;z-index:9998;font-size:13px;opacity:0;
-  transition:opacity .3s ease;pointer-events:none;
-  background:#1e1e1e;border:1px solid rgba(255,255,255,.12);
-  border-radius:8px;padding:5px 10px;color:#fff"></div>
 
-<script src="script.js?v=4"></script>
+<!-- PWA BANNER -->
+<div id="pwa-banner">
+  <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+    <div style="width:40px;height:40px;border-radius:12px;background:rgba(var(--p-rgb),.18);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
+      <img id="pwab-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+      <span id="pwab-fb" style="font-family:'Bebas Neue';font-size:14px;color:var(--txt)">LSL</span>
+    </div>
+    <div style="min-width:0">
+      <div style="font-size:13px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="pwab-title">La Súper Liga</div>
+      <div style="font-size:11px;color:var(--txt2)">Agrega la app a tu pantalla de inicio</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;flex-shrink:0">
+    <button class="pwab-btn sec" onclick="dismissPWA()">No</button>
+    <button class="pwab-btn" onclick="installPWA()">Instalar</button>
+  </div>
+</div>
+
+<!--
+  ── INPUTS OCULTOS ───────────────────────────────────────
+  Para subir imágenes/videos de avatar y banner del perfil.
+  Se activan con triggerAvatar() y triggerBanner().
+  ─────────────────────────────────────────────────────── -->
+<input type="file" accept="image/*" id="avatar-fi" onchange="handleAvatarUpload(event)" style="display:none"/>
+<input type="file" accept="image/*,video/mp4,video/webm" id="banner-fi" onchange="handleBannerUpload(event)" style="display:none"/>
+
+<!-- TOAST: mensajes breves -->
+<div id="toast"></div>
+<!-- SYNC INDICATOR: ícono de sincronización con Supabase -->
+<div id="sync-indicator">☁️</div>
+
+<!--
+  ══════════════════════════════════════════════════════════════
+  SECCIÓN 10: SCRIPTS
+  ══════════════════════════════════════════════════════════════
+  script.js contiene TODA la lógica de la app.
+  Se carga al final del body para que el DOM esté listo.
+  El ?v=6 fuerza recarga tras actualizaciones (cache-busting).
+  ══════════════════════════════════════════════════════════════
+-->
+<script src="script.js?v=6"></script>
 </body>
 </html>

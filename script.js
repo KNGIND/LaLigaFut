@@ -99,6 +99,10 @@ function init(){
   // Single warm theme — no toggle needed
   updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
   restoreLastPage();
+  setTimeout(moveNavBubble,220);
+  setTimeout(updateNextMatchCountdown,150);
+  syncIslandToggleUI();
+  applyIslandVisibility();
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   initSupabase();
   // Sync inicial — sin bloquear render
@@ -310,19 +314,13 @@ function verifyAdmin(){
 }
 function checkAdmin(){
   const isA=D.user.isAdmin;
-  $('ni-admin').classList.toggle('hidden',!isA);
-  $('sm-admin-item').style.display=isA?'flex':'none';
-  $('sm-urole').textContent=isA?'Administrador':'Miembro';
+  $('ni-admin')?.classList.toggle('hidden',!isA);
+  const smAdmin=$('sm-admin-item');if(smAdmin)smAdmin.style.display=isA?'flex':'none';
+  const smRole=$('sm-urole');if(smRole)smRole.textContent=isA?'Administrador':'Miembro';
 }
 
 /* ---- EDIT MODE (drag / scale / rotate) ---- */
-function toggleEditMode(){
-  editMode=!editMode;
-  $('edit-bar').classList.toggle('hidden',!editMode);
-  $('edit-mode-toggle').textContent=editMode?'✏️ Salir edición':'✏️ Editar UI';
-  if(editMode)activateEditMode();
-  else deactivateEditMode();
-}
+
 function activateEditMode(){
   const targets=[...document.querySelectorAll('.sec,.greet,.hscroll,.stw')];
   targets.forEach(el=>{
@@ -373,16 +371,76 @@ function saveEditMode(){
 }
 function resetEditMode(){D.editTransforms={};save();document.querySelectorAll('.editable').forEach(el=>el.style.transform='');toast('🔄 Posiciones reseteadas')}
 
+/* ---- ISLA DINÁMICA — visibilidad por sección (M1) ---- */
+function toggleIslandSection(page){
+  if(!D.settings)D.settings={};
+  if(!Array.isArray(D.settings.islandHiddenPages))D.settings.islandHiddenPages=[];
+  const arr=D.settings.islandHiddenPages;
+  const idx=arr.indexOf(page);
+  const tgl=$('isl-tgl-'+page);
+  if(idx>-1){arr.splice(idx,1);if(tgl)tgl.classList.add('on')}
+  else{arr.push(page);if(tgl)tgl.classList.remove('on')}
+  save();
+  applyIslandVisibility();
+}
+function applyIslandVisibility(){
+  const island=$('dynamic-island');if(!island)return;
+  const hidden=(D.settings?.islandHiddenPages||[]).includes(curPage);
+  island.classList.toggle('di-hidden',hidden);
+}
+function syncIslandToggleUI(){
+  const hidden=D.settings?.islandHiddenPages||[];
+  ['inicio','partidos','info','perfil'].forEach(p=>{
+    const tgl=$('isl-tgl-'+p);if(tgl)tgl.classList.toggle('on',!hidden.includes(p));
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   NAV — Resaltado in-place
+   Mueve la burbuja de fondo (#nav-bubble) para que quede
+   centrada detrás del ícono de la sección activa, dentro
+   de la misma barra (sin subir ni flotar por fuera).
+   Llamado desde: go(), init(), window resize
+   ════════════════════════════════════════════════════════════ */
+function moveNavBubble(){
+  requestAnimationFrame(()=>{
+    const bubble=$('nav-bubble');
+    const navEl=$('nav');
+    if(!bubble||!navEl)return;
+    const activeNi=document.querySelector('.ni.on');
+    if(!activeNi||activeNi.style.display==='none'){
+      bubble.style.opacity='0';return;
+    }
+    const navRect=navEl.getBoundingClientRect();
+    const niRect=activeNi.getBoundingClientRect();
+    const niCenterX=niRect.left-navRect.left+niRect.width/2;
+    const bsz=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-bubble-sz'))||48;
+    const bubbleLeft=niCenterX-bsz/2;
+    bubble.style.left=bubbleLeft+'px';
+    bubble.style.opacity='1';
+  });
+}
+window.addEventListener('resize',()=>moveNavBubble());
+
+
 /* ---- NAV ---- */
 function go(p){
   if(curPage===p&&p!=='admin')return;
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  // config-page → abre Config dentro del admin
+  if(p==='config-page'){
+    go('admin');setTimeout(()=>admGo('config'),80);return;
+  }
   const pg=$('pg-'+p),ni=$('ni-'+p);
   if(pg){pg.classList.add('active');curPage=p}
   if(ni)ni.classList.add('on');
-  $('scroll').scrollTop=0;closeMenu();
-  // M4: Header solo en inicio
+  moveNavBubble();
+  applyIslandVisibility();
+  const scrollEl=document.querySelector('.page.active');
+  if(scrollEl)scrollEl.scrollTop=0;
+  closeMenu();
+  // Header solo en inicio
   const hdr=$('hdr');
   if(hdr)hdr.classList.toggle('hdr-hidden',p!=='inicio');
   clearTimeout(ambientDebounce);ambientDebounce=setTimeout(updateAmbient,150);
@@ -394,7 +452,6 @@ function go(p){
     const backBtn=document.getElementById('adm-back-btn');if(backBtn)backBtn.style.display='none';
     const titleEl=document.getElementById('adm-hdr-title');if(titleEl)titleEl.textContent='Panel Admin';
   }
-  // Guardar posición actual para restaurar al volver
   try{sessionStorage.setItem('lsl_cur_page',p);}catch(e){}
   if(p!=='admin')setTimeout(()=>checkAnnouncements(p),250);
 }
@@ -516,10 +573,10 @@ function updateHdr(){
   const c=D.cfg;
   $('hname').textContent=c.name||'La Súper Liga';
   $('hseason').textContent=c.season||'T9';
-  $('sm-aln').textContent=c.name||'La Súper Liga';
+  
   const sl={en_curso:'En curso',proximo:'Próximamente',pausado:'Pausado',finalizado:'Finalizado'};
   $('hstatus').textContent=sl[c.status]||'En curso';
-  $('hdot').className='sdot'+(D.matches.some(m=>m.status==='en_vivo')?' live':'');
+  $('hdot').className='hdr-dot'+(D.matches.some(m=>m.status==='en_vivo')?' live':'');
   const li=$('logo-img'),fb=$('logo-fb');
   if(c.logo){li.src=c.logo;li.style.display='block';fb.style.display='none'}
   else{li.style.display='none';fb.style.display='';fb.textContent=c.short||'LSL'}
@@ -535,11 +592,11 @@ function updateGreet(){
 function updateUser(){
   const u=D.user;
   const init=(u.name||'U').charAt(0).toUpperCase();
-  $('hav-init').textContent=init;$('pav-init').textContent=init;$('sm-av-init').textContent=init;
-  $('sm-uname').textContent=u.name||'Usuario';$('pnm').textContent=u.name||'Usuario';
+  $('hav-init').textContent=init;$('pav-init').textContent=init;
+  $('pnm').textContent=u.name||'Usuario';
   $('pbio').textContent=u.bio||'Sin bio aún.';
-  [$('hav-img'),$('pav-img'),$('sm-av-img')].forEach(el=>{if(el){el.src=u.avatar||'';el.style.display=u.avatar?'block':'none'}});
-  $('hav-init').style.display=u.avatar?'none':'';$('pav-init').style.display=u.avatar?'none':'';$('sm-av-init').style.display=u.avatar?'none':'';
+  [$('hav-img'),$('pav-img')].forEach(el=>{if(el){el.src=u.avatar||'';el.style.display=u.avatar?'block':'none'}});
+  $('hav-init').style.display=u.avatar?'none':'';$('pav-init').style.display=u.avatar?'none':'';
   const pbi=$('pban-img'),pbph=$('pbanph');
   if(u.banner){pbi.src=u.banner;pbi.style.display='block';pbph.style.display='none'}else{pbi.style.display='none';pbph.style.display=''}
   const pt=team(u.favTeam);
@@ -586,7 +643,7 @@ function renderAll(){
 function renderPage(p){
   if(p==='inicio'){renderFeatN()}
   if(p==='partidos'){renderMList()}
-  if(p==='info'){renderAllN();renderStandings();renderSanc();renderRulesAndInfo()}
+  if(p==='info'){renderAllN();renderStandings();renderSanc();renderRulesAndInfo();renderCopaChampions();renderCopaMatches()}
   if(p==='admin'){renderAdmLists()}
   updateDIVisibility();
 }
@@ -600,6 +657,8 @@ function fmtTime(d){try{return new Date(d).toLocaleTimeString('es-AR',{hour:'2-d
 function fmtDate(d){try{return new Date(d).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})}catch(e){return d}}
 const EV_ICONS={
   goal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg>',
+  goal_penalty:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg>',
+  goal_own:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/></svg>',
   yellow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/></svg>',
   red:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/></svg>',
   assist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
@@ -607,58 +666,77 @@ const EV_ICONS={
   default:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>'
 };
 function evIcon(type){return EV_ICONS[type]||EV_ICONS.default}
+/* Etiqueta corta para mostrar junto al minuto en tags de goleadores (ej: "87' Merlini (Pen)") */
+function evGoalSuffix(type){
+  if(type==='goal_penalty')return' (Pen)';
+  if(type==='goal_own')return' (EP)';
+  return'';
+}
 function team(id){return D.teams.find(t=>t.id===id)}
 function channel(id){return D.channels.find(c=>c.id===id)}
 
 /* ---- FEATURED MATCHES — máx 3, priorizando en vivo > próximos > finales recientes ---- */
 function renderFeatM(){
   const c=$('feat-m');if(!c)return;
-  // Prioridad: 1° en vivo, 2° próximos (más cercanos al ahora), 3° finales recientes
   const now=Date.now();
   const scored=D.matches.map(m=>{
     let score=0;
     if(m.status==='en_vivo')score=10000;
     else if(m.status==='pausado')score=9000;
-    else if(m.status==='proximo'){
-      // más cercano al presente = mayor score
-      const diff=new Date(m.datetime)-now;
-      if(diff>=0)score=5000-Math.floor(diff/60000); // próximos futuros, más cercano = mejor
-      else score=3000+Math.floor(diff/60000); // ya pasó la hora pero sigue "proximo"
-    }else if(m.status==='finalizado'){
-      // más reciente = mejor, pero baja prioridad
-      score=1000-Math.abs(new Date(m.datetime)-now)/3600000;
-    }
+    else if(m.status==='proximo'){const diff=new Date(m.datetime)-now;score=diff>=0?5000-Math.floor(diff/60000):3000+Math.floor(diff/60000);}
+    else if(m.status==='finalizado'){score=1000-Math.abs(new Date(m.datetime)-now)/3600000;}
     return{m,score};
-  }).sort((a,b)=>b.score-a.score).slice(0,3).map(x=>x.m);
+  }).sort((a,b)=>b.score-a.score).slice(0,5).map(x=>x.m);
 
-  if(!scored.length){c.innerHTML='<div class="empty" style="width:100%;padding:14px 0"><div class="etic">&#x26BD;</div><div class="etit">Sin partidos</div></div>';return}
-  c.innerHTML=scored.map(m=>{
+  if(!scored.length){c.innerHTML='<div class="empty" style="width:100%;padding:14px 0"><div class="etic">⚽</div><div class="etit">Sin partidos</div></div>';$('feat-dots').innerHTML='';return}
+
+  c.innerHTML=scored.map((m,i)=>{
     const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
-    const live=m.status==='en_vivo';
+    const live=m.status==='en_vivo',prox=m.status==='proximo';
     const ch=channel(m.channel);
+    const hCr=h.logo?`<img src="${h.logo}" style="width:100%;height:100%;object-fit:contain;padding:5px"/>`:`<span style="font-family:'Bebas Neue';font-size:13px;color:var(--txt2)">${h.name.substring(0,3).toUpperCase()}</span>`;
+    const aCr=a.logo?`<img src="${a.logo}" style="width:100%;height:100%;object-fit:contain;padding:5px"/>`:`<span style="font-family:'Bebas Neue';font-size:13px;color:var(--txt2)">${a.name.substring(0,3).toUpperCase()}</span>`;
     return`<div class="mc${live?' live':''}" onclick="openMatch('${m.id}')">
-      <div class="mcst${live?' lv':''}">
-        ${live?'<div class="ldot"></div>':''}${stLabel(m.status)}${m.stadium?` · ${m.stadium}`:''}
-      </div>
-      <div id="mc-imgs" class="mcts">
-        <div class="mct"><div class="mccr">${crEl(h.logo,h.name.substring(0,3).toUpperCase())}</div><div class="mctn">${h.name}</div></div>
-        <div class="mcmd">
-          ${m.status==='proximo'?
-            `<div class="mctl">${fmtTime(m.datetime)}</div><div class="mcdsh" style="font-family:'Bebas Neue';font-size:18px">VS</div>`:
-            `<div class="mcsc"><span>${m.homeScore??0}</span><span class="mcdsh">-</span><span>${m.awayScore??0}</span></div>`}
-          <div class="mctl">${new Date(m.datetime).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}</div>
+      <div class="mc-status">${live?'<div class="mc-live-dot"></div>':''}<span>${stLabel(m.status)}${m.stadium?' · '+m.stadium:''}</span></div>
+      <div class="mc-teams">
+        <div class="mc-team"><div class="mc-crest">${hCr}</div><div class="mc-tname">${h.name}</div></div>
+        <div class="mc-mid">
+          ${prox
+            ?`<div class="mc-time">${fmtTime(m.datetime)}</div><div class="mc-vs">VS</div>`
+            :`<div class="mc-score"><span>${m.homeScore??0}</span><span class="mc-sep">-</span><span>${m.awayScore??0}</span></div>`}
+          <div class="mc-date">${new Date(m.datetime).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}</div>
         </div>
-        <div class="mct"><div class="mccr">${crEl(a.logo,a.name.substring(0,3).toUpperCase())}</div><div class="mctn">${a.name}</div></div>
+        <div class="mc-team"><div class="mc-crest">${aCr}</div><div class="mc-tname">${a.name}</div></div>
       </div>
-      ${ch?`<div class="mcft"><div class="mcftxt">${ch.logo?`<img class="chl" src="${ch.logo}"/>`:''}<span>${ch.name}</span></div></div>`:''}
+      ${ch?`<div class="mc-channel">${ch.logo?`<img src="${ch.logo}"/>`:'📺'} <span>${ch.name}</span></div>`:''}
     </div>`;
   }).join('');
-  setTimeout(updateAmbient,300);
+
+  // Dots del carrusel
+  const dots=$('feat-dots');
+  if(dots){
+    dots.innerHTML=scored.map((_,i)=>`<div class="feat-dot${i===0?' on':''}" data-i="${i}"></div>`).join('');
+    // Observer para actualizar dot activo
+    const track=c;
+    const updateDots=()=>{
+      const idx=Math.round(track.scrollLeft/(track.scrollWidth/scored.length));
+      dots.querySelectorAll('.feat-dot').forEach((d,i)=>d.classList.toggle('on',i===idx));
+    };
+    track.addEventListener('scroll',updateDots,{passive:true});
+  }
 }
 
 /* ---- MATCH LIST ---- */
 let curFlt='todos';
 function flt(f,el){curFlt=f;document.querySelectorAll('.chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');renderMList()}
+/* Arma el texto de goleadores de un equipo, estilo Promiedos: 24' Fagioli; 87' Merlini (Pen) */
+function buildScorersLine(events,teamKey){
+  const goals=(events||[])
+    .filter(e=>e.team===teamKey&&(e.type==='goal'||e.type==='goal_penalty'||e.type==='goal_own'))
+    .sort((a,b)=>a.minute-b.minute);
+  if(!goals.length)return'';
+  return goals.map(g=>`<span class="mr-scorer-min">${g.minute}'</span> ${g.player}${evGoalSuffix(g.type)}`).join('<span class="mr-scorer-sep">;</span> ');
+}
 function renderMList(){
   const c=$('mlist');if(!c)return;
   let ms=D.matches.slice().sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
@@ -671,15 +749,24 @@ function renderMList(){
     ${gms.map(m=>{
       const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
       const live=m.status==='en_vivo';
+      const comp=m.competition||'liga';
+      const compIcon={liga:'⚽',copa:'🏆',amistoso:'🤝'}[comp]||'⚽';
+      const jornadaLabel=m.jornada?(m.copaName?`${m.copaName} · ${m.jornada}`:m.jornada):'';
+      const showScorers=(m.status==='finalizado'||live)&&(m.events||[]).some(e=>e.type==='goal'||e.type==='goal_penalty'||e.type==='goal_own');
+      const scorersH=showScorers?buildScorersLine(m.events,'home'):'';
+      const scorersA=showScorers?buildScorersLine(m.events,'away'):'';
       return`<div class="mr${live?' live':''}" onclick="openMatch('${m.id}')">
         <div class="mrts">
           <div class="mrt"><div class="mrcr">${crEl(h.logo,h.name.substring(0,3))}</div><div class="mrtn">${h.name}</div></div>
+          ${scorersH?`<div class="mr-scorers">${scorersH}</div>`:''}
           <div class="mrt"><div class="mrcr">${crEl(a.logo,a.name.substring(0,3))}</div><div class="mrtn">${a.name}</div></div>
+          ${scorersA?`<div class="mr-scorers">${scorersA}</div>`:''}
+          ${jornadaLabel?`<div style="display:flex;align-items:center;gap:4px;margin-top:3px"><span style="font-size:9px">${compIcon}</span><span style="font-size:9px;font-weight:700;color:var(--txt3)">${jornadaLabel}${m.vuelta?' (Vuelta)':''}</span>${m.vuelta&&m.idaResult?`<span style="font-size:9px;color:var(--txt3)">(Ida: ${m.idaResult})</span>`:''}</div>`:''}
         </div>
         <div class="mrr">
-          ${m.status==='proximo'?
-            `<div class="mrtm">${fmtTime(m.datetime)}</div><div class="mrbdg mrbdg-prox">PRÓ</div>`:
-            `<div class="mrsc"><span id="rmh-${m.id}">${m.homeScore??0}</span><span class="mrsp">-</span><span id="rma-${m.id}">${m.awayScore??0}</span></div><div class="mrbdg${live?' mrbdg-live':''}">${live?'LIVE':'FIN'}</div>`}
+          ${m.status==='proximo'
+            ?`<div class="mrtm">${fmtTime(m.datetime)}</div><div class="mrbdg mrbdg-prox">PRÓX</div>`
+            :`<div class="mrsc"><span id="rmh-${m.id}">${m.homeScore??0}</span><span class="mrsp">-</span><span id="rma-${m.id}">${m.awayScore??0}</span></div><div class="mrbdg${live?' mrbdg-live':''}">${live?'🔴 LIVE':'FIN'}</div>`}
         </div>
       </div>`;
     }).join('')}
@@ -764,9 +851,10 @@ function openMatch(id){
         <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t2)">
           ${D.cfg.name||'La Súper Liga'}${ch?` &nbsp;·&nbsp; ${ch.name}`:''}
         </div>
-        ${m.jornada||m.competition?`<div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;background:rgba(var(--amb-color),.10);border:1px solid rgba(var(--amb-color),.22)">
-          <span style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent2)">${({liga:'Liga',copa:'Copa',amistoso:'Amistoso'})[m.competition]||'Liga'}</span>
-          ${m.jornada?`<span style="font-size:9px;color:var(--t3)">·</span><span style="font-size:9px;font-weight:700;color:var(--t2)">${m.jornada}</span>`:''}
+        ${m.jornada||m.competition?`<div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:99px;background:rgba(var(--p-rgb),.12);border:1px solid rgba(var(--p-rgb),.22)">
+          <span style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--p2)">${({liga:'⚽ Liga',copa:'🏆 Copa',amistoso:'🤝 Amistoso'})[m.competition]||'⚽ Liga'}${m.copaName?' '+m.copaName:''}</span>
+          ${m.jornada?`<span style="font-size:9px;color:var(--txt3)">·</span><span style="font-size:9px;font-weight:700;color:var(--txt2)">${m.jornada}${m.vuelta?' · Vuelta':''}</span>`:''}
+          ${m.vuelta&&m.idaResult?`<span style="font-size:9px;color:var(--txt3)">·</span><span style="font-size:9px;font-weight:600;color:var(--txt3)">(Ida: ${m.idaResult})</span>`:''}
         </div>`:''}
       </div>
 
@@ -963,7 +1051,7 @@ function openMatch(id){
     <div class="md-panel${(done||live)?' on':''}" id="mdt-ev-${id}">
       ${events.length?events.map(ev=>{
         const eico=evIcon(ev.type);
-        const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
+        const ecolor={'goal':'#22c55e','goal_penalty':'#22c55e','goal_own':'#f87171','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
         const isHome=ev.team==='home';
         return `<div class="evit" style="border-left:3px solid ${ecolor};justify-content:${isHome?'flex-start':'flex-end'}">
           ${isHome?`
@@ -1502,18 +1590,19 @@ function toggleReminder(id){
 /* ---- NEWS ---- */
 function renderFeatN(){
   const c=$('feat-n');if(!c)return;
-  if(!D.news.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F4F0;</div><div class="etit">Sin noticias</div></div>';return}
-  const [big,...rest]=D.news.slice(0,4);
-  c.innerHTML=`
-    <div style="padding:0 14px">
-      <div class="ncbig" onclick="openNews('${big.id}')">
-        <div class="ncbig-img">${big.image?`<img src="${big.image}" loading="lazy"/>`:'<span style="font-size:48px;opacity:.2">📰</span>'}</div>
-        <div class="ncbig-body"><div class="nccat">${big.category||'NOTICIAS'}</div><div class="ncbig-t">${big.title}</div><div class="ncexc">${big.excerpt}</div></div>
+  if(!D.news.length){c.innerHTML='<div class="empty"><div class="etic">📰</div><div class="etit">Sin noticias</div></div>';return}
+  c.innerHTML=D.news.slice(0,8).map(n=>`
+    <div class="news-card" onclick="openNews('${n.id}')">
+      ${n.image
+        ?`<img class="news-img" src="${n.image}" loading="lazy"/>`
+        :`<div class="news-img-ph"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>`}
+      <div class="news-body">
+        <div class="news-cat">${n.category||'NOTICIAS'}</div>
+        <div class="news-title">${n.title}</div>
+        <div class="news-date">${fmtND(n.date)}</div>
       </div>
     </div>
-    ${rest.length?`<div style="padding:10px 14px 0">${rest.map(n=>`<div class="ncsm" onclick="openNews('${n.id}')"><div class="ncsm-img" style="height:80px">${n.image?`<img src="${n.image}" loading="lazy"/>`:''}</div><div class="ncsm-body"><div class="ncsm-t">${n.title}</div><div class="nccat">${n.category||''}</div><div class="ncdt">${fmtND(n.date)}</div></div></div>`).join('')}</div>`:''}
-  `;
-  setTimeout(updateAmbient,300);
+  `).join('');
 }
 function renderAllN(){
   const c=$('all-n');if(!c)return;
@@ -1537,7 +1626,8 @@ function openNews(id){
 /* ---- STANDINGS ---- */
 function calcStandings(){
   D.teams.forEach(t=>{t.pj=0;t.pg=0;t.pp=0;t.pe=0;t.gf=0;t.gc=0;t.pts=0});
-  D.matches.filter(m=>m.status==='finalizado').forEach(m=>{
+  // Solo partidos de LIGA finalizados cuentan para la tabla
+  D.matches.filter(m=>m.status==='finalizado' && (!m.competition||m.competition==='liga')).forEach(m=>{
     const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return;
     const hs=m.homeScore??0,as=m.awayScore??0;
     h.pj++;a.pj++;h.gf+=hs;h.gc+=as;a.gf+=as;a.gc+=hs;
@@ -1578,6 +1668,79 @@ function renderMiniTbl(){
   if(!ts.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F3C6;</div><div class="etit">Sin equipos</div></div>';return}
   c.innerHTML=`<div class="stw" style="margin:0 14px"><table class="stt"><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>Pts</th></tr></thead><tbody>${ts.map((t,i)=>`<tr><td>${i+1}</td><td><div class="sttr"><div class="stcr">${crEl(t.logo,t.name.substring(0,3))}</div><span>${t.name}</span></div></td><td>${t.pj}</td><td>${t.pts+(t.adj||0)}</td></tr>`).join('')}</tbody></table></div>`;
 }
+/* ════════════════════════════════════════════════════════
+   COPA — Campeones & partidos de copa
+   ════════════════════════════════════════════════════════ */
+function renderCopaChampions(){
+  let el=$('copa-champions-box');
+  if(!el){
+    // Crear el contenedor si no existe en el DOM (se inserta tras la sección de sanciones)
+    const sanc=document.querySelector('#sanc-box')?.parentElement;
+    if(!sanc)return;
+    const wrap=document.createElement('div');
+    wrap.className='sec';wrap.style.marginTop='16px';
+    wrap.innerHTML=`<div class="sec-hd"><div class="sec-title">🏆 Campeones de Copas</div></div><div id="copa-champions-box" class="ibox"></div>`;
+    sanc.after(wrap);
+    el=$('copa-champions-box');
+    if(!el)return;
+  }
+  const champs=D.cfg.copaChampions||[];
+  if(!champs.length){el.innerHTML='<div class="empty"><div class="etic">🏆</div><div class="etit">Sin campeones registrados</div><div class="esub">El admin puede agregar campeones desde Config → Copa</div></div>';return}
+  el.innerHTML=champs.map(c=>{
+    const w=team(c.winnerId);
+    return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <div style="width:34px;height:34px;border-radius:10px;background:rgba(var(--p-rgb),.12);border:1px solid rgba(var(--p-rgb),.2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">${w?.logo?`<img src="${w.logo}" style="width:100%;height:100%;object-fit:contain;padding:2px"/>`:'🏆'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:var(--txt)">${c.name}</div>
+        <div style="font-size:11px;color:var(--txt2)">${w?.name||c.winnerName||'?'} · ${c.season||''}</div>
+      </div>
+      <div style="font-size:20px">🥇</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCopaMatches(){
+  let el=$('copa-matches-box');
+  if(!el){
+    const champ=document.querySelector('#copa-champions-box')?.parentElement;
+    if(!champ)return;
+    const wrap=document.createElement('div');
+    wrap.className='sec';wrap.style.marginTop='16px';
+    wrap.innerHTML=`<div class="sec-hd"><div class="sec-title">🏅 Partidos de Copa</div></div><div id="copa-matches-box"></div>`;
+    champ.after(wrap);
+    el=$('copa-matches-box');
+    if(!el)return;
+  }
+  const copaMtchs=D.matches.filter(m=>m.competition==='copa').sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+  if(!copaMtchs.length){el.innerHTML='<div class="empty" style="padding:14px 0"><div class="etic">🏅</div><div class="etit">Sin partidos de copa</div></div>';return}
+  // Agrupar por copaName / jornada
+  const groups={};
+  copaMtchs.forEach(m=>{const k=m.copaName||'Copa';if(!groups[k])groups[k]=[];groups[k].push(m)});
+  el.innerHTML=Object.entries(groups).map(([copaName,ms])=>`
+    <div style="padding:0 18px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--p2);margin:10px 0 6px">${copaName}</div>
+      ${ms.map(m=>{
+        const h=team(m.homeTeam),a=team(m.awayTeam);if(!h||!a)return'';
+        const live=m.status==='en_vivo';
+        const isVuelta=m.vuelta&&m.idaResult;
+        return`<div class="mr${live?' live':''}" onclick="openMatch('${m.id}')" style="margin-bottom:8px">
+          <div class="mrts">
+            <div class="mrt"><div class="mrcr">${crEl(h.logo,h.name.substring(0,3))}</div><div class="mrtn">${h.name}</div></div>
+            <div class="mrt"><div class="mrcr">${crEl(a.logo,a.name.substring(0,3))}</div><div class="mrtn">${a.name}</div></div>
+          </div>
+          <div class="mrr">
+            ${m.status==='proximo'?`<div class="mrtm">${fmtTime(m.datetime)}</div>`:`<div class="mrsc"><span>${m.homeScore??0}</span><span class="mrsp">-</span><span>${m.awayScore??0}</span></div>`}
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+              <div class="mrbdg ${live?'mrbdg-live':m.status==='proximo'?'mrbdg-prox':''}">${m.jornada||(m.vuelta?'Vuelta':'Ida')}</div>
+              ${isVuelta?`<div style="font-size:9px;color:var(--txt3);white-space:nowrap">Ida: ${m.idaResult}</div>`:''}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
 function renderSanc(){
   const c=$('sanc-box');if(!c)return;
   if(!D.sanctions.length){c.innerHTML='<div class="empty"><div class="etic">&#x1F7E8;</div><div class="etit">Sin sancionados</div></div>';return}
@@ -1613,7 +1776,7 @@ function delSponsor(id){if(!confirm('¿Eliminar sponsor?'))return;if(!D.sponsors
 /* ---- ADMIN SELECTS ---- */
 function populateSels(){
   const opts='<option value="">Seleccionar...</option>'+D.teams.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
-  ['mh-team','ma-team','sa-team','pl-team','pts-team'].forEach(id=>{const el=$(id);if(el){const v=el.value;el.innerHTML=opts;el.value=v}});
+  ['mh-team','ma-team','sa-team','pl-team','pts-team','cc-winner'].forEach(id=>{const el=$(id);if(el){const v=el.value;el.innerHTML=opts;el.value=v}});
   const mch=$('m-ch');if(mch){mch.innerHTML='<option value="">Sin canal</option>'+D.channels.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
 }
 function updateAdmCfg(){
@@ -1649,18 +1812,23 @@ function saveMatch(){
   const roomCode=$('m-room')?.value?.trim()||'';
   const competition=$('m-comp')?.value||'liga';
   const jornada=$('m-jornada')?.value?.trim()||'';
+  const copaName=$('m-copa-name')?.value?.trim()||'';
+  const vuelta=$('m-vuelta')?.checked||false;
+  const idaResult=$('m-ida-result')?.value?.trim()||'';
   if(!h&&!a&&!dt){toast('⚠️ Completá: local, visitante y fecha');return}
   if(!h){toast('⚠️ Seleccioná el equipo Local');$('mh-team')?.focus();return}
   if(!a){toast('⚠️ Seleccioná el equipo Visitante');$('ma-team')?.focus();return}
   if(!dt){toast('⚠️ Ingresá la fecha y hora del partido');$('m-dt')?.focus();return}
   if(h===a){toast('⚠️ El local y visitante deben ser equipos distintos');return}
   let isoDate;try{isoDate=new Date(dt).toISOString()}catch(e){toast('⚠️ Fecha inválida');return}
-  const newMatch={id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,datetime:isoDate,status:st,stadium:stad,channel:ch,roomCode:roomCode,competition:competition,jornada:jornada,events:[],stats:{}};
+  const newMatch={id:Date.now().toString(),homeTeam:h,awayTeam:a,homeScore:0,awayScore:0,datetime:isoDate,status:st,stadium:stad,channel:ch,roomCode:roomCode,competition:competition,jornada:jornada,copaName:copaName||undefined,vuelta:competition==='copa'?vuelta:undefined,idaResult:competition==='copa'&&vuelta?idaResult:undefined,events:[],stats:{}};
   D.matches.push(newMatch);save();renderAll();
   const hSel=$('mh-team'),aSel=$('ma-team');if(hSel)hSel.value='';if(aSel)aSel.value='';
   const stadEl=$('m-stad');if(stadEl)stadEl.value='';
   const roomEl=$('m-room');if(roomEl)roomEl.value='';
   const jornadaEl=$('m-jornada');if(jornadaEl)jornadaEl.value='';
+  const copaNameEl=$('m-copa-name');if(copaNameEl)copaNameEl.value='';
+  const idaResEl=$('m-ida-result');if(idaResEl)idaResEl.value='';
   prefillMatchDate();
   addNotif('Nuevo partido',`${teamName(h)} vs ${teamName(a)}`);
   try{sendPushToAll('⚽ Nuevo partido',`${teamName(h)} vs ${teamName(a)}`)}catch(e){}
@@ -1668,8 +1836,45 @@ function saveMatch(){
 }
 function updateJornadaPlaceholder(){
   const comp=$('m-comp')?.value;const inp=$('m-jornada');if(!inp)return;
-  const placeholders={liga:'Ej: Fecha 5',copa:'Ej: Octavos de Final',amistoso:'Ej: Amistoso de pretemporada'};
+  const placeholders={liga:'Ej: Fecha 5',copa:'Ej: Semifinal / Final',amistoso:'Ej: Amistoso de pretemporada'};
   inp.placeholder=placeholders[comp]||'Ej: Fecha 5';
+  // Mostrar/ocultar campos de copa
+  const copaFields=$('copa-extra-fields');
+  if(copaFields)copaFields.style.display=comp==='copa'?'block':'none';
+}
+function toggleVueltaField(){
+  const isVuelta=$('m-vuelta')?.checked;
+  const idaRow=$('ida-result-row');
+  if(idaRow)idaRow.style.display=isVuelta?'block':'none';
+}
+/* Campeones de Copa — Admin */
+function saveCopaChampion(){
+  const name=$('cc-name')?.value?.trim();
+  const season=$('cc-season')?.value?.trim();
+  const winnerId=$('cc-winner')?.value;
+  const winnerName=team(winnerId)?.name||$('cc-winner-name')?.value?.trim()||'';
+  if(!name||!season){toast('⚠️ Nombre de copa y temporada requeridos');return}
+  if(!D.cfg.copaChampions)D.cfg.copaChampions=[];
+  D.cfg.copaChampions.push({id:Date.now().toString(),name,season,winnerId:winnerId||'',winnerName});
+  save();adminSync();
+  if($('cc-name'))$('cc-name').value='';
+  if($('cc-season'))$('cc-season').value='';
+  if($('cc-winner'))$('cc-winner').value='';
+  renderCopaChampionsList();renderCopaChampions();
+  toast('✅ Campeón registrado');
+}
+function delCopaChampion(id){
+  if(!D.cfg.copaChampions)return;
+  D.cfg.copaChampions=D.cfg.copaChampions.filter(c=>c.id!==id);
+  save();adminSync();renderCopaChampionsList();renderCopaChampions();toast('🗑️ Eliminado');
+}
+function renderCopaChampionsList(){
+  const el=$('adm-copa-list');if(!el)return;
+  const list=D.cfg.copaChampions||[];
+  el.innerHTML=list.length?list.map(c=>{
+    const w=team(c.winnerId);
+    return`<div class="ali"><div class="alinf"><div class="aln">🏆 ${c.name}</div><div class="als">${w?.name||c.winnerName||'?'} · ${c.season}</div></div><div class="alacts"><button class="albtn danger" onclick="delCopaChampion('${c.id}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`;
+  }).join(''):'<div class="empty" style="padding:14px 0"><div class="etic">🏆</div><div class="etit">Sin campeones</div></div>';
 }
 function teamName(id){return D.teams.find(t=>t.id===id)?.name||id}
 function delMatch(id){if(!confirm('¿Eliminar partido?'))return;D.matches=D.matches.filter(m=>m.id!==id);save();renderAll();broadcastUpdate();adminSync();toast('🗑️ Eliminado')}
@@ -1846,7 +2051,7 @@ function openLiveEdit(id){
     </div>
     <div class="fl" style="margin-top:10px">Agregar evento</div>
     <div class="aform" style="padding:12px">
-      <div class="fl">Tipo</div><select class="fsel" id="le-et"><option value="goal">Gol</option><option value="yellow">Amarilla</option><option value="red">Roja</option><option value="assist">Asistencia</option><option value="sub">Cambio</option></select>
+      <div class="fl">Tipo</div><select class="fsel" id="le-et"><option value="goal">Gol</option><option value="goal_penalty">Gol (Penal)</option><option value="goal_own">Gol en contra</option><option value="yellow">Amarilla</option><option value="red">Roja</option><option value="assist">Asistencia</option><option value="sub">Cambio</option></select>
       <div style="display:flex;gap:8px">
         <div style="flex:1"><div class="fl">Jugador</div><input type="text" class="fi" id="le-ep" placeholder="Nombre..." style="margin-bottom:0"/></div>
         <div style="flex:1"><div class="fl">Minuto</div><input type="number" class="fi" id="le-em" placeholder="45" min="1" max="120" style="margin-bottom:0"/></div>
@@ -1880,7 +2085,7 @@ function openLiveEdit(id){
     <button class="abtn" onclick="saveLiveEdit('${id}')">GUARDAR CAMBIOS</button>
     <div class="fl" style="margin-top:14px">Eventos</div>
     <div>${(m.events||[]).length?(m.events||[]).map((ev,i)=>{
-      const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
+      const ecolor={'goal':'#22c55e','goal_penalty':'#22c55e','goal_own':'#f87171','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
       return`<div class="ali"><div class="evico" style="width:22px;color:${ecolor}">${evIcon(ev.type)}</div><div class="alinf"><div class="aln">${ev.player} (${ev.minute}')</div><div class="als">${ev.team==='home'?(h?.name||'L'):(a?.name||'V')}</div></div><div class="alacts"><button class="albtn" onclick="delEv('${id}',${i})"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div>`;
     }).join(''):'<div class="empty" style="padding:10px 0"><div class="etit" style="font-size:12px">Sin eventos</div></div>'}</div>
   `;
@@ -2242,8 +2447,8 @@ function closeMD(){
 }
 function ovClick(e,id){if(id!=='md-ov'&&e.target.id===id)closeOv(id)}
 function ovClick(e,id){if(e.target.id===id)closeOv(id)}
-function openMenu(){$('smov').classList.add('open')}
-function closeMenu(){$('smov').classList.remove('open')}
+function openMenu(){$('smov')?.classList.add('open')}
+function closeMenu(){$('smov')?.classList.remove('open')}
 function closeSMOv(e){if(e.target.id==='smov')closeMenu()}
 
 /* ---- TOAST ---- */
@@ -2299,12 +2504,95 @@ function toast(msg){
 
 /* ---- AMBIENT SCROLL LISTENER ---- */
 document.addEventListener('DOMContentLoaded',()=>{
-  init();
-  initHeaderShrink();
-  // Ambient: solo al cargar, no en cada scroll
-  setTimeout(updateAmbient, 600);
-  loadCustomCode();
+  initLockScreen();
 });
+
+/* ════════════════════════════════════════════════════════════
+   LOCK SCREEN
+   initLockScreen()  — carga datos guardados (logo, nombre, fondo)
+   attemptUnlock()   — animación de escaneo al tocar la huella
+   unlockComplete()  — anima la salida y llama a init()
+   ════════════════════════════════════════════════════════════ */
+function initLockScreen(){
+  const clockEl=$('lk-clock');
+  const tick=()=>{if(clockEl)clockEl.textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})};
+  tick();setInterval(tick,15000);
+  try{
+    const raw=localStorage.getItem(STORE);
+    if(raw){
+      const saved=JSON.parse(raw);
+      const cfg=saved?.cfg||{};
+      if(cfg.logo){
+        const img=$('lk-logo-img'),fb=$('lk-logo-fb');
+        if(img){img.src=cfg.logo;img.style.display='block'}
+        if(fb)fb.style.display='none';
+      }
+      if(cfg.name){const nm=$('lk-app-name');if(nm)nm.textContent=cfg.name}
+      if(cfg.lockHint){const h=$('lk-hint-text');if(h)h.textContent=cfg.lockHint}
+      if(cfg.lockBg){
+        const bg=$('lk-bg-img');
+        if(bg){bg.src=cfg.lockBg;bg.onload=()=>bg.classList.add('loaded')}
+      }
+      if(saved?.settings?.perf==='eco')
+        document.documentElement.setAttribute('data-perf','lite');
+    }
+  }catch(e){}
+}
+let _unlocking=false;
+function attemptUnlock(){
+  if(_unlocking)return;_unlocking=true;
+  const btn=$('lk-fp'),lbl=$('lk-fp-lbl');
+  if(btn)btn.classList.add('scanning');
+  if(lbl)lbl.textContent='VERIFICANDO...';
+  if(navigator.vibrate)try{navigator.vibrate([12,40,12])}catch(e){}
+  setTimeout(()=>{
+    if(btn){btn.classList.remove('scanning');btn.classList.add('ok')}
+    if(lbl)lbl.textContent='¡LISTO!';
+    if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
+    setTimeout(unlockComplete,420);
+  },580);
+}
+function unlockComplete(){
+  const lock=$('lock-screen');
+  if(lock)lock.classList.add('unlocked');
+  setTimeout(()=>{
+    if(lock)lock.style.display='none';
+    init();
+    initHeaderShrink();
+    setTimeout(updateAmbient,600);
+    loadCustomCode();
+  },520);
+}
+
+/* ---- HEADER: reloj + cuenta regresiva próximo partido (M2) ---- */
+function getNextMatch(){
+  const now=Date.now();
+  const upcoming=(D.matches||[]).filter(m=>m.status==='proximo'&&m.datetime&&new Date(m.datetime).getTime()>now);
+  if(!upcoming.length)return null;
+  upcoming.sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  return upcoming[0];
+}
+function updateNextMatchCountdown(){
+  const pill=$('next-match-pill'),timeEl=$('next-match-time');
+  const clockEl=$('hdr-clock');
+  if(clockEl)clockEl.textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  if(!pill||!timeEl)return;
+  const m=getNextMatch();
+  if(!m){pill.style.display='none';return}
+  pill.style.display='flex';
+  const diff=new Date(m.datetime).getTime()-Date.now();
+  if(diff<=0){timeEl.textContent='¡Ya!';return}
+  const mins=Math.floor(diff/60000);
+  const days=Math.floor(mins/1440);
+  const hours=Math.floor((mins%1440)/60);
+  const rem=mins%60;
+  let txt;
+  if(days>0)txt=`${days}d ${hours}h`;
+  else if(hours>0)txt=`${hours}h ${rem}m`;
+  else txt=`${rem}m`;
+  timeEl.textContent=txt;
+}
+setInterval(()=>{try{updateNextMatchCountdown();}catch(e){}},30000);
 
 /* ---- HEADER SCROLL — Solo blur intensifica, NO shrink ---- */
 function initHeaderShrink(){
@@ -2859,6 +3147,8 @@ function openSettings(){
   setTgl('tgl-ambient',s.ambient!==false);
   setTgl('tgl-anims', s.anims!==false);
   setTgl('tgl-glass', s.glass!==false);
+  setTgl('tgl-di', s.diVisible!==false);
+  setTgl('tgl-di-all', s.diAllSections!==false);
   // Estado de notificaciones
   const ns=$('cfg-notif-state');
   if(ns){
@@ -2868,10 +3158,81 @@ function openSettings(){
     else ns.textContent='Toca para activar';
   }
   // Marcar el acento activo
+  const activeHex=(s.accentHex||getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
   document.querySelectorAll('.accent-dot').forEach(d=>{
-    const matches=d.style.background===getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const matches=d.style.background===activeHex;
     d.classList.toggle('active',matches);
   });
+  const hexInput=$('accent-hex-input');
+  if(hexInput)hexInput.value=(activeHex||'#818cf8').replace('#','').toUpperCase();
+  // Fuente activa
+  document.querySelectorAll('.font-opt').forEach(o=>o.classList.toggle('active',o.dataset.font===(s.fontFamily||'dmsans')));
+  // Tema activo
+  const activeThemeName=D._activeThemeName||s.colorTheme||'default';
+  document.querySelectorAll('.theme-item').forEach(i=>i.classList.toggle('active',i.id==='theme-'+activeThemeName));
+  updateThemeModeUI();
+  // Estado de pantalla completa
+  const fs=$('cfg-fullscreen-state');
+  if(fs)fs.textContent=document.fullscreenElement?'✅ Activada':'Ocultar barra del navegador';
+}
+function closeSettings(){closeOv('cfg-ov')}
+
+/* ---- Color de acento vía input HEX ---- */
+function applyHexInput(inputId){
+  const inp=$(inputId);if(!inp)return;
+  let hex=(inp.value||'').trim().replace('#','');
+  if(!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(hex)){toast('⚠️ HEX inválido. Usá 3 o 6 dígitos (ej: 8B5CF6)');return}
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  setCustomAccent('#'+hex);
+  inp.value=hex.toUpperCase();
+}
+function syncHexInput(inputId,hexValue){
+  const inp=$(inputId);if(!inp)return;
+  inp.value=(hexValue||'').replace('#','').toUpperCase();
+}
+function syncBgHex(slot){
+  const hexInp=$('custom-bg-'+slot+'-hex');const colorInp=$('custom-bg-'+slot);
+  if(!hexInp||!colorInp)return;
+  let hex=(hexInp.value||'').trim().replace('#','');
+  if(!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(hex)){toast('⚠️ HEX inválido. Usá 3 o 6 dígitos');return}
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  colorInp.value='#'+hex;
+  previewCustomBg();
+}
+
+/* ---- Sincronización genérica color-picker <-> input HEX (usado en Admin: Anuncios, etc.) ---- */
+function syncColorHex(colorInputId,hexInputId){
+  const colorInp=$(colorInputId);const hexInp=$(hexInputId);
+  if(!colorInp||!hexInp)return;
+  hexInp.value=colorInp.value.replace('#','').toUpperCase();
+}
+function applyColorFromHex(hexInputId,colorInputId){
+  const hexInp=$(hexInputId);const colorInp=$(colorInputId);
+  if(!hexInp||!colorInp)return;
+  let hex=(hexInp.value||'').trim().replace('#','');
+  if(!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(hex)){toast('⚠️ HEX inválido. Usá 3 o 6 dígitos');return}
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  colorInp.value='#'+hex;
+  hexInp.value=hex.toUpperCase();
+  toast('✅ Color aplicado');
+}
+
+/* ---- Pantalla completa (Fullscreen API) ---- */
+function toggleFullscreen(){
+  const fs=$('cfg-fullscreen-state');
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen?.().then(()=>{
+      if(fs)fs.textContent='✅ Activada';
+      toast('⛶ Pantalla completa activada');
+    }).catch(()=>{
+      toast('⚠️ Tu navegador no permite forzar pantalla completa acá. Instalá la app desde "Agregar a pantalla de inicio" para que abra sin barras.');
+    });
+  }else{
+    document.exitFullscreen?.().then(()=>{
+      if(fs)fs.textContent='Ocultar barra del navegador';
+      toast('Pantalla completa desactivada');
+    });
+  }
 }
 
 function toggleCfg(key){
@@ -2920,6 +3281,8 @@ function setAccent(hex,rgb){
   event.currentTarget.classList.add('active');
   if(!D.settings)D.settings={};
   D.settings.accentHex=hex;D.settings.accentRgb=rgb;
+  // Marcar que el usuario eligió un acento manual: así updateAmbient() no lo pisa
+  D.settings.colorTheme='custom-accent';
   save();toast('🎨 Color aplicado');
 }
 
@@ -3454,7 +3817,7 @@ function renderRules(){renderRulesAndInfo()}
 function buildEventsHTML(events,h,a){
   if(!events||!events.length)return`<div class="empty" style="padding:28px 0"><div class="etic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg></div><div class="etit">Sin eventos registrados</div><div class="esub">Los eventos aparecerán en vivo</div></div>`;
   return events.map(ev=>{
-    const eico=evIcon(ev.type);const ecolor={'goal':'#22c55e','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
+    const eico=evIcon(ev.type);const ecolor={'goal':'#22c55e','goal_penalty':'#22c55e','goal_own':'#f87171','yellow':'#facc15','red':'#f87171','assist':'#60a5fa','sub':'#a78bfa'}[ev.type]||'#888';
     const isHome=ev.team==='home';
     const isGoal=ev.type==='goal';
     const tn=isHome?h.name:a.name;
@@ -3504,6 +3867,7 @@ function admBackToHub(){
    ════════════════════════════════════════════════ */
 let _euiSettings={logoSize:54,logoRadius:16,titleSize:22,hdrBlur:36,hdrPadTop:18,cardRadius:20,cardWidth:278,cardScale:100,cardRotate:0,borderWidth:1,fontSize:13,navBlur:32,navPad:4,navIcoSize:22,hdrShrink:true};
 let _euiSelectedEl=null,_euiPicking=false;
+let _euiDblTapTimer={};
 
 function openEditUI(){$('edit-ui-panel').classList.add('open');euiLoadSettings()}
 function closeEditUI(){
@@ -3974,8 +4338,44 @@ function clearCodeSearch(){const inp=$('code-search-input');if(inp)inp.value='';
    PERFORMANCE
    ════════════════════════════════════════════════ */
 function applyPerformanceMode(){
-  const slow=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=2);
-  if(slow||D.settings?.perf==='eco'){const root=document.documentElement;root.style.setProperty('--spd','.12s');root.style.setProperty('--slow','.22s');document.querySelectorAll('.amb').forEach(el=>el.style.display='none');console.log('⚡ Modo rendimiento');}
+  // Si el usuario todavía no eligió manualmente, detectamos hardware una sola vez
+  if(D.settings?.perf===undefined){
+    const slow=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=2);
+    if(slow){setPerfMode('lite');return}
+  }
+  applyPerfMode(D.settings?.perf==='eco'?'lite':'full');
+}
+/* Aplica los efectos visuales del modo, sin guardar (usado en cada carga) */
+function applyPerfMode(mode){
+  const root=document.documentElement;
+  root.setAttribute('data-perf',mode==='lite'?'lite':'full');
+  if(mode==='lite'){
+    root.style.setProperty('--spd','.12s');
+    root.style.setProperty('--slow','.18s');
+    root.style.setProperty('--spring','ease');
+  }else{
+    root.style.removeProperty('--spd');
+    root.style.removeProperty('--slow');
+    root.style.removeProperty('--spring');
+  }
+  const hdr=$('hdr'),nav=$('nav');
+  if(hdr)hdr.style.backdropFilter='';
+  if(nav)nav.style.backdropFilter='';
+  $('tgl-anims')?.classList.toggle('on',mode!=='lite');
+  $('tgl-glass')?.classList.toggle('on',mode!=='lite');
+  $('perf-opt-full')?.classList.toggle('on',mode!=='lite');
+  $('perf-opt-lite')?.classList.toggle('on',mode==='lite');
+  console.log(mode==='lite'?'⚡ Modo Liviano activo':'✨ Modo Fluido activo');
+}
+/* Elegido a mano por el usuario desde Config */
+function setPerfMode(mode){
+  if(!D.settings)D.settings={};
+  D.settings.perf=mode==='lite'?'eco':'full';
+  D.settings.anims=mode!=='lite';
+  D.settings.glass=mode!=='lite';
+  applyPerfMode(mode);
+  save();
+  toast(mode==='lite'?'⚡ Modo Liviano activado':'✨ Modo Fluido activado');
 }
 
 /* ════════════════════════════════════════════════
@@ -4198,7 +4598,7 @@ function initDynamicIsland(){
     islandEl.classList.add('notify');
     _diNotifying=true;
     clearTimeout(_diNotifyTimeout);
-    _diNotifyTimeout=setTimeout(()=>{islandEl.classList.remove('notify');_diNotifying=false},4500);
+    _diNotifyTimeout=setTimeout(()=>{islandEl.classList.remove('notify');_diNotifying=false;updateDIIdleState()},4500);
   };
 
   updateDIVisibility();
@@ -4209,7 +4609,7 @@ let _diPlaylist=[],_diIndex=0;
 function diLoadTrack(index,autoplay){
   const audioEl=$('native-audio');
   const track=_diPlaylist[index];
-  if(!track){_diHasTrack=false;return}
+  if(!track){_diHasTrack=false;updateDIIdleState();return}
   _diHasTrack=true;
   $('island-song-title').textContent=track.title||'Sin título';
   $('island-song-artist').textContent=track.artist||'';
@@ -4243,6 +4643,23 @@ function updateDIVisibility(){
   const onHome=curPage==='inicio';
   const shouldShow=_diVisible&&(allSections||onHome);
   islandEl.classList.toggle('di-hidden',!shouldShow);
+  updateDIIdleState();
+}
+/* ── Estado de reposo del mini-cover (isla colapsada, sin notificación activa) ──
+   Prioridad: 1) canción cargada  2) última notificación  3) negro sólido, sin ícono */
+function updateDIIdleState(){
+  const mini=$('mini-cover');if(!mini)return;
+  if(_diHasTrack)return; // ya lo maneja diLoadTrack(): portada o placeholder de nota
+  const lastNotif=(D.notifications||[])[0];
+  if(lastNotif){
+    mini.classList.remove('empty');
+    mini.classList.add('di-idle-notif');
+    mini.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>`;
+    mini.title=lastNotif.title||'';
+  }else{
+    mini.classList.remove('empty','di-idle-notif');
+    mini.innerHTML='';
+  }
 }
 function euiApplyDI(){
   const top=$('eui-di-top')?.value,radius=$('eui-di-radius')?.value;
@@ -4362,6 +4779,8 @@ function setCustomAccent(hex){
   const trigger=document.querySelector('.custom-accent-trigger');if(trigger)trigger.classList.add('active');
   if(!D.settings)D.settings={};
   D.settings.accentHex=hex;D.settings.accentRgb=rgb;
+  // Marcar que el usuario eligió un acento manual: así updateAmbient() no lo pisa
+  D.settings.colorTheme='custom-accent';
   save();adminSync();toast('🎨 Color personalizado aplicado');
 }
 
@@ -4594,3 +5013,354 @@ function launchConfetti(){
   }
   setTimeout(()=>{if(wrap)wrap.innerHTML=''},2600);
 }
+
+/* ════════════════════════════════════════════════════════════
+   AUTO-ROTACIÓN DE CARRUSELES — cada 7 segundos
+   Funciones: startCarouselAuto(), startNewsAuto()
+   Se llaman desde renderFeatM() y renderFeatN()
+   respectivamente, después de generar el HTML.
+   ════════════════════════════════════════════════════════════ */
+let _carouselTimer=null;
+let _newsTimer=null;
+const CAROUSEL_INTERVAL=7000;
+
+function startCarouselAuto(){
+  clearInterval(_carouselTimer);
+  const track=$('feat-m');
+  const dots=$('feat-dots');
+  if(!track)return;
+  const cards=track.querySelectorAll('.mc');
+  if(cards.length<=1)return;
+  let idx=0;
+  const advance=()=>{
+    idx=(idx+1)%cards.length;
+    const card=cards[idx];
+    if(card){
+      card.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+      // Actualizar dots
+      if(dots){
+        dots.querySelectorAll('.feat-dot').forEach((d,i)=>
+          d.classList.toggle('on',i===idx));
+      }
+    }
+  };
+  _carouselTimer=setInterval(advance,CAROUSEL_INTERVAL);
+  // Pausar cuando el usuario desliza manualmente
+  track.addEventListener('touchstart',()=>clearInterval(_carouselTimer),{passive:true});
+  track.addEventListener('touchend',()=>{
+    _carouselTimer=setInterval(advance,CAROUSEL_INTERVAL);
+  },{passive:true});
+}
+
+function startNewsAuto(){
+  clearInterval(_newsTimer);
+  const track=$('feat-n');
+  if(!track)return;
+  const cards=track.querySelectorAll('.news-card');
+  if(cards.length<=1)return;
+  let idx=0;
+  const advance=()=>{
+    idx=(idx+1)%cards.length;
+    const card=cards[idx];
+    if(card)card.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  };
+  _newsTimer=setInterval(advance,CAROUSEL_INTERVAL);
+  track.addEventListener('touchstart',()=>clearInterval(_newsTimer),{passive:true});
+  track.addEventListener('touchend',()=>{
+    _newsTimer=setInterval(advance,CAROUSEL_INTERVAL);
+  },{passive:true});
+}
+
+/* ════════════════════════════════════════════════════════════
+   EDITOR DE UI — doble toque para activar
+   ════════════════════════════════════════════════════════════
+   Cómo funciona:
+   1. El admin activa el modo desde Admin → Editar UI
+   2. toggleEditMode() agrega .eui-active al body
+   3. Todos los elementos con data-editable="true" muestran
+      un contorno punteado violeta
+   4. El usuario hace DOBLE TOQUE en cualquier elemento
+   5. showEditToolbar(el) aparece con controles de edición
+   6. Los cambios se guardan en D.editTransforms y se aplican
+      en tiempo real
+
+   Funciones principales:
+   - toggleEditMode()     — activa/desactiva el modo
+   - initEditUI()         — configura listeners de doble toque
+   - showEditToolbar(el)  — muestra toolbar sobre el elemento
+   - euiApplyText()       — aplica cambio de texto
+   - euiLiveColor(c)      — aplica color en tiempo real
+   - euiLiveBg(c)         — aplica fondo en tiempo real
+   - euiApplyAnim(name)   — aplica animación CSS
+   - euiToggleHide()      — muestra/oculta el elemento
+   - euiDeleteEl()        — elimina el elemento del DOM
+   - euiSave()            — guarda D.editTransforms + sync
+   - euiReset()           — restaura todos los cambios
+   ════════════════════════════════════════════════════════════ */
+_euiDblTapTimer={};
+
+/* Activa o desactiva el modo edición */
+function toggleEditMode(){
+  editMode=!editMode;
+  document.body.classList.toggle('eui-active',editMode);
+  const bar=$('edit-ui-bar');
+  if(bar)bar.classList.toggle('open',editMode);
+  const toolbar=$('eui-toolbar');
+  if(toolbar)toolbar.classList.remove('open');
+  _euiSelectedEl=null;
+  if(editMode){
+    toast('✏️ Doble toque en cualquier elemento para editarlo');
+    markEditables();
+    attachDblTapListeners();
+  }else{
+    toast('✖ Modo edición desactivado');
+  }
+}
+
+/* Marca elementos editables con el atributo data-editable */
+function markEditables(){
+  // Elementos de texto comunes
+  const textSels=[
+    '.greet-name','#greet-time','#greet-sea',
+    '.sec-title','.sec-more','.pg-hdr-title','.pg-hdr-sub',
+    '#hname','#hseason','#hstatus',
+    '.mc-tname','.mc-time','.mc-score',
+    '.news-title','.news-cat',
+    '.mr-team','.mr-score','.mr-time',
+    '.stt td','.stt th',
+    '.pnm','#pbio',
+    '.feat-dot','.hdr-name','.greet-hi',
+    'h1','h2','h3','h4','p'
+  ];
+  textSels.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      if(!el.closest('#edit-ui-bar')&&!el.closest('#eui-toolbar')&&!el.closest('#lock-screen')){
+        el.setAttribute('data-editable','true');
+        if(!el.dataset.euiId)el.dataset.euiId='eui_'+Math.random().toString(36).slice(2,8);
+      }
+    });
+  });
+  // Imágenes
+  document.querySelectorAll('img,video').forEach(el=>{
+    if(!el.closest('#edit-ui-bar')&&!el.closest('#dynamic-island')){
+      el.setAttribute('data-editable','true');
+      if(!el.dataset.euiId)el.dataset.euiId='eui_'+Math.random().toString(36).slice(2,8);
+    }
+  });
+  // Contenedores visuales
+  document.querySelectorAll('.mc,.news-card,.mr,.ibox,.chip,.abtn,.hdr-btn').forEach(el=>{
+    el.setAttribute('data-editable','true');
+    if(!el.dataset.euiId)el.dataset.euiId='eui_'+Math.random().toString(36).slice(2,8);
+  });
+}
+
+/* Escucha doble toque (200ms entre toques) en toda la página */
+function attachDblTapListeners(){
+  document.querySelectorAll('[data-editable]').forEach(el=>{
+    el.addEventListener('touchend',function(e){
+      const id=this.dataset.euiId||'_';
+      if(_euiDblTapTimer[id]){
+        clearTimeout(_euiDblTapTimer[id]);
+        delete _euiDblTapTimer[id];
+        e.preventDefault();
+        onEuiElementSelect(this);
+      }else{
+        _euiDblTapTimer[id]=setTimeout(()=>delete _euiDblTapTimer[id],220);
+      }
+    },{passive:false});
+  });
+}
+
+/* Selecciona un elemento y muestra el toolbar */
+function onEuiElementSelect(el){
+  // Quitar selección anterior
+  if(_euiSelectedEl)_euiSelectedEl.classList.remove('eui-selected');
+  _euiSelectedEl=el;
+  el.classList.add('eui-selected');
+  showEditToolbar(el);
+}
+
+/* Muestra el toolbar posicionado cerca del elemento */
+function showEditToolbar(el){
+  const tb=$('eui-toolbar');if(!tb)return;
+  // Rellenar campos con valores actuales
+  const nameEl=$('eui-tb-name');
+  if(nameEl)nameEl.textContent=el.tagName.toLowerCase()+(el.className?' .'+el.className.split(' ').filter(c=>!['eui-selected','data-editable'].includes(c))[0]:'');
+  const inText=$('eui-in-text');
+  if(inText)inText.value=el.innerText||el.textContent||'';
+  const inColor=$('eui-in-color');
+  if(inColor)inColor.value=rgbToHex(getComputedStyle(el).color)||'#f0effb';
+  const inBg=$('eui-in-bg');
+  if(inBg)inBg.value=rgbToHex(getComputedStyle(el).backgroundColor)||'#18171f';
+  const inSize=$('eui-in-size');
+  if(inSize)inSize.value=parseInt(getComputedStyle(el).fontSize)||'';
+  // Posicionar toolbar
+  const rect=el.getBoundingClientRect();
+  tb.style.top=Math.max(80,rect.bottom+8)+'px';
+  tb.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-290))+'px';
+  tb.classList.add('open');
+}
+
+/* Helpers de color */
+function rgbToHex(rgb){
+  if(!rgb||rgb==='rgba(0, 0, 0, 0)')return null;
+  const m=rgb.match(/\d+/g);if(!m||m.length<3)return null;
+  return '#'+m.slice(0,3).map(x=>parseInt(x).toString(16).padStart(2,'0')).join('');
+}
+
+/* Acciones del toolbar */
+function euiApplyText(){
+  if(!_euiSelectedEl)return;
+  const v=$('eui-in-text')?.value;
+  if(v===undefined)return;
+  _euiSelectedEl.innerText=v;
+  euiSaveEl(_euiSelectedEl,{text:v});
+  toast('✅ Texto actualizado');
+}
+function euiLiveColor(hex){
+  if(_euiSelectedEl)_euiSelectedEl.style.color=hex;
+}
+function euiLiveBg(hex){
+  if(_euiSelectedEl)_euiSelectedEl.style.backgroundColor=hex;
+}
+function euiApplyAnim(name){
+  if(!_euiSelectedEl)return;
+  // Limpiar animaciones previas
+  _euiSelectedEl.classList.remove('anim-pulse','anim-shake','anim-bounce','anim-spin','anim-glow');
+  if(name!=='none')_euiSelectedEl.classList.add('anim-'+name);
+  euiSaveEl(_euiSelectedEl,{anim:name});
+  // Resaltar botón activo
+  document.querySelectorAll('.eui-tb-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(name)));
+  toast('✨ Animación: '+name);
+}
+function euiToggleHide(){
+  if(!_euiSelectedEl)return;
+  const hidden=_euiSelectedEl.style.display==='none';
+  _euiSelectedEl.style.display=hidden?'':'none';
+  euiSaveEl(_euiSelectedEl,{hidden:!hidden});
+  toast(hidden?'👁 Elemento visible':'🙈 Elemento oculto');
+}
+function euiDeleteEl(){
+  if(!_euiSelectedEl)return;
+  if(!confirm('¿Borrar este elemento del DOM? No se puede deshacer sin recargar.'))return;
+  euiSaveEl(_euiSelectedEl,{deleted:true});
+  _euiSelectedEl.remove();
+  _euiSelectedEl=null;
+  $('eui-toolbar')?.classList.remove('open');
+  toast('🗑 Elemento borrado');
+}
+
+/* Guarda el estado de un elemento en D.editTransforms */
+function euiSaveEl(el,changes){
+  const id=el.dataset.euiId;if(!id)return;
+  if(!D.editTransforms)D.editTransforms={};
+  D.editTransforms[id]={...(D.editTransforms[id]||{}),...changes,
+    color:el.style.color||undefined,
+    bg:el.style.backgroundColor||undefined,
+    fontSize:el.style.fontSize||undefined,
+  };
+}
+
+/* Guarda y sincroniza con Supabase */
+function euiSave(){
+  if(_euiSelectedEl){
+    const fv=$('eui-in-color')?.value;
+    const bv=$('eui-in-bg')?.value;
+    const sv=$('eui-in-size')?.value;
+    if(fv)_euiSelectedEl.style.color=fv;
+    if(bv&&bv!=='#18171f')_euiSelectedEl.style.backgroundColor=bv;
+    if(sv)_euiSelectedEl.style.fontSize=sv+'px';
+    euiSaveEl(_euiSelectedEl,{});
+  }
+  save();adminSync();
+  toast('💾 Cambios guardados');
+}
+
+/* Restablece TODOS los cambios del editor */
+function euiReset(){
+  if(!confirm('¿Restablecer todos los cambios del editor de UI?'))return;
+  D.editTransforms={};
+  save();adminSync();
+  toast('↩️ Cambios restablecidos — recargá para ver');
+}
+
+/* Aplica los cambios guardados al cargar la app */
+function applyEditTransforms(){
+  const transforms=D.editTransforms||{};
+  Object.keys(transforms).forEach(id=>{
+    const el=document.querySelector(`[data-eui-id="${id}"]`);
+    if(!el)return;
+    const t=transforms[id];
+    if(t.deleted){el.remove();return}
+    if(t.text)el.innerText=t.text;
+    if(t.color)el.style.color=t.color;
+    if(t.bg)el.style.backgroundColor=t.bg;
+    if(t.fontSize)el.style.fontSize=t.fontSize;
+    if(t.hidden)el.style.display='none';
+    if(t.anim&&t.anim!=='none')el.classList.add('anim-'+t.anim);
+  });
+}
+
+/* Animaciones CSS para el Editor de UI */
+const euiAnimStyle=document.createElement('style');
+euiAnimStyle.textContent=`
+  .anim-pulse{animation:eui-pulse 1.5s ease-in-out infinite}
+  @keyframes eui-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.04)}}
+  .anim-shake{animation:eui-shake .6s ease infinite}
+  @keyframes eui-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .anim-bounce{animation:eui-bounce .8s ease infinite alternate}
+  @keyframes eui-bounce{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
+  .anim-spin{animation:eui-spin 2s linear infinite}
+  @keyframes eui-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  .anim-glow{animation:eui-glow 2s ease-in-out infinite}
+  @keyframes eui-glow{0%,100%{filter:brightness(1) drop-shadow(0 0 0 transparent)}50%{filter:brightness(1.2) drop-shadow(0 0 8px rgba(139,92,246,.7))}}
+`;
+document.head.appendChild(euiAnimStyle);
+
+/* ════════════════════════════════════════════════════════════
+   LOCK SCREEN ADMIN CONFIG
+   Permite al admin personalizar el lock screen desde
+   Admin → Config → Lock Screen.
+   Opciones: imagen de fondo, hint personalizado.
+   ════════════════════════════════════════════════════════════ */
+function saveLockScreenConfig(){
+  const hint=$('cfg-lock-hint')?.value?.trim();
+  if(!D.cfg)D.cfg={};
+  if(hint)D.cfg.lockHint=hint;
+  save();adminSync();
+  toast('✅ Lock screen actualizado');
+}
+function triggerLockBg(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';
+  inp.onchange=async(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    toast('⏳ Subiendo imagen...');
+    try{
+      const url=await uploadToStorage(file,'lockbg');
+      if(url){D.cfg.lockBg=url;save();adminSync();toast('✅ Fondo del lock screen actualizado')}
+    }catch(er){toast('❌ Error al subir imagen')}
+  };
+  inp.click();
+}
+
+/* ════════════════════════════════════════════════════════════
+   CARRUSEL: hookear auto-rotación después de renderizar
+   ════════════════════════════════════════════════════════════ */
+const _origRenderFeatM=typeof renderFeatM==='function'?renderFeatM:null;
+// Aseguramos que startCarouselAuto se llame tras renderFeatM
+const _postRenderHook=()=>{setTimeout(startCarouselAuto,120)};
+// Monkey-patch para disparar auto-rotación
+if(typeof renderAll==='function'){
+  const _origRA=renderAll;
+  // no sobreescribimos renderAll, usamos el evento de DOMContentLoaded tardío
+}
+// Hook manual: llamado al final de renderFeatM ya está en la nueva versión
+// Llamar startNewsAuto cuando feat-n tenga contenido
+const _featNObserver=new MutationObserver(()=>{
+  if($('feat-n')?.querySelector('.news-card'))startNewsAuto();
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  const fn=$('feat-n');
+  if(fn)_featNObserver.observe(fn,{childList:true});
+});
