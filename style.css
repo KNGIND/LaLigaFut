@@ -572,6 +572,17 @@ body{
 .stt .top{background:rgba(var(--p-rgb),.07)}
 .stt .tcrest{width:20px;height:20px;object-fit:contain;border-radius:4px;vertical-align:middle}
 .stt .tinit{font-size:9px;font-weight:700;color:var(--p2)}
+/* FIX ESCUDO GIGANTE (Posiciones): renderStandings()/renderMiniTbl() arman
+   cada fila con <div class="sttr"><div class="stcr">{escudo}</div><span>
+   ...</span></div> — pero .sttr y .stcr nunca tuvieron NINGUNA regla CSS,
+   así que el <img> del escudo se renderizaba a su tamaño original y sin
+   ningún contenedor/card. Se fija el tamaño desde el contenedor .stcr,
+   sin depender de que la imagen tenga una clase propia. */
+.sttr{display:flex;align-items:center;gap:8px;min-width:0}
+.sttr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.stcr{width:22px;height:22px;border-radius:5px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06)}
+.stcr img{width:100%;height:100%;object-fit:cover}
+.stcr span{font-size:9px;font-weight:700;color:var(--p2)}
 
 /* ──────────────────────────────────────────
    [IBOX]
@@ -625,7 +636,12 @@ body{
 .pnm{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.5px;color:var(--txt);margin-bottom:4px}
 .pbio{font-size:13px;color:var(--txt2);line-height:1.5;margin-bottom:12px}
 .ptb{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;border-radius:var(--r-full);background:var(--glass);border:1px solid var(--glass-brd);cursor:pointer;margin-bottom:16px}
-.ptbcr{font-size:16px}
+/* FIX ESCUDO GIGANTE (Perfil): updateUser() en script.js inyecta
+   `<img src="...">` dentro de #ptbcr con innerHTML, sin clase ni
+   tamaño propio — por eso el escudo se veía a su tamaño original.
+   Se contiene el <img> desde el padre, sin depender de una clase. */
+.ptbcr{width:22px;height:22px;font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,.06)}
+.ptbcr img{width:100%;height:100%;object-fit:cover}
 .ptbnm{font-size:12px;font-weight:700;color:var(--txt2)}
 .pstats{display:flex;padding:0 18px 16px}
 .pst{flex:1;text-align:center;padding:14px 0;background:rgba(90,88,105,.20);border:1px solid var(--glass-brd);-webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur))}
@@ -862,15 +878,42 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .adm-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;row-gap:8px;padding:20px 18px 0}
 .adm-hdr-title{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.5px;min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .adm-hdr-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;margin-left:auto}
-#adm-hub{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
-.adm-hub-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--r-lg);background:rgba(90,88,105,.20);-webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur));border:1px solid var(--glass-brd);cursor:pointer;transition:transform var(--fast) var(--spring)}
+/* FIX CARDS CORTADAS: grid de 2 filas × 3 columnas (ícono | texto | flecha).
+   Título y descripción quedan APILADOS en la misma columna en vez de
+   compartir una sola fila con el ícono y la flecha — así nunca compiten
+   por el mismo ancho horizontal. width:100%+border-box es defensivo por
+   si el entorno de preview no aplica bien el viewport móvil. */
+/* !important necesario: script.js pone hub.style.display='grid' inline
+   (código heredado del diseño anterior en grid de 2 columnas) cada vez
+   que se entra/vuelve al hub. Un estilo inline le gana a cualquier regla
+   externa sin importar especificidad, así que sin !important esta regla
+   pierde. También hay una card ("Editor de Código") con un
+   style="grid-column:span 2" viejo en el HTML: con !important queda
+   inerte (esa propiedad solo aplica dentro de un contenedor grid). */
+#adm-hub{padding:16px 18px;display:flex !important;flex-direction:column;flex-wrap:nowrap;gap:8px}
+/* FIX NAVEGACIÓN: admGo() oculta el hub con hub.style.display='none' al
+   entrar a una sección (ej. "Partidos") — pero el !important de arriba
+   también bloqueaba ESE display:none, dejando el hub y la sección
+   visibles al mismo tiempo (la sección "aparecía abajo de todo"). Esta
+   regla oculta el hub por CSS cuando hay una .apane activa, sin
+   depender del display:none inline que el JS ya no puede aplicar. */
+#pg-admin:has(.apane.on) #adm-hub{display:none !important}
+.adm-hub-card{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  gap:2px 12px;width:100%;box-sizing:border-box;
+  padding:11px 13px;border-radius:var(--r-lg);
+  background:rgba(90,88,105,.20);
+  -webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur));
+  border:1px solid var(--glass-brd);cursor:pointer;
+  transition:transform var(--fast) var(--spring);
+}
 .adm-hub-card:active{transform:scale(.97)}
-.adm-hub-ico{width:40px;height:40px;border-radius:var(--r-md);background:rgba(var(--p-rgb),.13);border:1px solid rgba(var(--p-rgb),.22);display:flex;align-items:center;justify-content:center;color:var(--p2);flex-shrink:0}
-.adm-hub-ico svg{width:20px;height:20px;stroke-width:1.8}
-.adm-hub-lbl{font-size:14px;font-weight:700;color:var(--txt);flex:1}
-.adm-hub-sub{font-size:11px;color:var(--txt3)}
-.adm-hub-arr{width:24px;height:24px;color:var(--txt3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.adm-hub-arr svg{width:14px;height:14px;stroke-width:2.5}
+.adm-hub-ico{grid-row:1/3;grid-column:1;width:34px;height:34px;border-radius:var(--r-md);background:rgba(var(--p-rgb),.13);border:1px solid rgba(var(--p-rgb),.22);display:flex;align-items:center;justify-content:center;color:var(--p2)}
+.adm-hub-ico svg{width:17px;height:17px;stroke-width:1.8}
+.adm-hub-lbl{grid-row:1;grid-column:2;font-size:13px;font-weight:700;color:var(--txt);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-hub-sub{grid-row:2;grid-column:2;font-size:10.5px;color:var(--txt3);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-hub-arr{grid-row:1/3;grid-column:3;width:20px;height:20px;color:var(--txt3);display:flex;align-items:center;justify-content:center}
+.adm-hub-arr svg{width:12px;height:12px;stroke-width:2.5}
 /* Tabs del admin */
 .atabs{display:flex;gap:6px;overflow-x:auto;padding:0 18px;-webkit-overflow-scrolling:touch}
 .atabs::-webkit-scrollbar{display:none}
@@ -983,26 +1026,9 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .adm-sec-stats{color:#a78bfa;border-color:rgba(167,139,250,.25)}
 .adm-sec-db{color:#4ade80;border-color:rgba(74,222,128,.25)}
 
-/* ──────────────────────────────────────────
-   [ADMIN · EXTRA] Colores por card del hub
-   (opcional, solo diferencia visual — no
-   afecta el layout, que ya funciona bien)
-   ────────────────────────────────────────── */
-.adm-hub-matches{background:linear-gradient(135deg,#312e81,#4338ca);border-color:rgba(129,140,248,.3)}
-.adm-hub-teams{background:linear-gradient(135deg,#064e3b,#065f46);border-color:rgba(52,211,153,.3)}
-.adm-hub-players{background:linear-gradient(135deg,#500724,#881337);border-color:rgba(244,114,182,.3)}
-.adm-hub-news{background:linear-gradient(135deg,#431407,#7c2d12);border-color:rgba(251,146,60,.3)}
-.adm-hub-channels{background:linear-gradient(135deg,#083344,#164e63);border-color:rgba(34,211,238,.3)}
-.adm-hub-sanctions{background:linear-gradient(135deg,#422006,#78350f);border-color:rgba(250,204,21,.3)}
-.adm-hub-copa{background:linear-gradient(135deg,#3b0764,#6b21a8);border-color:rgba(192,132,252,.3)}
-.adm-hub-season{background:linear-gradient(135deg,#1e3a5f,#1e40af);border-color:rgba(96,165,250,.3)}
-.adm-hub-stats{background:linear-gradient(135deg,#1a0533,#7c3aed);border-color:rgba(167,139,250,.3)}
-.adm-hub-announce{background:linear-gradient(135deg,#7c2d12,#c2410c);border-color:rgba(251,146,60,.35)}
-.adm-hub-config{background:linear-gradient(135deg,#171717,#404040);border-color:rgba(226,232,240,.2)}
-.adm-hub-db{background:linear-gradient(135deg,#052e16,#15803d);border-color:rgba(74,222,128,.3)}
-.adm-hub-music{background:linear-gradient(135deg,#3b0764,#86198f);border-color:rgba(232,121,249,.3)}
-.adm-hub-code{background:linear-gradient(135deg,#0c1445,#1d4ed8);border-color:rgba(96,165,250,.3)}
-.adm-hub-appupdate{background:linear-gradient(135deg,#083344,#0e7490);border-color:rgba(34,211,238,.3)}
+/* NOTA: las cards del hub ya no tienen color por sección — usan el mismo
+   fondo gris translúcido (rgba(90,88,105,.20)) que .adm-hub-card, para que
+   se vean del mismo tono que el fondo general de la página. */
 
 /* ──────────────────────────────────────────
    [ADMIN · RESPONSIVE 320-430px]
@@ -1013,7 +1039,9 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
   .adm-hdr{padding:16px 14px 0}
   .adm-hdr-title{font-size:22px}
   #adm-hub{padding:14px}
-  .adm-hub-card{padding:12px 14px;gap:12px}
+  .adm-hub-card{padding:10px 12px;gap:2px 10px}
+  .adm-hub-ico{width:30px;height:30px}
+  .adm-hub-ico svg{width:15px;height:15px}
   .aform{padding:14px}
   .frow{gap:8px}
   .lcn{font-size:28px}
