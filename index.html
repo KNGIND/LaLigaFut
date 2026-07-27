@@ -753,37 +753,39 @@
     <div class="adm-section-header adm-sec-matches"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 3v4M12 17v4M3.5 9.5l3.5 1M17 10.5l3.5-1M6 18l1.5-3.5M18 18l-1.5-3.5"/></svg></div><div class="adm-sec-lbl">PARTIDOS</div><div class="adm-sec-count" id="adm-match-count">0</div></div>
     <div class="atit">Nuevo partido</div>
     <div class="aform">
-      <div class="fl">Local</div><select class="fsel" id="mh-team"></select>
-      <div class="fl">Visitante</div><select class="fsel" id="ma-team"></select>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Local</div><select class="fsel" id="mh-team"></select></div>
+        <div class="fgrp"><div class="fl">Visitante</div><select class="fsel" id="ma-team"></select></div>
+      </div>
       <div class="fl">Fecha y hora</div><input type="datetime-local" class="fi" id="m-dt"/>
       <div class="frow">
         <div class="fgrp"><div class="fl">Competencia</div><select class="fsel" id="m-comp" onchange="updateJornadaPlaceholder()"><option value="liga">Liga</option><option value="copa">Copa</option><option value="amistoso">Amistoso</option></select></div>
         <div class="fgrp"><div class="fl">Jornada / Fase</div><input type="text" class="fi" id="m-jornada" placeholder="Ej: Fecha 5"/></div>
-        <!-- Campos extra de Copa — se muestran solo cuando competition=copa -->
-        <div id="copa-extra-fields" style="display:none">
-          <div class="fl">Nombre de la copa</div>
-          <input type="text" class="fi" id="m-copa-name" placeholder="Ej: Copa Oro, Copa Plata..."/>
-          <div class="cfg-row" style="padding:10px 0;border:none">
-            <div class="cfg-row-txt">
-              <div class="cfg-row-t">Es partido de Vuelta</div>
-              <div class="cfg-row-s">Mostrará el resultado de la Ida entre paréntesis</div>
-            </div>
-            <input type="checkbox" id="m-vuelta" onchange="toggleVueltaField()" style="width:18px;height:18px;accent-color:var(--p);cursor:pointer"/>
+      </div>
+      <!-- Campos extra de Copa — se muestran solo cuando competition=copa -->
+      <div id="copa-extra-fields" style="display:none">
+        <div class="fl">Nombre de la copa</div>
+        <input type="text" class="fi" id="m-copa-name" placeholder="Ej: Copa Oro, Copa Plata..."/>
+        <div class="cfg-row" style="padding:10px 0;border:none">
+          <div class="cfg-row-txt">
+            <div class="cfg-row-t">Es partido de Vuelta</div>
+            <div class="cfg-row-s">Mostrará el resultado de la Ida entre paréntesis</div>
           </div>
-          <div id="ida-result-row" style="display:none">
-            <div class="fl">Resultado de la Ida</div>
-            <input type="text" class="fi" id="m-ida-result" placeholder="Ej: 2-1 (local ganó la ida)"/>
-          </div>
+          <input type="checkbox" id="m-vuelta" onchange="toggleVueltaField()" style="width:18px;height:18px;accent-color:var(--p);cursor:pointer"/>
+        </div>
+        <div id="ida-result-row" style="display:none">
+          <div class="fl">Resultado de la Ida</div>
+          <input type="text" class="fi" id="m-ida-result" placeholder="Ej: 2-1 (local ganó la ida)"/>
         </div>
       </div>
       <div class="frow">
         <div class="fgrp"><div class="fl">Estadio</div><input type="text" class="fi" id="m-stad" placeholder="Estadio..."/></div>
         <div class="fgrp"><div class="fl">Canal</div><select class="fsel" id="m-ch"><option value="">Sin canal</option></select></div>
       </div>
-      <div class="fl">Estado</div>
-      <select class="fsel" id="m-st"><option value="proximo">Próximo</option><option value="en_vivo">En Vivo</option><option value="finalizado">Finalizado</option><option value="pausado">Pausado</option></select>
-      <div class="fl">Código de sala (opcional)</div>
-      <input type="text" class="fi" id="m-room" placeholder="Ej: LIGA2026, SALA-A..." maxlength="20"/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Estado</div><select class="fsel" id="m-st"><option value="proximo">Próximo</option><option value="en_vivo">En Vivo</option><option value="finalizado">Finalizado</option><option value="pausado">Pausado</option></select></div>
+        <div class="fgrp"><div class="fl">Código de sala (opcional)</div><input type="text" class="fi" id="m-room" placeholder="Ej: LIGA2026..." maxlength="20"/></div>
+      </div>
       <button class="abtn" onclick="saveMatch()">GUARDAR PARTIDO</button>
     </div>
     <div class="atit" style="margin-top:4px">Control en vivo</div>
@@ -810,12 +812,14 @@
     <div class="adm-section-header adm-sec-players"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l4 2 4-2 4 4-3 3v9H7v-9L4 8z"/></svg></div><div class="adm-sec-lbl">JUGADORES</div><div class="adm-sec-count" id="adm-player-count">0</div></div>
     <div class="atit">Agregar jugador</div>
     <div class="aform">
-      <div class="fl">Nombre</div><input type="text" class="fi" id="pl-name" placeholder="Nombre..."/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Nombre</div><input type="text" class="fi" id="pl-name" placeholder="Nombre..."/></div>
+        <div class="fgrp"><div class="fl">Equipo</div><select class="fsel" id="pl-team"></select></div>
+      </div>
       <div class="frow">
         <div class="fgrp"><div class="fl">Número</div><input type="number" class="fi" id="pl-num" placeholder="10" min="1" max="99"/></div>
         <div class="fgrp"><div class="fl">Posición</div><select class="fsel" id="pl-pos"><option value="PO">Portero</option><option value="DF">Defensa</option><option value="MC">Mediocampista</option><option value="DE">Delantero</option></select></div>
       </div>
-      <div class="fl">Equipo</div><select class="fsel" id="pl-team"></select>
       <button class="fupbtn" id="pl-photo-btn" onclick="document.getElementById('pl-photo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg><span id="pl-photo-txt">Foto (opcional)</span></button>
       <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="pl-photo-fi" onchange="handleFile(event,'pendingPlayerPhoto','pl-photo-btn','pl-photo-txt')"/>
       <button class="abtn" onclick="savePlayer()">AGREGAR JUGADOR</button>
@@ -828,9 +832,10 @@
     <div class="adm-section-header adm-sec-news"><div class="adm-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 012 2v13a1 1 0 01-1 1H6a2 2 0 01-2-2z"/><path d="M19 4v15a1 1 0 001 1h0a1 1 0 001-1V8"/><path d="M8 8h6M8 12h6M8 16h4"/></svg></div><div class="adm-sec-lbl">NOTICIAS</div><div class="adm-sec-count" id="adm-news-count">0</div></div>
     <div class="atit">Nueva noticia</div>
     <div class="aform">
-      <div class="fl">Título</div><input type="text" class="fi" id="n-title" placeholder="Título..."/>
-      <div class="fl">Categoría</div>
-      <select class="fsel" id="n-cat"><option value="NOTICIAS">NOTICIAS</option><option value="RESULTADOS">RESULTADOS</option><option value="FICHAJES">FICHAJES</option><option value="ENTREVISTA">ENTREVISTA</option><option value="ANÁLISIS">ANÁLISIS</option><option value="RUMORES">RUMORES</option></select>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Título</div><input type="text" class="fi" id="n-title" placeholder="Título..."/></div>
+        <div class="fgrp"><div class="fl">Categoría</div><select class="fsel" id="n-cat"><option value="NOTICIAS">NOTICIAS</option><option value="RESULTADOS">RESULTADOS</option><option value="FICHAJES">FICHAJES</option><option value="ENTREVISTA">ENTREVISTA</option><option value="ANÁLISIS">ANÁLISIS</option><option value="RUMORES">RUMORES</option></select></div>
+      </div>
       <div class="fl">Resumen</div><input type="text" class="fi" id="n-excerpt" placeholder="Breve descripción..."/>
       <div class="fl">Contenido</div><textarea class="fi" id="n-body" rows="4" placeholder="Cuerpo..." style="resize:vertical"></textarea>
       <div class="fl">Imagen</div>
@@ -845,8 +850,10 @@
   <div class="apane" id="adm-channels">
     <div class="atit">Agregar canal</div>
     <div class="aform">
-      <div class="fl">Nombre</div><input type="text" class="fi" id="ch-name" placeholder="Ej: Twitch, YouTube..."/>
-      <div class="fl">URL (opcional)</div><input type="text" class="fi" id="ch-url" placeholder="https://..."/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Nombre</div><input type="text" class="fi" id="ch-name" placeholder="Ej: Twitch, YouTube..."/></div>
+        <div class="fgrp"><div class="fl">URL (opcional)</div><input type="text" class="fi" id="ch-url" placeholder="https://..."/></div>
+      </div>
       <button class="fupbtn" id="ch-logo-btn" onclick="document.getElementById('ch-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M17 2l-5 5-5-5"/></svg><span id="ch-logo-txt">Logo del canal</span></button>
       <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="ch-logo-fi" onchange="handleFile(event,'pendingChLogo','ch-logo-btn','ch-logo-txt')"/>
       <button class="abtn" onclick="saveChannel()">GUARDAR CANAL</button>
@@ -878,11 +885,14 @@
   <div class="apane" id="adm-sanctions">
     <div class="atit">Agregar sanción / lesión</div>
     <div class="aform">
-      <div class="fl">Jugador</div><input type="text" class="fi" id="sa-player" placeholder="Nombre..."/>
-      <div class="fl">Equipo</div><select class="fsel" id="sa-team"></select>
-      <div class="fl">Tipo</div>
-      <select class="fsel" id="sa-type"><option value="sancion">Sanción (amarillas)</option><option value="expulsion">Expulsión roja</option><option value="lesion">Lesión</option><option value="otro">Otro</option></select>
-      <div class="fl">Duración</div><input type="text" class="fi" id="sa-dur" placeholder="Ej: 1 partido..."/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Jugador</div><input type="text" class="fi" id="sa-player" placeholder="Nombre..."/></div>
+        <div class="fgrp"><div class="fl">Equipo</div><select class="fsel" id="sa-team"></select></div>
+      </div>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Tipo</div><select class="fsel" id="sa-type"><option value="sancion">Sanción (amarillas)</option><option value="expulsion">Expulsión roja</option><option value="lesion">Lesión</option><option value="otro">Otro</option></select></div>
+        <div class="fgrp"><div class="fl">Duración</div><input type="text" class="fi" id="sa-dur" placeholder="Ej: 1 partido..."/></div>
+      </div>
       <div class="fl">Notas</div><input type="text" class="fi" id="sa-notes" placeholder="Motivo..."/>
       <button class="abtn" onclick="saveSanction()">AGREGAR</button>
     </div>
@@ -893,9 +903,10 @@
   <div class="apane" id="adm-season">
     <div class="atit">Gestión de temporada</div>
     <div class="aform">
-      <div class="fl">Nombre de temporada</div><input type="text" class="fi" id="sea-name" placeholder='T9 "Reinicio"'/>
-      <div class="fl">Estado</div>
-      <select class="fsel" id="sea-status"><option value="en_curso">En curso</option><option value="proximo">Próximamente</option><option value="pausado">Pausado</option><option value="finalizado">Finalizado</option></select>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Nombre de temporada</div><input type="text" class="fi" id="sea-name" placeholder='T9 "Reinicio"'/></div>
+        <div class="fgrp"><div class="fl">Estado</div><select class="fsel" id="sea-status"><option value="en_curso">En curso</option><option value="proximo">Próximamente</option><option value="pausado">Pausado</option><option value="finalizado">Finalizado</option></select></div>
+      </div>
       <div class="fl">Descripción</div><input type="text" class="fi" id="sea-desc" placeholder="Descripción breve..."/>
       <button class="abtn" onclick="saveSeason()">GUARDAR TEMPORADA</button>
     </div>
@@ -998,10 +1009,10 @@
   <div class="apane" id="adm-copa">
     <div class="atit">🏆 Campeones de Copas</div>
     <div class="aform">
-      <div class="fl">Nombre de la copa</div>
-      <input type="text" class="fi" id="cc-name" placeholder="Ej: Copa Oro, Copa Plata..."/>
-      <div class="fl">Temporada</div>
-      <input type="text" class="fi" id="cc-season" placeholder="Ej: T9 2026"/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Nombre de la copa</div><input type="text" class="fi" id="cc-name" placeholder="Ej: Copa Oro..."/></div>
+        <div class="fgrp"><div class="fl">Temporada</div><input type="text" class="fi" id="cc-season" placeholder="Ej: T9 2026"/></div>
+      </div>
       <div class="fl">Equipo campeón</div>
       <select class="fsel" id="cc-winner" style="margin-bottom:10px">
         <option value="">Seleccionar equipo...</option>
@@ -1014,8 +1025,10 @@
   <div class="apane" id="adm-config">
     <div class="atit">Configuración</div>
     <div class="aform">
-      <div class="fl">Nombre de la liga</div><input type="text" class="fi" id="cfg-name" placeholder="La Super Liga"/>
-      <div class="fl">Nombre corto</div><input type="text" class="fi" id="cfg-short" placeholder="LSL"/>
+      <div class="frow">
+        <div class="fgrp"><div class="fl">Nombre de la liga</div><input type="text" class="fi" id="cfg-name" placeholder="La Super Liga"/></div>
+        <div class="fgrp"><div class="fl">Nombre corto</div><input type="text" class="fi" id="cfg-short" placeholder="LSL"/></div>
+      </div>
       <div class="fl">Logo / Icono</div>
       <button class="fupbtn" id="cfg-logo-btn" onclick="document.getElementById('cfg-logo-fi').click()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span id="cfg-logo-txt">Cambiar logo</span></button>
       <input type="file" accept="image/jpeg,image/png,image/webp" class="hfi" id="cfg-logo-fi" onchange="handleFile(event,'pendingCfgLogo','cfg-logo-btn','cfg-logo-txt')"/>

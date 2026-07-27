@@ -98,6 +98,7 @@ function init(){
   if(!D.editTransforms)D.editTransforms={};
   // Single warm theme — no toggle needed
   updateHdr();updateGreet();updateUser();renderAll();checkAdmin();
+  setTimeout(checkAdmin,900); // refuerzo: re-verifica tras initAll() y otros procesos async
   restoreLastPage();
   setTimeout(moveNavBubble,220);
   setTimeout(updateNextMatchCountdown,150);
@@ -105,6 +106,7 @@ function init(){
   applyIslandVisibility();
   setupLogoHold();setupBroadcast();setupPWA();setupManifest();
   initSupabase();
+  initAll(); // Config extra (tema, perf, isla) — corre DESPUÉS de load() para no pisar D con el default
   // Sync inicial — sin bloquear render
     // Aplicar settings guardados
   if(D.settings){
@@ -313,8 +315,19 @@ function verifyAdmin(){
   }
 }
 function checkAdmin(){
+  // Red de seguridad: releer localStorage directo por si D.user quedó desincronizado
+  // por alguna condición de carrera durante el arranque.
+  try{
+    const raw=localStorage.getItem(STORE);
+    if(raw){
+      const saved=JSON.parse(raw);
+      if(saved?.user?.isAdmin===true&&D.user.isAdmin!==true){
+        D.user.isAdmin=true;
+      }
+    }
+  }catch(e){}
   const isA=D.user.isAdmin;
-  $('ni-admin')?.classList.toggle('hidden',!isA);
+  const niAdmin=$('ni-admin');if(niAdmin)niAdmin.style.display=isA?'flex':'none';
   const smAdmin=$('sm-admin-item');if(smAdmin)smAdmin.style.display=isA?'flex':'none';
   const smRole=$('sm-urole');if(smRole)smRole.textContent=isA?'Administrador':'Miembro';
 }
@@ -4672,7 +4685,7 @@ function euiApplyDI(){
   save();
 }
 
-(function initAll(){
+function initAll(){
   setTimeout(()=>{try{loadEuiSettings();}catch(e){}},300);
   setTimeout(()=>{try{loadColorTheme();}catch(e){}},200);
   setTimeout(()=>{try{applyPerformanceMode();}catch(e){}},500);
@@ -4694,7 +4707,7 @@ function euiApplyDI(){
     initDynamicIsland();
     updateDIVisibility();
   }catch(e){console.warn('Dynamic Island init error:',e)}
-})();
+}
 // Función para activar y escuchar las notificaciones en el celu
 async function activarNotificacionesPush() {
   // Verificamos si estamos adentro de la App (Capacitor) y si existe el plugin

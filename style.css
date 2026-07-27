@@ -758,8 +758,24 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5}
 select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239e9cb8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:36px}
 .fl{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px}
 .frow{display:flex;gap:10px}
+.fgrp{flex:1;min-width:0}
+.fgrp .fi,.fgrp .fsel{margin-bottom:0}
 .frow>.fi,.frow .fsel{flex:1;margin-bottom:0}
 .fsel{width:100%;padding:11px 13px;border-radius:var(--r-md);border:1px solid var(--glass-brd);background:rgba(255,255,255,.06);color:var(--txt);font-family:var(--f);font-size:14px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239e9cb8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px}
+/* Botón "subir archivo" (usado en Equipos, Jugadores, Noticias, Canales, Config, Música) */
+.fupbtn{
+  width:100%;display:flex;align-items:center;gap:10px;
+  padding:12px 14px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.06);border:1px dashed var(--glass-brd);
+  color:var(--txt2);font-size:13px;font-family:var(--f);font-weight:600;
+  cursor:pointer;transition:background var(--mid) ease,border-color var(--mid) ease;
+  margin-bottom:10px;text-align:left;
+}
+.fupbtn:active{background:rgba(255,255,255,.1)}
+.fupbtn svg{width:18px;height:18px;flex-shrink:0;stroke:var(--p2)}
+.fupbtn span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Input de archivo real: oculto, el .fupbtn de arriba lo dispara por click */
+.hfi{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .abtn{width:100%;padding:14px;border-radius:var(--r-full);background:linear-gradient(135deg,var(--p),var(--pink));color:#fff;font-size:13px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;box-shadow:0 6px 20px rgba(var(--p-rgb),.32);transition:transform var(--fast) var(--spring),box-shadow var(--mid) ease;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}
 .abtn:active{transform:scale(.97)}
 .abtn.sec{background:rgba(var(--p-rgb),.10);box-shadow:none;border:1px solid rgba(var(--p-rgb),.24);color:var(--p2)}
@@ -773,6 +789,65 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .cfg-row-txt{flex:1;min-width:0}
 .cfg-row-t{font-size:14px;font-weight:600;color:var(--txt)}
 .cfg-row-s{font-size:11px;color:var(--txt3);margin-top:2px}
+.cfg-section{background:rgba(255,255,255,.04);border:1px solid var(--glass-brd);border-radius:var(--r-lg);overflow:hidden;box-sizing:border-box}
+
+/* Color de acento: pastillas circulares */
+.accent-dot{
+  width:34px;height:34px;border-radius:50%;cursor:pointer;flex-shrink:0;
+  border:2px solid transparent;box-sizing:border-box;
+  transition:transform var(--fast) var(--spring),border-color var(--mid) ease;
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.accent-dot:active{transform:scale(.88)}
+.accent-dot.active{border-color:#fff}
+.accent-dot.active::after{
+  content:'✓';position:absolute;color:#fff;font-size:14px;font-weight:900;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+.custom-accent-trigger{display:flex;align-items:center;justify-content:center}
+
+/* Modo Oscuro / Claro */
+.mode-toggle{display:flex;gap:8px;box-sizing:border-box}
+.mode-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:16px 8px;border-radius:var(--r-lg);background:rgba(255,255,255,.04);
+  border:1px solid var(--glass-brd);cursor:pointer;color:var(--txt2);
+  font-size:12px;font-weight:700;transition:background var(--mid) ease,color var(--mid) ease,border-color var(--mid) ease;
+  box-sizing:border-box;min-width:0;
+}
+.mode-btn svg{width:22px;height:22px;stroke:currentColor;flex-shrink:0}
+.mode-btn.active{background:rgba(var(--p-rgb),.14);border-color:rgba(var(--p-rgb),.35);color:var(--p2)}
+
+/* Temas de fondo: grilla de miniaturas */
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;box-sizing:border-box}
+.theme-item{
+  position:relative;aspect-ratio:1.4/1;border-radius:12px;cursor:pointer;overflow:hidden;
+  border:2px solid transparent;box-sizing:border-box;
+  transition:border-color var(--mid) ease,transform var(--fast) var(--spring);
+}
+.theme-item:active{transform:scale(.94)}
+.theme-item.active{border-color:var(--p2)}
+.theme-item-check{
+  position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;
+  background:var(--p2);color:#fff;font-size:9px;font-weight:900;
+  display:none;align-items:center;justify-content:center;
+}
+.theme-item.active .theme-item-check{display:flex}
+.custom-theme-item{
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.05);border-style:dashed;border-color:var(--glass-brd);color:var(--txt3);
+}
+
+/* Fondo personalizado (2 colores) */
+#custom-bg-panel{display:none;margin-top:10px;box-sizing:border-box}
+#custom-bg-panel.open{display:block}
+.cbg-preview{width:100%;height:56px;border-radius:12px;margin-bottom:10px;border:1px solid var(--glass-brd);box-sizing:border-box}
+.cbg-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;box-sizing:border-box}
+.cbg-swatch-lbl{font-size:11px;color:var(--txt2);flex-shrink:0}
+.cbg-color-input{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--glass-brd);
+  background:none;padding:0;cursor:pointer;flex-shrink:0;
+}
 
 /* ──────────────────────────────────────────
    [ADMIN]
@@ -782,9 +857,11 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
    - Paneles (.apane)
    JS: admGo(), admTab() en script.js
    ────────────────────────────────────────── */
-.adm-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 18px 0}
-.adm-hdr-title{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.5px}
-.adm-hdr-acts{display:flex;gap:8px;align-items:center}
+/* FIX MENÚ CORTADO: flex-wrap permite que .adm-hdr-acts baje de línea
+   en vez de desbordar/cortarse cuando no entra junto al título (320-430px) */
+.adm-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;row-gap:8px;padding:20px 18px 0}
+.adm-hdr-title{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.5px;min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-hdr-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;margin-left:auto}
 #adm-hub{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
 .adm-hub-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--r-lg);background:rgba(90,88,105,.20);-webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur));border:1px solid var(--glass-brd);cursor:pointer;transition:transform var(--fast) var(--spring)}
 .adm-hub-card:active{transform:scale(.97)}
@@ -820,6 +897,128 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .adm-ia:active{transform:scale(.86)}
 .adm-ia svg{width:13px;height:13px;stroke-width:2}
 .adm-ia.danger{color:var(--danger);background:rgba(248,113,113,.08)}
+
+/* ──────────────────────────────────────────
+   [ADMIN · LISTAS DE ITEMS]
+   Filas de listas dentro de cada sección del
+   admin: Partidos, Equipos, Jugadores, Noticias,
+   Canales, Sanciones (.ali generado por JS en
+   renderAdmLists()). Estaban sin CSS: el texto
+   se superponía y los botones no tenían tamaño.
+   ────────────────────────────────────────── */
+.ali{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;margin-bottom:8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--glass-brd);
+  border-radius:var(--r-md);
+  transition:background var(--mid) ease,transform var(--fast) var(--spring);
+}
+.ali:active{background:rgba(255,255,255,.07);transform:scale(.99)}
+.alinf{flex:1;min-width:0}
+.aln{font-size:13px;font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.als{font-size:11px;color:var(--txt3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alacts{display:flex;gap:6px;flex-shrink:0}
+.albtn{
+  width:32px;height:32px;flex-shrink:0;border-radius:var(--r-sm);
+  background:rgba(255,255,255,.06);border:1px solid var(--glass-brd);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--txt2);cursor:pointer;
+  transition:transform var(--fast) var(--spring),background var(--mid) ease;
+}
+.albtn:active{transform:scale(.88);background:rgba(255,255,255,.1)}
+.albtn svg{width:14px;height:14px;flex-shrink:0}
+/* En Partidos el 2do botón de cada fila es "Eliminar": lo distinguimos en rojo */
+.alacts .albtn:last-child{color:var(--danger);background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.18)}
+
+/* ──────────────────────────────────────────
+   [ADMIN · CONTROL EN VIVO]
+   Caja de marcador en vivo dentro de "Partidos"
+   (#live-ctrls → .lcbox generado por JS).
+   Botones +/- de gol (.scb) sin tamaño definido
+   quedaban amontonados con el marcador.
+   ────────────────────────────────────────── */
+.lcbox{
+  background:rgba(90,88,105,.18);border:1px solid var(--glass-brd);
+  border-radius:var(--r-lg);padding:14px;margin-bottom:10px;
+}
+.lctit{font-size:12px;font-weight:700;color:var(--txt2);text-align:center;margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px}
+.lcsc{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.lctn{font-size:11px;font-weight:700;color:var(--txt2);max-width:72px;text-align:center;line-height:1.25}
+.lcn{font-family:"Bebas Neue",sans-serif;font-size:34px;letter-spacing:1px;color:var(--txt);min-width:34px;text-align:center}
+.scc{display:flex;flex-direction:column;gap:5px}
+.scb{
+  width:30px;height:26px;border-radius:var(--r-sm);
+  background:rgba(255,255,255,.07);border:1px solid var(--glass-brd);
+  color:var(--txt);font-size:15px;font-weight:800;font-family:var(--f);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:transform var(--fast) var(--spring),background var(--mid) ease;
+}
+.scb:active{transform:scale(.85);background:rgba(var(--p-rgb),.18)}
+
+/* ──────────────────────────────────────────
+   [ADMIN · HEADERS DE SECCIÓN]
+   Cabecera con ícono + nombre + contador que
+   encabeza cada pane (PARTIDOS, EQUIPOS...).
+   Sin CSS quedaban como texto plano apilado.
+   ────────────────────────────────────────── */
+.adm-section-header{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;margin-bottom:14px;
+  border-radius:var(--r-lg);
+  font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.5px;
+  position:relative;overflow:hidden;
+  color:var(--p2);border:1px solid var(--bdr2);
+}
+.adm-section-header::before{content:"";position:absolute;inset:0;opacity:.10;background:currentColor}
+.adm-sec-ico{position:relative;flex-shrink:0;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.adm-sec-ico svg{width:19px;height:19px}
+.adm-sec-lbl{position:relative;flex:1;min-width:0;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-sec-count{position:relative;font-family:var(--f);font-size:11px;font-weight:700;background:rgba(255,255,255,.15);padding:3px 9px;border-radius:var(--r-full);color:#fff;flex-shrink:0}
+/* Color distintivo por sección */
+.adm-sec-matches{color:#818cf8;border-color:rgba(129,140,248,.25)}
+.adm-sec-teams{color:#34d399;border-color:rgba(52,211,153,.25)}
+.adm-sec-players{color:#f472b6;border-color:rgba(244,114,182,.25)}
+.adm-sec-news{color:#fb923c;border-color:rgba(251,146,60,.25)}
+.adm-sec-stats{color:#a78bfa;border-color:rgba(167,139,250,.25)}
+.adm-sec-db{color:#4ade80;border-color:rgba(74,222,128,.25)}
+
+/* ──────────────────────────────────────────
+   [ADMIN · EXTRA] Colores por card del hub
+   (opcional, solo diferencia visual — no
+   afecta el layout, que ya funciona bien)
+   ────────────────────────────────────────── */
+.adm-hub-matches{background:linear-gradient(135deg,#312e81,#4338ca);border-color:rgba(129,140,248,.3)}
+.adm-hub-teams{background:linear-gradient(135deg,#064e3b,#065f46);border-color:rgba(52,211,153,.3)}
+.adm-hub-players{background:linear-gradient(135deg,#500724,#881337);border-color:rgba(244,114,182,.3)}
+.adm-hub-news{background:linear-gradient(135deg,#431407,#7c2d12);border-color:rgba(251,146,60,.3)}
+.adm-hub-channels{background:linear-gradient(135deg,#083344,#164e63);border-color:rgba(34,211,238,.3)}
+.adm-hub-sanctions{background:linear-gradient(135deg,#422006,#78350f);border-color:rgba(250,204,21,.3)}
+.adm-hub-copa{background:linear-gradient(135deg,#3b0764,#6b21a8);border-color:rgba(192,132,252,.3)}
+.adm-hub-season{background:linear-gradient(135deg,#1e3a5f,#1e40af);border-color:rgba(96,165,250,.3)}
+.adm-hub-stats{background:linear-gradient(135deg,#1a0533,#7c3aed);border-color:rgba(167,139,250,.3)}
+.adm-hub-announce{background:linear-gradient(135deg,#7c2d12,#c2410c);border-color:rgba(251,146,60,.35)}
+.adm-hub-config{background:linear-gradient(135deg,#171717,#404040);border-color:rgba(226,232,240,.2)}
+.adm-hub-db{background:linear-gradient(135deg,#052e16,#15803d);border-color:rgba(74,222,128,.3)}
+.adm-hub-music{background:linear-gradient(135deg,#3b0764,#86198f);border-color:rgba(232,121,249,.3)}
+.adm-hub-code{background:linear-gradient(135deg,#0c1445,#1d4ed8);border-color:rgba(96,165,250,.3)}
+.adm-hub-appupdate{background:linear-gradient(135deg,#083344,#0e7490);border-color:rgba(34,211,238,.3)}
+
+/* ──────────────────────────────────────────
+   [ADMIN · RESPONSIVE 320-430px]
+   Ajustes finos para pantallas muy chicas
+   (iPhone SE y similares) sin tocar el resto.
+   ────────────────────────────────────────── */
+@media (max-width:380px){
+  .adm-hdr{padding:16px 14px 0}
+  .adm-hdr-title{font-size:22px}
+  #adm-hub{padding:14px}
+  .adm-hub-card{padding:12px 14px;gap:12px}
+  .aform{padding:14px}
+  .frow{gap:8px}
+  .lcn{font-size:28px}
+  .lctn{max-width:58px;font-size:10px}
+}
 
 /* ──────────────────────────────────────────
    [EDITUI]
@@ -1018,7 +1217,7 @@ body.eui-active [data-editable]:not(.eui-selected){
 .tpit.sel{background:rgba(var(--p-rgb),.10)}
 .tpck{margin-left:auto;font-size:14px;color:var(--p2);opacity:0}
 .tpit.sel .tpck{opacity:1}
-.alcr{width:36px;height:36px;background:var(--glass);border:1px solid var(--glass-brd);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.alcr{width:36px;height:36px;border-radius:var(--r-sm);background:var(--glass);border:1px solid var(--glass-brd);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
 .alcr img{width:100%;height:100%;object-fit:contain;padding:2px}
 .alcr span{font-size:9px;font-weight:700;color:var(--txt3)}
 /* Accent dots config */
